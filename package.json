@@ -1,0 +1,35 @@
+{
+  "name": "ai-blog-generation-wizard",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "serve:api": "tsx server/index.ts",
+    "dev:full": "concurrently \"vite\" \"tsx server/index.ts\""
+  },
+  "dependencies": {
+    "@ax-llm/ax": "^14.0.37",
+    "@google/genai": "^1.24.0",
+    "@langchain/core": "^1.0.1",
+    "@langchain/langgraph": "^1.0.1",
+    "express": "^4.21.1",
+    "google-ads-api": "^17.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "mammoth": "^1.8.0",
+    "pdfjs-dist": "^4.8.69",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "@vitejs/plugin-react": "^5.0.0",
+    "concurrently": "^9.1.2",
+    "tsx": "^4.19.2",
+    "typescript": "~5.8.2",
+    "vite": "^6.4.1"
+  }
+}

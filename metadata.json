@@ -1,0 +1,5 @@
+{
+  "name": "AI Blog Generation Wizard",
+  "description": "A multi-step wizard to generate high-quality blog posts using Gemini. Users can specify topics, provide reference materials, define writing style, and review an AI-generated outline before final content creation.",
+  "requestFramePermissions": []
+}
