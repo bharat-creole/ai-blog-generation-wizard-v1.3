@@ -29,6 +29,7 @@ interface Props {
 	updateData: (data: Partial<BlogData>) => void;
 	showBlogInfo: boolean;
 	showTrace: boolean;
+	onCollapseSidebar?: () => void;
 }
 
 // Helper function to convert file to base64
@@ -97,6 +98,16 @@ const getStepMessage = (
 };
 
 const markdownStyles = `
+	@keyframes slideIn {
+		from {
+			opacity: 0;
+			transform: translateX(20px);
+		}
+		to {
+			opacity: 1;
+			transform: translateX(0);
+		}
+	}
 	.markdown-preview .markdown-content h1 {
 		font-size: 2rem;
 		font-weight: bold;
@@ -193,6 +204,7 @@ const AgentMode: React.FC<Props> = ({
 	updateData,
 	showBlogInfo,
 	showTrace,
+	onCollapseSidebar,
 }) => {
 	const apiKey = data.apiKey;
 	const interlinks: Interlink[] = data.interlinks;
@@ -214,6 +226,9 @@ const AgentMode: React.FC<Props> = ({
 		data.outline || []
 	);
 	const [outlineApproved, setOutlineApproved] = useState<boolean>(false);
+	const [showBlogContent, setShowBlogContent] = useState<boolean>(
+		!!(data.blogContent && data.blogContent.trim().length > 0)
+	);
 	const [isThinking, setIsThinking] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [traceItems, setTraceItems] = useState<
@@ -257,6 +272,16 @@ const AgentMode: React.FC<Props> = ({
 	useEffect(() => {
 		scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
 	}, [messages, isThinking]);
+
+	// Show blog content when draft or outline is approved
+	useEffect(() => {
+		if (outlineApproved && draft.trim().length > 0) {
+			console.log(
+				'Setting showBlogContent to true - draft content detected'
+			);
+			setShowBlogContent(true);
+		}
+	}, [outlineApproved, draft]);
 
 	// Debounced SEO ranking
 	useEffect(() => {
@@ -458,8 +483,16 @@ const AgentMode: React.FC<Props> = ({
 
 					// ✨ If outline was auto-approved, switch to blog content view
 					if (working.outlineApproved && !outlineApproved) {
+						console.log(
+							'Outline approved - showing blog content'
+						);
 						setOutlineApproved(true);
+						setShowBlogContent(true);
 						setViewMode('markdown');
+						// Collapse sidebar when blog content appears
+						if (onCollapseSidebar) {
+							onCollapseSidebar();
+						}
 					}
 
 					// Only halt if user input is actually needed
@@ -711,11 +744,11 @@ const AgentMode: React.FC<Props> = ({
 	};
 
 	return (
-		<div className='h-full bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-200/50'>
+		<div className='h-full flex flex-col overflow-hidden'>
 			{/* Inject markdown styles */}
 			<style>{markdownStyles}</style>
 
-			<div className='flex-1 overflow-auto px-6 py-5 bg-gradient-to-br from-gray-50/50 to-white'>
+			<div className='flex-1 flex flex-col overflow-hidden'>
 				{/* ✨ Automation Mode Selector - DEPRECATED (now in chat) */}
 				{false && (
 					<div className='mb-5 p-4 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 border border-blue-200/50 rounded-2xl shadow-lg'>
@@ -2097,7 +2130,15 @@ const AgentMode: React.FC<Props> = ({
 											true,
 									} as AgentState;
 									setAgent(next);
+									console.log(
+										'User approved outline - showing blog content'
+									);
 									setOutlineApproved(true);
+									setShowBlogContent(true);
+									// Collapse sidebar when blog content appears
+									if (onCollapseSidebar) {
+										onCollapseSidebar();
+									}
 									setIsThinking(true);
 									try {
 										let working = next;
@@ -2244,9 +2285,9 @@ const AgentMode: React.FC<Props> = ({
 					)}
 
 				{/* Blog Info Panel */}
-				<div className='mt-4'>
-					{showBlogInfo && (
-						<div className='mt-2 p-3 border rounded bg-blue-50 text-xs'>
+				{showBlogInfo && (
+					<div className='mb-4 flex-shrink-0'>
+						<div className='p-4 border border-gray-200 rounded-lg bg-gray-50 text-xs max-h-48 overflow-y-auto'>
 							{agent && (
 								<div className='space-y-2'>
 									{/* Primary Keyword */}
@@ -2389,13 +2430,13 @@ const AgentMode: React.FC<Props> = ({
 								</div>
 							)}
 						</div>
-					)}
-				</div>
+					</div>
+				)}
 
 				{/* Trace Panel */}
-				<div className='mt-4'>
-					{showTrace && (
-						<div className='mt-2 p-2 border rounded bg-gray-50 max-h-40 overflow-auto text-xs text-gray-700'>
+				{showTrace && (
+					<div className='mb-4'>
+						<div className='p-3 border border-gray-200 rounded-lg bg-gray-50 max-h-40 overflow-auto text-xs text-gray-700'>
 							{traceItems.length === 0 && (
 								<div>No steps yet.</div>
 							)}
@@ -2408,40 +2449,51 @@ const AgentMode: React.FC<Props> = ({
 								</div>
 							))}
 						</div>
-					)}
-				</div>
+					</div>
+				)}
 
-				<div className='grid grid-cols-1 lg:grid-cols-2 gap-6 h-full'>
+				{/* Debug indicator - remove in production */}
+				{showBlogContent && (
+					<div className='text-xs text-green-600 font-bold mb-2'>
+						✅ Blog content panel is active
+					</div>
+				)}
+
+				<div className='flex gap-6 flex-1 min-h-0 transition-all duration-700 ease-in-out'>
 					{/* Chat + Input */}
-					<div className='flex flex-col min-h-0'>
-						<div className='flex-1 overflow-y-auto border-2 border-gray-200 rounded-2xl p-4 bg-gradient-to-br from-gray-50 to-white shadow-inner'>
+					<div
+						className={`flex flex-col min-h-0 transition-all duration-700 ease-in-out ${
+							showBlogContent ? 'w-[30%]' : 'w-full'
+						}`}
+					>
+						<div className='flex-1 overflow-y-auto py-4 px-4'>
 							{messages.map((m, i) => (
 								<div
 									key={i}
 									className={`mb-4 ${
 										m.role === 'user'
-											? 'text-right'
-											: 'text-left'
+											? 'flex justify-end'
+											: 'flex justify-start'
 									}`}
 								>
 									<div
-										className={`inline-block px-5 py-3 rounded-2xl text-sm whitespace-pre-wrap shadow-lg ${
+										className={`px-4 py-2.5 rounded-xl text-sm whitespace-pre-wrap ${
 											m.role ===
 											'user'
-												? 'bg-gradient-to-br from-orange-500 to-orange-600 text-white max-w-[80%]'
+												? 'bg-orange-500 text-white max-w-[75%]'
 												: m.keywordSelection
-												? 'bg-amber-50 border-2 border-amber-200 max-w-full w-full'
+												? 'bg-gray-100 border border-gray-200 max-w-full w-full'
 												: m.titleSelection
-												? 'bg-purple-50 border-2 border-purple-200 max-w-full w-full'
+												? 'bg-gray-100 border border-gray-200 max-w-full w-full'
 												: m.interlinkingForm
-												? 'bg-green-50 border-2 border-green-200 max-w-full w-full'
+												? 'bg-gray-100 border border-gray-200 max-w-full w-full'
 												: m.referencesForm
-												? 'bg-yellow-50 border-2 border-yellow-300 max-w-full w-full'
+												? 'bg-gray-100 border border-gray-200 max-w-full w-full'
 												: m.outlineApproval
-												? 'bg-blue-50 border-2 border-blue-300 max-w-full w-full'
+												? 'bg-gray-100 border border-gray-200 max-w-full w-full'
 												: m.controlLevelSelection
-												? 'bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 border-2 border-purple-300 max-w-full w-full'
-												: 'bg-white border border-gray-200 max-w-[80%]'
+												? 'bg-gray-100 border border-gray-200 max-w-md'
+												: 'bg-gray-100 text-gray-800 max-w-[75%]'
 										}`}
 									>
 										{m.content}
@@ -2460,7 +2512,7 @@ const AgentMode: React.FC<Props> = ({
 															key={
 																idx
 															}
-															className='flex items-center justify-between text-sm bg-white border rounded p-2'
+															className='flex items-center justify-between text-sm bg-white border border-gray-200 rounded-md p-2 hover:border-orange-400 transition-colors'
 														>
 															<div>
 																<div className='font-medium text-gray-800'>
@@ -4328,10 +4380,10 @@ const AgentMode: React.FC<Props> = ({
 
 										{/* Control Level Selection */}
 										{m.controlLevelSelection && (
-											<div className='mt-3'>
-												<div className='space-y-3'>
+											<div className='mt-3 flex flex-col items-center'>
+												<div className='space-y-2 max-w-md w-full'>
 													<button
-														className='w-full flex items-center justify-between p-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 shadow-md hover:shadow-lg transition-all'
+														className='w-full flex items-center justify-between p-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 shadow-md hover:shadow-lg transition-all'
 														onClick={() => {
 															setAutomationMode(
 																'full'
@@ -4354,12 +4406,12 @@ const AgentMode: React.FC<Props> = ({
 														}}
 													>
 														<div className='text-left'>
-															<div className='font-bold text-lg'>
+															<div className='font-bold text-base'>
 																🚀
 																Full
 																Automation
 															</div>
-															<div className='text-sm text-blue-100'>
+															<div className='text-xs text-blue-100'>
 																I
 																decide
 																everything
@@ -4367,13 +4419,13 @@ const AgentMode: React.FC<Props> = ({
 																you
 															</div>
 														</div>
-														<div className='text-2xl'>
+														<div className='text-xl'>
 															→
 														</div>
 													</button>
 
 													<button
-														className='w-full flex items-center justify-between p-4 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg hover:from-purple-600 hover:to-purple-700 shadow-md hover:shadow-lg transition-all'
+														className='w-full flex items-center justify-between p-3 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg hover:from-purple-600 hover:to-purple-700 shadow-md hover:shadow-lg transition-all'
 														onClick={() => {
 															setAutomationMode(
 																'guided'
@@ -4396,11 +4448,11 @@ const AgentMode: React.FC<Props> = ({
 														}}
 													>
 														<div className='text-left'>
-															<div className='font-bold text-lg'>
+															<div className='font-bold text-base'>
 																🎯
 																Guided
 															</div>
-															<div className='text-sm text-purple-100'>
+															<div className='text-xs text-purple-100'>
 																I
 																approve
 																key
@@ -4408,7 +4460,7 @@ const AgentMode: React.FC<Props> = ({
 																(Recommended)
 															</div>
 														</div>
-														<div className='text-2xl'>
+														<div className='text-xl'>
 															→
 														</div>
 													</button>
@@ -4459,74 +4511,106 @@ const AgentMode: React.FC<Props> = ({
 								</div>
 							))}
 							{isThinking && (
-								<div className='flex items-center gap-2 text-sm text-gray-500 mt-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full inline-flex shadow-md'>
-									<Spinner className='w-4 h-4' />
-									<span className='font-medium'>
-										Thinking...
-									</span>
+								<div className='flex justify-start mb-4'>
+									<div className='bg-gray-100 text-gray-800 max-w-[75%] px-4 py-2.5 rounded-xl flex items-center gap-2'>
+										<Spinner className='w-4 h-4' />
+										<span className='text-sm'>
+											Thinking...
+										</span>
+									</div>
 								</div>
 							)}
 							<div ref={scrollRef} />
 						</div>
 
-						<div className='mt-4 flex gap-3 bg-white p-2 rounded-2xl border-2 border-gray-200 shadow-lg'>
-							<textarea
-								value={input}
-								onChange={(e) =>
-									setInput(e.target.value)
-								}
-								onKeyDown={(e) => {
-									if (
-										e.key === 'Enter' &&
-										!e.shiftKey
-									) {
-										e.preventDefault();
-										if (
-											canSend &&
-											!isThinking
-										) {
-											handleSend();
+						{/* Floating Input Box */}
+						<div className='sticky bottom-0 left-0 right-0 py-4 bg-gradient-to-t from-white via-white to-transparent'>
+							<div className='max-w-3xl mx-auto px-4'>
+								<div className='flex gap-2 items-end p-3 rounded-2xl border border-gray-300 bg-white shadow-lg focus-within:border-orange-400 focus-within:shadow-xl transition-all'>
+									<textarea
+										value={input}
+										onChange={(e) =>
+											setInput(
+												e.target
+													.value
+											)
 										}
-									}
-								}}
-								rows={2}
-								disabled={outlineApproved}
-								placeholder={
-									outlineApproved
-										? '💬 Chat disabled - Blog generation in progress...'
-										: '💬 Ask the agent to plan, write a section, refine tone, add examples, etc.'
-								}
-								className={`flex-1 px-4 py-2 border-0 rounded-xl focus:ring-2 focus:ring-orange-400 focus:outline-none resize-none ${
-									outlineApproved
-										? 'bg-gray-100 cursor-not-allowed opacity-60'
-										: 'bg-gray-50'
-								}`}
-							/>
-							<button
-								onClick={handleSend}
-								disabled={
-									!canSend || isThinking
-								}
-								className='px-8 py-2 text-sm font-bold text-white bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl hover:shadow-xl hover:shadow-orange-500/40 hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100'
-							>
-								{isThinking ? '⏳' : '🚀'} Send
-							</button>
+										onKeyDown={(e) => {
+											if (
+												e.key ===
+													'Enter' &&
+												!e.shiftKey
+											) {
+												e.preventDefault();
+												if (
+													canSend &&
+													!isThinking
+												) {
+													handleSend();
+												}
+											}
+										}}
+										rows={1}
+										disabled={
+											outlineApproved
+										}
+										placeholder={
+											outlineApproved
+												? 'Chat disabled - Blog generation in progress...'
+												: 'Message Bloggr AI...'
+										}
+										className={`flex-1 px-2 py-2 border-0 focus:ring-0 focus:outline-none resize-none bg-transparent text-gray-900 placeholder-gray-400 ${
+											outlineApproved
+												? 'cursor-not-allowed opacity-60'
+												: ''
+										}`}
+										style={{
+											minHeight:
+												'24px',
+											maxHeight:
+												'200px',
+										}}
+									/>
+									<button
+										onClick={handleSend}
+										disabled={
+											!canSend ||
+											isThinking
+										}
+										className='p-2 text-white bg-orange-500 rounded-lg hover:bg-orange-600 transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-orange-500'
+										title='Send message'
+									>
+										<svg
+											className='w-5 h-5'
+											fill='none'
+											stroke='currentColor'
+											viewBox='0 0 24 24'
+										>
+											<path
+												strokeLinecap='round'
+												strokeLinejoin='round'
+												strokeWidth={
+													2
+												}
+												d='M5 12h14M12 5l7 7-7 7'
+											/>
+										</svg>
+									</button>
+								</div>
+							</div>
 						</div>
 					</div>
 
 					{/* Draft + SEO */}
-					<div className='flex flex-col min-h-0'>
-						<div className='flex items-center justify-between mb-2'>
-							<h3 className='text-lg font-semibold text-gray-800'>
-								{!outlineApproved &&
-								outline.length > 0
-									? 'Outline Preview'
-									: 'Blog Content'}
-							</h3>
-							<div className='flex items-center gap-3'>
-								{/* View Mode Toggle */}
-								{outlineApproved &&
-									draft.trim() && (
+					{showBlogContent && (
+						<div className='flex flex-col min-h-0 w-[70%] transition-all duration-700 ease-in-out animate-[slideIn_0.7s_ease-out] border-2 border-orange-300 rounded-xl bg-white p-4 shadow-lg'>
+							<div className='flex items-center justify-between mb-2'>
+								<h3 className='text-lg font-semibold text-gray-800'>
+									Blog Content
+								</h3>
+								<div className='flex items-center gap-3'>
+									{/* View Mode Toggle */}
+									{draft.trim() && (
 										<div className='flex gap-1 bg-gray-100 rounded-md p-1'>
 											<button
 												onClick={() =>
@@ -4560,112 +4644,124 @@ const AgentMode: React.FC<Props> = ({
 											</button>
 										</div>
 									)}
-								{/* SEO Score */}
-								{isRanking ? (
-									<div className='flex items-center gap-2 text-gray-500 text-sm bg-white px-4 py-2 rounded-full shadow-md'>
-										<Spinner />
-										<span className='font-medium'>
-											Scoring SEO…
-										</span>
-									</div>
-								) : seoScore !== null ? (
-									<div className='flex items-center gap-2 px-4 py-2 rounded-full shadow-lg bg-gradient-to-r from-orange-500 to-orange-600 text-white'>
-										<span className='text-lg'>
-											📊
-										</span>
-										<span className='font-bold text-base'>
-											SEO:{' '}
-											{seoScore}/100
-										</span>
-									</div>
-								) : (
-									<div className='text-sm text-gray-400 italic'>
-										SEO score
-										unavailable
-									</div>
-								)}
+									{/* SEO Score */}
+									{isRanking ? (
+										<div className='flex items-center gap-2 text-gray-500 text-sm bg-white px-4 py-2 rounded-full shadow-md'>
+											<Spinner />
+											<span className='font-medium'>
+												Scoring
+												SEO…
+											</span>
+										</div>
+									) : seoScore !== null ? (
+										<div className='flex items-center gap-2 px-4 py-2 rounded-full shadow-lg bg-gradient-to-r from-orange-500 to-orange-600 text-white'>
+											<span className='text-lg'>
+												📊
+											</span>
+											<span className='font-bold text-base'>
+												SEO:{' '}
+												{
+													seoScore
+												}
+												/100
+											</span>
+										</div>
+									) : (
+										<div className='text-sm text-gray-400 italic'>
+											SEO score
+											unavailable
+										</div>
+									)}
+								</div>
 							</div>
-						</div>
 
-						{/* Content Display - Outline now shown in chat only */}
-						{viewMode === 'markdown' ? (
-							/* Show Markdown Preview */
-							<div className='flex-1 overflow-y-auto border rounded-md p-4 bg-white prose prose-sm max-w-none markdown-preview'>
-								{draft.trim() ? (
-									<div className='markdown-content'>
-										<ReactMarkdown>
-											{draft}
-										</ReactMarkdown>
-									</div>
-								) : (
-									<div className='flex items-center justify-center h-full text-gray-400'>
-										{isThinking ? (
-											<div className='flex flex-col items-center gap-3'>
-												<Spinner className='w-8 h-8' />
+							{/* Content Display - Outline now shown in chat only */}
+							{viewMode === 'markdown' ? (
+								/* Show Markdown Preview */
+								<div className='flex-1 overflow-y-auto border rounded-md p-4 bg-white prose prose-sm max-w-none markdown-preview'>
+									{draft.trim() ? (
+										<div className='markdown-content'>
+											<ReactMarkdown>
+												{draft}
+											</ReactMarkdown>
+										</div>
+									) : (
+										<div className='flex items-center justify-center h-full text-gray-400'>
+											{isThinking ? (
+												<div className='flex flex-col items-center gap-3'>
+													<Spinner className='w-8 h-8' />
+													<p>
+														Generating
+														content...
+													</p>
+												</div>
+											) : (
 												<p>
-													Generating
-													content...
+													Content
+													will
+													appear
+													here
+													as
+													the
+													agent
+													writes...
 												</p>
-											</div>
-										) : (
-											<p>
-												Content
-												will
-												appear
-												here as
-												the
-												agent
-												writes...
-											</p>
-										)}
-									</div>
-								)}
-							</div>
-						) : (
-							/* Show Raw Markdown */
-							<textarea
-								value={draft}
-								onChange={(e) =>
-									setDraft(e.target.value)
-								}
-								className='flex-1 p-3 border rounded-md focus:ring-orange-500 focus:border-orange-500 font-mono text-sm'
-								placeholder='# Your Blog Title\n\nContent will appear here as the agent writes...'
-							/>
-						)}
+											)}
+										</div>
+									)}
+								</div>
+							) : (
+								/* Show Raw Markdown */
+								<textarea
+									value={draft}
+									onChange={(e) =>
+										setDraft(
+											e.target.value
+										)
+									}
+									className='flex-1 p-3 border rounded-md focus:ring-orange-500 focus:border-orange-500 font-mono text-sm'
+									placeholder='# Your Blog Title\n\nContent will appear here as the agent writes...'
+								/>
+							)}
 
-						{seoScore !== null && (
-							<div className='mt-4 grid grid-cols-1 gap-3 text-sm'>
-								<div className='p-4 bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-xl shadow-md'>
-									<div className='flex items-center gap-2 mb-1'>
-										<span className='text-lg'>
-											⭐
-										</span>
-										<span className='font-bold text-blue-700'>
-											Primary
-											Ranking Factor
-										</span>
+							{seoScore !== null && (
+								<div className='mt-4 grid grid-cols-1 gap-3 text-sm'>
+									<div className='p-4 bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-xl shadow-md'>
+										<div className='flex items-center gap-2 mb-1'>
+											<span className='text-lg'>
+												⭐
+											</span>
+											<span className='font-bold text-blue-700'>
+												Primary
+												Ranking
+												Factor
+											</span>
+										</div>
+										<p className='text-gray-700 ml-7'>
+											{seoPrimary ||
+												'—'}
+										</p>
 									</div>
-									<p className='text-gray-700 ml-7'>
-										{seoPrimary || '—'}
-									</p>
-								</div>
-								<div className='p-4 bg-gradient-to-br from-red-50 to-orange-50 border border-red-200 rounded-xl shadow-md'>
-									<div className='flex items-center gap-2 mb-1'>
-										<span className='text-lg'>
-											⚠️
-										</span>
-										<span className='font-bold text-red-700'>
-											Most Critical
-											Flaw
-										</span>
+									<div className='p-4 bg-gradient-to-br from-red-50 to-orange-50 border border-red-200 rounded-xl shadow-md'>
+										<div className='flex items-center gap-2 mb-1'>
+											<span className='text-lg'>
+												⚠️
+											</span>
+											<span className='font-bold text-red-700'>
+												Most
+												Critical
+												Flaw
+											</span>
+										</div>
+										<p className='text-gray-700 ml-7'>
+											{seoCritical ||
+												'—'}
+										</p>
 									</div>
-									<p className='text-gray-700 ml-7'>
-										{seoCritical || '—'}
-									</p>
 								</div>
-							</div>
-						)}
-					</div>
+							)}
+						</div>
+					)}
 				</div>
 			</div>
 		</div>

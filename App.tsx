@@ -256,6 +256,9 @@ const App: React.FC = () => {
 					updateData={updateData}
 					showBlogInfo={showBlogInfo}
 					showTrace={showTrace}
+					onCollapseSidebar={() =>
+						setSidebarCollapsed(true)
+					}
 				/>
 			);
 		}
