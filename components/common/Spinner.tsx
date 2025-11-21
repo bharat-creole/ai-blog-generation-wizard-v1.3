@@ -1,9 +1,16 @@
 
 import React from 'react';
 
-const Spinner: React.FC = () => {
+interface SpinnerProps {
+    className?: string;
+}
+
+const Spinner: React.FC<SpinnerProps> = ({ className = '' }) => {
+    const defaultClasses = "animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500";
+    const combinedClasses = className ? `${defaultClasses} ${className}` : defaultClasses;
+    
     return (
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
+        <div className={combinedClasses}></div>
     );
 };
 

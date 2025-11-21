@@ -1,10 +1,31 @@
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenAI, GenerateContentResponse } from '@google/genai';
 import { BlogData, Interlink, OutlineSection } from '../types';
 
 export interface ChatMessage {
   role: 'user' | 'assistant' | 'system';
   content: string;
 }
+
+// Helper to safely extract text from Gemini response (handles non-text parts like thoughtSignature)
+const extractTextFromResponse = (response: GenerateContentResponse): string => {
+  // Always extract text parts directly to avoid triggering warning from response.text getter
+  try {
+    if (response.candidates && response.candidates[0]?.content?.parts) {
+      const textParts = response.candidates[0].content.parts
+        .filter((part: any) => part.text !== undefined)
+        .map((part: any) => part.text)
+        .join('');
+      
+      if (textParts) {
+        return textParts;
+      }
+    }
+  } catch (e) {
+    console.error('❌ Failed to extract text from response:', e);
+  }
+
+  throw new Error('Unable to extract text from Gemini response');
+};
 
 const cleanAndParseJson = (text: string): any => {
   const cleanedText = text.replace(/^```json\s*/, '').replace(/```\s*$/, '').trim();
@@ -47,7 +68,7 @@ SUBHEADS (H3):\n${section.items?.map(i => `- ${i.name}`).join('\n') || '(none)'}
     },
   });
 
-  return response.text;
+  return extractTextFromResponse(response);
 };
 
 export const chatAgentRespond = async (
@@ -114,5 +135,5 @@ ${currentDraft}
     }
   });
 
-  return cleanAndParseJson(response.text);
+  return cleanAndParseJson(extractTextFromResponse(response));
 };

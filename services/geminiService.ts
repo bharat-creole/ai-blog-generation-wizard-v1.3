@@ -1,6 +1,27 @@
 import { GoogleGenAI, Type, GenerateContentResponse, Part } from "@google/genai";
 import { BlogData, OutlineSection, SeoReport } from '../types';
 
+// Helper to safely extract text from Gemini response (handles non-text parts like thoughtSignature)
+const extractTextFromResponse = (response: GenerateContentResponse): string => {
+    // Always extract text parts directly to avoid triggering warning from response.text getter
+    try {
+        if (response.candidates && response.candidates[0]?.content?.parts) {
+            const textParts = response.candidates[0].content.parts
+                .filter((part: any) => part.text !== undefined)
+                .map((part: any) => part.text)
+                .join('');
+            
+            if (textParts) {
+                return textParts;
+            }
+        }
+    } catch (e) {
+        console.error('❌ Failed to extract text from response:', e);
+    }
+
+    throw new Error('Unable to extract text from Gemini response');
+};
+
 const cleanAndParseJson = (text: string): any => {
     // The model might return JSON wrapped in markdown ```json ... ```
     const cleanedText = text.replace(/^```json\s*/, '').replace(/```\s*$/, '').trim();
@@ -159,7 +180,10 @@ export const generateTitles = async (data: BlogData, apiKey: string): Promise<st
         },
     });
 
-    return cleanAndParseJson(response.text);
+    const extractedText = extractTextFromResponse(response);
+    const titles = cleanAndParseJson(extractedText);
+    
+    return titles;
 };
 
 export const generateOutline = async (data: BlogData, apiKey: string, feedback?: string): Promise<OutlineSection[]> => {
@@ -177,7 +201,7 @@ export const generateOutline = async (data: BlogData, apiKey: string, feedback?:
                 tools: [{ googleSearch: {} }, { urlContext: {} }],
             },
         });
-        return cleanAndParseJson(response.text);
+        return cleanAndParseJson(extractTextFromResponse(response));
     }
 
     // Agentic flow for initial generation
@@ -317,5 +341,5 @@ export const rankBlogPost = async (content: string, keyword: string, apiKey: str
         },
     });
 
-    return cleanAndParseJson(response.text);
+    return cleanAndParseJson(extractTextFromResponse(response));
 }

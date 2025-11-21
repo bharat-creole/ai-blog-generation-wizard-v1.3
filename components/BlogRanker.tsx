@@ -20,7 +20,7 @@ const BlogRanker: React.FC<Props> = ({ apiKey, savedBlogContent }) => {
 
     const handleRankBlog = async () => {
         if (!apiKey) {
-            setError('Gemini API Key is missing. Please set it in the Blog Generation Wizard.');
+            setError('Gemini API Key is missing. Please set it in Bloggr.AI first.');
             return;
         }
         if (!keyword.trim()) {
@@ -51,15 +51,28 @@ const BlogRanker: React.FC<Props> = ({ apiKey, savedBlogContent }) => {
     };
     
     const getScoreColor = (score: number) => {
-        if (score >= 80) return 'text-green-600 bg-green-100';
-        if (score >= 50) return 'text-yellow-600 bg-yellow-100';
-        return 'text-red-600 bg-red-100';
+        if (score >= 80) return 'text-green-600 bg-gradient-to-br from-green-100 to-emerald-100';
+        if (score >= 50) return 'text-yellow-600 bg-gradient-to-br from-yellow-100 to-orange-100';
+        return 'text-red-600 bg-gradient-to-br from-red-100 to-pink-100';
     }
 
     return (
-        <div className="w-full max-w-7xl mx-auto bg-white rounded-lg shadow-2xl p-6 sm:p-10">
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">Blog SEO Ranker</h1>
-            <p className="text-gray-600 mb-8">Analyze your blog content against a target keyword to get a comprehensive SEO score and actionable insights.</p>
+        <div className="h-full bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-200/50">
+            <div className="border-b border-gray-200/50 bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500 px-6 py-5 flex-shrink-0">
+                <div className="flex items-center gap-3 mb-2">
+                    <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                        <span className="text-2xl">📊</span>
+                    </div>
+                    <div>
+                        <h1 className="text-2xl font-bold text-white mb-0.5 flex items-center gap-2">
+                            Blog SEO Ranker
+                            <span className="text-xs bg-white/20 backdrop-blur-sm px-2 py-1 rounded-full">Pro Analysis</span>
+                        </h1>
+                        <p className="text-sm text-green-50">Analyze your blog content against a target keyword to get a comprehensive SEO score and actionable insights.</p>
+                    </div>
+                </div>
+            </div>
+            <div className="flex-1 overflow-auto px-6 py-5 bg-gradient-to-br from-gray-50/50 to-white">
             
             {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">{error}</div>}
 
@@ -110,9 +123,9 @@ const BlogRanker: React.FC<Props> = ({ apiKey, savedBlogContent }) => {
                     <button
                         onClick={handleRankBlog}
                         disabled={isLoading}
-                        className="w-full px-6 py-3 text-base font-semibold text-white bg-orange-500 rounded-md hover:bg-orange-600 transition-colors disabled:bg-orange-300"
+                        className="w-full px-6 py-3 text-base font-semibold text-white bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl hover:shadow-lg hover:shadow-green-500/30 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        {isLoading ? 'Analyzing...' : 'Rank Blog'}
+                        {isLoading ? '🔄 Analyzing...' : '✨ Analyze Blog SEO'}
                     </button>
                 </div>
 
@@ -173,6 +186,7 @@ const BlogRanker: React.FC<Props> = ({ apiKey, savedBlogContent }) => {
                         </div>
                     )}
                 </div>
+            </div>
             </div>
         </div>
     );

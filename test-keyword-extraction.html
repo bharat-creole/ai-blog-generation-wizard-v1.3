@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Keyword Extraction Demo</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+        }
+        .results {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        .results h2 {
+            color: #667eea;
+            margin-top: 0;
+        }
+        .seed-list {
+            list-style: none;
+            padding: 0;
+        }
+        .seed-list li {
+            padding: 10px;
+            margin: 8px 0;
+            background: white;
+            border-radius: 6px;
+            border-left: 3px solid #764ba2;
+            display: flex;
+            align-items: center;
+        }
+        .seed-number {
+            background: #667eea;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+        .log {
+            background: #1e1e1e;
+            color: #0f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            margin-top: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .example-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .example-btn {
+            flex: 1;
+            padding: 8px;
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+        .example-btn:hover {
+            background: #e0e0e0;
+            border-color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Enhanced Keyword Extraction</h1>
+        <p class="subtitle">See how your topic is transformed into SEO-optimized keyword seeds</p>
+        
+        <div class="example-buttons">
+            <button class="example-btn" onclick="setExample('ASI and its impacts')">ASI Example</button>
+            <button class="example-btn" onclick="setExample('AI in healthcare')">AI Healthcare</button>
+            <button class="example-btn" onclick="setExample('Machine learning best practices')">ML Best Practices</button>
+            <button class="example-btn" onclick="setExample('Future of cloud computing and IoT')">Cloud & IoT</button>
+        </div>
+        
+        <div class="input-group">
+            <label for="topic">Enter Your Topic or Blog Title:</label>
+            <input type="text" id="topic" placeholder="e.g., ASI and its impacts" value="ASI and its impacts">
+        </div>
+        
+        <button onclick="extractKeywords()">🔍 Extract Keywords</button>
+        
+        <div id="results" style="display: none;" class="results">
+            <h2>📊 Extracted Keyword Seeds</h2>
+            <p>These seeds will be used to fetch keyword ideas from Google Ads API:</p>
+            <ul id="seed-list" class="seed-list"></ul>
+            
+            <h3 style="color: #667eea; margin-top: 25px;">📝 Extraction Log</h3>
+            <div id="log" class="log"></div>
+        </div>
+    </div>
+
+    <script>
+        // Acronym expansions
+        const ACRONYM_EXPANSIONS = {
+            'ai': ['artificial intelligence', 'ai'],
+            'asi': ['artificial superintelligence', 'asi', 'super ai'],
+            'agi': ['artificial general intelligence', 'agi'],
+            'ml': ['machine learning', 'ml'],
+            'nlp': ['natural language processing', 'nlp'],
+            'iot': ['internet of things', 'iot'],
+            'ar': ['augmented reality', 'ar'],
+            'vr': ['virtual reality', 'vr'],
+            'seo': ['search engine optimization', 'seo'],
+            'api': ['application programming interface', 'api'],
+            'saas': ['software as a service', 'saas'],
+        };
+
+        // Stop words
+        const STOP_WORDS = new Set([
+            'the', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for',
+            'of', 'with', 'by', 'from', 'as', 'is', 'was', 'are', 'be',
+            'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would',
+            'should', 'could', 'may', 'might', 'must', 'can', 'its', 'it',
+            'this', 'that', 'these', 'those', 'a', 'an'
+        ]);
+
+        let logMessages = [];
+
+        function log(message) {
+            logMessages.push(message);
+        }
+
+        function setExample(text) {
+            document.getElementById('topic').value = text;
+            extractKeywords();
+        }
+
+        function extractKeywords() {
+            logMessages = [];
+            const title = document.getElementById('topic').value;
+            
+            log(`🔍 [Keyword Extraction] Analyzing: "${title}"`);
+            
+            const seeds = [];
+            const words = title.replace(/[^\w\s]/g, ' ').split(/\s+/).filter(Boolean);
+            
+            // Find acronyms
+            const acronyms = [];
+            words.forEach(word => {
+                if (/^[A-Z]{2,5}$/.test(word)) {
+                    acronyms.push(word);
+                    log(`   📌 Found acronym: "${word}"`);
+                }
+            });
+            
+            // Expand acronyms
+            acronyms.forEach(acronym => {
+                const key = acronym.toLowerCase();
+                if (ACRONYM_EXPANSIONS[key]) {
+                    const expansions = ACRONYM_EXPANSIONS[key];
+                    seeds.push(...expansions);
+                    log(`   ✨ Expanded "${acronym}" → [${expansions.join(', ')}]`);
+                } else {
+                    seeds.push(acronym.toLowerCase());
+                }
+            });
+            
+            // Extract tokens
+            const tokens = title
+                .toLowerCase()
+                .replace(/[^a-z0-9\s]/g, ' ')
+                .split(/\s+/)
+                .filter(Boolean)
+                .filter(t => t.length >= 3)
+                .filter(t => !STOP_WORDS.has(t));
+            
+            log(`   📝 Meaningful tokens: [${tokens.join(', ')}]`);
+            
+            // Extract phrases
+            const phrases = [];
+            for (let i = 0; i < tokens.length - 1; i++) {
+                const phrase = `${tokens[i]} ${tokens[i + 1]}`;
+                if (phrase.length >= 6) phrases.push(phrase);
+            }
+            
+            for (let i = 0; i < tokens.length - 2; i++) {
+                const phrase = `${tokens[i]} ${tokens[i + 1]} ${tokens[i + 2]}`;
+                if (phrase.length >= 10) phrases.push(phrase);
+            }
+            
+            log(`   💬 Extracted phrases: [${phrases.slice(0, 3).join(', ')}${phrases.length > 3 ? '...' : ''}]`);
+            
+            seeds.push(...tokens);
+            seeds.push(...phrases);
+            
+            // Full phrase
+            const fullPhrase = title
+                .toLowerCase()
+                .replace(/[^a-z0-9\s]/g, ' ')
+                .replace(/\s+/g, ' ')
+                .trim();
+            
+            if (fullPhrase.length >= 10 && fullPhrase.length <= 100) {
+                seeds.unshift(fullPhrase);
+                log(`   🎯 Full phrase: "${fullPhrase}"`);
+            }
+            
+            // Deduplicate and sort
+            const uniqueSeeds = Array.from(new Set(seeds))
+                .filter(s => s.length >= 2)
+                .sort((a, b) => {
+                    const aWords = a.split(' ').length;
+                    const bWords = b.split(' ').length;
+                    if (aWords !== bWords) return bWords - aWords;
+                    return b.length - a.length;
+                });
+            
+            const finalSeeds = uniqueSeeds.slice(0, 5);
+            log(`   ✅ Final ${finalSeeds.length} seeds: [${finalSeeds.join(', ')}]`);
+            
+            // Display results
+            displayResults(finalSeeds);
+        }
+
+        function displayResults(seeds) {
+            const resultsDiv = document.getElementById('results');
+            const seedList = document.getElementById('seed-list');
+            const logDiv = document.getElementById('log');
+            
+            seedList.innerHTML = '';
+            seeds.forEach((seed, index) => {
+                const li = document.createElement('li');
+                li.innerHTML = `<div class="seed-number">${index + 1}</div><strong>"${seed}"</strong>`;
+                seedList.appendChild(li);
+            });
+            
+            logDiv.innerHTML = logMessages.join('<br>');
+            resultsDiv.style.display = 'block';
+            
+            resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // Run on load with default example
+        window.onload = () => extractKeywords();
+    </script>
+</body>
+</html>
+

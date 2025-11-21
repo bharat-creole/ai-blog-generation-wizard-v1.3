@@ -79,3 +79,46 @@ export interface SeoReport {
     mostCriticalFlaw: string;
     detailedReport: PillarReport[];
 }
+
+// Agent Mode Types
+export type AutomationLevel = 'full' | 'guided' | 'manual';
+
+export interface AgentPreferences {
+    automationLevel: AutomationLevel;
+    skipOptionalSteps: boolean;
+    autoSelectBestOptions: boolean;
+}
+
+export interface ConversationContext {
+    lastIntent: string;
+    pendingQuestions: string[];
+}
+
+export interface KeywordCandidate {
+    text: string;
+    volume: number;
+    difficulty: number;
+}
+
+export interface ChatMessage {
+    role: 'user' | 'assistant' | 'system';
+    content: string;
+    keywordSelection?: {
+        type: 'primary' | 'secondary';
+        candidates: KeywordCandidate[];
+    };
+    titleSelection?: {
+        titles: string[];
+    };
+    interlinkingForm?: {
+        currentLinks: Interlink[];
+    };
+    referencesForm?: {
+        currentUrls: string[];
+        currentFiles: ReferenceFile[];
+    };
+    outlineApproval?: {
+        outline: OutlineSection[];
+    };
+    controlLevelSelection?: boolean;
+}
