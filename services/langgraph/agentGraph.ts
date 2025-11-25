@@ -61,14 +61,14 @@ export async function discoveryNode(s: AgentState): Promise<AgentState> {
 	const shouldUseRefs =
 		s.policy.referencesUsage === 'both' ||
 		s.policy.referencesUsage === 'outline-only';
-	
+
 	// 📚 Log reference materials being used for outline
 	if (shouldUseRefs) {
 		console.log('📚 [OUTLINE GENERATION] Using references:');
 		console.log(`   URLs: ${s.data.referenceUrls?.length || 0}`);
 		console.log(`   Files: ${s.data.referenceFiles?.length || 0}`);
 	}
-	
+
 	const input: BlogData = {
 		...s.data,
 		outline: [],
@@ -133,20 +133,7 @@ export async function discoveryNode(s: AgentState): Promise<AgentState> {
 }
 
 export async function estimatorNode(s: AgentState): Promise<AgentState> {
-	if (!s.draft?.trim()) return s;
-
-	// ✨ Only run SEO scoring when blog is complete (saves time during generation)
-	const isComplete =
-		(s.progress.sectionIndex ?? 0) >= (s.outline?.length || 0);
-	if (!isComplete) return s; // Skip intermediate scoring
-
-	await geminiService.rankBlogPost(
-		s.draft,
-		s.data.primaryKeyword,
-		s.apiKey,
-		'gemini-flash-latest'
-	);
-	appendTrace(s, 'EstimatorNode.ranked');
+	// ✨ Estimator node is now a no-op since SEO ranking has been removed
 	return s;
 }
 
@@ -169,14 +156,14 @@ export async function proposalNode(s: AgentState): Promise<AgentState> {
 	const useRefs =
 		s.policy.referencesUsage === 'both' ||
 		s.policy.referencesUsage === 'content-only';
-	
+
 	// 📚 Log reference usage for this section
 	if (useRefs && idx === 0) {
 		console.log('📚 [CONTENT GENERATION] Using references:');
 		console.log(`   URLs: ${s.data.referenceUrls?.length || 0}`);
 		console.log(`   Files: ${s.data.referenceFiles?.length || 0}`);
 	}
-	
+
 	const sectionMd = await agentService.generateSectionContent(
 		s.data,
 		section,
@@ -284,20 +271,20 @@ export async function researchPrimaryNode(s: AgentState): Promise<AgentState> {
 
 	// 🎯 Extract main topic from multiple sources
 	const topicSource = s.data.title || s.data.topic || s.data.primaryKeyword || '';
-	
+
 	// 📊 LOG: Show what we're extracting from
 	console.log('🔍 [PRIMARY KEYWORD RESEARCH] Starting...');
 	console.log(`   Topic source: "${topicSource}"`);
-	
+
 	// 🎯 Extract intelligent seeds using enhanced extraction
 	const extractedSeeds = keywordTool.extractSeedsFromTitle(topicSource, 5);
-	
+
 	// Combine with any user-provided primary keyword
 	const seeds = [
 		...(s.data.primaryKeyword ? [s.data.primaryKeyword] : []),
 		...extractedSeeds,
 	];
-	
+
 	const location = s.data.targetLocation || 'United States';
 
 	console.log(`   📍 Location: ${location}`);
@@ -309,8 +296,7 @@ export async function researchPrimaryNode(s: AgentState): Promise<AgentState> {
 		const batches = await Promise.all(
 			seeds.map(async (k, idx) => {
 				console.log(
-					`   📡 Fetching keywords for seed ${idx + 1}/${
-						seeds.length
+					`   📡 Fetching keywords for seed ${idx + 1}/${seeds.length
 					}: "${k}"`
 				);
 				try {

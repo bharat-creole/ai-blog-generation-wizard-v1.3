@@ -15,6 +15,7 @@ import * as geminiService from '../services/geminiService';
 import * as conversationHandler from '../services/conversationHandler';
 import * as automationEngine from '../services/automationEngine';
 import Spinner from './common/Spinner';
+import StreamingText from './StreamingText';
 import {
 	BlogData,
 	Interlink,
@@ -29,6 +30,7 @@ interface Props {
 	updateData: (data: Partial<BlogData>) => void;
 	showBlogInfo: boolean;
 	showTrace: boolean;
+	showSettings: boolean;
 	onCollapseSidebar?: () => void;
 }
 
@@ -52,23 +54,18 @@ const getStepMessage = (
 	info?: Record<string, any>
 ): string | null => {
 	const messages: Record<string, string> = {
-		'KeywordResearch.primaryCandidates': `🔍 Researched ${
-			info?.count || 0
-		} keyword options`,
+		'KeywordResearch.primaryCandidates': `🔍 Researched ${info?.count || 0
+			} keyword options`,
 		'KeywordResearch.autoSelected': `✅ Selected "${info?.keyword}" as primary keyword`,
 		'KeywordResearch.userProvided': `✅ Using your keyword: "${info?.keyword}"`,
-		'KeywordResearch.secondaryCandidates': `🔍 Found ${
-			info?.count || 0
-		} secondary keyword options`,
-		'KeywordResearch.secondaryAutoSelected': `✅ Selected ${
-			info?.count || 0
-		} secondary keywords`,
-		'KeywordResearch.secondaryUserProvided': `✅ Using your ${
-			info?.count || 0
-		} secondary keywords`,
-		'TitleGeneration.generated': `📝 Generated ${
-			info?.count || 0
-		} title options`,
+		'KeywordResearch.secondaryCandidates': `🔍 Found ${info?.count || 0
+			} secondary keyword options`,
+		'KeywordResearch.secondaryAutoSelected': `✅ Selected ${info?.count || 0
+			} secondary keywords`,
+		'KeywordResearch.secondaryUserProvided': `✅ Using your ${info?.count || 0
+			} secondary keywords`,
+		'TitleGeneration.generated': `📝 Generated ${info?.count || 0
+			} title options`,
 		'TitleGeneration.autoSelected': `✅ Selected title: "${info?.title}"`,
 		'TitleGeneration.userProvided': `✅ Using your title: "${info?.title}"`,
 		'Interlinking.prompted': `🔗 Ready to add internal/external links (optional)`,
@@ -76,21 +73,16 @@ const getStepMessage = (
 		'Interlinking.userProvided': `✅ Added ${info?.count || 0} links`,
 		'ReferencesCollection.prompted': `📚 Ready to add reference URLs (optional)`,
 		'ReferencesCollection.autoSkipped': `⏭️ Skipped references step`,
-		'ReferencesCollection.userProvided': `✅ Added ${
-			info?.count || 0
-		} references`,
-		'DiscoveryNode.generatedOutline': `📋 Generated outline with ${
-			info?.h2Count || 0
-		} sections`,
-		'DiscoveryNode.regeneratedOutline': `🔄 Regenerated outline with ${
-			info?.h2Count || 0
-		} sections based on your feedback`,
-		'ProposalNode.generatedSection': `✍️ Writing section ${
-			(info?.sectionIndex || 0) + 1
-		}: ${info?.section}`,
-		'FinalBlog.generated': `🎉 Blog complete! ${
-			info?.wordCount || 0
-		} words`,
+		'ReferencesCollection.userProvided': `✅ Added ${info?.count || 0
+			} references`,
+		'DiscoveryNode.generatedOutline': `📋 Generated outline with ${info?.h2Count || 0
+			} sections`,
+		'DiscoveryNode.regeneratedOutline': `🔄 Regenerated outline with ${info?.h2Count || 0
+			} sections based on your feedback`,
+		'ProposalNode.generatedSection': `✍️ Writing section ${(info?.sectionIndex || 0) + 1
+			}: ${info?.section}`,
+		'FinalBlog.generated': `🎉 Blog complete! ${info?.wordCount || 0
+			} words`,
 		'EstimatorNode.ranked': `📊 SEO analysis complete`,
 	};
 
@@ -98,6 +90,40 @@ const getStepMessage = (
 };
 
 const markdownStyles = `
+	/* Thin scrollbars - visible only on hover/scroll */
+	* {
+		scrollbar-width: thin;
+		scrollbar-color: transparent transparent;
+		transition: scrollbar-color 0.3s ease;
+	}
+	
+	*:hover {
+		scrollbar-color: rgba(156, 163, 175, 0.3) transparent;
+	}
+	
+	*::-webkit-scrollbar {
+		width: 3px;
+		height: 3px;
+	}
+	
+	*::-webkit-scrollbar-track {
+		background: transparent;
+	}
+	
+	*::-webkit-scrollbar-thumb {
+		background: transparent;
+		border-radius: 10px;
+		transition: background 0.3s ease;
+	}
+	
+	*:hover::-webkit-scrollbar-thumb {
+		background: rgba(156, 163, 175, 0.3);
+	}
+	
+	*::-webkit-scrollbar-thumb:hover {
+		background: rgba(156, 163, 175, 0.5);
+	}
+
 	@keyframes slideIn {
 		from {
 			opacity: 0;
@@ -204,16 +230,33 @@ const AgentMode: React.FC<Props> = ({
 	updateData,
 	showBlogInfo,
 	showTrace,
+	showSettings,
 	onCollapseSidebar,
 }) => {
 	const apiKey = data.apiKey;
 	const interlinks: Interlink[] = data.interlinks;
-	const [automationMode, setAutomationMode] =
-		useState<AutomationLevel | null>(null); // null means not selected yet
+	// Intelligent flow management
+	const [flowContext, setFlowContext] = useState<{
+		automationLevel: AutomationLevel;
+		hasProvidedInfo: boolean;
+		missingFields: string[];
+		awaitingConfirmation: boolean;
+		currentStep: string;
+		modificationInProgress: boolean;
+		userRequestedAutomation: boolean;
+	}>({
+		automationLevel: 'guided', // Default to guided
+		hasProvidedInfo: false,
+		missingFields: [],
+		awaitingConfirmation: false,
+		currentStep: 'initial',
+		modificationInProgress: false,
+		userRequestedAutomation: false,
+	});
 	const [messages, setMessages] = useState<ChatMessage[]>([
 		{
 			role: 'assistant',
-			content: "Hi! I'm your Blog Agent. Tell me what you want to write about and I'll help you create an SEO-optimized blog.\n\nExamples:\n• 'Write a blog about cloud computing'\n• 'Topic: AI in healthcare, Keyword: machine learning'\n• 'Generate a blog on databases for United States'",
+			content: "Hello! I'm your Blog Agent 🤖. Let's create an SEO-optimized blog post together.\n\nTo get started, please provide the following details:\n\n- **Topic:** The subject of your blog.\n- **Primary Keyword:** One main keyword for SEO focus.\n- **Secondary Keywords:** Up to five additional keywords.\n- **Title (Optional):** Your desired title.\n- **Reference Links (Optional):** Any external links for research.\n- **Internal Links (Optional):** Any links to your own content.\n\nHere's an example of how you can provide this information:\n\n```\nTopic: The benefits of AI in marketing\nPrimary Keyword: AI marketing tools\nSecondary Keywords: machine learning, marketing automation, predictive analytics\n```\n\n**Tip:** You can also say **\"generate blog automatically\"** if you'd like me to handle everything for you!\n\nI'm ready when you are! 🚀",
 		},
 	]);
 	const [input, setInput] = useState('');
@@ -230,6 +273,7 @@ const AgentMode: React.FC<Props> = ({
 		!!(data.blogContent && data.blogContent.trim().length > 0)
 	);
 	const [isThinking, setIsThinking] = useState(false);
+	const [isStreaming, setIsStreaming] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [traceItems, setTraceItems] = useState<
 		{ step: string; at: number }[]
@@ -256,6 +300,11 @@ const AgentMode: React.FC<Props> = ({
 	const [interlinkUrl, setInterlinkUrl] = useState('');
 	const [currentReferenceUrl, setCurrentReferenceUrl] = useState('');
 
+	// Track completed selections to disable them
+	const [completedSelections, setCompletedSelections] = useState<
+		Set<string>
+	>(new Set());
+
 	const scrollRef = useRef<HTMLDivElement>(null);
 
 	// ✨ Allow sending during outline approval (for feedback), but disable after approval
@@ -268,6 +317,13 @@ const AgentMode: React.FC<Props> = ({
 		// Otherwise, allow chat (including during outline approval for feedback)
 		return true;
 	}, [input, apiKey, outlineApproved]);
+
+	const isInputLocked = outlineApproved || isThinking || isStreaming;
+
+	// Set streaming to true on mount for initial assistant message
+	useEffect(() => {
+		setIsStreaming(true);
+	}, []);
 
 	useEffect(() => {
 		scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -283,40 +339,13 @@ const AgentMode: React.FC<Props> = ({
 		}
 	}, [outlineApproved, draft]);
 
-	// Debounced SEO ranking
-	useEffect(() => {
-		if (!apiKey || !draft.trim()) {
-			setSeoScore(null);
-			setSeoPrimary('');
-			setSeoCritical('');
-			return;
-		}
-		const handle = setTimeout(async () => {
-			try {
-				setIsRanking(true);
-				const report = await geminiService.rankBlogPost(
-					draft,
-					data.primaryKeyword || userTopic,
-					apiKey,
-					'gemini-flash-latest'
-				);
-				setSeoScore(report.finalSeoScore);
-				setSeoPrimary(report.primaryRankingFactor);
-				setSeoCritical(report.mostCriticalFlaw);
-			} catch (e) {
-				// swallow ranking errors to not block chat
-			} finally {
-				setIsRanking(false);
-			}
-		}, 800);
-		return () => clearTimeout(handle);
-	}, [draft, data.primaryKeyword, userTopic, apiKey]);
+	// Removed SEO ranking feature
 
 	const handleSend = useCallback(async () => {
 		if (!canSend) return;
 		if (!apiKey) {
 			setError(
-				'Please set your Gemini API Key in the Wizard first.'
+				'Please set your Gemini API Key in Settings.'
 			);
 			return;
 		}
@@ -326,47 +355,682 @@ const AgentMode: React.FC<Props> = ({
 			content: input.trim(),
 		};
 
-		// ✨ Check if control level is not set yet (first message)
-		if (automationMode === null && !agent) {
-			// Detect if user provided detailed information
-			const hasDetailedInfo =
-				/keyword|title|location|country|reference|link|url|target|primary|secondary/i.test(
-					input.trim()
+		// ✨ Intelligent flow detection based on user input
+		const analyzeUserIntent = (content: string) => {
+			// Check for automation requests
+			const wantsFullAutomation =
+				/generate.*automatically|auto.*generate|create.*automatic|full.*automation|generate blog automatically/i.test(
+					content
+				);
+			const wantsAutomation =
+				/automat|auto.*select|auto.*choose|proceed.*automatic/i.test(
+					content
 				);
 
-			if (hasDetailedInfo) {
-				// Auto-select Guided mode if user provides detailed info
-				setAutomationMode('guided');
-				setMessages((prev) => [
-					...prev,
-					userMsg,
-					{
-						role: 'assistant',
-						content: "🎯 I can see you have specific requirements. I'll use Guided mode where you approve key decisions. Let me process this...",
-					},
-				]);
-				setInput('');
-				setIsThinking(true);
-			} else {
-				// Ask for control level if just a simple topic
-				setMessages((prev) => [
-					...prev,
-					userMsg,
-					{
-						role: 'assistant',
-						content: '⚙️ Before we begin, how would you like me to help you?',
-						controlLevelSelection: true,
-					},
-				]);
-				setInput('');
-				return; // Don't proceed until control level is selected
+			// Check for general blog generation requests (without "automatically")
+			const wantsBlogGeneration =
+				/^(generate|create|write|make|build|produce)\s+(a\s+|an\s+|the\s+)?(blog|article|post|content)/i.test(
+					content
+				) && !wantsFullAutomation;
+
+			// Check for information provided
+			const hasDetailedInfo =
+				/keyword|title|location|country|reference|link|url|target|primary|secondary|topic/i.test(
+					content
+				);
+
+			// Check for modification requests
+			const wantsModification =
+				/change|modify|update|edit|different|instead|replace|go back/i.test(
+					content
+				);
+
+			// Check for irrelevant queries
+			const isIrrelevant =
+				!hasDetailedInfo &&
+				!wantsFullAutomation &&
+				!wantsAutomation &&
+				!wantsModification &&
+				!wantsBlogGeneration &&
+				!/blog|content|article|post|write|seo/i.test(content);
+
+			return {
+				wantsFullAutomation,
+				wantsAutomation,
+				wantsBlogGeneration,
+				hasDetailedInfo,
+				wantsModification,
+				isIrrelevant,
+			};
+		};
+
+		const intent = analyzeUserIntent(input.trim());
+
+		// Helper function to extract topic from text
+		const extractTopicFromText = (text: string): string | null => {
+			// Try to extract topic from patterns like:
+			// "generate blog about AI in healthcare"
+			// "create article on remote work"
+			// "write blog for web development"
+			const patterns = [
+				/(?:about|on|regarding|concerning|for)\s+(.+)/i,
+				/(?:topic|subject):\s*(.+)/i,
+				/(?:generate|create|write|make)\s+(?:blog|article|post|content)\s+(.+)/i,
+			];
+
+			for (const pattern of patterns) {
+				const match = text.match(pattern);
+				if (match && match[1]) {
+					const extracted = match[1].trim();
+					// Make sure it's not just keywords like "automatically"
+					if (
+						extracted.length > 5 &&
+						!/^(automatically|auto|manually|guided)$/i.test(
+							extracted
+						)
+					) {
+						return extracted;
+					}
+				}
 			}
-		} else {
-			// Control level already set, proceed normally
-			setMessages((prev) => [...prev, userMsg]);
+			return null;
+		};
+
+		// Check if topic exists in previous messages
+		const findTopicInHistory = (): string | null => {
+			// Look through last 5 messages for a topic
+			const recentMessages = messages.slice(-5);
+			for (const msg of recentMessages) {
+				if (msg.role === 'user') {
+					const extracted = extractTopicFromText(
+						msg.content
+					);
+					if (extracted) return extracted;
+
+					// Check if it's a simple topic statement
+					const content = msg.content.trim();
+					if (
+						content.length > 5 &&
+						content.length < 150 &&
+						!/^(generate|create|write|make|yes|no|ok|sure)/i.test(
+							content
+						) &&
+						!intent.wantsModification
+					) {
+						return content;
+					}
+				}
+			}
+			return null;
+		};
+
+		// Handle general blog generation requests (generate blog, create blog, write blog, etc.)
+		if (intent.wantsBlogGeneration && !agent) {
+			// Try to extract topic from current message
+			let topicFound = extractTopicFromText(input.trim());
+
+			// If no topic in current message, check previous messages
+			if (!topicFound) {
+				topicFound = findTopicInHistory();
+			}
+
+			// Check existing data
+			const existingTopic = userTopic || data.topic;
+
+			if (!topicFound && !existingTopic) {
+				// No topic found anywhere - ask for it
+				setFlowContext((prev) => ({
+					...prev,
+					automationLevel: 'guided',
+					currentStep: 'awaiting_topic',
+					userRequestedAutomation: false,
+				}));
+
+				setMessages((prev) => [
+					...prev,
+					userMsg,
+					{
+						role: 'assistant',
+						content: "I'd be happy to help you create a blog post! 📝\n\n**Please tell me what topic you'd like to write about:**\n\nFor example:\n- 'AI in healthcare'\n- 'Benefits of remote work'\n- 'Best practices for web development'\n\nWhat's your blog topic?",
+					},
+				]);
+				setInput('');
+				return;
+			} else {
+				// Topic found - use it and start guided generation
+				const finalTopic = topicFound || existingTopic;
+				if (topicFound && !existingTopic) {
+					setUserTopic(topicFound);
+				}
+
+				setFlowContext((prev) => ({
+					...prev,
+					automationLevel: 'guided',
+					currentStep: 'processing',
+					hasProvidedInfo: true,
+				}));
+
+				setMessages((prev) => [
+					...prev,
+					userMsg,
+					{
+						role: 'assistant',
+						content: `Great! I'll help you create a blog post about **"${finalTopic}"**.\n\nLet me start by researching keywords and generating an outline. I'll ask for your approval at key steps.`,
+					},
+				]);
+
+				// Continue with agent initialization below
+			}
+		}
+
+		// If user was asked for topic and now provides it
+		if (
+			!agent &&
+			flowContext.currentStep === 'awaiting_topic' &&
+			!intent.wantsFullAutomation &&
+			!intent.wantsBlogGeneration &&
+			!intent.isIrrelevant
+		) {
+			const providedText = input.trim();
+
+			// Validate if the input is a valid topic (not just any text)
+			const isValidTopic =
+				providedText.length >= 3 &&
+				!/^(yes|no|ok|okay|sure|generate|create|make|write|start)$/i.test(
+					providedText
+				) &&
+				!intent.wantsModification;
+
+			if (!isValidTopic) {
+				// Input doesn't look like a valid topic
+				setMessages((prev) => [
+					...prev,
+					userMsg,
+					{
+						role: 'assistant',
+						content: "I need a clear blog topic to proceed. Please provide a specific topic.\n\n**Examples:**\n- 'The impact of AI on modern education'\n- 'Best practices for remote team management'\n- 'How to build a successful e-commerce business'\n\nWhat would you like to write about?",
+					},
+				]);
+				setInput('');
+				return;
+			}
+
+			// User is providing a valid topic after being asked
+			setUserTopic(providedText);
+
+			// Determine if this was for automation or guided mode
+			const isForAutomation = flowContext.userRequestedAutomation;
+
+			setFlowContext((prev) => ({
+				...prev,
+				automationLevel: isForAutomation ? 'full' : 'guided',
+				currentStep: isForAutomation
+					? 'automation'
+					: 'processing',
+				hasProvidedInfo: true,
+			}));
+
+			// Don't add userMsg here - let the general flow add it
+			// Continue with agent initialization below
+		}
+
+		// Handle "generate blog automatically" with data analysis
+		if (intent.wantsFullAutomation && !agent) {
+			// Try to extract topic from the user's message
+			const extractedTopic = input
+				.trim()
+				.replace(
+					/^(generate|create|write|make).*(blog|article|post|content).*(about|on|for|regarding|concerning)\s+/i,
+					''
+				)
+				.replace(
+					/^(generate|create|write|make).*(automatically|auto).*$/i,
+					''
+				)
+				.trim();
+
+			// Check if user provided topic in the same message
+			const topicInMessage =
+				extractedTopic.length > 10 &&
+				extractedTopic !== input.trim() &&
+				!/^(generate|create|write|make|automatically|auto)/i.test(
+					extractedTopic
+				);
+
+			// Analyze what data we already have
+			const hasExistingData = {
+				topic: !!(userTopic || data.topic || topicInMessage),
+				primaryKeyword: !!data.primaryKeyword,
+				secondaryKeywords:
+					(data.secondaryKeywords || []).length > 0,
+				title: !!data.title,
+				references: (data.referenceUrls || []).length > 0,
+				interlinks: (data.interlinks || []).length > 0,
+			};
+
+			const currentTopic =
+				userTopic ||
+				data.topic ||
+				(topicInMessage ? extractedTopic : '');
+			const hasValidTopic = currentTopic.trim().length >= 3;
+
+			// Check if topic is clear before proceeding
+			if (!hasValidTopic) {
+				// No clear topic - must ask before starting
+				setFlowContext((prev) => ({
+					...prev,
+					automationLevel: 'full',
+					currentStep: 'awaiting_topic',
+					userRequestedAutomation: true,
+				}));
+
+				setMessages((prev) => [
+					...prev,
+					userMsg,
+					{
+						role: 'assistant',
+						content: '🚀 **Full Automation Mode Activated!**\n\nI\'ll handle everything for you and create an SEO-optimized blog post.\n\n**To get started, please provide your blog topic:**\n\nFor example:\n- "AI in healthcare"\n- "Benefits of remote work"\n- "Best practices for web development"\n\n💡 *Tip: Be specific about your topic for better results!*',
+					},
+				]);
+				setInput('');
+				return;
+			} else {
+				// Has a valid topic - save it if extracted from message
+				if (topicInMessage && !userTopic && !data.topic) {
+					setUserTopic(extractedTopic);
+				}
+
+				// Has a valid topic - check if there's other data
+				// Has some data - analyze and resume from there
+				let dataStatus =
+					'🎯 **Analyzing your existing data...**\n\n';
+				if (hasExistingData.topic)
+					dataStatus += `✅ Topic: ${currentTopic}\n`;
+				if (hasExistingData.primaryKeyword)
+					dataStatus += `✅ Primary Keyword: ${data.primaryKeyword}\n`;
+				if (hasExistingData.secondaryKeywords)
+					dataStatus += `✅ Secondary Keywords: ${data.secondaryKeywords.join(
+						', '
+					)}\n`;
+				if (hasExistingData.title)
+					dataStatus += `✅ Title: ${data.title}\n`;
+				if (hasExistingData.references)
+					dataStatus += `✅ References: ${data.referenceUrls.length} link(s)\n`;
+				if (hasExistingData.interlinks)
+					dataStatus += `✅ Internal Links: ${data.interlinks.length} link(s)\n`;
+
+				dataStatus +=
+					"\n**Switching to Full Automation Mode...**\n\nI'll use this information and auto-generate the remaining content!";
+
+				// Switch to full automation mode and continue
+				setFlowContext((prev) => ({
+					...prev,
+					automationLevel: 'full',
+					currentStep: 'automation_with_data',
+					userRequestedAutomation: true,
+				}));
+
+				// Don't add messages here - let the general flow handle it
+				// Don't return - continue with agent initialization below
+			}
+		} else if (intent.wantsFullAutomation && agent) {
+			// User wants full automation but agent already exists - update preferences
+			setFlowContext((prev) => ({
+				...prev,
+				automationLevel: 'full',
+				currentStep: 'automation',
+				userRequestedAutomation: true,
+			}));
+
+			// Update agent preferences to full automation
+			const updatedAgent: AgentState = {
+				...agent,
+				preferences: {
+					...agent.preferences,
+					automationLevel: 'full' as AutomationLevel,
+					skipOptionalSteps: true,
+					autoSelectBestOptions: true,
+				},
+			};
+
+			// Update the agent state
+			setAgent(updatedAgent);
+
+			setMessages((prev) => [
+				...prev,
+				userMsg,
+				{
+					role: 'assistant',
+					content: "🚀 **Switched to Full Automation Mode!**\n\nI'll handle all remaining steps automatically. No more questions - let me complete your blog!",
+				},
+			]);
 			setInput('');
 			setIsThinking(true);
+
+			// Don't return - continue with agent execution
+			try {
+				let working = updatedAgent;
+
+				// Run agent with full automation
+				const maxIterations = 100;
+				let guard = 0;
+				let lastTraceLength = 0;
+
+				while (guard++ < maxIterations) {
+					const {
+						state: ns,
+						halted,
+						step,
+					} = await lgRunNext(working);
+					working = ns;
+
+					// Show progress messages
+					if (working.trace.length > lastTraceLength) {
+						const latestTrace =
+							working.trace[
+							working.trace.length - 1
+							];
+						const stepMessage = getStepMessage(
+							latestTrace.step,
+							latestTrace.info
+						);
+
+						if (stepMessage) {
+							setMessages((prev) => [
+								...prev,
+								{
+									role: 'assistant',
+									content: stepMessage,
+								},
+							]);
+							setIsStreaming(true);
+
+							await new Promise((resolve) =>
+								setTimeout(resolve, 300)
+							);
+						}
+						lastTraceLength = working.trace.length;
+					}
+
+					// Update live state
+					setAgent(working);
+					setDraft(working.draft);
+					setOutline(working.outline);
+
+					// If outline was auto-approved, switch to blog content view
+					if (working.outlineApproved && !outlineApproved) {
+						setOutlineApproved(true);
+						setShowBlogContent(true);
+						setViewMode('markdown');
+						if (onCollapseSidebar) {
+							onCollapseSidebar();
+						}
+					}
+
+					// Only halt if user input is actually needed
+					if (
+						halted &&
+						automationEngine.needsUserInput(ns)
+					) {
+						break;
+					}
+				}
+
+				setAgent(working);
+				setOutline(working.outline);
+				setDraft(working.draft);
+				setUserTopic(working.data.topic || '');
+				setTargetLocation(
+					working.data.targetLocation || 'United States'
+				);
+				setTraceItems(
+					working.trace.map((t) => ({
+						step: t.step,
+						at: t.at,
+					}))
+				);
+				updateData({
+					outline: working.outline,
+					blogContent: working.draft,
+					primaryKeyword: working.data.primaryKeyword,
+					secondaryKeywords: working.data.secondaryKeywords,
+					topic: working.data.topic,
+					targetLocation: working.data.targetLocation,
+				});
+
+				// Check if blog generation is complete
+				if (
+					!working.halt &&
+					(working.progress.sectionIndex ?? 0) >=
+					(working.outline?.length || 0) &&
+					(working.outline?.length || 0) > 0
+				) {
+					setMessages((prev) => [
+						...prev,
+						{
+							role: 'assistant',
+							content: '✨ Blog generation complete! Review your content in the Live Draft panel.',
+						},
+					]);
+					setIsStreaming(true);
+				}
+			} catch (e: any) {
+				setError(e?.message || 'Agent failed to respond.');
+			} finally {
+				setIsThinking(false);
+			}
+
+			return; // Return after processing
 		}
+
+		// Handle irrelevant queries - redirect to blog creation
+		if (!agent && intent.isIrrelevant) {
+			setMessages((prev) => [
+				...prev,
+				userMsg,
+				{
+					role: 'assistant',
+					content: "I'm focused on helping you create an SEO-optimized blog post. Let's get back to that!\n\nPlease provide your blog topic and keywords, or say **\"generate blog automatically\"** if you'd like me to handle everything.",
+				},
+			]);
+			setInput('');
+			return;
+		}
+
+		// Handle modification requests when agent already exists
+		if (
+			agent &&
+			intent.wantsModification &&
+			!flowContext.modificationInProgress
+		) {
+			setFlowContext((prev) => ({
+				...prev,
+				modificationInProgress: true,
+			}));
+			setMessages((prev) => [
+				...prev,
+				userMsg,
+				{
+					role: 'assistant',
+					content: "⚠️ I understand you want to modify the current information. This will affect the blog generation flow.\n\n**Please confirm:** Type **'yes'** to proceed with modifications, or **'no'** to continue with the current flow.",
+				},
+			]);
+			setInput('');
+			return;
+		}
+
+		// Handle automation during guided flow
+		if (intent.wantsAutomation && agent) {
+			setFlowContext((prev) => ({
+				...prev,
+				automationLevel: 'full',
+				userRequestedAutomation: true,
+			}));
+
+			// Update agent preferences to full automation
+			const updatedAgent: AgentState = {
+				...agent,
+				preferences: {
+					...agent.preferences,
+					automationLevel: 'full' as AutomationLevel,
+					skipOptionalSteps: true,
+					autoSelectBestOptions: true,
+				},
+			};
+
+			// Update the agent state with new preferences
+			setAgent(updatedAgent);
+
+			setMessages((prev) => [
+				...prev,
+				userMsg,
+				{
+					role: 'assistant',
+					content: "🔄 **Switching to Automation Mode**\n\nI'll handle all remaining steps automatically without asking questions. Let me complete your blog!",
+				},
+			]);
+			setInput('');
+			setIsThinking(true);
+
+			// Don't return - continue with agent execution below
+			// Use the updated agent with full automation preferences
+			try {
+				let working = updatedAgent;
+
+				// Run agent with full automation
+				const maxIterations = 100; // More iterations for full automation
+				let guard = 0;
+				let lastTraceLength = 0;
+
+				while (guard++ < maxIterations) {
+					const {
+						state: ns,
+						halted,
+						step,
+					} = await lgRunNext(working);
+					working = ns;
+
+					// Show progress messages
+					if (working.trace.length > lastTraceLength) {
+						const latestTrace =
+							working.trace[
+							working.trace.length - 1
+							];
+						const stepMessage = getStepMessage(
+							latestTrace.step,
+							latestTrace.info
+						);
+
+						if (stepMessage) {
+							setMessages((prev) => [
+								...prev,
+								{
+									role: 'assistant',
+									content: stepMessage,
+								},
+							]);
+							setIsStreaming(true);
+
+							await new Promise((resolve) =>
+								setTimeout(resolve, 300)
+							);
+						}
+						lastTraceLength = working.trace.length;
+					}
+
+					// Update live state
+					setAgent(working);
+					setDraft(working.draft);
+					setOutline(working.outline);
+
+					// If outline was auto-approved, switch to blog content view
+					if (working.outlineApproved && !outlineApproved) {
+						setOutlineApproved(true);
+						setShowBlogContent(true);
+						setViewMode('markdown');
+						if (onCollapseSidebar) {
+							onCollapseSidebar();
+						}
+					}
+
+					// Only halt if user input is actually needed (shouldn't happen in full automation)
+					if (
+						halted &&
+						automationEngine.needsUserInput(ns)
+					) {
+						break;
+					}
+				}
+
+				setAgent(working);
+				setOutline(working.outline);
+				setDraft(working.draft);
+				setUserTopic(working.data.topic || '');
+				setTargetLocation(
+					working.data.targetLocation || 'United States'
+				);
+				setTraceItems(
+					working.trace.map((t) => ({
+						step: t.step,
+						at: t.at,
+					}))
+				);
+				updateData({
+					outline: working.outline,
+					blogContent: working.draft,
+					primaryKeyword: working.data.primaryKeyword,
+					secondaryKeywords: working.data.secondaryKeywords,
+					topic: working.data.topic,
+					targetLocation: working.data.targetLocation,
+				});
+
+				// Check if blog generation is complete
+				if (
+					!working.halt &&
+					(working.progress.sectionIndex ?? 0) >=
+					(working.outline?.length || 0) &&
+					(working.outline?.length || 0) > 0
+				) {
+					setMessages((prev) => [
+						...prev,
+						{
+							role: 'assistant',
+							content: '✨ Blog generation complete! Review your content in the Live Draft panel.',
+						},
+					]);
+					setIsStreaming(true);
+				}
+			} catch (e: any) {
+				setError(e?.message || 'Agent failed to respond.');
+			} finally {
+				setIsThinking(false);
+			}
+
+			return; // Return after processing automation
+		}
+
+		setMessages((prev) => [...prev, userMsg]);
+
+		// Track if we're handling special setup cases to skip conversation handler's message
+		const isAutomationTopicSetup =
+			!agent &&
+			flowContext.userRequestedAutomation &&
+			flowContext.currentStep === 'automation' &&
+			flowContext.hasProvidedInfo;
+
+		const isGuidedTopicSetup =
+			!agent &&
+			!flowContext.userRequestedAutomation &&
+			flowContext.currentStep === 'processing' &&
+			flowContext.hasProvidedInfo;
+
+		const isAutomationWithData =
+			!agent &&
+			flowContext.userRequestedAutomation &&
+			flowContext.currentStep === 'automation_with_data';
+
+		setInput('');
+		setIsThinking(true);
 
 		try {
 			// Initialize agent state if this is the first actionable turn
@@ -375,11 +1039,18 @@ const AgentMode: React.FC<Props> = ({
 				({
 					data: {
 						...data,
-						topic: userTopic || '',
-						targetLocation: targetLocation,
-						primaryKeyword: '',
-						secondaryKeywords: [],
-						title: '',
+						topic: userTopic || data.topic || '',
+						targetLocation:
+							targetLocation ||
+							data.targetLocation ||
+							'United States',
+						primaryKeyword: data.primaryKeyword || '',
+						secondaryKeywords:
+							data.secondaryKeywords || [],
+						title: data.title || '',
+						interlinks: data.interlinks || [],
+						referenceUrls: data.referenceUrls || [],
+						referenceFiles: data.referenceFiles || [],
 					},
 					apiKey,
 					outline: [...(data.outline || [])],
@@ -398,9 +1069,14 @@ const AgentMode: React.FC<Props> = ({
 					referencesCollected: false,
 					finalBlogGenerated: false,
 					preferences: {
-						automationLevel: automationMode || 'guided', // Default to guided if still null
-						skipOptionalSteps: false,
-						autoSelectBestOptions: false,
+						automationLevel:
+							flowContext.automationLevel,
+						skipOptionalSteps:
+							flowContext.automationLevel ===
+							'full',
+						autoSelectBestOptions:
+							flowContext.automationLevel ===
+							'full',
 					},
 					userProvidedFields: new Set(),
 					autoFillFields: new Set(),
@@ -412,17 +1088,81 @@ const AgentMode: React.FC<Props> = ({
 					userMsg.content,
 					working,
 					apiKey,
-					automationMode || 'guided' // Pass the user's selected automation mode
+					flowContext.automationLevel // Pass the determined automation mode
 				);
 
 			// Show assistant's interpretation/response
-			setMessages((prev) => [
-				...prev,
-				{
-					role: 'assistant',
-					content: conversationResponse.assistantMessage,
-				},
-			]);
+			if (isAutomationTopicSetup) {
+				// For automation topic setup, show custom message
+				const currentTopic = userTopic || userMsg.content;
+				setMessages((prev) => [
+					...prev,
+					{
+						role: 'assistant',
+						content: `🚀 **Perfect! Starting Full Automation...**\n\n**Topic:** ${currentTopic}\n\nI'll now auto-generate all the content for you. Sit back and watch the magic happen!`,
+					},
+				]);
+			} else if (isAutomationWithData) {
+				// For automation with existing data, show data analysis
+				const hasExistingData = {
+					topic: !!(userTopic || data.topic),
+					primaryKeyword: !!data.primaryKeyword,
+					secondaryKeywords:
+						(data.secondaryKeywords || []).length > 0,
+					title: !!data.title,
+					references: (data.referenceUrls || []).length > 0,
+					interlinks: (data.interlinks || []).length > 0,
+				};
+
+				let dataStatus =
+					'🎯 **Analyzing your existing data...**\n\n';
+				if (hasExistingData.topic)
+					dataStatus += `✅ Topic: ${userTopic || data.topic
+						}\n`;
+				if (hasExistingData.primaryKeyword)
+					dataStatus += `✅ Primary Keyword: ${data.primaryKeyword}\n`;
+				if (hasExistingData.secondaryKeywords)
+					dataStatus += `✅ Secondary Keywords: ${data.secondaryKeywords.join(
+						', '
+					)}\n`;
+				if (hasExistingData.title)
+					dataStatus += `✅ Title: ${data.title}\n`;
+				if (hasExistingData.references)
+					dataStatus += `✅ References: ${data.referenceUrls.length} link(s)\n`;
+				if (hasExistingData.interlinks)
+					dataStatus += `✅ Internal Links: ${data.interlinks.length} link(s)\n`;
+
+				dataStatus +=
+					"\n**Switching to Full Automation Mode...**\n\nI'll use this information and auto-generate the remaining content!";
+
+				setMessages((prev) => [
+					...prev,
+					{
+						role: 'assistant',
+						content: dataStatus,
+					},
+				]);
+			} else if (isGuidedTopicSetup) {
+				// For guided mode topic setup, show custom message
+				const currentTopic = userTopic || userMsg.content;
+				setMessages((prev) => [
+					...prev,
+					{
+						role: 'assistant',
+						content: `Great! I'll help you create a blog post about **"${currentTopic}"**.\n\nLet me start by researching keywords and generating an outline. I'll ask for your approval at key steps.`,
+					},
+				]);
+			} else {
+				// Regular flow - use conversation handler's message
+				setMessages((prev) => [
+					...prev,
+					{
+						role: 'assistant',
+						content: conversationResponse.assistantMessage,
+					},
+				]);
+			}
+			setIsStreaming(true);
 
 			// Apply state updates from conversation handler
 			working = {
@@ -452,7 +1192,7 @@ const AgentMode: React.FC<Props> = ({
 					if (working.trace.length > lastTraceLength) {
 						const latestTrace =
 							working.trace[
-								working.trace.length - 1
+							working.trace.length - 1
 							];
 						const stepMessage = getStepMessage(
 							latestTrace.step,
@@ -467,6 +1207,7 @@ const AgentMode: React.FC<Props> = ({
 									content: stepMessage,
 								},
 							]);
+							setIsStreaming(true);
 
 							// Small delay for UX (let user see the message)
 							await new Promise((resolve) =>
@@ -640,6 +1381,7 @@ const AgentMode: React.FC<Props> = ({
 							content: '⚠️ References were not used in the last section. Provide alternative links or proceed without them.',
 						},
 					]);
+					setIsStreaming(true);
 				}
 			}
 
@@ -647,7 +1389,7 @@ const AgentMode: React.FC<Props> = ({
 			if (
 				!working.halt &&
 				(working.progress.sectionIndex ?? 0) >=
-					(working.outline?.length || 0) &&
+				(working.outline?.length || 0) &&
 				(working.outline?.length || 0) > 0
 			) {
 				setMessages((prev) => [
@@ -657,6 +1399,7 @@ const AgentMode: React.FC<Props> = ({
 						content: '✨ Blog generation complete! Review your content in the Live Draft panel.',
 					},
 				]);
+				setIsStreaming(true);
 			}
 		} catch (e: any) {
 			setError(e?.message || 'Agent failed to respond.');
@@ -674,6 +1417,7 @@ const AgentMode: React.FC<Props> = ({
 		updateData,
 		userTopic,
 		targetLocation,
+		flowContext,
 	]);
 
 	const handleSaveToWizard = () => {
@@ -761,35 +1505,40 @@ const AgentMode: React.FC<Props> = ({
 							</div>
 							<div className='text-xs px-3 py-1.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full shadow-lg font-semibold'>
 								Active:{' '}
-								{automationMode === 'full'
+								{flowContext.automationLevel ===
+									'full'
 									? '🚀 Full Automation'
-									: automationMode ===
-									  'guided'
-									? '🎯 Guided'
-									: '✋ Manual'}
+									: flowContext.automationLevel ===
+										'guided'
+										? '🎯 Guided'
+										: '✋ Manual'}
 							</div>
 						</div>
 						<div className='flex gap-3'>
 							<label
-								className={`flex items-center gap-2 ${
-									agent
-										? 'cursor-not-allowed opacity-60'
-										: 'cursor-pointer'
-								}`}
+								className={`flex items-center gap-2 ${agent
+									? 'cursor-not-allowed opacity-60'
+									: 'cursor-pointer'
+									}`}
 							>
 								<input
 									type='radio'
 									name='automation-mode'
 									value='full'
 									checked={
-										automationMode ===
+										flowContext.automationLevel ===
 										'full'
 									}
 									disabled={!!agent}
 									onChange={(e) =>
-										setAutomationMode(
-											e.target
-												.value as AutomationLevel
+										setFlowContext(
+											(prev) => ({
+												...prev,
+												automationLevel:
+													e
+														.target
+														.value as AutomationLevel,
+											})
 										)
 									}
 									className='w-4 h-4 text-blue-600'
@@ -802,25 +1551,29 @@ const AgentMode: React.FC<Props> = ({
 								</span>
 							</label>
 							<label
-								className={`flex items-center gap-2 ${
-									agent
-										? 'cursor-not-allowed opacity-60'
-										: 'cursor-pointer'
-								}`}
+								className={`flex items-center gap-2 ${agent
+									? 'cursor-not-allowed opacity-60'
+									: 'cursor-pointer'
+									}`}
 							>
 								<input
 									type='radio'
 									name='automation-mode'
 									value='guided'
 									checked={
-										automationMode ===
+										flowContext.automationLevel ===
 										'guided'
 									}
 									disabled={!!agent}
 									onChange={(e) =>
-										setAutomationMode(
-											e.target
-												.value as AutomationLevel
+										setFlowContext(
+											(prev) => ({
+												...prev,
+												automationLevel:
+													e
+														.target
+														.value as AutomationLevel,
+											})
 										)
 									}
 									className='w-4 h-4 text-blue-600'
@@ -831,25 +1584,29 @@ const AgentMode: React.FC<Props> = ({
 								</span>
 							</label>
 							<label
-								className={`flex items-center gap-2 ${
-									agent
-										? 'cursor-not-allowed opacity-60'
-										: 'cursor-pointer'
-								}`}
+								className={`flex items-center gap-2 ${agent
+									? 'cursor-not-allowed opacity-60'
+									: 'cursor-pointer'
+									}`}
 							>
 								<input
 									type='radio'
 									name='automation-mode'
 									value='manual'
 									checked={
-										automationMode ===
+										flowContext.automationLevel ===
 										'manual'
 									}
 									disabled={!!agent}
 									onChange={(e) =>
-										setAutomationMode(
-											e.target
-												.value as AutomationLevel
+										setFlowContext(
+											(prev) => ({
+												...prev,
+												automationLevel:
+													e
+														.target
+														.value as AutomationLevel,
+											})
 										)
 									}
 									className='w-4 h-4 text-blue-600'
@@ -878,10 +1635,10 @@ const AgentMode: React.FC<Props> = ({
 								Current step:{' '}
 								{agent.trace.length > 0
 									? agent.trace[
-											agent.trace
-												.length -
-												1
-									  ]?.step
+										agent.trace
+											.length -
+										1
+									]?.step
 									: 'Initializing'}
 							</div>
 							<div className='mt-2 text-xs text-blue-600'>
@@ -906,7 +1663,7 @@ const AgentMode: React.FC<Props> = ({
 				{false &&
 					agent?.preferences?.automationLevel !== 'full' &&
 					agent?.halt?.reason ===
-						'await_keyword_selection' &&
+					'await_keyword_selection' &&
 					agent?.keywordResearch?.primaryCandidates && (
 						<div className='mb-4 p-3 border rounded bg-amber-50'>
 							<div className='font-semibold mb-2'>
@@ -952,12 +1709,12 @@ const AgentMode: React.FC<Props> = ({
 														(
 															prev
 														) => [
-															...prev,
-															{
-																role: 'assistant',
-																content: `✅ Selected "${r.text}" as primary keyword. Continuing...`,
-															},
-														]
+																...prev,
+																{
+																	role: 'assistant',
+																	content: `✅ Selected "${r.text}" as primary keyword. Continuing...`,
+																},
+															]
 													);
 
 													const next =
@@ -1011,10 +1768,10 @@ const AgentMode: React.FC<Props> = ({
 																const latestTrace =
 																	working
 																		.trace[
-																		working
-																			.trace
-																			.length -
-																			1
+																	working
+																		.trace
+																		.length -
+																	1
 																	];
 																const stepMessage =
 																	getStepMessage(
@@ -1029,12 +1786,12 @@ const AgentMode: React.FC<Props> = ({
 																		(
 																			prev
 																		) => [
-																			...prev,
-																			{
-																				role: 'assistant',
-																				content: stepMessage,
-																			},
-																		]
+																				...prev,
+																				{
+																					role: 'assistant',
+																					content: stepMessage,
+																				},
+																			]
 																	);
 																	await new Promise(
 																		(
@@ -1097,12 +1854,12 @@ const AgentMode: React.FC<Props> = ({
 																(
 																	prev
 																) => [
-																	...prev,
-																	{
-																		role: 'assistant',
-																		content: '🎯 Select up to 5 secondary keywords below.',
-																	},
-																]
+																		...prev,
+																		{
+																			role: 'assistant',
+																			content: '🎯 Select up to 5 secondary keywords below.',
+																		},
+																	]
 															);
 														}
 													} finally {
@@ -1123,7 +1880,7 @@ const AgentMode: React.FC<Props> = ({
 				{false &&
 					agent?.preferences?.automationLevel !== 'full' &&
 					agent?.halt?.reason ===
-						'await_secondary_selection' &&
+					'await_secondary_selection' &&
 					agent?.keywordResearch?.secondaryCandidates && (
 						<div className='mb-4 p-3 border rounded bg-amber-50'>
 							<div className='font-semibold mb-2'>
@@ -1286,12 +2043,12 @@ const AgentMode: React.FC<Props> = ({
 													(
 														prev
 													) => [
-														...prev,
-														{
-															role: 'assistant',
-															content: '📋 Outline ready! Click "Approve outline" to proceed, or provide feedback to regenerate.',
-														},
-													]
+															...prev,
+															{
+																role: 'assistant',
+																content: '📋 Outline ready! Click "Approve outline" to proceed, or provide feedback to regenerate.',
+															},
+														]
 												);
 											}
 										} finally {
@@ -1423,7 +2180,7 @@ const AgentMode: React.FC<Props> = ({
 									onKeyDown={async (e) => {
 										if (
 											e.key ===
-												'Enter' &&
+											'Enter' &&
 											e.currentTarget.value.trim()
 										) {
 											const customTitle =
@@ -1769,7 +2526,7 @@ const AgentMode: React.FC<Props> = ({
 											) => {
 												if (
 													e.key ===
-														'Enter' &&
+													'Enter' &&
 													e.currentTarget.value.trim()
 												) {
 													const url =
@@ -1917,7 +2674,7 @@ const AgentMode: React.FC<Props> = ({
 												e.target
 													.files
 													.length >
-													0
+												0
 											) {
 												const file =
 													e
@@ -1929,11 +2686,11 @@ const AgentMode: React.FC<Props> = ({
 															file
 														);
 													const newFile: ReferenceFile =
-														{
-															name: file.name,
-															mimeType: file.type,
-															base64: base64,
-														};
+													{
+														name: file.name,
+														mimeType: file.type,
+														base64: base64,
+													};
 													updateData(
 														{
 															referenceFiles:
@@ -1996,19 +2753,17 @@ const AgentMode: React.FC<Props> = ({
 											'📚 [REFERENCES] User completed reference collection'
 										);
 										console.log(
-											`   URLs: ${
-												data
-													.referenceUrls
-													?.length ||
-												0
+											`   URLs: ${data
+												.referenceUrls
+												?.length ||
+											0
 											}`
 										);
 										console.log(
-											`   Files: ${
-												data
-													.referenceFiles
-													?.length ||
-												0
+											`   Files: ${data
+												.referenceFiles
+												?.length ||
+											0
 											}`
 										);
 
@@ -2077,7 +2832,7 @@ const AgentMode: React.FC<Props> = ({
 										(data.referenceFiles
 											?.length ||
 											0) >
-									0
+										0
 										? '✅ Continue with References'
 										: '⏭️ Skip & Continue'}
 								</button>
@@ -2167,10 +2922,10 @@ const AgentMode: React.FC<Props> = ({
 												const latestTrace =
 													working
 														.trace[
-														working
-															.trace
-															.length -
-															1
+													working
+														.trace
+														.length -
+													1
 													];
 												const stepMessage =
 													getStepMessage(
@@ -2185,12 +2940,12 @@ const AgentMode: React.FC<Props> = ({
 														(
 															prev
 														) => [
-															...prev,
-															{
-																role: 'assistant',
-																content: stepMessage,
-															},
-														]
+																...prev,
+																{
+																	role: 'assistant',
+																	content: stepMessage,
+																},
+															]
 													);
 													await new Promise(
 														(
@@ -2224,7 +2979,7 @@ const AgentMode: React.FC<Props> = ({
 												working
 													.halt
 													?.reason !==
-													undefined
+												undefined
 											)
 												break;
 										}
@@ -2264,12 +3019,12 @@ const AgentMode: React.FC<Props> = ({
 												(
 													prev
 												) => [
-													...prev,
-													{
-														role: 'assistant',
-														content: '✨ Blog generation complete! Review your content.',
-													},
-												]
+														...prev,
+														{
+															role: 'assistant',
+															content: '✨ Blog generation complete! Review your content.',
+														},
+													]
 											);
 										}
 									} finally {
@@ -2287,26 +3042,26 @@ const AgentMode: React.FC<Props> = ({
 				{/* Blog Info Panel */}
 				{showBlogInfo && (
 					<div className='mb-4 flex-shrink-0'>
-						<div className='p-4 border border-gray-200 rounded-lg bg-gray-50 text-xs max-h-48 overflow-y-auto'>
+						<div className='p-4 border-2 border-orange-500 rounded-lg bg-white text-xs max-h-48 overflow-y-auto shadow-lg'>
 							{agent && (
 								<div className='space-y-2'>
 									{/* Primary Keyword */}
 									{agent.data
 										.primaryKeyword && (
-										<div>
-											<span className='font-semibold text-gray-700'>
-												Primary
-												Keyword:
-											</span>{' '}
-											<span className='text-blue-700'>
-												{
-													agent
-														.data
-														.primaryKeyword
-												}
-											</span>
-										</div>
-									)}
+											<div>
+												<span className='font-semibold text-gray-700'>
+													Primary
+													Keyword:
+												</span>{' '}
+												<span className='text-blue-700'>
+													{
+														agent
+															.data
+															.primaryKeyword
+													}
+												</span>
+											</div>
+										)}
 
 									{/* Secondary Keywords */}
 									{agent.data
@@ -2314,7 +3069,7 @@ const AgentMode: React.FC<Props> = ({
 										agent.data
 											.secondaryKeywords
 											.length >
-											0 && (
+										0 && (
 											<div>
 												<span className='font-semibold text-gray-700'>
 													Secondary
@@ -2348,7 +3103,7 @@ const AgentMode: React.FC<Props> = ({
 									{agent.outline &&
 										agent.outline
 											.length >
-											0 && (
+										0 && (
 											<div>
 												<div className='font-semibold text-gray-700 mb-1'>
 													Outline:
@@ -2377,7 +3132,7 @@ const AgentMode: React.FC<Props> = ({
 																	section
 																		.items
 																		.length >
-																		0 && (
+																	0 && (
 																		<div className='ml-3 text-gray-600'>
 																			{section.items.map(
 																				(
@@ -2410,7 +3165,7 @@ const AgentMode: React.FC<Props> = ({
 										(!agent.outline ||
 											agent.outline
 												.length ===
-												0) && (
+											0) && (
 											<div className='text-gray-500'>
 												No blog
 												info
@@ -2452,601 +3207,698 @@ const AgentMode: React.FC<Props> = ({
 					</div>
 				)}
 
-				{/* Debug indicator - remove in production */}
-				{showBlogContent && (
-					<div className='text-xs text-green-600 font-bold mb-2'>
-						✅ Blog content panel is active
+				{/* Settings Panel */}
+				{showSettings && (
+					<div className='mb-4 flex-shrink-0'>
+						<div className='p-4 border-2 border-blue-500 rounded-lg bg-white text-sm shadow-lg'>
+							<div className='space-y-4'>
+								<div>
+									<h3 className='font-bold text-gray-800 mb-3'>⚙️ Settings</h3>
+									<div className='space-y-3'>
+										<div>
+											<label htmlFor='agent-apiKey' className='block text-sm font-medium text-gray-700 mb-1'>
+												Gemini API Key *
+											</label>
+											<input
+												type='password'
+												id='agent-apiKey'
+												value={data.apiKey}
+												onChange={(e) => updateData({ apiKey: e.target.value })}
+												className='w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500 text-sm'
+												placeholder='Enter your Gemini API key'
+											/>
+											<p className='text-xs text-gray-500 mt-1'>
+												Your API key is stored only in your browser for this session.
+											</p>
+										</div>
+										{data.apiKey && (
+											<div className='text-xs text-green-600'>
+												✓ API key is configured
+											</div>
+										)}
+										{!data.apiKey && (
+											<div className='text-xs text-orange-600'>
+												⚠ Please enter your API key to use the agent
+											</div>
+										)}
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
 				)}
 
-				<div className='flex gap-6 flex-1 min-h-0 transition-all duration-700 ease-in-out'>
+				{/* Debug indicator - remove in production */}
+				{showBlogContent && (
+					<div className='text-xs text-green-600 font-bold mb-2'>
+						✅ Blog History
+					</div>
+				)}
+
+				<div className='flex gap-4 flex-1 min-h-0 transition-all duration-700 ease-in-out'>
 					{/* Chat + Input */}
 					<div
-						className={`flex flex-col min-h-0 transition-all duration-700 ease-in-out ${
-							showBlogContent ? 'w-[30%]' : 'w-full'
-						}`}
+						className={`flex flex-col min-h-0 transition-all duration-700 ease-in-out ${showBlogContent ? 'w-[30%]' : 'w-full'
+							} ${showBlogContent
+								? 'border-2 border-orange-300 rounded-xl bg-white shadow-lg'
+								: ''
+							}`}
 					>
-						<div className='flex-1 overflow-y-auto py-4 px-4'>
+						<div className='flex-1 overflow-y-auto py-3 px-4'>
 							{messages.map((m, i) => (
 								<div
 									key={i}
-									className={`mb-4 ${
-										m.role === 'user'
-											? 'flex justify-end'
-											: 'flex justify-start'
-									}`}
+									className={`mb-4 ${m.role === 'user'
+										? 'flex justify-end'
+										: 'flex justify-start'
+										}`}
 								>
 									<div
-										className={`px-4 py-2.5 rounded-xl text-sm whitespace-pre-wrap ${
-											m.role ===
+										className={`px-4 py-2.5 rounded-xl text-sm whitespace-pre-wrap ${m.role ===
 											'user'
-												? 'bg-orange-500 text-white max-w-[75%]'
-												: m.keywordSelection
+											? 'bg-orange-500 text-white max-w-[75%]'
+											: m.keywordSelection
 												? 'bg-gray-100 border border-gray-200 max-w-full w-full'
 												: m.titleSelection
-												? 'bg-gray-100 border border-gray-200 max-w-full w-full'
-												: m.interlinkingForm
-												? 'bg-gray-100 border border-gray-200 max-w-full w-full'
-												: m.referencesForm
-												? 'bg-gray-100 border border-gray-200 max-w-full w-full'
-												: m.outlineApproval
-												? 'bg-gray-100 border border-gray-200 max-w-full w-full'
-												: m.controlLevelSelection
-												? 'bg-gray-100 border border-gray-200 max-w-md'
-												: 'bg-gray-100 text-gray-800 max-w-[75%]'
-										}`}
+													? 'bg-gray-100 border border-gray-200 max-w-full w-full'
+													: m.interlinkingForm
+														? 'bg-gray-100 border border-gray-200 max-w-full w-full'
+														: m.referencesForm
+															? 'bg-gray-100 border border-gray-200 max-w-full w-full'
+															: m.outlineApproval
+																? 'bg-gray-100 border border-gray-200 max-w-full w-full'
+																: m.controlLevelSelection
+																	? 'bg-gray-100 border border-gray-200 max-w-md'
+																	: 'bg-gray-100 text-gray-800 max-w-[75%]'
+											}`}
 									>
-										{m.content}
+										{m.role ===
+											'assistant' &&
+											!m.keywordSelection &&
+											!m.titleSelection &&
+											!m.interlinkingForm &&
+											!m.referencesForm &&
+											!m.outlineApproval &&
+											!m.controlLevelSelection ? (
+											<StreamingText
+												text={
+													m.content
+												}
+												speed={
+													15
+												}
+												onComplete={() => {
+													setIsStreaming(
+														false
+													);
+												}}
+											/>
+										) : (
+											m.content
+										)}
 
 										{/* Primary Keyword Selection */}
 										{m.keywordSelection
 											?.type ===
 											'primary' && (
-											<div className='mt-3 grid grid-cols-1 md:grid-cols-2 gap-2'>
-												{m.keywordSelection.candidates.map(
-													(
-														kw,
-														idx
-													) => (
-														<div
-															key={
-																idx
-															}
-															className='flex items-center justify-between text-sm bg-white border border-gray-200 rounded-md p-2 hover:border-orange-400 transition-colors'
-														>
-															<div>
-																<div className='font-medium text-gray-800'>
-																	{
-																		kw.text
-																	}
-																</div>
-																<div className='text-xs text-gray-500'>
-																	Vol:{' '}
-																	{
-																		kw.volume
-																	}{' '}
-																	·
-																	Diff:{' '}
-																	{kw.difficulty.toFixed(
-																		2
-																	)}
-																</div>
-															</div>
-															<button
-																className='px-3 py-1 text-xs bg-orange-500 text-white rounded hover:bg-orange-600 transition-colors'
-																onClick={async () => {
-																	if (
-																		!agent
-																	)
-																		return;
-
-																	setMessages(
-																		(
-																			prev
-																		) => [
-																			...prev,
-																			{
-																				role: 'user',
-																				content: `Select "${kw.text}" as primary keyword`,
-																			},
-																			{
-																				role: 'assistant',
-																				content: `✅ Selected "${kw.text}" as primary keyword. Continuing...`,
-																			},
-																		]
-																	);
-
-																	const next =
-																		{
-																			...agent,
-																			data: {
-																				...agent.data,
-																				primaryKeyword:
-																					kw.text,
-																			},
-																		} as AgentState;
-																	setAgent(
-																		next
-																	);
-																	updateData(
-																		{
-																			primaryKeyword:
-																				kw.text,
-																		}
-																	);
-																	setIsThinking(
-																		true
-																	);
-
-																	try {
-																		let working =
-																			next;
-																		let guard = 0;
-																		let lastTraceLength = 0;
-
-																		while (
-																			guard++ <
-																			20
-																		) {
-																			const {
-																				state: ns,
-																				halted,
-																				step,
-																			} = await lgRunNext(
-																				working
-																			);
-																			working =
-																				ns;
-
-																			if (
-																				working
-																					.trace
-																					.length >
-																				lastTraceLength
-																			) {
-																				const latestTrace =
-																					working
-																						.trace[
-																						working
-																							.trace
-																							.length -
-																							1
-																					];
-																				const stepMessage =
-																					getStepMessage(
-																						latestTrace.step,
-																						latestTrace.info
-																					);
-
-																				if (
-																					stepMessage
-																				) {
-																					setMessages(
-																						(
-																							prev
-																						) => [
-																							...prev,
-																							{
-																								role: 'assistant',
-																								content: stepMessage,
-																							},
-																						]
-																					);
-																					await new Promise(
-																						(
-																							resolve
-																						) =>
-																							setTimeout(
-																								resolve,
-																								300
-																							)
-																					);
-																				}
-																				lastTraceLength =
-																					working
-																						.trace
-																						.length;
-																			}
-
-																			// Break if halted and needs user input
-																			if (
-																				halted &&
-																				automationEngine.needsUserInput(
-																					ns
-																				)
-																			) {
-																				break;
-																			}
-																		}
-
-																		setAgent(
-																			working
-																		);
-																		setOutline(
-																			working.outline
-																		);
-																		setDraft(
-																			working.draft
-																		);
-																		setTraceItems(
-																			working.trace.map(
-																				(
-																					t
-																				) => ({
-																					step: t.step,
-																					at: t.at,
-																				})
-																			)
-																		);
-																		updateData(
-																			{
-																				outline: working.outline,
-																				blogContent:
-																					working.draft,
-																				secondaryKeywords:
-																					working
-																						.data
-																						.secondaryKeywords,
-																			}
-																		);
-
-																		if (
-																			working
-																				.halt
-																				?.reason ===
-																			'await_secondary_selection'
-																		) {
-																			setMessages(
-																				(
-																					prev
-																				) => [
-																					...prev,
-																					{
-																						role: 'assistant',
-																						content: '🎯 Select up to 5 secondary keywords:',
-																						keywordSelection:
-																							{
-																								type: 'secondary',
-																								candidates:
-																									working.keywordResearch?.secondaryCandidates?.slice(
-																										0,
-																										12
-																									) ||
-																									[],
-																							},
-																					},
-																				]
-																			);
-																		}
-																	} finally {
-																		setIsThinking(
-																			false
-																		);
-																	}
-																}}
-															>
-																Select
-															</button>
-														</div>
-													)
-												)}
-											</div>
-										)}
-
-										{/* Secondary Keyword Selection */}
-										{m.keywordSelection
-											?.type ===
-											'secondary' && (
-											<>
 												<div className='mt-3 grid grid-cols-1 md:grid-cols-2 gap-2'>
 													{m.keywordSelection.candidates.map(
 														(
 															kw,
 															idx
-														) => {
-															const checked =
-																selectedSecondaries.includes(
-																	kw.text
-																);
-															return (
-																<label
-																	key={
-																		idx
-																	}
-																	className='flex items-center justify-between text-sm bg-white border rounded p-2 cursor-pointer hover:bg-gray-50'
-																>
-																	<div className='flex items-center gap-2'>
-																		<input
-																			type='checkbox'
-																			checked={
-																				checked
+														) => (
+															<div
+																key={
+																	idx
+																}
+																className='flex items-center justify-between text-sm bg-white border border-gray-200 rounded-md p-2 hover:border-orange-400 transition-colors'
+															>
+																<div>
+																	<div className='font-medium text-gray-800'>
+																		{
+																			kw.text
+																		}
+																	</div>
+																	<div className='text-xs text-gray-500'>
+																		Vol:{' '}
+																		{
+																			kw.volume
+																		}{' '}
+																		·
+																		Diff:{' '}
+																		{kw.difficulty.toFixed(
+																			2
+																		)}
+																	</div>
+																</div>
+																<button
+																	disabled={completedSelections.has(
+																		'primaryKeyword'
+																	)}
+																	className={`px-3 py-1 text-xs text-white rounded transition-colors ${completedSelections.has(
+																		'primaryKeyword'
+																	)
+																		? 'bg-gray-400 cursor-not-allowed'
+																		: 'bg-orange-500 hover:bg-orange-600'
+																		}`}
+																	onClick={async () => {
+																		if (
+																			!agent
+																		)
+																			return;
+
+																		setCompletedSelections(
+																			(
+																				prev
+																			) =>
+																				new Set(
+																					prev
+																				).add(
+																					'primaryKeyword'
+																				)
+																		);
+																		setMessages(
+																			(
+																				prev
+																			) => [
+																					...prev,
+																					{
+																						role: 'user',
+																						content: `Select "${kw.text}" as primary keyword`,
+																					},
+																					{
+																						role: 'assistant',
+																						content: `✅ Selected "${kw.text}" as primary keyword. Continuing...`,
+																					},
+																				]
+																		);
+
+																		const next =
+																			{
+																				...agent,
+																				data: {
+																					...agent.data,
+																					primaryKeyword:
+																						kw.text,
+																				},
+																			} as AgentState;
+																		setAgent(
+																			next
+																		);
+																		updateData(
+																			{
+																				primaryKeyword:
+																					kw.text,
 																			}
-																			onChange={(
-																				e
-																			) => {
-																				setSelectedSecondaries(
-																					(
-																						prev
-																					) => {
-																						if (
-																							e
-																								.target
-																								.checked
-																						) {
-																							const next =
-																								[
-																									...prev,
-																									kw.text,
-																								];
-																							return next.slice(
-																								0,
-																								5
-																							);
-																						}
-																						return prev.filter(
+																		);
+																		setIsThinking(
+																			true
+																		);
+
+																		try {
+																			let working =
+																				next;
+																			let guard = 0;
+																			let lastTraceLength = 0;
+
+																			while (
+																				guard++ <
+																				20
+																			) {
+																				const {
+																					state: ns,
+																					halted,
+																					step,
+																				} = await lgRunNext(
+																					working
+																				);
+																				working =
+																					ns;
+
+																				if (
+																					working
+																						.trace
+																						.length >
+																					lastTraceLength
+																				) {
+																					const latestTrace =
+																						working
+																							.trace[
+																						working
+																							.trace
+																							.length -
+																						1
+																						];
+																					const stepMessage =
+																						getStepMessage(
+																							latestTrace.step,
+																							latestTrace.info
+																						);
+
+																					if (
+																						stepMessage
+																					) {
+																						setMessages(
 																							(
-																								x
+																								prev
+																							) => [
+																									...prev,
+																									{
+																										role: 'assistant',
+																										content: stepMessage,
+																									},
+																								]
+																						);
+																						await new Promise(
+																							(
+																								resolve
 																							) =>
-																								x !==
-																								kw.text
+																								setTimeout(
+																									resolve,
+																									300
+																								)
 																						);
 																					}
-																				);
-																			}}
-																			className='w-4 h-4 text-orange-600 focus:ring-orange-500 border-gray-300 rounded'
-																		/>
-																		<div>
-																			<div className='font-medium text-gray-800'>
-																				{
-																					kw.text
+																					lastTraceLength =
+																						working
+																							.trace
+																							.length;
 																				}
-																			</div>
-																			<div className='text-xs text-gray-500'>
-																				Vol:{' '}
+
+																				// Break if halted and needs user input
+																				if (
+																					halted &&
+																					automationEngine.needsUserInput(
+																						ns
+																					)
+																				) {
+																					break;
+																				}
+																			}
+
+																			setAgent(
+																				working
+																			);
+																			setOutline(
+																				working.outline
+																			);
+																			setDraft(
+																				working.draft
+																			);
+																			setTraceItems(
+																				working.trace.map(
+																					(
+																						t
+																					) => ({
+																						step: t.step,
+																						at: t.at,
+																					})
+																				)
+																			);
+																			updateData(
 																				{
-																					kw.volume
-																				}{' '}
-																				·
-																				Diff:{' '}
-																				{kw.difficulty.toFixed(
-																					2
-																				)}
-																			</div>
-																		</div>
-																	</div>
-																</label>
-															);
-														}
+																					outline: working.outline,
+																					blogContent:
+																						working.draft,
+																					secondaryKeywords:
+																						working
+																							.data
+																							.secondaryKeywords,
+																				}
+																			);
+
+																			if (
+																				working
+																					.halt
+																					?.reason ===
+																				'await_secondary_selection'
+																			) {
+																				setMessages(
+																					(
+																						prev
+																					) => [
+																							...prev,
+																							{
+																								role: 'assistant',
+																								content: '🎯 Select up to 5 secondary keywords:',
+																								keywordSelection:
+																								{
+																									type: 'secondary',
+																									candidates:
+																										working.keywordResearch?.secondaryCandidates?.slice(
+																											0,
+																											12
+																										) ||
+																										[],
+																								},
+																							},
+																						]
+																				);
+																			}
+																		} finally {
+																			setIsThinking(
+																				false
+																			);
+																		}
+																	}}
+																>
+																	Select
+																</button>
+															</div>
+														)
 													)}
 												</div>
-												<div className='mt-3 text-right'>
-													<button
-														className='px-4 py-2 text-sm bg-orange-600 text-white rounded hover:bg-orange-700 transition-colors disabled:bg-orange-300 disabled:cursor-not-allowed'
-														disabled={
-															selectedSecondaries.length ===
-															0
-														}
-														onClick={async () => {
-															if (
-																!agent
-															)
-																return;
+											)}
 
-															setMessages(
-																(
-																	prev
-																) => [
-																	...prev,
-																	{
-																		role: 'user',
-																		content: `Selected ${
-																			selectedSecondaries.length
-																		} secondary keywords: ${selectedSecondaries.join(
-																			', '
-																		)}`,
-																	},
-																	{
-																		role: 'assistant',
-																		content: `✅ Added ${selectedSecondaries.length} secondary keywords. Continuing...`,
-																	},
-																]
-															);
+										{/* Secondary Keyword Selection */}
+										{m.keywordSelection
+											?.type ===
+											'secondary' && (
+												<>
+													<div className='mt-3 grid grid-cols-1 md:grid-cols-2 gap-2'>
+														{m.keywordSelection.candidates.map(
+															(
+																kw,
+																idx
+															) => {
+																const checked =
+																	selectedSecondaries.includes(
+																		kw.text
+																	);
+																return (
+																	<label
+																		key={
+																			idx
+																		}
+																		className='flex items-center justify-between text-sm bg-white border rounded p-2 cursor-pointer hover:bg-gray-50'
+																	>
+																		<div className='flex items-center gap-2'>
+																			<input
+																				type='checkbox'
+																				disabled={completedSelections.has(
+																					'secondaryKeywords'
+																				)}
+																				checked={
+																					checked
+																				}
+																				onChange={(
+																					e
+																				) => {
+																					setSelectedSecondaries(
+																						(
+																							prev
+																						) => {
+																							if (
+																								e
+																									.target
+																									.checked
+																							) {
+																								const next =
+																									[
+																										...prev,
+																										kw.text,
+																									];
+																								return next.slice(
+																									0,
+																									5
+																								);
+																							}
+																							return prev.filter(
+																								(
+																									x
+																								) =>
+																									x !==
+																									kw.text
+																							);
+																						}
+																					);
+																				}}
+																				className='w-4 h-4 text-orange-600 focus:ring-orange-500 border-gray-300 rounded'
+																			/>
+																			<div>
+																				<div className='font-medium text-gray-800'>
+																					{
+																						kw.text
+																					}
+																				</div>
+																				<div className='text-xs text-gray-500'>
+																					Vol:{' '}
+																					{
+																						kw.volume
+																					}{' '}
+																					·
+																					Diff:{' '}
+																					{kw.difficulty.toFixed(
+																						2
+																					)}
+																				</div>
+																			</div>
+																		</div>
+																	</label>
+																);
+															}
+														)}
+													</div>
+													<div className='mt-3 text-right'>
+														<button
+															disabled={
+																completedSelections.has(
+																	'secondaryKeywords'
+																) ||
+																selectedSecondaries.length ===
+																0
+															}
+															className='px-4 py-2 text-sm bg-orange-600 text-white rounded hover:bg-orange-700 transition-colors disabled:bg-orange-300 disabled:cursor-not-allowed'
+															onClick={async () => {
+																if (
+																	!agent
+																)
+																	return;
 
-															const next =
-																{
-																	...agent,
-																	data: {
-																		...agent.data,
-																		secondaryKeywords:
-																			selectedSecondaries,
-																	},
-																} as AgentState;
-															setAgent(
-																next
-															);
-															updateData(
-																{
-																	secondaryKeywords:
-																		selectedSecondaries,
-																}
-															);
-															setIsThinking(
-																true
-															);
-
-															try {
-																let working =
-																	next;
-																let guard = 0;
-																while (
-																	guard++ <
-																	20
-																) {
-																	const {
-																		state: ns,
-																		halted,
-																	} =
-																		await lgRunNext(
-																			working
-																		);
-																	working =
-																		ns;
-
-																	// Break if halted and needs user input
-																	if (
-																		halted &&
-																		automationEngine.needsUserInput(
-																			ns
+																setCompletedSelections(
+																	(
+																		prev
+																	) =>
+																		new Set(
+																			prev
+																		).add(
+																			'secondaryKeywords'
 																		)
-																	) {
-																		break;
-																	}
-																}
+																);
+																setMessages(
+																	(
+																		prev
+																	) => [
+																			...prev,
+																			{
+																				role: 'user',
+																				content: `Selected ${selectedSecondaries.length
+																					} secondary keywords: ${selectedSecondaries.join(
+																						', '
+																					)}`,
+																			},
+																			{
+																				role: 'assistant',
+																				content: `✅ Added ${selectedSecondaries.length} secondary keywords. Continuing...`,
+																			},
+																		]
+																);
 
+																const next =
+																	{
+																		...agent,
+																		data: {
+																			...agent.data,
+																			secondaryKeywords:
+																				selectedSecondaries,
+																		},
+																	} as AgentState;
 																setAgent(
-																	working
-																);
-																setOutline(
-																	working.outline
-																);
-																setDraft(
-																	working.draft
-																);
-																setTraceItems(
-																	working.trace.map(
-																		(
-																			t
-																		) => ({
-																			step: t.step,
-																			at: t.at,
-																		})
-																	)
+																	next
 																);
 																updateData(
 																	{
-																		outline: working.outline,
-																		blogContent:
-																			working.draft,
-																		title: working
-																			.data
-																			.title,
+																		secondaryKeywords:
+																			selectedSecondaries,
 																	}
 																);
-
-																// ✨ Display title selection UI if needed
-																if (
-																	working
-																		.halt
-																		?.reason ===
-																		'await_title_selection' &&
-																	working.titleOptions &&
-																	working
-																		.titleOptions
-																		.length >
-																		0
-																) {
-																	setMessages(
-																		(
-																			prev
-																		) => [
-																			...prev,
-																			{
-																				role: 'assistant',
-																				content: '📝 Select a blog title from the options below:',
-																				titleSelection:
-																					{
-																						titles: working.titleOptions,
-																					},
-																			},
-																		]
-																	);
-																}
-
-																// ✨ Display interlinking UI if needed
-																if (
-																	working
-																		.halt
-																		?.reason ===
-																	'await_interlinking'
-																) {
-																	setMessages(
-																		(
-																			prev
-																		) => [
-																			...prev,
-																			{
-																				role: 'assistant',
-																				content: '🔗 Add internal/external links (optional) or click "Continue" to skip:',
-																				interlinkingForm:
-																					{
-																						currentLinks:
-																							working
-																								.data
-																								.interlinks ||
-																							[],
-																					},
-																			},
-																		]
-																	);
-																}
-
-																// ✨ Display references form if needed
-																if (
-																	working
-																		.halt
-																		?.reason ===
-																	'await_references'
-																) {
-																	setMessages(
-																		(
-																			prev
-																		) => [
-																			...prev,
-																			{
-																				role: 'assistant',
-																				content: '📚 Add reference materials (URLs or files) to improve content quality, or click "Continue" to skip:',
-																				referencesForm:
-																					{
-																						currentUrls:
-																							working
-																								.data
-																								.referenceUrls ||
-																							[],
-																						currentFiles:
-																							working
-																								.data
-																								.referenceFiles ||
-																							[],
-																					},
-																			},
-																		]
-																	);
-																}
-															} finally {
 																setIsThinking(
-																	false
+																	true
 																);
-															}
-														}}
-													>
-														Continue
-														(
-														{
-															selectedSecondaries.length
-														}{' '}
-														selected)
-													</button>
-												</div>
-											</>
-										)}
+
+																try {
+																	let working =
+																		next;
+																	let guard = 0;
+																	while (
+																		guard++ <
+																		20
+																	) {
+																		const {
+																			state: ns,
+																			halted,
+																		} =
+																			await lgRunNext(
+																				working
+																			);
+																		working =
+																			ns;
+
+																		// Break if halted and needs user input
+																		if (
+																			halted &&
+																			automationEngine.needsUserInput(
+																				ns
+																			)
+																		) {
+																			break;
+																		}
+																	}
+
+																	setAgent(
+																		working
+																	);
+																	setOutline(
+																		working.outline
+																	);
+																	setDraft(
+																		working.draft
+																	);
+																	setTraceItems(
+																		working.trace.map(
+																			(
+																				t
+																			) => ({
+																				step: t.step,
+																				at: t.at,
+																			})
+																		)
+																	);
+																	updateData(
+																		{
+																			outline: working.outline,
+																			blogContent:
+																				working.draft,
+																			title: working
+																				.data
+																				.title,
+																		}
+																	);
+
+																	// ✨ Display title selection UI if needed
+																	if (
+																		working
+																			.halt
+																			?.reason ===
+																		'await_title_selection' &&
+																		working.titleOptions &&
+																		working
+																			.titleOptions
+																			.length >
+																		0
+																	) {
+																		setMessages(
+																			(
+																				prev
+																			) => [
+																					...prev,
+																					{
+																						role: 'assistant',
+																						content: '📝 Select a blog title from the options below:',
+																						titleSelection:
+																						{
+																							titles: working.titleOptions,
+																						},
+																					},
+																				]
+																		);
+																	}
+
+																	// ✨ Display interlinking UI if needed
+																	if (
+																		working
+																			.halt
+																			?.reason ===
+																		'await_interlinking'
+																	) {
+																		setMessages(
+																			(
+																				prev
+																			) => [
+																					...prev,
+																					{
+																						role: 'assistant',
+																						content: '🔗 Add internal/external links (optional) or click "Continue" to skip:',
+																						interlinkingForm:
+																						{
+																							currentLinks:
+																								working
+																									.data
+																									.interlinks ||
+																								[],
+																						},
+																					},
+																				]
+																		);
+																	}
+
+																	// ✨ Display references form if needed
+																	if (
+																		working
+																			.halt
+																			?.reason ===
+																		'await_references'
+																	) {
+																		setMessages(
+																			(
+																				prev
+																			) => [
+																					...prev,
+																					{
+																						role: 'assistant',
+																						content: '📚 Add reference materials (URLs or files) to improve content quality, or click "Continue" to skip:',
+																						referencesForm:
+																						{
+																							currentUrls:
+																								working
+																									.data
+																									.referenceUrls ||
+																								[],
+																							currentFiles:
+																								working
+																									.data
+																									.referenceFiles ||
+																								[],
+																						},
+																					},
+																				]
+																		);
+																	}
+																} finally {
+																	setIsThinking(
+																		false
+																	);
+																}
+															}}
+														>
+															Continue
+															(
+															{
+																selectedSecondaries.length
+															}{' '}
+															selected)
+														</button>
+													</div>
+												</>
+											)}
 
 										{/* Title Selection */}
 										{m.titleSelection &&
-										m.titleSelection
-											.titles &&
-										m.titleSelection
-											.titles
-											.length >
+											m.titleSelection
+												.titles &&
+											m.titleSelection
+												.titles
+												.length >
 											0 ? (
 											<div className='mt-3 space-y-2'>
 												{m.titleSelection.titles.map(
@@ -3066,27 +3918,45 @@ const AgentMode: React.FC<Props> = ({
 																}
 															</div>
 															<button
-																className='px-3 py-1 text-xs bg-purple-500 text-white rounded hover:bg-purple-600 transition-colors ml-3'
+																disabled={completedSelections.has(
+																	'title'
+																)}
+																className={`px-3 py-1 text-xs text-white rounded transition-colors ml-3 ${completedSelections.has(
+																	'title'
+																)
+																	? 'bg-gray-400 cursor-not-allowed'
+																	: 'bg-purple-500 hover:bg-purple-600'
+																	}`}
 																onClick={async () => {
 																	if (
 																		!agent
 																	)
 																		return;
 
+																	setCompletedSelections(
+																		(
+																			prev
+																		) =>
+																			new Set(
+																				prev
+																			).add(
+																				'title'
+																			)
+																	);
 																	setMessages(
 																		(
 																			prev
 																		) => [
-																			...prev,
-																			{
-																				role: 'user',
-																				content: `Select "${title}" as title`,
-																			},
-																			{
-																				role: 'assistant',
-																				content: `✅ Selected title. Continuing...`,
-																			},
-																		]
+																				...prev,
+																				{
+																					role: 'user',
+																					content: `Select "${title}" as title`,
+																				},
+																				{
+																					role: 'assistant',
+																					content: `✅ Selected title. Continuing...`,
+																				},
+																			]
 																	);
 
 																	const next =
@@ -3178,11 +4048,11 @@ const AgentMode: React.FC<Props> = ({
 																				(
 																					prev
 																				) => [
-																					...prev,
-																					{
-																						role: 'assistant',
-																						content: '🔗 Add internal/external links (optional) or click "Continue" to skip:',
-																						interlinkingForm:
+																						...prev,
+																						{
+																							role: 'assistant',
+																							content: '🔗 Add internal/external links (optional) or click "Continue" to skip:',
+																							interlinkingForm:
 																							{
 																								currentLinks:
 																									working
@@ -3190,8 +4060,8 @@ const AgentMode: React.FC<Props> = ({
 																										.interlinks ||
 																									[],
 																							},
-																					},
-																				]
+																						},
+																					]
 																			);
 																		}
 
@@ -3206,11 +4076,11 @@ const AgentMode: React.FC<Props> = ({
 																				(
 																					prev
 																				) => [
-																					...prev,
-																					{
-																						role: 'assistant',
-																						content: '📚 Add reference materials (URLs or files) to improve content quality, or click "Continue" to skip:',
-																						referencesForm:
+																						...prev,
+																						{
+																							role: 'assistant',
+																							content: '📚 Add reference materials (URLs or files) to improve content quality, or click "Continue" to skip:',
+																							referencesForm:
 																							{
 																								currentUrls:
 																									working
@@ -3223,8 +4093,8 @@ const AgentMode: React.FC<Props> = ({
 																										.referenceFiles ||
 																									[],
 																							},
-																					},
-																				]
+																						},
+																					]
 																			);
 																		}
 
@@ -3239,18 +4109,18 @@ const AgentMode: React.FC<Props> = ({
 																				(
 																					prev
 																				) => [
-																					...prev,
-																					{
-																						role: 'assistant',
-																						content: '📋 Outline is ready! Review it below and approve to continue, or provide feedback to regenerate:',
-																						outlineApproval:
+																						...prev,
+																						{
+																							role: 'assistant',
+																							content: '📋 Outline is ready! Review it below and approve to continue, or provide feedback to regenerate:',
+																							outlineApproval:
 																							{
 																								outline:
 																									working.outline ||
 																									[],
 																							},
-																					},
-																				]
+																						},
+																					]
 																			);
 																		}
 																	} finally {
@@ -3278,7 +4148,7 @@ const AgentMode: React.FC<Props> = ({
 														.interlinkingForm
 														.currentLinks
 														.length >
-														0 && (
+													0 && (
 														<div className='space-y-2 mb-3'>
 															{m.interlinkingForm.currentLinks.map(
 																(
@@ -3329,23 +4199,23 @@ const AgentMode: React.FC<Props> = ({
 																							) => {
 																								if (
 																									i ===
-																										messages.length -
-																											1 &&
+																									messages.length -
+																									1 &&
 																									msg.interlinkingForm
 																								) {
 																									return {
 																										...msg,
 																										interlinkingForm:
-																											{
-																												currentLinks:
-																													data.interlinks.filter(
-																														(
-																															l
-																														) =>
-																															l.id !==
-																															link.id
-																													),
-																											},
+																										{
+																											currentLinks:
+																												data.interlinks.filter(
+																													(
+																														l
+																													) =>
+																														l.id !==
+																														link.id
+																												),
+																										},
 																									};
 																								}
 																								return msg;
@@ -3364,6 +4234,9 @@ const AgentMode: React.FC<Props> = ({
 
 												<div className='flex gap-2 mb-3'>
 													<input
+														disabled={completedSelections.has(
+															'interlinking'
+														)}
 														type='text'
 														placeholder='Keyword/Anchor Text'
 														value={
@@ -3378,9 +4251,12 @@ const AgentMode: React.FC<Props> = ({
 																	.value
 															)
 														}
-														className='flex-1 px-3 py-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-green-500 focus:border-green-500'
+														className='flex-1 px-3 py-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-green-500 focus:border-green-500 disabled:bg-gray-100 disabled:cursor-not-allowed'
 													/>
 													<input
+														disabled={completedSelections.has(
+															'interlinking'
+														)}
 														type='text'
 														placeholder='URL'
 														value={
@@ -3395,7 +4271,7 @@ const AgentMode: React.FC<Props> = ({
 																	.value
 															)
 														}
-														className='flex-1 px-3 py-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-green-500 focus:border-green-500'
+														className='flex-1 px-3 py-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-green-500 focus:border-green-500 disabled:bg-gray-100 disabled:cursor-not-allowed'
 													/>
 													<button
 														className='px-3 py-2 text-sm bg-green-500 text-white rounded hover:bg-green-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed'
@@ -3409,11 +4285,11 @@ const AgentMode: React.FC<Props> = ({
 																interlinkUrl.trim()
 															) {
 																const newLink: Interlink =
-																	{
-																		id: Date.now().toString(),
-																		keyword: interlinkKeyword.trim(),
-																		url: interlinkUrl.trim(),
-																	};
+																{
+																	id: Date.now().toString(),
+																	keyword: interlinkKeyword.trim(),
+																	url: interlinkUrl.trim(),
+																};
 																updateData(
 																	{
 																		interlinks:
@@ -3435,20 +4311,20 @@ const AgentMode: React.FC<Props> = ({
 																			) => {
 																				if (
 																					i ===
-																						messages.length -
-																							1 &&
+																					messages.length -
+																					1 &&
 																					msg.interlinkingForm
 																				) {
 																					return {
 																						...msg,
 																						interlinkingForm:
-																							{
-																								currentLinks:
-																									[
-																										...data.interlinks,
-																										newLink,
-																									],
-																							},
+																						{
+																							currentLinks:
+																								[
+																									...data.interlinks,
+																									newLink,
+																								],
+																						},
 																					};
 																				}
 																				return msg;
@@ -3470,39 +4346,57 @@ const AgentMode: React.FC<Props> = ({
 
 												<div className='text-right'>
 													<button
-														className='px-4 py-2 text-sm bg-green-600 text-white rounded hover:bg-green-700 transition-colors'
+														disabled={completedSelections.has(
+															'interlinking'
+														)}
+														className={`px-4 py-2 text-sm text-white rounded transition-colors ${completedSelections.has(
+															'interlinking'
+														)
+															? 'bg-gray-400 cursor-not-allowed'
+															: 'bg-green-600 hover:bg-green-700'
+															}`}
 														onClick={async () => {
 															if (
 																!agent
 															)
 																return;
 
+															setCompletedSelections(
+																(
+																	prev
+																) =>
+																	new Set(
+																		prev
+																	).add(
+																		'interlinking'
+																	)
+															);
 															setMessages(
 																(
 																	prev
 																) => [
-																	...prev,
-																	{
-																		role: 'user',
-																		content:
-																			data
-																				.interlinks
-																				.length >
-																			0
-																				? `Added ${data.interlinks.length} link(s). Continue.`
-																				: 'Skip interlinking',
-																	},
-																	{
-																		role: 'assistant',
-																		content:
-																			data
-																				.interlinks
-																				.length >
-																			0
-																				? `✅ Added ${data.interlinks.length} internal/external links. Continuing...`
-																				: '⏭️ Skipped interlinking. Continuing...',
-																	},
-																]
+																		...prev,
+																		{
+																			role: 'user',
+																			content:
+																				data
+																					.interlinks
+																					.length >
+																					0
+																					? `Added ${data.interlinks.length} link(s). Continue.`
+																					: 'Skip interlinking',
+																		},
+																		{
+																			role: 'assistant',
+																			content:
+																				data
+																					.interlinks
+																					.length >
+																					0
+																					? `✅ Added ${data.interlinks.length} internal/external links. Continuing...`
+																					: '⏭️ Skipped interlinking. Continuing...',
+																		},
+																	]
 															);
 
 															const next =
@@ -3585,11 +4479,11 @@ const AgentMode: React.FC<Props> = ({
 																		(
 																			prev
 																		) => [
-																			...prev,
-																			{
-																				role: 'assistant',
-																				content: '📚 Add reference materials (URLs or files) to improve content quality, or click "Continue" to skip:',
-																				referencesForm:
+																				...prev,
+																				{
+																					role: 'assistant',
+																					content: '📚 Add reference materials (URLs or files) to improve content quality, or click "Continue" to skip:',
+																					referencesForm:
 																					{
 																						currentUrls:
 																							working
@@ -3602,8 +4496,8 @@ const AgentMode: React.FC<Props> = ({
 																								.referenceFiles ||
 																							[],
 																					},
-																			},
-																		]
+																				},
+																			]
 																	);
 																}
 
@@ -3618,18 +4512,18 @@ const AgentMode: React.FC<Props> = ({
 																		(
 																			prev
 																		) => [
-																			...prev,
-																			{
-																				role: 'assistant',
-																				content: '📋 Outline is ready! Review it below and approve to continue, or provide feedback to regenerate:',
-																				outlineApproval:
+																				...prev,
+																				{
+																					role: 'assistant',
+																					content: '📋 Outline is ready! Review it below and approve to continue, or provide feedback to regenerate:',
+																					outlineApproval:
 																					{
 																						outline:
 																							working.outline ||
 																							[],
 																					},
-																			},
-																		]
+																				},
+																			]
 																	);
 																}
 															} finally {
@@ -3666,48 +4560,48 @@ const AgentMode: React.FC<Props> = ({
 															.currentUrls
 															.length >
 															0 && (
-															<div className='space-y-2 mb-3 max-h-32 overflow-y-auto'>
-																{m.referencesForm.currentUrls.map(
-																	(
-																		url,
-																		idx
-																	) => (
-																		<div
-																			key={
-																				idx
-																			}
-																			className='flex items-center justify-between text-xs bg-gray-50 border rounded p-2'
-																		>
-																			<span className='truncate flex-1 text-blue-600'>
-																				{
-																					url
+																<div className='space-y-2 mb-3 max-h-32 overflow-y-auto'>
+																	{m.referencesForm.currentUrls.map(
+																		(
+																			url,
+																			idx
+																		) => (
+																			<div
+																				key={
+																					idx
 																				}
-																			</span>
-																			<button
-																				className='px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600 transition-colors ml-2'
-																				onClick={() => {
-																					updateData(
-																						{
-																							referenceUrls:
-																								data.referenceUrls.filter(
-																									(
-																										_,
-																										i
-																									) =>
-																										i !==
-																										idx
-																								),
-																						}
-																					);
-																				}}
+																				className='flex items-center justify-between text-xs bg-gray-50 border rounded p-2'
 																			>
-																				Remove
-																			</button>
-																		</div>
-																	)
-																)}
-															</div>
-														)}
+																				<span className='truncate flex-1 text-blue-600'>
+																					{
+																						url
+																					}
+																				</span>
+																				<button
+																					className='px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600 transition-colors ml-2'
+																					onClick={() => {
+																						updateData(
+																							{
+																								referenceUrls:
+																									data.referenceUrls.filter(
+																										(
+																											_,
+																											i
+																										) =>
+																											i !==
+																											idx
+																									),
+																							}
+																						);
+																					}}
+																				>
+																					Remove
+																				</button>
+																			</div>
+																		)
+																	)}
+																</div>
+															)}
 														<div className='flex gap-2'>
 															<input
 																type='text'
@@ -3728,7 +4622,7 @@ const AgentMode: React.FC<Props> = ({
 																) => {
 																	if (
 																		e.key ===
-																			'Enter' &&
+																		'Enter' &&
 																		currentReferenceUrl.trim()
 																	) {
 																		const url =
@@ -3805,48 +4699,48 @@ const AgentMode: React.FC<Props> = ({
 															.currentFiles
 															.length >
 															0 && (
-															<div className='space-y-2 mb-3 max-h-32 overflow-y-auto'>
-																{m.referencesForm.currentFiles.map(
-																	(
-																		file,
-																		idx
-																	) => (
-																		<div
-																			key={
-																				idx
-																			}
-																			className='flex items-center justify-between text-xs bg-gray-50 border rounded p-2'
-																		>
-																			<span className='truncate flex-1'>
-																				{
-																					file.name
+																<div className='space-y-2 mb-3 max-h-32 overflow-y-auto'>
+																	{m.referencesForm.currentFiles.map(
+																		(
+																			file,
+																			idx
+																		) => (
+																			<div
+																				key={
+																					idx
 																				}
-																			</span>
-																			<button
-																				className='px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600 transition-colors ml-2'
-																				onClick={() => {
-																					updateData(
-																						{
-																							referenceFiles:
-																								data.referenceFiles.filter(
-																									(
-																										_,
-																										i
-																									) =>
-																										i !==
-																										idx
-																								),
-																						}
-																					);
-																				}}
+																				className='flex items-center justify-between text-xs bg-gray-50 border rounded p-2'
 																			>
-																				Remove
-																			</button>
-																		</div>
-																	)
-																)}
-															</div>
-														)}
+																				<span className='truncate flex-1'>
+																					{
+																						file.name
+																					}
+																				</span>
+																				<button
+																					className='px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600 transition-colors ml-2'
+																					onClick={() => {
+																						updateData(
+																							{
+																								referenceFiles:
+																									data.referenceFiles.filter(
+																										(
+																											_,
+																											i
+																										) =>
+																											i !==
+																											idx
+																									),
+																							}
+																						);
+																					}}
+																				>
+																					Remove
+																				</button>
+																			</div>
+																		)
+																	)}
+																</div>
+															)}
 														<input
 															type='file'
 															accept='.pdf,.docx'
@@ -3866,11 +4760,11 @@ const AgentMode: React.FC<Props> = ({
 																				file
 																			);
 																		const newFile: ReferenceFile =
-																			{
-																				name: file.name,
-																				mimeType: file.type,
-																				base64: base64,
-																			};
+																		{
+																			name: file.name,
+																			mimeType: file.type,
+																			base64: base64,
+																		};
 																		updateData(
 																			{
 																				referenceFiles:
@@ -3913,59 +4807,75 @@ const AgentMode: React.FC<Props> = ({
 														File(s)
 													</div>
 													<button
-														className='w-full px-4 py-2 text-sm font-semibold bg-gradient-to-r from-yellow-600 to-orange-600 text-white rounded-lg hover:from-yellow-700 hover:to-orange-700 shadow-md hover:shadow-lg transition-all'
+														disabled={completedSelections.has(
+															'references'
+														)}
+														className={`w-full px-4 py-2 text-sm font-semibold text-white rounded-lg shadow-md transition-all ${completedSelections.has(
+															'references'
+														)
+															? 'bg-gray-400 cursor-not-allowed'
+															: 'bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 hover:shadow-lg'
+															}`}
 														onClick={async () => {
 															if (
 																!agent
 															)
 																return;
 
+															setCompletedSelections(
+																(
+																	prev
+																) =>
+																	new Set(
+																		prev
+																	).add(
+																		'references'
+																	)
+															);
 															setMessages(
 																(
 																	prev
 																) => [
-																	...prev,
-																	{
-																		role: 'user',
-																		content:
-																			(data
-																				.referenceUrls
-																				?.length ||
-																				0) +
+																		...prev,
+																		{
+																			role: 'user',
+																			content:
 																				(data
-																					.referenceFiles
+																					.referenceUrls
 																					?.length ||
-																					0) >
-																			0
-																				? `Added ${
-																						data
-																							.referenceUrls
-																							?.length ||
-																						0
-																				  } URL(s) and ${
-																						data
-																							.referenceFiles
-																							?.length ||
-																						0
-																				  } file(s). Continue.`
-																				: 'Skip references',
-																	},
-																	{
-																		role: 'assistant',
-																		content:
-																			(data
-																				.referenceUrls
-																				?.length ||
-																				0) +
+																					0) +
+																					(data
+																						.referenceFiles
+																						?.length ||
+																						0) >
+																					0
+																					? `Added ${data
+																						.referenceUrls
+																						?.length ||
+																					0
+																					} URL(s) and ${data
+																						.referenceFiles
+																						?.length ||
+																					0
+																					} file(s). Continue.`
+																					: 'Skip references',
+																		},
+																		{
+																			role: 'assistant',
+																			content:
 																				(data
-																					.referenceFiles
+																					.referenceUrls
 																					?.length ||
-																					0) >
-																			0
-																				? `✅ Added reference materials. Continuing...`
-																				: '⏭️ Skipped references. Continuing...',
-																	},
-																]
+																					0) +
+																					(data
+																						.referenceFiles
+																						?.length ||
+																						0) >
+																					0
+																					? `✅ Added reference materials. Continuing...`
+																					: '⏭️ Skipped references. Continuing...',
+																		},
+																	]
 															);
 
 															const next =
@@ -4048,18 +4958,18 @@ const AgentMode: React.FC<Props> = ({
 																		(
 																			prev
 																		) => [
-																			...prev,
-																			{
-																				role: 'assistant',
-																				content: '📋 Outline is ready! Review it below and approve to continue, or provide feedback to regenerate:',
-																				outlineApproval:
+																				...prev,
+																				{
+																					role: 'assistant',
+																					content: '📋 Outline is ready! Review it below and approve to continue, or provide feedback to regenerate:',
+																					outlineApproval:
 																					{
 																						outline:
 																							working.outline ||
 																							[],
 																					},
-																			},
-																		]
+																				},
+																			]
 																	);
 																}
 															} finally {
@@ -4077,7 +4987,7 @@ const AgentMode: React.FC<Props> = ({
 																.referenceFiles
 																?.length ||
 																0) >
-														0
+															0
 															? '✅ Continue with References'
 															: '⏭️ Skip & Continue'}
 													</button>
@@ -4122,7 +5032,7 @@ const AgentMode: React.FC<Props> = ({
 																			section
 																				.items
 																				.length >
-																				0 && (
+																			0 && (
 																				<ul className='ml-4 space-y-1 text-gray-600'>
 																					{section.items.map(
 																						(
@@ -4151,27 +5061,45 @@ const AgentMode: React.FC<Props> = ({
 
 													<div className='flex gap-3'>
 														<button
-															className='flex-1 px-4 py-3 text-sm font-semibold bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg hover:from-green-700 hover:to-green-800 shadow-md hover:shadow-lg transition-all'
+															disabled={completedSelections.has(
+																'outline'
+															)}
+															className={`px-6 py-3 text-sm font-semibold rounded-xl transition-all duration-200 ${completedSelections.has(
+																'outline'
+															)
+																? 'bg-gray-400 text-gray-200 cursor-not-allowed'
+																: 'text-white bg-gradient-to-r from-orange-500 to-orange-600 hover:shadow-lg hover:shadow-orange-500/30'
+																}`}
 															onClick={async () => {
 																if (
 																	!agent
 																)
 																	return;
 
+																setCompletedSelections(
+																	(
+																		prev
+																	) =>
+																		new Set(
+																			prev
+																		).add(
+																			'outline'
+																		)
+																);
 																setMessages(
 																	(
 																		prev
 																	) => [
-																		...prev,
-																		{
-																			role: 'user',
-																			content: 'Approve outline',
-																		},
-																		{
-																			role: 'assistant',
-																			content: '✅ Outline approved! Starting blog generation...',
-																		},
-																	]
+																			...prev,
+																			{
+																				role: 'user',
+																				content: 'Approve outline',
+																			},
+																			{
+																				role: 'assistant',
+																				content: '✅ Outline approved! Starting blog generation...',
+																			},
+																		]
 																);
 
 																const next =
@@ -4223,10 +5151,10 @@ const AgentMode: React.FC<Props> = ({
 																			const latestTrace =
 																				working
 																					.trace[
-																					working
-																						.trace
-																						.length -
-																						1
+																				working
+																					.trace
+																					.length -
+																				1
 																				];
 																			const stepMessage =
 																				getStepMessage(
@@ -4241,12 +5169,12 @@ const AgentMode: React.FC<Props> = ({
 																					(
 																						prev
 																					) => [
-																						...prev,
-																						{
-																							role: 'assistant',
-																							content: stepMessage,
-																						},
-																					]
+																							...prev,
+																							{
+																								role: 'assistant',
+																								content: stepMessage,
+																							},
+																						]
 																				);
 																				await new Promise(
 																					(
@@ -4321,12 +5249,12 @@ const AgentMode: React.FC<Props> = ({
 																			(
 																				prev
 																			) => [
-																				...prev,
-																				{
-																					role: 'assistant',
-																					content: '🎉 Blog generation complete! Your content is ready in the Live Draft.',
-																				},
-																			]
+																					...prev,
+																					{
+																						role: 'assistant',
+																						content: '🎉 Blog generation complete! Your content is ready in the Live Draft.',
+																					},
+																				]
 																		);
 																	}
 																} finally {
@@ -4378,135 +5306,7 @@ const AgentMode: React.FC<Props> = ({
 												</div>
 											)}
 
-										{/* Control Level Selection */}
-										{m.controlLevelSelection && (
-											<div className='mt-3 flex flex-col items-center'>
-												<div className='space-y-2 max-w-md w-full'>
-													<button
-														className='w-full flex items-center justify-between p-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 shadow-md hover:shadow-lg transition-all'
-														onClick={() => {
-															setAutomationMode(
-																'full'
-															);
-															setMessages(
-																(
-																	prev
-																) => [
-																	...prev,
-																	{
-																		role: 'user',
-																		content: 'Full Automation - I decide everything',
-																	},
-																	{
-																		role: 'assistant',
-																		content: "🚀 Perfect! I'll handle all decisions automatically. Let's start - what's your blog topic?",
-																	},
-																]
-															);
-														}}
-													>
-														<div className='text-left'>
-															<div className='font-bold text-base'>
-																🚀
-																Full
-																Automation
-															</div>
-															<div className='text-xs text-blue-100'>
-																I
-																decide
-																everything
-																for
-																you
-															</div>
-														</div>
-														<div className='text-xl'>
-															→
-														</div>
-													</button>
-
-													<button
-														className='w-full flex items-center justify-between p-3 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg hover:from-purple-600 hover:to-purple-700 shadow-md hover:shadow-lg transition-all'
-														onClick={() => {
-															setAutomationMode(
-																'guided'
-															);
-															setMessages(
-																(
-																	prev
-																) => [
-																	...prev,
-																	{
-																		role: 'user',
-																		content: 'Guided - I approve key decisions',
-																	},
-																	{
-																		role: 'assistant',
-																		content: "🎯 Great choice! I'll show you options and you make the final calls. What would you like to write about?",
-																	},
-																]
-															);
-														}}
-													>
-														<div className='text-left'>
-															<div className='font-bold text-base'>
-																🎯
-																Guided
-															</div>
-															<div className='text-xs text-purple-100'>
-																I
-																approve
-																key
-																decisions
-																(Recommended)
-															</div>
-														</div>
-														<div className='text-xl'>
-															→
-														</div>
-													</button>
-
-													{/* Manual Mode - Commented out for now */}
-													{/* <button
-													className='w-full flex items-center justify-between p-4 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-lg hover:from-pink-600 hover:to-pink-700 shadow-md hover:shadow-lg transition-all'
-													onClick={() => {
-														setAutomationMode(
-															'manual'
-														);
-														setMessages(
-															(
-																prev
-															) => [
-																...prev,
-																{
-																	role: 'user',
-																	content: 'Manual - I control everything',
-																},
-																{
-																	role: 'assistant',
-																	content: "✋ Got it! You'll have full control over every step. Tell me what you want to write about.",
-																},
-															]
-														);
-													}}
-												>
-													<div className='text-left'>
-														<div className='font-bold text-lg'>
-															✋
-															Manual
-														</div>
-														<div className='text-sm text-pink-100'>
-															I
-															control
-															everything
-														</div>
-													</div>
-													<div className='text-2xl'>
-														→
-													</div>
-												</button> */}
-												</div>
-											</div>
-										)}
+										{/* Control Level Selection - Removed as we now use intelligent flow detection */}
 									</div>
 								</div>
 							))}
@@ -4538,7 +5338,7 @@ const AgentMode: React.FC<Props> = ({
 										onKeyDown={(e) => {
 											if (
 												e.key ===
-													'Enter' &&
+												'Enter' &&
 												!e.shiftKey
 											) {
 												e.preventDefault();
@@ -4552,18 +5352,21 @@ const AgentMode: React.FC<Props> = ({
 										}}
 										rows={1}
 										disabled={
-											outlineApproved
+											isInputLocked
 										}
 										placeholder={
 											outlineApproved
 												? 'Chat disabled - Blog generation in progress...'
-												: 'Message Bloggr AI...'
+												: isStreaming
+													? 'Assistant is streaming response...'
+													: isThinking
+														? 'Assistant is responding...'
+														: 'Message Bloggr AI...'
 										}
-										className={`flex-1 px-2 py-2 border-0 focus:ring-0 focus:outline-none resize-none bg-transparent text-gray-900 placeholder-gray-400 ${
-											outlineApproved
-												? 'cursor-not-allowed opacity-60'
-												: ''
-										}`}
+										className={`flex-1 px-2 py-2 border-0 focus:ring-0 focus:outline-none resize-none bg-transparent text-gray-900 placeholder-gray-400 ${isInputLocked
+											? 'cursor-not-allowed opacity-60'
+											: ''
+											}`}
 										style={{
 											minHeight:
 												'24px',
@@ -4597,6 +5400,17 @@ const AgentMode: React.FC<Props> = ({
 										</svg>
 									</button>
 								</div>
+								{isThinking &&
+									!outlineApproved && (
+										<div className='mt-2 flex items-center gap-2 text-xs text-gray-500 px-4'>
+											<Spinner className='w-3 h-3' />
+											<span>
+												Assistant
+												is
+												responding...
+											</span>
+										</div>
+									)}
 							</div>
 						</div>
 					</div>
@@ -4605,9 +5419,63 @@ const AgentMode: React.FC<Props> = ({
 					{showBlogContent && (
 						<div className='flex flex-col min-h-0 w-[70%] transition-all duration-700 ease-in-out animate-[slideIn_0.7s_ease-out] border-2 border-orange-300 rounded-xl bg-white p-4 shadow-lg'>
 							<div className='flex items-center justify-between mb-2'>
-								<h3 className='text-lg font-semibold text-gray-800'>
-									Blog Content
-								</h3>
+								<div className='flex items-center gap-2'>
+									<h3 className='text-lg font-semibold text-gray-800'>
+										Blog Content
+									</h3>
+									{/* SEO Info Button */}
+									{seoScore !== null &&
+										(seoPrimary ||
+											seoCritical) && (
+											<div className='relative group'>
+												<button className='w-5 h-5 rounded-full bg-blue-100 text-blue-600 text-xs font-bold hover:bg-blue-200 transition-colors flex items-center justify-center'>
+													i
+												</button>
+												<div className='absolute left-0 top-6 w-80 bg-white border border-gray-200 rounded-lg shadow-lg p-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50'>
+													<div className='space-y-3 text-sm'>
+														{seoPrimary && (
+															<div className='p-3 bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-lg'>
+																<div className='flex items-center gap-2 mb-1'>
+																	<span className='text-base'>
+																		⭐
+																	</span>
+																	<span className='font-bold text-blue-700'>
+																		Primary
+																		Ranking
+																		Factor
+																	</span>
+																</div>
+																<p className='text-gray-700 text-xs'>
+																	{
+																		seoPrimary
+																	}
+																</p>
+															</div>
+														)}
+														{seoCritical && (
+															<div className='p-3 bg-gradient-to-br from-red-50 to-orange-50 border border-red-200 rounded-lg'>
+																<div className='flex items-center gap-2 mb-1'>
+																	<span className='text-base'>
+																		⚠️
+																	</span>
+																	<span className='font-bold text-red-700'>
+																		Most
+																		Critical
+																		Flaw
+																	</span>
+																</div>
+																<p className='text-gray-700 text-xs'>
+																	{
+																		seoCritical
+																	}
+																</p>
+															</div>
+														)}
+													</div>
+												</div>
+											</div>
+										)}
+								</div>
 								<div className='flex items-center gap-3'>
 									{/* View Mode Toggle */}
 									{draft.trim() && (
@@ -4618,12 +5486,11 @@ const AgentMode: React.FC<Props> = ({
 														'markdown'
 													)
 												}
-												className={`px-3 py-1 text-xs rounded ${
-													viewMode ===
+												className={`px-3 py-1 text-xs rounded ${viewMode ===
 													'markdown'
-														? 'bg-orange-500 text-white'
-														: 'text-gray-600 hover:bg-gray-200'
-												}`}
+													? 'bg-orange-500 text-white'
+													: 'text-gray-600 hover:bg-gray-200'
+													}`}
 											>
 												Preview
 											</button>
@@ -4633,12 +5500,11 @@ const AgentMode: React.FC<Props> = ({
 														'blog'
 													)
 												}
-												className={`px-3 py-1 text-xs rounded ${
-													viewMode ===
+												className={`px-3 py-1 text-xs rounded ${viewMode ===
 													'blog'
-														? 'bg-orange-500 text-white'
-														: 'text-gray-600 hover:bg-gray-200'
-												}`}
+													? 'bg-orange-500 text-white'
+													: 'text-gray-600 hover:bg-gray-200'
+													}`}
 											>
 												Raw
 											</button>
@@ -4656,7 +5522,7 @@ const AgentMode: React.FC<Props> = ({
 									) : seoScore !== null ? (
 										<div className='flex items-center gap-2 px-4 py-2 rounded-full shadow-lg bg-gradient-to-r from-orange-500 to-orange-600 text-white'>
 											<span className='text-lg'>
-												📊
+												🎯
 											</span>
 											<span className='font-bold text-base'>
 												SEO:{' '}
@@ -4722,43 +5588,6 @@ const AgentMode: React.FC<Props> = ({
 									className='flex-1 p-3 border rounded-md focus:ring-orange-500 focus:border-orange-500 font-mono text-sm'
 									placeholder='# Your Blog Title\n\nContent will appear here as the agent writes...'
 								/>
-							)}
-
-							{seoScore !== null && (
-								<div className='mt-4 grid grid-cols-1 gap-3 text-sm'>
-									<div className='p-4 bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-xl shadow-md'>
-										<div className='flex items-center gap-2 mb-1'>
-											<span className='text-lg'>
-												⭐
-											</span>
-											<span className='font-bold text-blue-700'>
-												Primary
-												Ranking
-												Factor
-											</span>
-										</div>
-										<p className='text-gray-700 ml-7'>
-											{seoPrimary ||
-												'—'}
-										</p>
-									</div>
-									<div className='p-4 bg-gradient-to-br from-red-50 to-orange-50 border border-red-200 rounded-xl shadow-md'>
-										<div className='flex items-center gap-2 mb-1'>
-											<span className='text-lg'>
-												⚠️
-											</span>
-											<span className='font-bold text-red-700'>
-												Most
-												Critical
-												Flaw
-											</span>
-										</div>
-										<p className='text-gray-700 ml-7'>
-											{seoCritical ||
-												'—'}
-										</p>
-									</div>
-								</div>
 							)}
 						</div>
 					)}

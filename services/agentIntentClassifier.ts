@@ -11,7 +11,7 @@ const extractTextFromResponse = (response: GenerateContentResponse): string => {
 				.filter((part: any) => part.text !== undefined)
 				.map((part: any) => part.text)
 				.join('');
-			
+
 			if (textParts) {
 				return textParts;
 			}
@@ -33,13 +33,16 @@ const cleanAndParseJson = (text: string): any => {
 
 export interface UserIntent {
 	type:
-		| 'full_automation'
-		| 'partial_info'
-		| 'query'
-		| 'refinement'
-		| 'manual_control'
-		| 'approval'
-		| 'skip_step';
+	| 'full_automation'
+	| 'partial_info'
+	| 'query'
+	| 'refinement'
+	| 'manual_control'
+	| 'approval'
+	| 'skip_step'
+	| 'greeting'
+	| 'help_request'
+	| 'off_topic';
 	extractedData?: Partial<BlogData>;
 	missingFields?: string[];
 	autoFillRequested?: boolean;
@@ -73,9 +76,12 @@ CURRENT STATE:
 
 INSTRUCTIONS:
 1. Classify the intent type:
+   - "greeting": User is greeting or saying hello (hi, hello, hey, good morning, etc.)
+   - "help_request": User is asking what you can do or how you can help
+   - "off_topic": User is asking about something completely unrelated to blog generation (weather, math, coding help, general questions, etc.)
    - "full_automation": User wants agent to decide everything automatically
    - "partial_info": User provides some information (topic, keywords, title, etc.)
-   - "query": User is asking a question
+   - "query": User is asking a question ABOUT blog creation process
    - "refinement": User wants to modify/improve existing content
    - "manual_control": User explicitly wants to control specific steps
    - "approval": User is approving/confirming something
@@ -90,9 +96,16 @@ INSTRUCTIONS:
 
 4. Identify specific requests or questions
 
+IMPORTANT CLASSIFICATION RULES:
+- If user says "hi", "hello", "hey", or similar → type: "greeting"
+- If user asks "what can you do", "how can you help", "what are your capabilities" → type: "help_request"
+- If user asks about weather, math, code debugging, general knowledge questions NOT related to blog writing → type: "off_topic"
+- Only classify as "query" if the question is specifically about the blog creation process
+- Only classify as "partial_info" if user provides actual blog-related data (topic, keywords, etc.)
+
 OUTPUT SCHEMA:
 {
-  "type": "full_automation" | "partial_info" | "query" | "refinement" | "manual_control" | "approval" | "skip_step",
+  "type": "greeting" | "help_request" | "off_topic" | "full_automation" | "partial_info" | "query" | "refinement" | "manual_control" | "approval" | "skip_step",
   "extractedData": {
     "topic": string | null,
     "primaryKeyword": string | null,
@@ -110,6 +123,9 @@ OUTPUT SCHEMA:
 }
 
 EXAMPLES:
+- "Hi" or "Hello" → type: "greeting"
+- "What can you help me with?" → type: "help_request"
+- "What's the weather today?" → type: "off_topic"
 - "Write a blog about cloud computing, you decide everything" → type: "full_automation", autoFillRequested: true
 - "Topic: AWS, Keyword: database services" → type: "partial_info", extractedData filled
 - "Can you suggest good keywords?" → type: "query", specificRequest: "keyword suggestions"
@@ -124,6 +140,9 @@ EXAMPLES:
 			type: {
 				type: Type.STRING,
 				enum: [
+					'greeting',
+					'help_request',
+					'off_topic',
 					'full_automation',
 					'partial_info',
 					'query',

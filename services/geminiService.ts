@@ -1,5 +1,5 @@
 import { GoogleGenAI, Type, GenerateContentResponse, Part } from "@google/genai";
-import { BlogData, OutlineSection, SeoReport } from '../types';
+import { BlogData, OutlineSection } from '../types';
 
 // Helper to safely extract text from Gemini response (handles non-text parts like thoughtSignature)
 const extractTextFromResponse = (response: GenerateContentResponse): string => {
@@ -10,7 +10,7 @@ const extractTextFromResponse = (response: GenerateContentResponse): string => {
                 .filter((part: any) => part.text !== undefined)
                 .map((part: any) => part.text)
                 .join('');
-            
+
             if (textParts) {
                 return textParts;
             }
@@ -182,7 +182,7 @@ export const generateTitles = async (data: BlogData, apiKey: string): Promise<st
 
     const extractedText = extractTextFromResponse(response);
     const titles = cleanAndParseJson(extractedText);
-    
+
     return titles;
 };
 
@@ -220,13 +220,13 @@ export const generateOutline = async (data: BlogData, apiKey: string, feedback?:
     if (!h2Plan || h2Plan.length === 0) {
         throw new Error("Could not generate H2 headings based on the provided context.");
     }
-    
+
     // 2. Executor Agent: Generate H3s for each H2 in parallel
     const outlinePromises = h2Plan.map(async (h2Name, i) => {
         const h2Id = (i + 1).toString();
         const executorPrompt = EXECUTION_PROMPT(data, h2Name, h2Id);
         const executorContentParts = await buildContentParts(executorPrompt, data);
-        
+
         const executorResponse: GenerateContentResponse = await ai.models.generateContent({
             model: 'gemini-flash-latest',
             contents: { parts: executorContentParts },
@@ -234,7 +234,7 @@ export const generateOutline = async (data: BlogData, apiKey: string, feedback?:
                 tools: [{ googleSearch: {} }, { urlContext: {} }],
             },
         });
-        
+
         return cleanAndParseJson(executorResponse.text) as OutlineSection;
     });
 
@@ -246,7 +246,7 @@ export const generateOutline = async (data: BlogData, apiKey: string, feedback?:
 export const generateBlogPost = async (data: BlogData, outline: OutlineSection[], apiKey: string): Promise<string> => {
     if (!apiKey) throw new Error("API Key is required.");
     const ai = new GoogleGenAI({ apiKey });
-    
+
     const prompt = FINAL_BLOG_PROMPT(data, outline) + (data.referenceUrls.length ? `\n\nREFERENCE URLS to consult (via urlContext):\n${data.referenceUrls.map(u => `- ${u}`).join('\n')}` : '');
     const contentParts = await buildContentParts(prompt, data);
 
@@ -264,82 +264,3 @@ export const generateBlogPost = async (data: BlogData, outline: OutlineSection[]
     }
     return blogContent;
 };
-
-export const rankBlogPost = async (content: string, keyword: string, apiKey: string, model: string): Promise<SeoReport> => {
-    if (!apiKey) throw new Error("API Key is required.");
-    const ai = new GoogleGenAI({ apiKey });
-
-    const prompt = `
-    ROLE: You are an expert SEO Analyst. Your task is to analyze a blog post against a target keyword and provide a comprehensive SEO score out of 100, based on a specific weighted algorithm.
-
-    ALGORITHM & WEIGHTS (no Core Web Vitals):
-    - A. Content & Intent: 45%
-    - B. Off-Page Authority (Inferred): 30%
-    - C. On-Page & Structure: 25%
-
-    INSTRUCTIONS:
-    1. Analyze the provided "Blog Content" in relation to the "Target Keyword".
-    2. For each pillar, evaluate the content against the sub-factors listed in the response schema.
-    3. **Crucially, for "Off-Page Authority", you cannot access external tools. You must INFER this score based on on-page signals and clearly state that this is an estimation in your justification.** For example, infer authority from the quality of sources cited.
-    4. Provide a score for each sub-factor and a final weighted score for each pillar.
-    5. Calculate the "Final SEO Score" using the specified weights.
-    6. Provide a "Primary Ranking Factor" (the pillar with the highest impact) and the "Most Critical Flaw" (the factor that needs the most improvement).
-    7. **Do NOT evaluate or reference performance metrics, Core Web Vitals, page speed, LCP/CLS, or any runtime/technical metrics. Do not list them as flaws. Focus strictly on content quality, on-page SEO structure, internal/external linking, topical coverage, readability, and inferred off-page signals.**
-    7. For each pillar, provide a concise "Justification" for the score and a prioritized, actionable "Recommended Action".
-    8. Output ONLY a single, valid JSON object that adheres strictly to the provided schema. Do not include any text, comments, or markdown formatting outside of the JSON object.
-
-    TARGET KEYWORD: "${keyword}"
-
-    BLOG CONTENT:
-    ---
-    ${content}
-    ---
-    `;
-    
-    const responseSchema = {
-        type: Type.OBJECT,
-        properties: {
-            finalSeoScore: { type: Type.NUMBER },
-            primaryRankingFactor: { type: Type.STRING },
-            mostCriticalFlaw: { type: Type.STRING },
-            detailedReport: {
-                type: Type.ARRAY,
-                items: {
-                    type: Type.OBJECT,
-                    properties: {
-                        pillar: { type: Type.STRING },
-                        score: { type: Type.NUMBER },
-                        justification: { type: Type.STRING },
-                        recommendedAction: { type: Type.STRING },
-                        subFactors: {
-                            type: Type.ARRAY,
-                            items: {
-                                type: Type.OBJECT,
-                                properties: {
-                                    name: { type: Type.STRING },
-                                    score: { type: Type.NUMBER },
-                                    justification: { type: Type.STRING },
-                                },
-                                required: ['name', 'score', 'justification'],
-                            },
-                        },
-                    },
-                    required: ['pillar', 'score', 'justification', 'recommendedAction', 'subFactors'],
-                },
-            },
-        },
-        required: ['finalSeoScore', 'primaryRankingFactor', 'mostCriticalFlaw', 'detailedReport'],
-    };
-
-
-    const response = await ai.models.generateContent({
-        model,
-        contents: { parts: [{ text: prompt }] },
-        config: {
-            responseMimeType: "application/json",
-            responseSchema: responseSchema,
-        },
-    });
-
-    return cleanAndParseJson(extractTextFromResponse(response));
-}

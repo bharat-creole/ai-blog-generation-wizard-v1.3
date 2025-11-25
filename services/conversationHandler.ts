@@ -26,6 +26,15 @@ export const processMessage = async (
 
 	// Step 2: Handle different intent types
 	switch (intent.type) {
+		case 'greeting':
+			return handleGreeting(currentState);
+
+		case 'help_request':
+			return handleHelpRequest(currentState);
+
+		case 'off_topic':
+			return handleOffTopic(currentState);
+
 		case 'full_automation':
 			return handleFullAutomation(userMessage, intent, currentState, userSelectedAutomationMode);
 
@@ -54,6 +63,91 @@ export const processMessage = async (
 				shouldRunAgent: true,
 			};
 	}
+};
+
+// Helper to check if user has started providing blog information
+const hasStartedBlogCreation = (state: AgentState): boolean => {
+	return !!(
+		state.data.topic ||
+		state.data.primaryKeyword ||
+		state.data.title ||
+		state.data.secondaryKeywords?.length > 0 ||
+		state.data.referenceUrls?.length > 0 ||
+		state.data.interlinks?.length > 0
+	);
+};
+
+// Helper to generate reminder message about missing info
+const getMissingInfoMessage = (state: AgentState): string => {
+	const missing: string[] = [];
+
+	if (!state.data.topic) missing.push('**Topic**');
+	if (!state.data.primaryKeyword && !state.userProvidedFields?.has('primaryKeyword')) {
+		missing.push('**Primary Keyword** (or I can research it for you)');
+	}
+
+	if (missing.length === 0) {
+		return "Let's continue with your blog creation!";
+	}
+
+	return `To continue, I still need:\n${missing.map(m => `- ${m}`).join('\n')}\n\nPlease provide these details, or say **\"generate blog automatically\"** to let me handle everything!`;
+};
+
+// Handler for greetings
+const handleGreeting = (currentState: AgentState): ConversationResponse => {
+	// If user has already started, acknowledge and resume
+	if (hasStartedBlogCreation(currentState)) {
+		return {
+			assistantMessage: `Hello! 👋 Nice to hear from you again!\n\n${getMissingInfoMessage(currentState)}`,
+			stateUpdates: {},
+			shouldRunAgent: false,
+		};
+	}
+
+	// First time greeting - full welcome
+	return {
+		assistantMessage: "Hello! 👋 Great to see you! I'm your Blog Agent, here to help you create SEO-optimized blog posts.\n\nTo get started, just tell me what topic you'd like to write about, or say **\"generate blog automatically\"** and I'll handle everything!\n\nHow can I help you today?",
+		stateUpdates: {},
+		shouldRunAgent: false,
+	};
+};
+
+// Handler for help requests
+const handleHelpRequest = (currentState: AgentState): ConversationResponse => {
+	// If user has already started, give brief help and resume
+	if (hasStartedBlogCreation(currentState)) {
+		return {
+			assistantMessage: "I can help you create an SEO-optimized blog post! I'll handle keyword research, title generation, content outlining, and writing.\n\n" + getMissingInfoMessage(currentState),
+			stateUpdates: {},
+			shouldRunAgent: false,
+		};
+	}
+
+	// First time - full capabilities
+	return {
+		assistantMessage: "I'm your AI Blog Agent! 🤖 Here's what I can help you with:\n\n✍️ **Create SEO-Optimized Blogs** - I'll write comprehensive, engaging content\n🔍 **Keyword Research** - Find the best keywords for your topic\n📝 **Title Generation** - Create compelling, SEO-friendly titles\n📋 **Content Outlines** - Structure your blog professionally\n🔗 **Internal/External Links** - Add relevant references\n\n**To get started:**\n- Tell me your blog topic\n- Provide keywords if you have them\n- Or say **\"generate blog automatically\"** and let me handle everything!\n\nWhat would you like to create today?",
+		stateUpdates: {},
+		shouldRunAgent: false,
+	};
+};
+
+// Handler for off-topic queries
+const handleOffTopic = (currentState: AgentState): ConversationResponse => {
+	// If user has already started, politely redirect and resume
+	if (hasStartedBlogCreation(currentState)) {
+		return {
+			assistantMessage: "I appreciate the question, but let's focus on your blog for now! 📝\n\n" + getMissingInfoMessage(currentState),
+			stateUpdates: {},
+			shouldRunAgent: false,
+		};
+	}
+
+	// First time - full redirect message
+	return {
+		assistantMessage: "I appreciate your question, but I'm specifically designed to help you create amazing blog content! 📝\n\nI focus on:\n- Blog writing and content creation\n- SEO optimization\n- Keyword research\n- Title generation\n- Content outlines\n\nIf you'd like to create a blog post, I'm here to help! Just tell me your topic or say **\"generate blog automatically\"**.\n\nWhat blog would you like to create?",
+		stateUpdates: {},
+		shouldRunAgent: false,
+	};
 };
 
 const handleFullAutomation = (
@@ -176,11 +270,11 @@ const handlePartialInfo = async (
 	// Use user's UI selection or detect from message
 	const automationLevel = userSelectedAutomationMode || (intent.autoFillRequested ? 'full' : 'guided');
 	const isFullAuto = automationLevel === 'full';
-	
+
 	// If topic provided but location not provided and not already set, ask for location
 	if (hasTopic && !hasLocation && !isFullAuto) {
 		message += `\n\nWhich country/region should I target for SEO? (e.g., United States, United Kingdom, Canada, Global, etc.)`;
-		
+
 		const stateUpdates: Partial<AgentState> = {
 			data: updatedData as BlogData,
 			userProvidedFields: providedFields,
@@ -190,7 +284,7 @@ const handlePartialInfo = async (
 				autoSelectBestOptions: false,
 			},
 		};
-		
+
 		return {
 			assistantMessage: message,
 			stateUpdates,
@@ -371,13 +465,13 @@ const handleRefinement = (
 	currentState: AgentState
 ): ConversationResponse => {
 	// ✨ Check if we're in outline approval stage and user is providing feedback
-	if (currentState.halt?.reason === 'awaiting_approval' && 
-	    currentState.outline && 
-	    currentState.outline.length > 0 && 
-	    !currentState.outlineApproved) {
-		
+	if (currentState.halt?.reason === 'awaiting_approval' &&
+		currentState.outline &&
+		currentState.outline.length > 0 &&
+		!currentState.outlineApproved) {
+
 		console.log('📝 [OUTLINE FEEDBACK] User provided feedback, preparing to regenerate outline...');
-		
+
 		return {
 			assistantMessage:
 				"Got it! I'll regenerate the outline based on your feedback. Please wait...",
@@ -388,7 +482,7 @@ const handleRefinement = (
 			shouldRunAgent: true, // Run the agent to regenerate
 		};
 	}
-	
+
 	// Default refinement handler
 	return {
 		assistantMessage:

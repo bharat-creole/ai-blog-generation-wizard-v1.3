@@ -1,15 +1,4 @@
-export enum AppStep {
-    Title,
-    ReferenceArticles,
-    Interlinking,
-    WritingStyle,
-    ReviewOutline,
-    YourBlogIsReady,
-}
-
 export enum AppView {
-    Wizard,
-    Ranker,
     Agent,
 }
 
@@ -58,27 +47,7 @@ export interface BlogData {
     extractedHeadingsByFile?: { name: string; headings: string[] }[];
 }
 
-// SEO Ranker Types
-export interface SeoSubFactor {
-    name: string;
-    score: number;
-    justification: string;
-}
 
-export interface PillarReport {
-    pillar: string;
-    score: number;
-    justification: string;
-    recommendedAction: string;
-    subFactors: SeoSubFactor[];
-}
-
-export interface SeoReport {
-    finalSeoScore: number;
-    primaryRankingFactor: string;
-    mostCriticalFlaw: string;
-    detailedReport: PillarReport[];
-}
 
 // Agent Mode Types
 export type AutomationLevel = 'full' | 'guided' | 'manual';
