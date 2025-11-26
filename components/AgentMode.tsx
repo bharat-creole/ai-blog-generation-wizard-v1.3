@@ -31,11 +31,25 @@ import BlogInfoPanel from './agentComponents/panels/BlogInfoPanel';
 import TracePanel from './agentComponents/panels/TracePanel';
 import DraggableOutline from './agentComponents/content/DraggableOutline';
 
+// Selection components
+import PrimaryKeywordSelection from './agentComponents/selections/PrimaryKeywordSelection';
+import SecondaryKeywordSelection from './agentComponents/selections/SecondaryKeywordSelection';
+import TitleSelection from './agentComponents/selections/TitleSelection';
+import InterlinkingForm from './agentComponents/selections/InterlinkingForm';
+import ReferencesForm from './agentComponents/selections/ReferencesForm';
+import OutlineApproval from './agentComponents/selections/OutlineApproval';
+
 // Extracted utilities
 import {
 	fileToBase64,
 	getStepMessage,
 } from './agentComponents/utils/agentHelpers';
+
+// Styles
+import {
+	markdownStyles,
+	inputTextareaStyles,
+} from './agentComponents/styles/agentModeStyles';
 
 interface Props {
 	data: BlogData;
@@ -45,144 +59,6 @@ interface Props {
 	showSettings: boolean;
 	onCollapseSidebar?: () => void;
 }
-
-// Helper functions moved to agentComponents/utils/agentHelpers.ts
-
-const markdownStyles = `
-	/* Thin scrollbars - visible only on hover/scroll */
-	* {
-		scrollbar-width: thin;
-		scrollbar-color: transparent transparent;
-		transition: scrollbar-color 0.3s ease;
-	}
-	
-	*:hover {
-		scrollbar-color: rgba(156, 163, 175, 0.3) transparent;
-	}
-	
-	*::-webkit-scrollbar {
-		width: 3px;
-		height: 3px;
-	}
-	
-	*::-webkit-scrollbar-track {
-		background: transparent;
-	}
-	
-	*::-webkit-scrollbar-thumb {
-		background: transparent;
-		border-radius: 10px;
-		transition: background 0.3s ease;
-	}
-	
-	*:hover::-webkit-scrollbar-thumb {
-		background: rgba(156, 163, 175, 0.3);
-	}
-	
-	*::-webkit-scrollbar-thumb:hover {
-		background: rgba(156, 163, 175, 0.5);
-	}
-
-	@keyframes slideIn {
-		from {
-			opacity: 0;
-			transform: translateX(20px);
-		}
-		to {
-			opacity: 1;
-			transform: translateX(0);
-		}
-	}
-	.markdown-preview .markdown-content h1 {
-		font-size: 2rem;
-		font-weight: bold;
-		margin-bottom: 1rem;
-		color: #1a1a1a;
-	}
-	.markdown-preview .markdown-content h2 {
-		font-size: 1.5rem;
-		font-weight: bold;
-		margin-top: 1.5rem;
-		margin-bottom: 0.75rem;
-		color: #2d3748;
-	}
-	.markdown-preview .markdown-content h3 {
-		font-size: 1.25rem;
-		font-weight: 600;
-		margin-top: 1rem;
-		margin-bottom: 0.5rem;
-		color: #4a5568;
-	}
-	.markdown-preview .markdown-content p {
-		margin-bottom: 0.75rem;
-		color: #4a5568;
-		line-height: 1.7;
-	}
-	.markdown-preview .markdown-content ul,
-	.markdown-preview .markdown-content ol {
-		margin-left: 1.5rem;
-		margin-bottom: 0.75rem;
-		list-style-position: outside;
-	}
-	.markdown-preview .markdown-content ul {
-		list-style-type: disc;
-	}
-	.markdown-preview .markdown-content ol {
-		list-style-type: decimal;
-	}
-	.markdown-preview .markdown-content li {
-		margin-bottom: 0.25rem;
-		color: #4a5568;
-	}
-	.markdown-preview .markdown-content a {
-		color: #2563eb;
-		text-decoration: underline;
-	}
-	.markdown-preview .markdown-content a:hover {
-		color: #1d4ed8;
-	}
-	.markdown-preview .markdown-content blockquote {
-		border-left: 4px solid #cbd5e0;
-		padding-left: 1rem;
-		font-style: italic;
-		margin: 1rem 0;
-		color: #718096;
-	}
-	.markdown-preview .markdown-content code {
-		background-color: #f7fafc;
-		padding: 0.125rem 0.25rem;
-		border-radius: 0.25rem;
-		font-size: 0.875rem;
-		font-family: monospace;
-	}
-	.markdown-preview .markdown-content pre {
-		background-color: #f7fafc;
-		padding: 1rem;
-		border-radius: 0.5rem;
-		overflow-x: auto;
-		margin: 1rem 0;
-	}
-	.markdown-preview .markdown-content table {
-		width: 100%;
-		border-collapse: collapse;
-		margin: 1rem 0;
-	}
-	.markdown-preview .markdown-content th,
-	.markdown-preview .markdown-content td {
-		border: 1px solid #cbd5e0;
-		padding: 0.5rem 1rem;
-	}
-	.markdown-preview .markdown-content th {
-		background-color: #f7fafc;
-		font-weight: 600;
-	}
-	.markdown-preview .markdown-content strong {
-		font-weight: 700;
-	}
-	.markdown-preview .markdown-content em {
-		font-style: italic;
-	}
-`;
 
 const AgentMode: React.FC<Props> = ({
 	data,
@@ -3655,1685 +3531,240 @@ const AgentMode: React.FC<Props> = ({
 										{m.keywordSelection
 											?.type ===
 											'primary' && (
-											<div className='mt-3 grid grid-cols-1 md:grid-cols-2 gap-2'>
-												{m.keywordSelection.candidates.map(
-													(
-														kw,
-														idx
-													) => (
-														<div
-															key={
-																idx
-															}
-															className='flex items-center justify-between text-sm bg-white border border-gray-200 rounded-md p-2 hover:border-orange-400 transition-colors'
-														>
-															<div>
-																<div className='font-medium text-gray-800'>
-																	{
-																		kw.text
-																	}
-																</div>
-																<div className='text-xs text-gray-500'>
-																	Vol:{' '}
-																	{
-																		kw.volume
-																	}{' '}
-																	·
-																	Diff:{' '}
-																	{kw.difficulty.toFixed(
-																		2
-																	)}
-																</div>
-															</div>
-															<button
-																disabled={completedSelections.has(
-																	'primaryKeyword'
-																)}
-																className={`px-3 py-1 text-xs text-white rounded transition-colors ${
-																	completedSelections.has(
-																		'primaryKeyword'
-																	)
-																		? 'bg-gray-400 cursor-not-allowed'
-																		: 'bg-orange-500 hover:bg-orange-600'
-																}`}
-																onClick={async () => {
-																	if (
-																		!agent
-																	)
-																		return;
-
-																	setCompletedSelections(
-																		(
-																			prev
-																		) =>
-																			new Set(
-																				prev
-																			).add(
-																				'primaryKeyword'
-																			)
-																	);
-																	setMessages(
-																		(
-																			prev
-																		) => [
-																			...prev,
-																			{
-																				role: 'user',
-																				content: `Select "${kw.text}" as primary keyword`,
-																			},
-																			{
-																				role: 'assistant',
-																				content: `✅ Selected "${kw.text}" as primary keyword. Continuing...`,
-																			},
-																		]
-																	);
-
-																	const next =
-																		{
-																			...agent,
-																			data: {
-																				...agent.data,
-																				primaryKeyword:
-																					kw.text,
-																			},
-																		} as AgentState;
-																	setAgent(
-																		next
-																	);
-																	updateData(
-																		{
-																			primaryKeyword:
-																				kw.text,
-																		}
-																	);
-																	setIsThinking(
-																		true
-																	);
-
-																	try {
-																		let working =
-																			next;
-																		let guard = 0;
-																		let lastTraceLength = 0;
-
-																		while (
-																			guard++ <
-																			20
-																		) {
-																			const {
-																				state: ns,
-																				halted,
-																				step,
-																			} = await lgRunNext(
-																				working
-																			);
-																			working =
-																				ns;
-
-																			if (
-																				working
-																					.trace
-																					.length >
-																				lastTraceLength
-																			) {
-																				const latestTrace =
-																					working
-																						.trace[
-																						working
-																							.trace
-																							.length -
-																							1
-																					];
-																				const stepMessage =
-																					getStepMessage(
-																						latestTrace.step,
-																						latestTrace.info
-																					);
-
-																				if (
-																					stepMessage
-																				) {
-																					setMessages(
-																						(
-																							prev
-																						) => [
-																							...prev,
-																							{
-																								role: 'assistant',
-																								content: stepMessage,
-																							},
-																						]
-																					);
-																					await new Promise(
-																						(
-																							resolve
-																						) =>
-																							setTimeout(
-																								resolve,
-																								300
-																							)
-																					);
-																				}
-																				lastTraceLength =
-																					working
-																						.trace
-																						.length;
-																			}
-
-																			// Break if halted and needs user input
-																			if (
-																				halted &&
-																				automationEngine.needsUserInput(
-																					ns
-																				)
-																			) {
-																				break;
-																			}
-																		}
-
-																		setAgent(
-																			working
-																		);
-																		setOutline(
-																			working.outline
-																		);
-																		setDraft(
-																			working.draft
-																		);
-																		setTraceItems(
-																			working.trace.map(
-																				(
-																					t
-																				) => ({
-																					step: t.step,
-																					at: t.at,
-																				})
-																			)
-																		);
-																		updateData(
-																			{
-																				outline: working.outline,
-																				blogContent:
-																					working.draft,
-																				secondaryKeywords:
-																					working
-																						.data
-																						.secondaryKeywords,
-																			}
-																		);
-
-																		if (
-																			working
-																				.halt
-																				?.reason ===
-																			'await_secondary_selection'
-																		) {
-																			setMessages(
-																				(
-																					prev
-																				) => [
-																					...prev,
-																					{
-																						role: 'assistant',
-																						content: '🎯 Select up to 5 secondary keywords:\n\n💡 Tip: If you would like to provide your own secondary keywords, simply type them in the chat (comma-separated)!',
-																						keywordSelection:
-																							{
-																								type: 'secondary',
-																								candidates:
-																									working.keywordResearch?.secondaryCandidates?.slice(
-																										0,
-																										12
-																									) ||
-																									[],
-																							},
-																					},
-																				]
-																			);
-																		}
-																	} finally {
-																		setIsThinking(
-																			false
-																		);
-																	}
-																}}
-															>
-																Select
-															</button>
-														</div>
-													)
-												)}
-											</div>
+											<PrimaryKeywordSelection
+												candidates={
+													m
+														.keywordSelection
+														.candidates
+												}
+												agent={
+													agent
+												}
+												completedSelections={
+													completedSelections
+												}
+												setCompletedSelections={
+													setCompletedSelections
+												}
+												setMessages={
+													setMessages
+												}
+												setAgent={
+													setAgent
+												}
+												updateData={
+													updateData
+												}
+												setIsThinking={
+													setIsThinking
+												}
+												setOutline={
+													setOutline
+												}
+												setDraft={
+													setDraft
+												}
+												setTraceItems={
+													setTraceItems
+												}
+											/>
 										)}
 
 										{/* Secondary Keyword Selection */}
 										{m.keywordSelection
 											?.type ===
 											'secondary' && (
-											<>
-												<div className='mt-3 grid grid-cols-1 md:grid-cols-2 gap-2'>
-													{m.keywordSelection.candidates.map(
-														(
-															kw,
-															idx
-														) => {
-															const checked =
-																selectedSecondaries.includes(
-																	kw.text
-																);
-															return (
-																<label
-																	key={
-																		idx
-																	}
-																	className='flex items-center justify-between text-sm bg-white border rounded p-2 cursor-pointer hover:bg-gray-50'
-																>
-																	<div className='flex items-center gap-2'>
-																		<input
-																			type='checkbox'
-																			disabled={completedSelections.has(
-																				'secondaryKeywords'
-																			)}
-																			checked={
-																				checked
-																			}
-																			onChange={(
-																				e
-																			) => {
-																				setSelectedSecondaries(
-																					(
-																						prev
-																					) => {
-																						if (
-																							e
-																								.target
-																								.checked
-																						) {
-																							const next =
-																								[
-																									...prev,
-																									kw.text,
-																								];
-																							return next.slice(
-																								0,
-																								5
-																							);
-																						}
-																						return prev.filter(
-																							(
-																								x
-																							) =>
-																								x !==
-																								kw.text
-																						);
-																					}
-																				);
-																			}}
-																			className='w-4 h-4 text-orange-600 focus:ring-orange-500 border-gray-300 rounded'
-																		/>
-																		<div>
-																			<div className='font-medium text-gray-800'>
-																				{
-																					kw.text
-																				}
-																			</div>
-																			<div className='text-xs text-gray-500'>
-																				Vol:{' '}
-																				{
-																					kw.volume
-																				}{' '}
-																				·
-																				Diff:{' '}
-																				{kw.difficulty.toFixed(
-																					2
-																				)}
-																			</div>
-																		</div>
-																	</div>
-																</label>
-															);
-														}
-													)}
-												</div>
-												<div className='mt-3 text-right'>
-													<button
-														disabled={
-															completedSelections.has(
-																'secondaryKeywords'
-															) ||
-															selectedSecondaries.length ===
-																0
-														}
-														className='px-4 py-2 text-sm bg-orange-600 text-white rounded hover:bg-orange-700 transition-colors disabled:bg-orange-300 disabled:cursor-not-allowed'
-														onClick={async () => {
-															if (
-																!agent
-															)
-																return;
-
-															setCompletedSelections(
-																(
-																	prev
-																) =>
-																	new Set(
-																		prev
-																	).add(
-																		'secondaryKeywords'
-																	)
-															);
-															setMessages(
-																(
-																	prev
-																) => [
-																	...prev,
-																	{
-																		role: 'user',
-																		content: `Selected ${
-																			selectedSecondaries.length
-																		} secondary keywords: ${selectedSecondaries.join(
-																			', '
-																		)}`,
-																	},
-																	{
-																		role: 'assistant',
-																		content: `✅ Added ${selectedSecondaries.length} secondary keywords. Continuing...`,
-																	},
-																]
-															);
-
-															const next =
-																{
-																	...agent,
-																	data: {
-																		...agent.data,
-																		secondaryKeywords:
-																			selectedSecondaries,
-																	},
-																} as AgentState;
-															setAgent(
-																next
-															);
-															updateData(
-																{
-																	secondaryKeywords:
-																		selectedSecondaries,
-																}
-															);
-															setIsThinking(
-																true
-															);
-
-															try {
-																let working =
-																	next;
-																let guard = 0;
-																while (
-																	guard++ <
-																	20
-																) {
-																	const {
-																		state: ns,
-																		halted,
-																	} =
-																		await lgRunNext(
-																			working
-																		);
-																	working =
-																		ns;
-
-																	// Break if halted and needs user input
-																	if (
-																		halted &&
-																		automationEngine.needsUserInput(
-																			ns
-																		)
-																	) {
-																		break;
-																	}
-																}
-
-																setAgent(
-																	working
-																);
-																setOutline(
-																	working.outline
-																);
-																setDraft(
-																	working.draft
-																);
-																setTraceItems(
-																	working.trace.map(
-																		(
-																			t
-																		) => ({
-																			step: t.step,
-																			at: t.at,
-																		})
-																	)
-																);
-																updateData(
-																	{
-																		outline: working.outline,
-																		blogContent:
-																			working.draft,
-																		title: working
-																			.data
-																			.title,
-																	}
-																);
-
-																// ✨ Display title selection UI if needed
-																if (
-																	working
-																		.halt
-																		?.reason ===
-																		'await_title_selection' &&
-																	working.titleOptions &&
-																	working
-																		.titleOptions
-																		.length >
-																		0
-																) {
-																	setMessages(
-																		(
-																			prev
-																		) => [
-																			...prev,
-																			{
-																				role: 'assistant',
-																				content: '📝 Select a blog title from the options below:\n\n💡 Tip: If you would like to provide your own title, simply type it in the chat!',
-																				titleSelection:
-																					{
-																						titles: working.titleOptions,
-																					},
-																			},
-																		]
-																	);
-																}
-
-																// ✨ Display interlinking UI if needed
-																if (
-																	working
-																		.halt
-																		?.reason ===
-																	'await_interlinking'
-																) {
-																	setMessages(
-																		(
-																			prev
-																		) => [
-																			...prev,
-																			{
-																				role: 'assistant',
-																				content: '🔗 Add internal/external links (optional) or click "Continue" to skip:',
-																				interlinkingForm:
-																					{
-																						currentLinks:
-																							working
-																								.data
-																								.interlinks ||
-																							[],
-																					},
-																			},
-																		]
-																	);
-																}
-
-																// ✨ Display references form if needed
-																if (
-																	working
-																		.halt
-																		?.reason ===
-																	'await_references'
-																) {
-																	setMessages(
-																		(
-																			prev
-																		) => [
-																			...prev,
-																			{
-																				role: 'assistant',
-																				content: '📚 Add reference materials (URLs or files) to improve content quality, or click "Continue" to skip:',
-																				referencesForm:
-																					{
-																						currentUrls:
-																							working
-																								.data
-																								.referenceUrls ||
-																							[],
-																						currentFiles:
-																							working
-																								.data
-																								.referenceFiles ||
-																							[],
-																					},
-																			},
-																		]
-																	);
-																}
-															} finally {
-																setIsThinking(
-																	false
-																);
-															}
-														}}
-													>
-														Continue
-														(
-														{
-															selectedSecondaries.length
-														}{' '}
-														selected)
-													</button>
-												</div>
-											</>
+											<SecondaryKeywordSelection
+												candidates={
+													m
+														.keywordSelection
+														.candidates
+												}
+												agent={
+													agent
+												}
+												selectedSecondaries={
+													selectedSecondaries
+												}
+												setSelectedSecondaries={
+													setSelectedSecondaries
+												}
+												completedSelections={
+													completedSelections
+												}
+												setCompletedSelections={
+													setCompletedSelections
+												}
+												setMessages={
+													setMessages
+												}
+												setAgent={
+													setAgent
+												}
+												updateData={
+													updateData
+												}
+												setIsThinking={
+													setIsThinking
+												}
+												setOutline={
+													setOutline
+												}
+												setDraft={
+													setDraft
+												}
+												setTraceItems={
+													setTraceItems
+												}
+											/>
 										)}
 
 										{/* Title Selection */}
 										{m.titleSelection &&
-										m.titleSelection
-											.titles &&
-										m.titleSelection
-											.titles
-											.length >
-											0 ? (
-											<div className='mt-3 space-y-2'>
-												{m.titleSelection.titles.map(
-													(
-														title,
-														idx
-													) => (
-														<div
-															key={
-																idx
-															}
-															className='flex items-center justify-between text-sm bg-white border rounded p-3 hover:bg-gray-50 transition-colors'
-														>
-															<div className='flex-1 font-medium text-gray-800'>
-																{
-																	title
-																}
-															</div>
-															<button
-																disabled={completedSelections.has(
-																	'title'
-																)}
-																className={`px-3 py-1 text-xs text-white rounded transition-colors ml-3 ${
-																	completedSelections.has(
-																		'title'
-																	)
-																		? 'bg-gray-400 cursor-not-allowed'
-																		: 'bg-purple-500 hover:bg-purple-600'
-																}`}
-																onClick={async () => {
-																	if (
-																		!agent
-																	)
-																		return;
-
-																	setCompletedSelections(
-																		(
-																			prev
-																		) =>
-																			new Set(
-																				prev
-																			).add(
-																				'title'
-																			)
-																	);
-																	setMessages(
-																		(
-																			prev
-																		) => [
-																			...prev,
-																			{
-																				role: 'user',
-																				content: `Select "${title}" as title`,
-																			},
-																			{
-																				role: 'assistant',
-																				content: `✅ Selected title. Continuing...`,
-																			},
-																		]
-																	);
-
-																	const next =
-																		{
-																			...agent,
-																			data: {
-																				...agent.data,
-																				title,
-																			},
-																			titleSelected:
-																				true,
-																		} as AgentState;
-																	setAgent(
-																		next
-																	);
-																	updateData(
-																		{
-																			title,
-																		}
-																	);
-																	setIsThinking(
-																		true
-																	);
-
-																	try {
-																		let working =
-																			next;
-																		let guard = 0;
-																		while (
-																			guard++ <
-																			20
-																		) {
-																			const {
-																				state: ns,
-																				halted,
-																			} =
-																				await lgRunNext(
-																					working
-																				);
-																			working =
-																				ns;
-
-																			// Break if halted and needs user input
-																			if (
-																				halted &&
-																				automationEngine.needsUserInput(
-																					ns
-																				)
-																			) {
-																				break;
-																			}
-																		}
-
-																		setAgent(
-																			working
-																		);
-																		setOutline(
-																			working.outline
-																		);
-																		setDraft(
-																			working.draft
-																		);
-																		setTraceItems(
-																			working.trace.map(
-																				(
-																					t
-																				) => ({
-																					step: t.step,
-																					at: t.at,
-																				})
-																			)
-																		);
-																		updateData(
-																			{
-																				outline: working.outline,
-																				blogContent:
-																					working.draft,
-																			}
-																		);
-
-																		// ✨ Display interlinking UI if needed
-																		if (
-																			working
-																				.halt
-																				?.reason ===
-																			'await_interlinking'
-																		) {
-																			setMessages(
-																				(
-																					prev
-																				) => [
-																					...prev,
-																					{
-																						role: 'assistant',
-																						content: '🔗 Add internal/external links (optional) or click "Continue" to skip:',
-																						interlinkingForm:
-																							{
-																								currentLinks:
-																									working
-																										.data
-																										.interlinks ||
-																									[],
-																							},
-																					},
-																				]
-																			);
-																		}
-
-																		// ✨ Display references form if needed
-																		if (
-																			working
-																				.halt
-																				?.reason ===
-																			'await_references'
-																		) {
-																			setMessages(
-																				(
-																					prev
-																				) => [
-																					...prev,
-																					{
-																						role: 'assistant',
-																						content: '📚 Add reference materials (URLs or files) to improve content quality, or click "Continue" to skip:',
-																						referencesForm:
-																							{
-																								currentUrls:
-																									working
-																										.data
-																										.referenceUrls ||
-																									[],
-																								currentFiles:
-																									working
-																										.data
-																										.referenceFiles ||
-																									[],
-																							},
-																					},
-																				]
-																			);
-																		}
-
-																		// ✨ Display outline approval if needed
-																		if (
-																			working
-																				.halt
-																				?.reason ===
-																			'awaiting_approval'
-																		) {
-																			setMessages(
-																				(
-																					prev
-																				) => [
-																					...prev,
-																					{
-																						role: 'assistant',
-																						content: '📋 Outline is ready! Review it below and approve to continue, or provide feedback to regenerate:',
-																						outlineApproval:
-																							{
-																								outline:
-																									working.outline ||
-																									[],
-																							},
-																					},
-																				]
-																			);
-																		}
-																	} finally {
-																		setIsThinking(
-																			false
-																		);
-																	}
-																}}
-															>
-																Select
-															</button>
-														</div>
-													)
-												)}
-											</div>
-										) : null}
+											m
+												.titleSelection
+												.titles &&
+											m
+												.titleSelection
+												.titles
+												.length >
+												0 && (
+												<TitleSelection
+													titles={
+														m
+															.titleSelection
+															.titles
+													}
+													agent={
+														agent
+													}
+													completedSelections={
+														completedSelections
+													}
+													setCompletedSelections={
+														setCompletedSelections
+													}
+													setMessages={
+														setMessages
+													}
+													setAgent={
+														setAgent
+													}
+													updateData={
+														updateData
+													}
+													setIsThinking={
+														setIsThinking
+													}
+													setOutline={
+														setOutline
+													}
+													setDraft={
+														setDraft
+													}
+													setTraceItems={
+														setTraceItems
+													}
+												/>
+											)}
 
 										{/* Interlinking Form */}
 										{m.interlinkingForm && (
-											<div className='mt-3'>
-												{m
-													.interlinkingForm
-													.currentLinks &&
+											<InterlinkingForm
+												currentLinks={
 													m
 														.interlinkingForm
-														.currentLinks
-														.length >
-														0 && (
-														<div className='space-y-2 mb-3'>
-															{m.interlinkingForm.currentLinks.map(
-																(
-																	link
-																) => (
-																	<div
-																		key={
-																			link.id
-																		}
-																		className='flex items-center justify-between text-sm bg-white border rounded p-2'
-																	>
-																		<div>
-																			<div className='font-medium text-gray-800'>
-																				{
-																					link.keyword
-																				}
-																			</div>
-																			<div className='text-xs text-blue-600 break-all'>
-																				{
-																					link.url
-																				}
-																			</div>
-																		</div>
-																		<button
-																			className='px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600 transition-colors'
-																			onClick={() => {
-																				updateData(
-																					{
-																						interlinks:
-																							data.interlinks.filter(
-																								(
-																									l
-																								) =>
-																									l.id !==
-																									link.id
-																							),
-																					}
-																				);
-																				// Update the message to reflect the change
-																				setMessages(
-																					(
-																						prev
-																					) =>
-																						prev.map(
-																							(
-																								msg,
-																								i
-																							) => {
-																								if (
-																									i ===
-																										messages.length -
-																											1 &&
-																									msg.interlinkingForm
-																								) {
-																									return {
-																										...msg,
-																										interlinkingForm:
-																											{
-																												currentLinks:
-																													data.interlinks.filter(
-																														(
-																															l
-																														) =>
-																															l.id !==
-																															link.id
-																													),
-																											},
-																									};
-																								}
-																								return msg;
-																							}
-																						)
-																				);
-																			}}
-																		>
-																			Remove
-																		</button>
-																	</div>
-																)
-															)}
-														</div>
-													)}
-
-												<div className='flex gap-2 mb-3'>
-													<input
-														disabled={completedSelections.has(
-															'interlinking'
-														)}
-														type='text'
-														placeholder='Keyword/Anchor Text'
-														value={
-															interlinkKeyword
-														}
-														onChange={(
-															e
-														) =>
-															setInterlinkKeyword(
-																e
-																	.target
-																	.value
-															)
-														}
-														className='flex-1 px-3 py-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-green-500 focus:border-green-500 disabled:bg-gray-100 disabled:cursor-not-allowed'
-													/>
-													<input
-														disabled={completedSelections.has(
-															'interlinking'
-														)}
-														type='text'
-														placeholder='URL'
-														value={
-															interlinkUrl
-														}
-														onChange={(
-															e
-														) =>
-															setInterlinkUrl(
-																e
-																	.target
-																	.value
-															)
-														}
-														className='flex-1 px-3 py-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-green-500 focus:border-green-500 disabled:bg-gray-100 disabled:cursor-not-allowed'
-													/>
-													<button
-														className='px-3 py-2 text-sm bg-green-500 text-white rounded hover:bg-green-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed'
-														disabled={
-															!interlinkKeyword.trim() ||
-															!interlinkUrl.trim()
-														}
-														onClick={() => {
-															if (
-																interlinkKeyword.trim() &&
-																interlinkUrl.trim()
-															) {
-																const newLink: Interlink =
-																	{
-																		id: Date.now().toString(),
-																		keyword: interlinkKeyword.trim(),
-																		url: interlinkUrl.trim(),
-																	};
-																updateData(
-																	{
-																		interlinks:
-																			[
-																				...data.interlinks,
-																				newLink,
-																			],
-																	}
-																);
-																// Update the message
-																setMessages(
-																	(
-																		prev
-																	) =>
-																		prev.map(
-																			(
-																				msg,
-																				i
-																			) => {
-																				if (
-																					i ===
-																						messages.length -
-																							1 &&
-																					msg.interlinkingForm
-																				) {
-																					return {
-																						...msg,
-																						interlinkingForm:
-																							{
-																								currentLinks:
-																									[
-																										...data.interlinks,
-																										newLink,
-																									],
-																							},
-																					};
-																				}
-																				return msg;
-																			}
-																		)
-																);
-																setInterlinkKeyword(
-																	''
-																);
-																setInterlinkUrl(
-																	''
-																);
-															}
-														}}
-													>
-														Add
-													</button>
-												</div>
-
-												<div className='text-right'>
-													<button
-														disabled={completedSelections.has(
-															'interlinking'
-														)}
-														className={`px-4 py-2 text-sm text-white rounded transition-colors ${
-															completedSelections.has(
-																'interlinking'
-															)
-																? 'bg-gray-400 cursor-not-allowed'
-																: 'bg-green-600 hover:bg-green-700'
-														}`}
-														onClick={async () => {
-															if (
-																!agent
-															)
-																return;
-
-															setCompletedSelections(
-																(
-																	prev
-																) =>
-																	new Set(
-																		prev
-																	).add(
-																		'interlinking'
-																	)
-															);
-															setMessages(
-																(
-																	prev
-																) => [
-																	...prev,
-																	{
-																		role: 'user',
-																		content:
-																			data
-																				.interlinks
-																				.length >
-																			0
-																				? `Added ${data.interlinks.length} link(s). Continue.`
-																				: 'Skip interlinking',
-																	},
-																	{
-																		role: 'assistant',
-																		content:
-																			data
-																				.interlinks
-																				.length >
-																			0
-																				? `✅ Added ${data.interlinks.length} internal/external links. Continuing...`
-																				: '⏭️ Skipped interlinking. Continuing...',
-																	},
-																]
-															);
-
-															const next =
-																{
-																	...agent,
-																	interlinkingCompleted:
-																		true,
-																} as AgentState;
-															setAgent(
-																next
-															);
-															setIsThinking(
-																true
-															);
-
-															try {
-																let working =
-																	next;
-																let guard = 0;
-																while (
-																	guard++ <
-																	20
-																) {
-																	const {
-																		state: ns,
-																		halted,
-																	} =
-																		await lgRunNext(
-																			working
-																		);
-																	working =
-																		ns;
-
-																	// Break if halted and needs user input
-																	if (
-																		halted &&
-																		automationEngine.needsUserInput(
-																			ns
-																		)
-																	) {
-																		break;
-																	}
-																}
-
-																setAgent(
-																	working
-																);
-																setOutline(
-																	working.outline
-																);
-																setDraft(
-																	working.draft
-																);
-																setTraceItems(
-																	working.trace.map(
-																		(
-																			t
-																		) => ({
-																			step: t.step,
-																			at: t.at,
-																		})
-																	)
-																);
-																updateData(
-																	{
-																		outline: working.outline,
-																		blogContent:
-																			working.draft,
-																	}
-																);
-
-																// ✨ Display references form if needed
-																if (
-																	working
-																		.halt
-																		?.reason ===
-																	'await_references'
-																) {
-																	setMessages(
-																		(
-																			prev
-																		) => [
-																			...prev,
-																			{
-																				role: 'assistant',
-																				content: '📚 Add reference materials (URLs or files) to improve content quality, or click "Continue" to skip:',
-																				referencesForm:
-																					{
-																						currentUrls:
-																							working
-																								.data
-																								.referenceUrls ||
-																							[],
-																						currentFiles:
-																							working
-																								.data
-																								.referenceFiles ||
-																							[],
-																					},
-																			},
-																		]
-																	);
-																}
-
-																// ✨ Display outline approval if needed
-																if (
-																	working
-																		.halt
-																		?.reason ===
-																	'awaiting_approval'
-																) {
-																	setMessages(
-																		(
-																			prev
-																		) => [
-																			...prev,
-																			{
-																				role: 'assistant',
-																				content: '📋 Outline is ready! Review it below and approve to continue, or provide feedback to regenerate:',
-																				outlineApproval:
-																					{
-																						outline:
-																							working.outline ||
-																							[],
-																					},
-																			},
-																		]
-																	);
-																}
-															} finally {
-																setIsThinking(
-																	false
-																);
-															}
-														}}
-													>
-														Continue{' '}
-														{data
-															.interlinks
-															.length >
-															0 &&
-															`(${data.interlinks.length} links)`}
-													</button>
-												</div>
-											</div>
+														.currentLinks ||
+													[]
+												}
+												agent={
+													agent
+												}
+												data={
+													data
+												}
+												completedSelections={
+													completedSelections
+												}
+												setCompletedSelections={
+													setCompletedSelections
+												}
+												setMessages={
+													setMessages
+												}
+												messages={
+													messages
+												}
+												setAgent={
+													setAgent
+												}
+												updateData={
+													updateData
+												}
+												setIsThinking={
+													setIsThinking
+												}
+												setOutline={
+													setOutline
+												}
+												setDraft={
+													setDraft
+												}
+												setTraceItems={
+													setTraceItems
+												}
+											/>
 										)}
 
 										{/* References Form */}
 										{m.referencesForm && (
-											<div className='mt-3'>
-												<div className='grid grid-cols-1 md:grid-cols-2 gap-4 mb-4'>
-													{/* URLs Section */}
-													<div className='bg-white p-3 rounded-md border border-yellow-200'>
-														<div className='font-semibold mb-2 text-gray-800 flex items-center gap-2 text-sm'>
-															🔗
-															Reference
-															URLs
-														</div>
-														{m
-															.referencesForm
-															.currentUrls
-															.length >
-															0 && (
-															<div className='space-y-2 mb-3 max-h-32 overflow-y-auto'>
-																{m.referencesForm.currentUrls.map(
-																	(
-																		url,
-																		idx
-																	) => (
-																		<div
-																			key={
-																				idx
-																			}
-																			className='flex items-center justify-between text-xs bg-gray-50 border rounded p-2'
-																		>
-																			<span className='truncate flex-1 text-blue-600'>
-																				{
-																					url
-																				}
-																			</span>
-																			<button
-																				className='px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600 transition-colors ml-2'
-																				onClick={() => {
-																					updateData(
-																						{
-																							referenceUrls:
-																								data.referenceUrls.filter(
-																									(
-																										_,
-																										i
-																									) =>
-																										i !==
-																										idx
-																								),
-																						}
-																					);
-																				}}
-																			>
-																				Remove
-																			</button>
-																		</div>
-																	)
-																)}
-															</div>
-														)}
-														<div className='flex gap-2'>
-															<input
-																type='text'
-																value={
-																	currentReferenceUrl
-																}
-																onChange={(
-																	e
-																) =>
-																	setCurrentReferenceUrl(
-																		e
-																			.target
-																			.value
-																	)
-																}
-																onKeyDown={(
-																	e
-																) => {
-																	if (
-																		e.key ===
-																			'Enter' &&
-																		currentReferenceUrl.trim()
-																	) {
-																		const url =
-																			currentReferenceUrl.trim();
-																		if (
-																			!data.referenceUrls.includes(
-																				url
-																			)
-																		) {
-																			updateData(
-																				{
-																					referenceUrls:
-																						[
-																							...(data.referenceUrls ||
-																								[]),
-																							url,
-																						],
-																				}
-																			);
-																			setCurrentReferenceUrl(
-																				''
-																			);
-																		}
-																	}
-																}}
-																placeholder='https://example.com/article'
-																className='flex-grow px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-yellow-500 focus:border-yellow-500'
-															/>
-															<button
-																onClick={() => {
-																	if (
-																		currentReferenceUrl.trim()
-																	) {
-																		const url =
-																			currentReferenceUrl.trim();
-																		if (
-																			!data.referenceUrls.includes(
-																				url
-																			)
-																		) {
-																			updateData(
-																				{
-																					referenceUrls:
-																						[
-																							...(data.referenceUrls ||
-																								[]),
-																							url,
-																						],
-																				}
-																			);
-																			setCurrentReferenceUrl(
-																				''
-																			);
-																		}
-																	}
-																}}
-																className='px-4 py-2 text-sm bg-gray-200 text-gray-700 border border-gray-300 rounded-md hover:bg-gray-300'
-															>
-																Add
-															</button>
-														</div>
-													</div>
-
-													{/* Files Section */}
-													<div className='bg-white p-3 rounded-md border border-yellow-200'>
-														<div className='font-semibold mb-2 text-gray-800 flex items-center gap-2 text-sm'>
-															📄
-															Upload
-															Files
-															(PDF/DOCX)
-														</div>
-														{m
-															.referencesForm
-															.currentFiles
-															.length >
-															0 && (
-															<div className='space-y-2 mb-3 max-h-32 overflow-y-auto'>
-																{m.referencesForm.currentFiles.map(
-																	(
-																		file,
-																		idx
-																	) => (
-																		<div
-																			key={
-																				idx
-																			}
-																			className='flex items-center justify-between text-xs bg-gray-50 border rounded p-2'
-																		>
-																			<span className='truncate flex-1'>
-																				{
-																					file.name
-																				}
-																			</span>
-																			<button
-																				className='px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600 transition-colors ml-2'
-																				onClick={() => {
-																					updateData(
-																						{
-																							referenceFiles:
-																								data.referenceFiles.filter(
-																									(
-																										_,
-																										i
-																									) =>
-																										i !==
-																										idx
-																								),
-																						}
-																					);
-																				}}
-																			>
-																				Remove
-																			</button>
-																		</div>
-																	)
-																)}
-															</div>
-														)}
-														<input
-															type='file'
-															accept='.pdf,.docx'
-															onChange={async (
-																e
-															) => {
-																const file =
-																	e
-																		.target
-																		.files?.[0];
-																if (
-																	file
-																) {
-																	try {
-																		const base64 =
-																			await fileToBase64(
-																				file
-																			);
-																		const newFile: ReferenceFile =
-																			{
-																				name: file.name,
-																				mimeType: file.type,
-																				base64: base64,
-																			};
-																		updateData(
-																			{
-																				referenceFiles:
-																					[
-																						...(data.referenceFiles ||
-																							[]),
-																						newFile,
-																					],
-																			}
-																		);
-																		e.target.value =
-																			'';
-																	} catch (err) {
-																		console.error(
-																			'Error reading file:',
-																			err
-																		);
-																	}
-																}
-															}}
-															className='block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-yellow-50 file:text-yellow-700 hover:file:bg-yellow-100 cursor-pointer'
-														/>
-													</div>
-												</div>
-
-												<div className='bg-white/70 p-3 rounded-md border border-yellow-200'>
-													<div className='text-sm text-gray-700 mb-2'>
-														<strong>
-															Added:
-														</strong>{' '}
-														{data
-															.referenceUrls
-															?.length ||
-															0}{' '}
-														URL(s),{' '}
-														{data
-															.referenceFiles
-															?.length ||
-															0}{' '}
-														File(s)
-													</div>
-													<button
-														disabled={completedSelections.has(
-															'references'
-														)}
-														className={`w-full px-4 py-2 text-sm font-semibold text-white rounded-lg shadow-md transition-all ${
-															completedSelections.has(
-																'references'
-															)
-																? 'bg-gray-400 cursor-not-allowed'
-																: 'bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 hover:shadow-lg'
-														}`}
-														onClick={async () => {
-															if (
-																!agent
-															)
-																return;
-
-															setCompletedSelections(
-																(
-																	prev
-																) =>
-																	new Set(
-																		prev
-																	).add(
-																		'references'
-																	)
-															);
-															setMessages(
-																(
-																	prev
-																) => [
-																	...prev,
-																	{
-																		role: 'user',
-																		content:
-																			(data
-																				.referenceUrls
-																				?.length ||
-																				0) +
-																				(data
-																					.referenceFiles
-																					?.length ||
-																					0) >
-																			0
-																				? `Added ${
-																						data
-																							.referenceUrls
-																							?.length ||
-																						0
-																				  } URL(s) and ${
-																						data
-																							.referenceFiles
-																							?.length ||
-																						0
-																				  } file(s). Continue.`
-																				: 'Skip references',
-																	},
-																	{
-																		role: 'assistant',
-																		content:
-																			(data
-																				.referenceUrls
-																				?.length ||
-																				0) +
-																				(data
-																					.referenceFiles
-																					?.length ||
-																					0) >
-																			0
-																				? `✅ Added reference materials. Continuing...`
-																				: '⏭️ Skipped references. Continuing...',
-																	},
-																]
-															);
-
-															const next =
-																{
-																	...agent,
-																	referencesCollected:
-																		true,
-																} as AgentState;
-															setAgent(
-																next
-															);
-															setIsThinking(
-																true
-															);
-
-															try {
-																let working =
-																	next;
-																let guard = 0;
-																while (
-																	guard++ <
-																	20
-																) {
-																	const {
-																		state: ns,
-																		halted,
-																	} =
-																		await lgRunNext(
-																			working
-																		);
-																	working =
-																		ns;
-
-																	// Break if halted and needs user input
-																	if (
-																		halted &&
-																		automationEngine.needsUserInput(
-																			ns
-																		)
-																	) {
-																		break;
-																	}
-																}
-
-																setAgent(
-																	working
-																);
-																setOutline(
-																	working.outline
-																);
-																setDraft(
-																	working.draft
-																);
-																setTraceItems(
-																	working.trace.map(
-																		(
-																			t
-																		) => ({
-																			step: t.step,
-																			at: t.at,
-																		})
-																	)
-																);
-																updateData(
-																	{
-																		outline: working.outline,
-																		blogContent:
-																			working.draft,
-																	}
-																);
-
-																// ✨ Display outline approval if needed
-																if (
-																	working
-																		.halt
-																		?.reason ===
-																	'awaiting_approval'
-																) {
-																	setMessages(
-																		(
-																			prev
-																		) => [
-																			...prev,
-																			{
-																				role: 'assistant',
-																				content: '📋 Outline is ready! Review it below and approve to continue, or provide feedback to regenerate:',
-																				outlineApproval:
-																					{
-																						outline:
-																							working.outline ||
-																							[],
-																					},
-																			},
-																		]
-																	);
-																}
-															} finally {
-																setIsThinking(
-																	false
-																);
-															}
-														}}
-													>
-														{(data
-															.referenceUrls
-															?.length ||
-															0) +
-															(data
-																.referenceFiles
-																?.length ||
-																0) >
-														0
-															? '✅ Continue with References'
-															: '⏭️ Skip & Continue'}
-													</button>
-												</div>
-											</div>
+											<ReferencesForm
+												currentUrls={
+													m
+														.referencesForm
+														.currentUrls ||
+													[]
+												}
+												currentFiles={
+													m
+														.referencesForm
+														.currentFiles ||
+													[]
+												}
+												agent={
+													agent
+												}
+												data={
+													data
+												}
+												completedSelections={
+													completedSelections
+												}
+												setCompletedSelections={
+													setCompletedSelections
+												}
+												setMessages={
+													setMessages
+												}
+												setAgent={
+													setAgent
+												}
+												updateData={
+													updateData
+												}
+												setIsThinking={
+													setIsThinking
+												}
+												setOutline={
+													setOutline
+												}
+												setDraft={
+													setDraft
+												}
+												setTraceItems={
+													setTraceItems
+												}
+											/>
 										)}
 
 										{/* Outline Approval */}
@@ -5341,317 +3772,55 @@ const AgentMode: React.FC<Props> = ({
 											m
 												.outlineApproval
 												.outline && (
-												<div className='mt-3'>
-													<DraggableOutline
-														outline={
-															m
-																.outlineApproval
-																.outline
-														}
-														onOutlineChange={(
-															newOutline
-														) => {
-															// Update the outline in the message
-															setMessages(
-																(
-																	prev
-																) =>
-																	prev.map(
-																		(
-																			msg,
-																			idx
-																		) =>
-																			idx ===
-																			messages.findIndex(
-																				(
-																					m2
-																				) =>
-																					m2 ===
-																					m
-																			)
-																				? {
-																						...msg,
-																						outlineApproval:
-																							{
-																								outline: newOutline,
-																							},
-																				  }
-																				: msg
-																	)
-															);
-
-															// Update the agent state
-															if (
-																agent
-															) {
-																setAgent(
-																	{
-																		...agent,
-																		outline: newOutline,
-																	}
-																);
-															}
-
-															// Update the outline state
-															setOutline(
-																newOutline
-															);
-
-															// Persist to data
-															updateData(
-																{
-																	outline: newOutline,
-																}
-															);
-														}}
-													/>
-
-													<div className='flex gap-3'>
-														<button
-															disabled={completedSelections.has(
-																'outline'
-															)}
-															className={`px-6 py-3 text-sm font-semibold rounded-xl transition-all duration-200 ${
-																completedSelections.has(
-																	'outline'
-																)
-																	? 'bg-gray-400 text-gray-200 cursor-not-allowed'
-																	: 'text-white bg-gradient-to-r from-orange-500 to-orange-600 hover:shadow-lg hover:shadow-orange-500/30'
-															}`}
-															onClick={async () => {
-																if (
-																	!agent
-																)
-																	return;
-
-																setCompletedSelections(
-																	(
-																		prev
-																	) =>
-																		new Set(
-																			prev
-																		).add(
-																			'outline'
-																		)
-																);
-																setMessages(
-																	(
-																		prev
-																	) => [
-																		...prev,
-																		{
-																			role: 'user',
-																			content: 'Approve outline',
-																		},
-																		{
-																			role: 'assistant',
-																			content: '✅ Outline approved! Starting blog generation...',
-																		},
-																	]
-																);
-
-																const next =
-																	{
-																		...agent,
-																		outlineApproved:
-																			true,
-																	} as AgentState;
-																setAgent(
-																	next
-																);
-																setOutlineApproved(
-																	true
-																);
-																setViewMode(
-																	'markdown'
-																);
-																setIsThinking(
-																	true
-																);
-
-																try {
-																	let working =
-																		next;
-																	let guard = 0;
-																	let lastTraceLength = 0;
-
-																	while (
-																		guard++ <
-																		50
-																	) {
-																		const {
-																			state: ns,
-																			halted,
-																			step,
-																		} = await lgRunNext(
-																			working
-																		);
-																		working =
-																			ns;
-
-																		// Show progress messages
-																		if (
-																			working
-																				.trace
-																				.length >
-																			lastTraceLength
-																		) {
-																			const latestTrace =
-																				working
-																					.trace[
-																					working
-																						.trace
-																						.length -
-																						1
-																				];
-																			const stepMessage =
-																				getStepMessage(
-																					latestTrace.step,
-																					latestTrace.info
-																				);
-
-																			if (
-																				stepMessage
-																			) {
-																				setMessages(
-																					(
-																						prev
-																					) => [
-																						...prev,
-																						{
-																							role: 'assistant',
-																							content: stepMessage,
-																						},
-																					]
-																				);
-																				await new Promise(
-																					(
-																						resolve
-																					) =>
-																						setTimeout(
-																							resolve,
-																							300
-																						)
-																				);
-																			}
-																			lastTraceLength =
-																				working
-																					.trace
-																					.length;
-																		}
-
-																		// Update live state for progress indicator
-																		setAgent(
-																			working
-																		);
-																		setDraft(
-																			working.draft
-																		);
-																		setOutline(
-																			working.outline
-																		);
-
-																		// Break if halted and needs user input
-																		if (
-																			halted &&
-																			automationEngine.needsUserInput(
-																				ns
-																			)
-																		) {
-																			break;
-																		}
-																	}
-
-																	setAgent(
-																		working
-																	);
-																	setOutline(
-																		working.outline
-																	);
-																	setDraft(
-																		working.draft
-																	);
-																	setTraceItems(
-																		working.trace.map(
-																			(
-																				t
-																			) => ({
-																				step: t.step,
-																				at: t.at,
-																			})
-																		)
-																	);
-																	updateData(
-																		{
-																			outline: working.outline,
-																			blogContent:
-																				working.draft,
-																		}
-																	);
-
-																	// Show completion message
-																	if (
-																		working.finalBlogGenerated
-																	) {
-																		setMessages(
-																			(
-																				prev
-																			) => [
-																				...prev,
-																				{
-																					role: 'assistant',
-																					content: '🎉 Blog generation complete! Your content is ready in the Live Draft.',
-																				},
-																			]
-																		);
-																	}
-																} finally {
-																	setIsThinking(
-																		false
-																	);
-																}
-															}}
-														>
-															✅
-															Approve
-															Outline
-														</button>
-														<button
-															className='px-4 py-3 text-sm font-semibold bg-gray-200 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-300 transition-all'
-															onClick={() => {
-																setInput(
-																	'Regenerate the outline with more detail'
-																);
-															}}
-														>
-															💬
-															Request
-															Changes
-														</button>
-													</div>
-
-													<div className='mt-3 text-xs text-gray-600 bg-blue-50 p-2 rounded'>
-														💡{' '}
-														<strong>
-															Tip:
-														</strong>{' '}
-														Type
-														feedback
-														like
-														"Add
-														a
-														section
-														about
-														X"
-														or
-														"Make
-														it
-														more
-														technical"
-														to
-														regenerate
-													</div>
-												</div>
+												<OutlineApproval
+													outline={
+														m
+															.outlineApproval
+															.outline
+													}
+													agent={
+														agent
+													}
+													completedSelections={
+														completedSelections
+													}
+													setCompletedSelections={
+														setCompletedSelections
+													}
+													setMessages={
+														setMessages
+													}
+													messages={
+														messages
+													}
+													setAgent={
+														setAgent
+													}
+													updateData={
+														updateData
+													}
+													setOutline={
+														setOutline
+													}
+													setIsThinking={
+														setIsThinking
+													}
+													setDraft={
+														setDraft
+													}
+													setTraceItems={
+														setTraceItems
+													}
+													setInput={
+														setInput
+													}
+													setOutlineApproved={
+														setOutlineApproved
+													}
+													setViewMode={
+														setViewMode
+													}
+												/>
 											)}
 
 										{/* Control Level Selection - Removed as we now use intelligent flow detection */}
@@ -5716,12 +3885,9 @@ const AgentMode: React.FC<Props> = ({
 												? 'cursor-not-allowed opacity-60'
 												: ''
 										}`}
-										style={{
-											minHeight:
-												'24px',
-											maxHeight:
-												'200px',
-										}}
+										style={
+											inputTextareaStyles
+										}
 									/>
 									<button
 										onClick={handleSend}
