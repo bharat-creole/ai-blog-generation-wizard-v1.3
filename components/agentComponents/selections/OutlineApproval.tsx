@@ -22,6 +22,8 @@ interface OutlineApprovalProps {
 	setInput: React.Dispatch<React.SetStateAction<string>>;
 	setOutlineApproved: React.Dispatch<React.SetStateAction<boolean>>;
 	setViewMode: React.Dispatch<React.SetStateAction<string>>;
+	setShowBlogContent: React.Dispatch<React.SetStateAction<boolean>>;
+	onCollapseSidebar?: () => void;
 }
 
 const OutlineApproval: React.FC<OutlineApprovalProps> = ({
@@ -40,6 +42,8 @@ const OutlineApproval: React.FC<OutlineApprovalProps> = ({
 	setInput,
 	setOutlineApproved,
 	setViewMode,
+	setShowBlogContent,
+	onCollapseSidebar,
 }) => {
 	const handleApprove = async () => {
 		if (!agent) return;
@@ -64,7 +68,13 @@ const OutlineApproval: React.FC<OutlineApprovalProps> = ({
 		setAgent(next);
 		setOutlineApproved(true);
 		setViewMode('markdown');
+		setShowBlogContent(true); // Show blog content immediately for animation
 		setIsThinking(true);
+		
+		// Collapse sidebar when blog content appears
+		if (onCollapseSidebar) {
+			onCollapseSidebar();
+		}
 
 		try {
 			let working = next;
@@ -74,6 +84,20 @@ const OutlineApproval: React.FC<OutlineApprovalProps> = ({
 			while (guard++ < 50) {
 				const { state: ns, halted, step } = await lgRunNext(working);
 				working = ns;
+
+				// Update live state during generation (for real-time content display)
+				setAgent(working);
+				setOutlineState(working.outline);
+				setDraft(working.draft); // Update draft in real-time as content is generated
+				setTraceItems(working.trace.map((t) => ({ step: t.step, at: t.at })));
+				
+				// Update blog data in real-time so content appears section by section
+				if (working.draft && working.draft.trim().length > 0) {
+					updateData({
+						blogContent: working.draft,
+						outline: working.outline,
+					});
+				}
 
 				// Show progress messages
 				if (working.trace.length > lastTraceLength) {
@@ -99,6 +123,7 @@ const OutlineApproval: React.FC<OutlineApprovalProps> = ({
 				}
 			}
 
+			// Final state update
 			setAgent(working);
 			setOutlineState(working.outline);
 			setDraft(working.draft);
