@@ -25,6 +25,18 @@ import {
 	ReferenceFile,
 } from '../types';
 
+// Extracted components
+import SettingsPanel from './agentComponents/panels/SettingsPanel';
+import BlogInfoPanel from './agentComponents/panels/BlogInfoPanel';
+import TracePanel from './agentComponents/panels/TracePanel';
+import DraggableOutline from './agentComponents/content/DraggableOutline';
+
+// Extracted utilities
+import {
+	fileToBase64,
+	getStepMessage,
+} from './agentComponents/utils/agentHelpers';
+
 interface Props {
 	data: BlogData;
 	updateData: (data: Partial<BlogData>) => void;
@@ -34,60 +46,7 @@ interface Props {
 	onCollapseSidebar?: () => void;
 }
 
-// Helper function to convert file to base64
-const fileToBase64 = (file: File): Promise<string> => {
-	return new Promise((resolve, reject) => {
-		const reader = new FileReader();
-		reader.readAsDataURL(file);
-		reader.onload = () => {
-			const result = reader.result as string;
-			// Remove "data:mime/type;base64," prefix
-			resolve(result.split(',')[1]);
-		};
-		reader.onerror = (error) => reject(error);
-	});
-};
-
-// Helper function to convert trace steps to user-friendly messages
-const getStepMessage = (
-	step: string,
-	info?: Record<string, any>
-): string | null => {
-	const messages: Record<string, string> = {
-		'KeywordResearch.primaryCandidates': `🔍 Researched ${info?.count || 0
-			} keyword options`,
-		'KeywordResearch.autoSelected': `✅ Selected "${info?.keyword}" as primary keyword`,
-		'KeywordResearch.userProvided': `✅ Using your keyword: "${info?.keyword}"`,
-		'KeywordResearch.secondaryCandidates': `🔍 Found ${info?.count || 0
-			} secondary keyword options`,
-		'KeywordResearch.secondaryAutoSelected': `✅ Selected ${info?.count || 0
-			} secondary keywords`,
-		'KeywordResearch.secondaryUserProvided': `✅ Using your ${info?.count || 0
-			} secondary keywords`,
-		'TitleGeneration.generated': `📝 Generated ${info?.count || 0
-			} title options`,
-		'TitleGeneration.autoSelected': `✅ Selected title: "${info?.title}"`,
-		'TitleGeneration.userProvided': `✅ Using your title: "${info?.title}"`,
-		'Interlinking.prompted': `🔗 Ready to add internal/external links (optional)`,
-		'Interlinking.autoSkipped': `⏭️ Skipped interlinking step`,
-		'Interlinking.userProvided': `✅ Added ${info?.count || 0} links`,
-		'ReferencesCollection.prompted': `📚 Ready to add reference URLs (optional)`,
-		'ReferencesCollection.autoSkipped': `⏭️ Skipped references step`,
-		'ReferencesCollection.userProvided': `✅ Added ${info?.count || 0
-			} references`,
-		'DiscoveryNode.generatedOutline': `📋 Generated outline with ${info?.h2Count || 0
-			} sections`,
-		'DiscoveryNode.regeneratedOutline': `🔄 Regenerated outline with ${info?.h2Count || 0
-			} sections based on your feedback`,
-		'ProposalNode.generatedSection': `✍️ Writing section ${(info?.sectionIndex || 0) + 1
-			}: ${info?.section}`,
-		'FinalBlog.generated': `🎉 Blog complete! ${info?.wordCount || 0
-			} words`,
-		'EstimatorNode.ranked': `📊 SEO analysis complete`,
-	};
-
-	return messages[step] || null;
-};
+// Helper functions moved to agentComponents/utils/agentHelpers.ts
 
 const markdownStyles = `
 	/* Thin scrollbars - visible only on hover/scroll */
@@ -244,6 +203,7 @@ const AgentMode: React.FC<Props> = ({
 		currentStep: string;
 		modificationInProgress: boolean;
 		userRequestedAutomation: boolean;
+		pendingModificationRequest: string | null; // Store the original modification request
 	}>({
 		automationLevel: 'guided', // Default to guided
 		hasProvidedInfo: false,
@@ -252,11 +212,12 @@ const AgentMode: React.FC<Props> = ({
 		currentStep: 'initial',
 		modificationInProgress: false,
 		userRequestedAutomation: false,
+		pendingModificationRequest: null,
 	});
 	const [messages, setMessages] = useState<ChatMessage[]>([
 		{
 			role: 'assistant',
-			content: "Hello! I'm your Blog Agent 🤖. Let's create an SEO-optimized blog post together.\n\nTo get started, please provide the following details:\n\n- **Topic:** The subject of your blog.\n- **Primary Keyword:** One main keyword for SEO focus.\n- **Secondary Keywords:** Up to five additional keywords.\n- **Title (Optional):** Your desired title.\n- **Reference Links (Optional):** Any external links for research.\n- **Internal Links (Optional):** Any links to your own content.\n\nHere's an example of how you can provide this information:\n\n```\nTopic: The benefits of AI in marketing\nPrimary Keyword: AI marketing tools\nSecondary Keywords: machine learning, marketing automation, predictive analytics\n```\n\n**Tip:** You can also say **\"generate blog automatically\"** if you'd like me to handle everything for you!\n\nI'm ready when you are! 🚀",
+			content: `Hello! I'm your Blog Agent 🤖. `,
 		},
 	]);
 	const [input, setInput] = useState('');
@@ -314,9 +275,12 @@ const AgentMode: React.FC<Props> = ({
 		// If outline is approved and blog generation has started, disable chat
 		if (outlineApproved) return false;
 
+		// Don't allow sending while thinking or streaming
+		if (isThinking || isStreaming) return false;
+
 		// Otherwise, allow chat (including during outline approval for feedback)
 		return true;
-	}, [input, apiKey, outlineApproved]);
+	}, [input, apiKey, outlineApproved, isThinking, isStreaming]);
 
 	const isInputLocked = outlineApproved || isThinking || isStreaming;
 
@@ -344,9 +308,7 @@ const AgentMode: React.FC<Props> = ({
 	const handleSend = useCallback(async () => {
 		if (!canSend) return;
 		if (!apiKey) {
-			setError(
-				'Please set your Gemini API Key in Settings.'
-			);
+			setError('Please set your Gemini API Key in Settings.');
 			return;
 		}
 		setError(null);
@@ -354,6 +316,8 @@ const AgentMode: React.FC<Props> = ({
 			role: 'user',
 			content: input.trim(),
 		};
+
+		// Helper functions moved to agentComponents/utils/agentHelpers.ts
 
 		// ✨ Intelligent flow detection based on user input
 		const analyzeUserIntent = (content: string) => {
@@ -645,19 +609,19 @@ const AgentMode: React.FC<Props> = ({
 				let dataStatus =
 					'🎯 **Analyzing your existing data...**\n\n';
 				if (hasExistingData.topic)
-					dataStatus += `✅ Topic: ${currentTopic}\n`;
+					dataStatus += `✅ Topic: ${currentTopic} \n`;
 				if (hasExistingData.primaryKeyword)
-					dataStatus += `✅ Primary Keyword: ${data.primaryKeyword}\n`;
+					dataStatus += `✅ Primary Keyword: ${data.primaryKeyword} \n`;
 				if (hasExistingData.secondaryKeywords)
 					dataStatus += `✅ Secondary Keywords: ${data.secondaryKeywords.join(
 						', '
-					)}\n`;
+					)} \n`;
 				if (hasExistingData.title)
-					dataStatus += `✅ Title: ${data.title}\n`;
+					dataStatus += `✅ Title: ${data.title} \n`;
 				if (hasExistingData.references)
-					dataStatus += `✅ References: ${data.referenceUrls.length} link(s)\n`;
+					dataStatus += `✅ References: ${data.referenceUrls.length} link(s) \n`;
 				if (hasExistingData.interlinks)
-					dataStatus += `✅ Internal Links: ${data.interlinks.length} link(s)\n`;
+					dataStatus += `✅ Internal Links: ${data.interlinks.length} link(s) \n`;
 
 				dataStatus +=
 					"\n**Switching to Full Automation Mode...**\n\nI'll use this information and auto-generate the remaining content!";
@@ -728,7 +692,7 @@ const AgentMode: React.FC<Props> = ({
 					if (working.trace.length > lastTraceLength) {
 						const latestTrace =
 							working.trace[
-							working.trace.length - 1
+								working.trace.length - 1
 							];
 						const stepMessage = getStepMessage(
 							latestTrace.step,
@@ -802,7 +766,7 @@ const AgentMode: React.FC<Props> = ({
 				if (
 					!working.halt &&
 					(working.progress.sectionIndex ?? 0) >=
-					(working.outline?.length || 0) &&
+						(working.outline?.length || 0) &&
 					(working.outline?.length || 0) > 0
 				) {
 					setMessages((prev) => [
@@ -823,19 +787,10 @@ const AgentMode: React.FC<Props> = ({
 			return; // Return after processing
 		}
 
-		// Handle irrelevant queries - redirect to blog creation
-		if (!agent && intent.isIrrelevant) {
-			setMessages((prev) => [
-				...prev,
-				userMsg,
-				{
-					role: 'assistant',
-					content: "I'm focused on helping you create an SEO-optimized blog post. Let's get back to that!\n\nPlease provide your blog topic and keywords, or say **\"generate blog automatically\"** if you'd like me to handle everything.",
-				},
-			]);
-			setInput('');
-			return;
-		}
+		// ✨ REMOVED: Early-return logic for irrelevant queries
+		// This was preventing greetings and help requests from reaching the conversation handler
+		// Now ALL messages go through conversationHandler.processMessage which has proper
+		// intent classification for greetings, help requests, and off-topic queries
 
 		// Handle modification requests when agent already exists
 		if (
@@ -843,9 +798,30 @@ const AgentMode: React.FC<Props> = ({
 			intent.wantsModification &&
 			!flowContext.modificationInProgress
 		) {
+			console.log(
+				'═══════════════════════════════════════════════════'
+			);
+			console.log(
+				'🔄 [MODIFICATION FLOW - INITIATED] User wants to modify existing information'
+			);
+			console.log(`   User request: "${input.trim()}"`);
+			console.log(`   Current state:`, {
+				hasTopic: !!agent.data.topic,
+				hasPrimaryKeyword: !!agent.data.primaryKeyword,
+				hasTitle: !!agent.data.title,
+				hasOutline: agent.outline?.length > 0,
+				outlineApproved: agent.outlineApproved,
+			});
+			console.log('   Action: Asking for user confirmation');
+			console.log(
+				'═══════════════════════════════════════════════════'
+			);
+
+			// Store the original modification request
 			setFlowContext((prev) => ({
 				...prev,
 				modificationInProgress: true,
+				pendingModificationRequest: input.trim(), // Store the original request
 			}));
 			setMessages((prev) => [
 				...prev,
@@ -857,6 +833,614 @@ const AgentMode: React.FC<Props> = ({
 			]);
 			setInput('');
 			return;
+		}
+
+		// ✨ Handle modification confirmation response (yes/no)
+		if (
+			agent &&
+			flowContext.modificationInProgress &&
+			flowContext.pendingModificationRequest &&
+			/^(yes|no)$/i.test(input.trim())
+		) {
+			const confirmed = /^yes$/i.test(input.trim());
+
+			if (confirmed) {
+				// User confirmed - process the original modification request automatically
+				console.log(
+					'═══════════════════════════════════════════════════'
+				);
+				console.log(
+					'🔄 [MODIFICATION FLOW - STEP 1] User confirmed modification'
+				);
+				console.log(
+					`   Original request: "${flowContext.pendingModificationRequest}"`
+				);
+				console.log(`   Current agent state:`, {
+					hasTopic: !!agent.data.topic,
+					hasPrimaryKeyword: !!agent.data.primaryKeyword,
+					hasTitle: !!agent.data.title,
+					hasOutline: agent.outline?.length > 0,
+					outlineApproved: agent.outlineApproved,
+				});
+				console.log(
+					'═══════════════════════════════════════════════════'
+				);
+
+				// Capture modification request before clearing
+				const modificationRequest =
+					flowContext.pendingModificationRequest;
+
+				// Reset agent state to allow modifications
+				const modifiedAgent: AgentState = {
+					...agent,
+					outlineApproved: false,
+					outline: [], // Clear outline - will be regenerated
+					draft: '', // Clear draft to prevent auto-continuation
+					finalBlogGenerated: false,
+				};
+
+				setAgent(modifiedAgent);
+				setOutlineApproved(false);
+				setOutline([]);
+				setDraft('');
+				setShowBlogContent(false);
+
+				// Process the stored modification request through conversation handler
+				setInput('');
+				setIsThinking(true);
+
+				try {
+					console.log(
+						'🔄 [MODIFICATION FLOW - STEP 2] Processing modification through conversation handler'
+					);
+
+					// Process the original modification request
+					const modificationResponse =
+						await conversationHandler.processMessage(
+							modificationRequest,
+							modifiedAgent,
+							apiKey,
+							flowContext.automationLevel
+						);
+
+					console.log(
+						'🔄 [MODIFICATION FLOW - STEP 3] Modification processed, applying updates'
+					);
+					console.log(
+						`   Response message: "${modificationResponse.assistantMessage}"`
+					);
+					console.log(
+						`   State updates:`,
+						modificationResponse.stateUpdates
+					);
+
+					// Apply state updates
+					const updatedAgent = {
+						...modifiedAgent,
+						...modificationResponse.stateUpdates,
+					};
+					setAgent(updatedAgent);
+
+					// Update the main data
+					if (modificationResponse.stateUpdates?.data) {
+						const updatedData =
+							modificationResponse.stateUpdates
+								.data;
+
+						updateData({
+							...updatedData,
+						});
+
+						// Update local state variables to reflect changes in UI
+						if (updatedData.topic) {
+							setUserTopic(updatedData.topic);
+						}
+						if (updatedData.targetLocation) {
+							setTargetLocation(
+								updatedData.targetLocation
+							);
+						}
+
+						console.log(
+							'🔄 [MODIFICATION FLOW - STEP 4] Updated blog data:',
+							{
+								topic: updatedData.topic,
+								primaryKeyword:
+									updatedData.primaryKeyword,
+								title: updatedData.title,
+								secondaryKeywords:
+									updatedData
+										.secondaryKeywords
+										?.length || 0,
+								targetLocation:
+									updatedData.targetLocation,
+							}
+						);
+					}
+
+					// Show the modification was applied
+					setMessages((prev) => [
+						...prev,
+						userMsg,
+						{
+							role: 'assistant',
+							content: modificationResponse.assistantMessage,
+						},
+						{
+							role: 'assistant',
+							content: '✅ **Modification Applied!**\n\nWould you like to make any other changes to:\n- Primary keyword\n- Secondary keywords\n- Title\n- Target location\n- Internal/External links\n- Reference materials\n\nJust tell me what to change, or say **"continue"** or **"done"** to regenerate the outline.',
+						},
+					]);
+
+					console.log(
+						'🔄 [MODIFICATION FLOW - STEP 5] Staying in modification mode, waiting for user response'
+					);
+					console.log(
+						'═══════════════════════════════════════════════════'
+					);
+
+					setFlowContext((prev) => ({
+						...prev,
+						modificationInProgress: true, // Keep in modification mode
+						pendingModificationRequest: null, // Clear the pending request
+					}));
+				} catch (e: any) {
+					console.error(
+						'❌ [MODIFICATION FLOW - ERROR] Failed to process modification:',
+						e
+					);
+					setError(
+						e?.message ||
+							'Failed to process modification.'
+					);
+					setFlowContext((prev) => ({
+						...prev,
+						modificationInProgress: false,
+						pendingModificationRequest: null,
+					}));
+				} finally {
+					setIsThinking(false);
+				}
+			} else {
+				// User declined - cancel modification mode
+				console.log(
+					'═══════════════════════════════════════════════════'
+				);
+				console.log(
+					'🔄 [MODIFICATION FLOW] User declined modification'
+				);
+				console.log(
+					'   Action: Continuing with current blog setup'
+				);
+				console.log(
+					'═══════════════════════════════════════════════════'
+				);
+
+				setFlowContext((prev) => ({
+					...prev,
+					modificationInProgress: false,
+					pendingModificationRequest: null,
+				}));
+
+				setMessages((prev) => [
+					...prev,
+					userMsg,
+					{
+						role: 'assistant',
+						content: '👍 Got it! Continuing with the current blog setup.\n\nIf you need to make changes later, just let me know!',
+					},
+				]);
+			}
+
+			return;
+		}
+
+		// ✨ Handle modifications when in modification mode
+		if (agent && flowContext.modificationInProgress) {
+			// Check if user is done with modifications
+			if (
+				/^(continue|done|proceed|that's all|finish|complete)$/i.test(
+					input.trim()
+				)
+			) {
+				console.log(
+					'═══════════════════════════════════════════════════'
+				);
+				console.log(
+					'🔄 [MODIFICATION FLOW - STEP 6] User finished modifications'
+				);
+				console.log(
+					'   Action: Regenerating outline with updated information'
+				);
+				console.log(`   Current blog data:`, {
+					topic: agent.data.topic,
+					primaryKeyword: agent.data.primaryKeyword,
+					title: agent.data.title,
+					secondaryKeywords:
+						agent.data.secondaryKeywords?.length || 0,
+					targetLocation: agent.data.targetLocation,
+				});
+				console.log(
+					'═══════════════════════════════════════════════════'
+				);
+
+				// Reset modification mode
+				setFlowContext((prev) => ({
+					...prev,
+					modificationInProgress: false,
+					pendingModificationRequest: null,
+				}));
+
+				setMessages((prev) => [
+					...prev,
+					userMsg,
+					{
+						role: 'assistant',
+						content: '✅ **Modifications Complete!**\n\nRegenerating the outline with your updated information...',
+					},
+				]);
+
+				setInput('');
+				setIsThinking(true);
+
+				// Regenerate outline with modified agent state
+				try {
+					// Prepare agent for outline regeneration
+					const regeneratingAgent: AgentState = {
+						...agent,
+						outline: [], // Clear outline
+						outlineApproved: false,
+						draft: '',
+						finalBlogGenerated: false,
+					};
+
+					console.log(
+						'🔄 [MODIFICATION FLOW - STEP 7] Starting outline regeneration'
+					);
+
+					let working = regeneratingAgent;
+					const maxIterations = 100;
+					let guard = 0;
+					let lastTraceLength = 0;
+
+					while (guard++ < maxIterations) {
+						const {
+							state: ns,
+							halted,
+							step,
+						} = await lgRunNext(working);
+						working = ns;
+
+						console.log(
+							`🔄 [MODIFICATION FLOW - STEP 7.${guard}] Agent step: ${step}, halted: ${halted}`
+						);
+
+						// Show progress messages
+						if (
+							working.trace.length > lastTraceLength
+						) {
+							const latestTrace =
+								working.trace[
+									working.trace.length - 1
+								];
+							const stepMessage = getStepMessage(
+								latestTrace.step,
+								latestTrace.info
+							);
+
+							if (stepMessage) {
+								setMessages((prev) => [
+									...prev,
+									{
+										role: 'assistant',
+										content: stepMessage,
+									},
+								]);
+								setIsStreaming(true);
+								await new Promise((resolve) =>
+									setTimeout(resolve, 300)
+								);
+							}
+							lastTraceLength =
+								working.trace.length;
+						}
+
+						// Update live state
+						setAgent(working);
+						setDraft(working.draft);
+						setOutline(working.outline);
+
+						// If outline generation is complete (halted at awaiting_approval), stop
+						if (
+							halted &&
+							working.halt?.reason ===
+								'awaiting_approval' &&
+							working.outline?.length > 0
+						) {
+							console.log(
+								'🔄 [MODIFICATION FLOW - STEP 8] Outline regenerated successfully'
+							);
+							console.log(
+								`   New outline sections: ${working.outline.length}`
+							);
+							console.log(
+								'   Waiting for user approval'
+							);
+							break;
+						}
+
+						// Safety: Only halt if user input is actually needed
+						if (
+							halted &&
+							automationEngine.needsUserInput(ns)
+						) {
+							console.log(
+								'🔄 [MODIFICATION FLOW] Halted - user input needed'
+							);
+							break;
+						}
+					}
+
+					setAgent(working);
+					setOutline(working.outline);
+					setDraft(working.draft);
+					setUserTopic(working.data.topic || '');
+					setTargetLocation(
+						working.data.targetLocation ||
+							'United States'
+					);
+					setTraceItems(
+						working.trace.map((t) => ({
+							step: t.step,
+							at: t.at,
+						}))
+					);
+
+					// Update all blog data with modifications
+					updateData({
+						outline: working.outline,
+						blogContent: working.draft,
+						primaryKeyword: working.data.primaryKeyword,
+						secondaryKeywords:
+							working.data.secondaryKeywords,
+						topic: working.data.topic,
+						title: working.data.title,
+						interlinks: working.data.interlinks,
+						referenceUrls: working.data.referenceUrls,
+						targetLocation: working.data.targetLocation,
+					});
+
+					console.log(
+						'🔄 [MODIFICATION FLOW - STEP 8.1] Updated all state with regenerated data:',
+						{
+							outlineSections:
+								working.outline?.length || 0,
+							topic: working.data.topic,
+							primaryKeyword:
+								working.data.primaryKeyword,
+							title: working.data.title,
+						}
+					);
+
+					// Show outline for approval
+					if (
+						working.outline?.length > 0 &&
+						working.halt?.reason === 'awaiting_approval'
+					) {
+						// Ensure outline UI is visible
+						setShowOutline(true);
+						setViewMode('outline');
+						setOutlineApproved(false);
+						setShowBlogContent(false);
+
+						console.log(
+							'🔄 [MODIFICATION FLOW - STEP 8.2] Setting UI state to show outline'
+						);
+						console.log('   showOutline: true');
+						console.log('   viewMode: outline');
+						console.log('   outlineApproved: false');
+						console.log(
+							'   Displaying outline approval component in chat'
+						);
+
+						setMessages((prev) => [
+							...prev,
+							{
+								role: 'assistant',
+								content: '✅ **Outline Regenerated!**\n\nPlease review the updated outline below and approve to continue, or provide feedback to regenerate:',
+								outlineApproval: {
+									outline:
+										working.outline ||
+										[],
+								},
+							},
+						]);
+						console.log(
+							'🔄 [MODIFICATION FLOW - COMPLETE] Outline regeneration complete, awaiting approval'
+						);
+						console.log(
+							'   📊 Summary of changes applied:'
+						);
+						console.log(
+							`      - Topic: ${working.data.topic}`
+						);
+						console.log(
+							`      - Primary Keyword: ${working.data.primaryKeyword}`
+						);
+						console.log(
+							`      - Title: ${working.data.title}`
+						);
+						console.log(
+							`      - Secondary Keywords: ${
+								working.data.secondaryKeywords
+									?.length || 0
+							}`
+						);
+						console.log(
+							`      - Target Location: ${working.data.targetLocation}`
+						);
+						console.log(
+							`      - Outline Sections: ${working.outline.length}`
+						);
+						console.log(
+							'═══════════════════════════════════════════════════'
+						);
+					}
+				} catch (e: any) {
+					console.error(
+						'❌ [MODIFICATION FLOW - ERROR] Outline regeneration failed:',
+						e
+					);
+					setError(
+						e?.message ||
+							'Failed to regenerate outline.'
+					);
+				} finally {
+					setIsThinking(false);
+				}
+
+				return;
+			}
+
+			// ✨ User wants to make another modification while in modification mode
+			// Process it directly without asking for confirmation again
+			console.log(
+				'═══════════════════════════════════════════════════'
+			);
+			console.log(
+				'🔄 [MODIFICATION FLOW - ADDITIONAL CHANGE] Processing another modification'
+			);
+			console.log(`   Request: "${input.trim()}"`);
+			console.log(
+				'   Note: No confirmation needed - already in modification mode'
+			);
+			console.log(
+				'═══════════════════════════════════════════════════'
+			);
+
+			// Capture the modification request before clearing input
+			const modificationRequest = input.trim();
+
+			// Reset agent state to allow modifications
+			const modifiedAgent: AgentState = {
+				...agent,
+				outlineApproved: false,
+				outline: [], // Clear outline
+				draft: '',
+				finalBlogGenerated: false,
+			};
+
+			setAgent(modifiedAgent);
+			setOutlineApproved(false);
+			setOutline([]);
+			setDraft('');
+			setShowBlogContent(false);
+
+			setInput('');
+			setIsThinking(true);
+
+			try {
+				// Process the modification request
+				const modificationResponse =
+					await conversationHandler.processMessage(
+						modificationRequest,
+						modifiedAgent,
+						apiKey,
+						flowContext.automationLevel
+					);
+
+				console.log(
+					'🔄 [MODIFICATION FLOW - ADDITIONAL CHANGE] Modification processed'
+				);
+				console.log(
+					`   Response: "${modificationResponse.assistantMessage}"`
+				);
+
+				// Apply state updates
+				const updatedAgent = {
+					...modifiedAgent,
+					...modificationResponse.stateUpdates,
+				};
+				setAgent(updatedAgent);
+
+				// Update the main data
+				if (modificationResponse.stateUpdates?.data) {
+					const updatedData =
+						modificationResponse.stateUpdates.data;
+
+					updateData({
+						...updatedData,
+					});
+
+					// Update local state variables to reflect changes in UI
+					if (updatedData.topic) {
+						setUserTopic(updatedData.topic);
+					}
+					if (updatedData.targetLocation) {
+						setTargetLocation(
+							updatedData.targetLocation
+						);
+					}
+
+					console.log(
+						'🔄 [MODIFICATION FLOW - ADDITIONAL CHANGE] Updated UI state:',
+						{
+							topic: updatedData.topic,
+							primaryKeyword:
+								updatedData.primaryKeyword,
+							title: updatedData.title,
+							secondaryKeywords:
+								updatedData.secondaryKeywords
+									?.length || 0,
+							targetLocation:
+								updatedData.targetLocation,
+						}
+					);
+				}
+
+				// Show the modification was applied
+				setMessages((prev) => [
+					...prev,
+					userMsg,
+					{
+						role: 'assistant',
+						content: modificationResponse.assistantMessage,
+					},
+					{
+						role: 'assistant',
+						content: '✅ **Modification Applied!**\n\nWould you like to make any other changes?\n\n- To modify more, just tell me what to change\n- Or say **"continue"** or **"done"** to regenerate the outline',
+					},
+				]);
+
+				console.log(
+					'🔄 [MODIFICATION FLOW - ADDITIONAL CHANGE] Staying in modification mode'
+				);
+				console.log(
+					'═══════════════════════════════════════════════════'
+				);
+
+				// Keep in modification mode
+				setFlowContext((prev) => ({
+					...prev,
+					modificationInProgress: true,
+					pendingModificationRequest: null,
+				}));
+			} catch (e: any) {
+				console.error(
+					'❌ [MODIFICATION FLOW - ERROR] Additional modification failed:',
+					e
+				);
+				setError(
+					e?.message || 'Failed to process modification.'
+				);
+			} finally {
+				setIsThinking(false);
+			}
+
+			return;
+
+			// Otherwise, process the modification request through conversation handler
+			// Fall through to normal message processing
 		}
 
 		// Handle automation during guided flow
@@ -914,7 +1498,7 @@ const AgentMode: React.FC<Props> = ({
 					if (working.trace.length > lastTraceLength) {
 						const latestTrace =
 							working.trace[
-							working.trace.length - 1
+								working.trace.length - 1
 							];
 						const stepMessage = getStepMessage(
 							latestTrace.step,
@@ -988,7 +1572,7 @@ const AgentMode: React.FC<Props> = ({
 				if (
 					!working.halt &&
 					(working.progress.sectionIndex ?? 0) >=
-					(working.outline?.length || 0) &&
+						(working.outline?.length || 0) &&
 					(working.outline?.length || 0) > 0
 				) {
 					setMessages((prev) => [
@@ -1099,7 +1683,7 @@ const AgentMode: React.FC<Props> = ({
 					...prev,
 					{
 						role: 'assistant',
-						content: `🚀 **Perfect! Starting Full Automation...**\n\n**Topic:** ${currentTopic}\n\nI'll now auto-generate all the content for you. Sit back and watch the magic happen!`,
+						content: `🚀 ** Perfect! Starting Full Automation...**\n\n ** Topic:** ${currentTopic} \n\nI'll now auto-generate all the content for you. Sit back and watch the magic happen!`,
 					},
 				]);
 			} else if (isAutomationWithData) {
@@ -1117,8 +1701,9 @@ const AgentMode: React.FC<Props> = ({
 				let dataStatus =
 					'🎯 **Analyzing your existing data...**\n\n';
 				if (hasExistingData.topic)
-					dataStatus += `✅ Topic: ${userTopic || data.topic
-						}\n`;
+					dataStatus += `✅ Topic: ${
+						userTopic || data.topic
+					}\n`;
 				if (hasExistingData.primaryKeyword)
 					dataStatus += `✅ Primary Keyword: ${data.primaryKeyword}\n`;
 				if (hasExistingData.secondaryKeywords)
@@ -1192,7 +1777,7 @@ const AgentMode: React.FC<Props> = ({
 					if (working.trace.length > lastTraceLength) {
 						const latestTrace =
 							working.trace[
-							working.trace.length - 1
+								working.trace.length - 1
 							];
 						const stepMessage = getStepMessage(
 							latestTrace.step,
@@ -1288,7 +1873,7 @@ const AgentMode: React.FC<Props> = ({
 						...prev,
 						{
 							role: 'assistant',
-							content: '🎯 Please select a primary keyword from the options below:',
+							content: '🎯 Please select a primary keyword from the options below:\n\n💡 Tip: If you would like to provide your own primary keyword, simply type it in the chat!',
 							keywordSelection: {
 								type: 'primary',
 								candidates:
@@ -1307,7 +1892,7 @@ const AgentMode: React.FC<Props> = ({
 						...prev,
 						{
 							role: 'assistant',
-							content: '🎯 Select up to 5 secondary keywords:',
+							content: '🎯 Select up to 5 secondary keywords:\n\n💡 Tip: If you would like to provide your own secondary keywords, simply type them in the chat (comma-separated)!',
 							keywordSelection: {
 								type: 'secondary',
 								candidates:
@@ -1329,7 +1914,7 @@ const AgentMode: React.FC<Props> = ({
 							...prev,
 							{
 								role: 'assistant',
-								content: '📝 Select a blog title from the options below:',
+								content: '📝 Select a blog title from the options below:\n\n💡 Tip: If you would like to provide your own title, simply type it in the chat!',
 								titleSelection: {
 									titles: working.titleOptions,
 								},
@@ -1389,7 +1974,7 @@ const AgentMode: React.FC<Props> = ({
 			if (
 				!working.halt &&
 				(working.progress.sectionIndex ?? 0) >=
-				(working.outline?.length || 0) &&
+					(working.outline?.length || 0) &&
 				(working.outline?.length || 0) > 0
 			) {
 				setMessages((prev) => [
@@ -1420,73 +2005,6 @@ const AgentMode: React.FC<Props> = ({
 		flowContext,
 	]);
 
-	const handleSaveToWizard = () => {
-		updateData({ blogContent: draft, outline });
-	};
-
-	const handleGenerateOutline = async () => {
-		// Deprecated: Prefer running via LangGraph. Kept for manual use if needed.
-		if (!apiKey) {
-			setError(
-				'Please set your Gemini API Key in the Wizard first.'
-			);
-			return;
-		}
-		setError(null);
-		setIsThinking(true);
-		try {
-			const freshOutline = await geminiService.generateOutline(
-				{
-					...data,
-					topic: userTopic,
-					targetLocation: targetLocation,
-					primaryKeyword: data.primaryKeyword || userTopic,
-					outline: [],
-				},
-				apiKey
-			);
-			setOutline(freshOutline);
-		} catch (e: any) {
-			setError(e?.message || 'Failed to generate outline.');
-		} finally {
-			setIsThinking(false);
-		}
-	};
-
-	const handleGenerateFullDraft = async () => {
-		if (!apiKey) {
-			setError(
-				'Please set your Gemini API Key in the Wizard first.'
-			);
-			return;
-		}
-		if (!outline || outline.length === 0) {
-			setError('Generate and approve an outline first.');
-			return;
-		}
-		setError(null);
-		setIsThinking(true);
-		try {
-			const content = await geminiService.generateBlogPost(
-				{
-					...data,
-					topic: userTopic,
-					targetLocation: targetLocation,
-					primaryKeyword: data.primaryKeyword || userTopic,
-					interlinks,
-				},
-				outline,
-				apiKey
-			);
-			setDraft(content);
-			updateData({ blogContent: content, outline });
-		} catch (e: any) {
-			setError(e?.message || 'Failed to generate full draft.');
-		} finally {
-			setIsThinking(false);
-		}
-	};
-
 	return (
 		<div className='h-full flex flex-col overflow-hidden'>
 			{/* Inject markdown styles */}
@@ -1506,20 +2024,21 @@ const AgentMode: React.FC<Props> = ({
 							<div className='text-xs px-3 py-1.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full shadow-lg font-semibold'>
 								Active:{' '}
 								{flowContext.automationLevel ===
-									'full'
+								'full'
 									? '🚀 Full Automation'
 									: flowContext.automationLevel ===
-										'guided'
-										? '🎯 Guided'
-										: '✋ Manual'}
+									  'guided'
+									? '🎯 Guided'
+									: '✋ Manual'}
 							</div>
 						</div>
 						<div className='flex gap-3'>
 							<label
-								className={`flex items-center gap-2 ${agent
-									? 'cursor-not-allowed opacity-60'
-									: 'cursor-pointer'
-									}`}
+								className={`flex items-center gap-2 ${
+									agent
+										? 'cursor-not-allowed opacity-60'
+										: 'cursor-pointer'
+								}`}
 							>
 								<input
 									type='radio'
@@ -1551,10 +2070,11 @@ const AgentMode: React.FC<Props> = ({
 								</span>
 							</label>
 							<label
-								className={`flex items-center gap-2 ${agent
-									? 'cursor-not-allowed opacity-60'
-									: 'cursor-pointer'
-									}`}
+								className={`flex items-center gap-2 ${
+									agent
+										? 'cursor-not-allowed opacity-60'
+										: 'cursor-pointer'
+								}`}
 							>
 								<input
 									type='radio'
@@ -1584,10 +2104,11 @@ const AgentMode: React.FC<Props> = ({
 								</span>
 							</label>
 							<label
-								className={`flex items-center gap-2 ${agent
-									? 'cursor-not-allowed opacity-60'
-									: 'cursor-pointer'
-									}`}
+								className={`flex items-center gap-2 ${
+									agent
+										? 'cursor-not-allowed opacity-60'
+										: 'cursor-pointer'
+								}`}
 							>
 								<input
 									type='radio'
@@ -1635,10 +2156,10 @@ const AgentMode: React.FC<Props> = ({
 								Current step:{' '}
 								{agent.trace.length > 0
 									? agent.trace[
-										agent.trace
-											.length -
-										1
-									]?.step
+											agent.trace
+												.length -
+												1
+									  ]?.step
 									: 'Initializing'}
 							</div>
 							<div className='mt-2 text-xs text-blue-600'>
@@ -1663,7 +2184,7 @@ const AgentMode: React.FC<Props> = ({
 				{false &&
 					agent?.preferences?.automationLevel !== 'full' &&
 					agent?.halt?.reason ===
-					'await_keyword_selection' &&
+						'await_keyword_selection' &&
 					agent?.keywordResearch?.primaryCandidates && (
 						<div className='mb-4 p-3 border rounded bg-amber-50'>
 							<div className='font-semibold mb-2'>
@@ -1709,12 +2230,12 @@ const AgentMode: React.FC<Props> = ({
 														(
 															prev
 														) => [
-																...prev,
-																{
-																	role: 'assistant',
-																	content: `✅ Selected "${r.text}" as primary keyword. Continuing...`,
-																},
-															]
+															...prev,
+															{
+																role: 'assistant',
+																content: `✅ Selected "${r.text}" as primary keyword. Continuing...`,
+															},
+														]
 													);
 
 													const next =
@@ -1768,10 +2289,10 @@ const AgentMode: React.FC<Props> = ({
 																const latestTrace =
 																	working
 																		.trace[
-																	working
-																		.trace
-																		.length -
-																	1
+																		working
+																			.trace
+																			.length -
+																			1
 																	];
 																const stepMessage =
 																	getStepMessage(
@@ -1786,12 +2307,12 @@ const AgentMode: React.FC<Props> = ({
 																		(
 																			prev
 																		) => [
-																				...prev,
-																				{
-																					role: 'assistant',
-																					content: stepMessage,
-																				},
-																			]
+																			...prev,
+																			{
+																				role: 'assistant',
+																				content: stepMessage,
+																			},
+																		]
 																	);
 																	await new Promise(
 																		(
@@ -1854,12 +2375,12 @@ const AgentMode: React.FC<Props> = ({
 																(
 																	prev
 																) => [
-																		...prev,
-																		{
-																			role: 'assistant',
-																			content: '🎯 Select up to 5 secondary keywords below.',
-																		},
-																	]
+																	...prev,
+																	{
+																		role: 'assistant',
+																		content: '🎯 Select up to 5 secondary keywords below.',
+																	},
+																]
 															);
 														}
 													} finally {
@@ -1880,7 +2401,7 @@ const AgentMode: React.FC<Props> = ({
 				{false &&
 					agent?.preferences?.automationLevel !== 'full' &&
 					agent?.halt?.reason ===
-					'await_secondary_selection' &&
+						'await_secondary_selection' &&
 					agent?.keywordResearch?.secondaryCandidates && (
 						<div className='mb-4 p-3 border rounded bg-amber-50'>
 							<div className='font-semibold mb-2'>
@@ -2043,12 +2564,12 @@ const AgentMode: React.FC<Props> = ({
 													(
 														prev
 													) => [
-															...prev,
-															{
-																role: 'assistant',
-																content: '📋 Outline ready! Click "Approve outline" to proceed, or provide feedback to regenerate.',
-															},
-														]
+														...prev,
+														{
+															role: 'assistant',
+															content: '📋 Outline ready! Click "Approve outline" to proceed, or provide feedback to regenerate.',
+														},
+													]
 												);
 											}
 										} finally {
@@ -2180,7 +2701,7 @@ const AgentMode: React.FC<Props> = ({
 									onKeyDown={async (e) => {
 										if (
 											e.key ===
-											'Enter' &&
+												'Enter' &&
 											e.currentTarget.value.trim()
 										) {
 											const customTitle =
@@ -2526,7 +3047,7 @@ const AgentMode: React.FC<Props> = ({
 											) => {
 												if (
 													e.key ===
-													'Enter' &&
+														'Enter' &&
 													e.currentTarget.value.trim()
 												) {
 													const url =
@@ -2674,7 +3195,7 @@ const AgentMode: React.FC<Props> = ({
 												e.target
 													.files
 													.length >
-												0
+													0
 											) {
 												const file =
 													e
@@ -2686,11 +3207,11 @@ const AgentMode: React.FC<Props> = ({
 															file
 														);
 													const newFile: ReferenceFile =
-													{
-														name: file.name,
-														mimeType: file.type,
-														base64: base64,
-													};
+														{
+															name: file.name,
+															mimeType: file.type,
+															base64: base64,
+														};
 													updateData(
 														{
 															referenceFiles:
@@ -2753,17 +3274,19 @@ const AgentMode: React.FC<Props> = ({
 											'📚 [REFERENCES] User completed reference collection'
 										);
 										console.log(
-											`   URLs: ${data
-												.referenceUrls
-												?.length ||
-											0
+											`   URLs: ${
+												data
+													.referenceUrls
+													?.length ||
+												0
 											}`
 										);
 										console.log(
-											`   Files: ${data
-												.referenceFiles
-												?.length ||
-											0
+											`   Files: ${
+												data
+													.referenceFiles
+													?.length ||
+												0
 											}`
 										);
 
@@ -2832,7 +3355,7 @@ const AgentMode: React.FC<Props> = ({
 										(data.referenceFiles
 											?.length ||
 											0) >
-										0
+									0
 										? '✅ Continue with References'
 										: '⏭️ Skip & Continue'}
 								</button>
@@ -2922,10 +3445,10 @@ const AgentMode: React.FC<Props> = ({
 												const latestTrace =
 													working
 														.trace[
-													working
-														.trace
-														.length -
-													1
+														working
+															.trace
+															.length -
+															1
 													];
 												const stepMessage =
 													getStepMessage(
@@ -2940,12 +3463,12 @@ const AgentMode: React.FC<Props> = ({
 														(
 															prev
 														) => [
-																...prev,
-																{
-																	role: 'assistant',
-																	content: stepMessage,
-																},
-															]
+															...prev,
+															{
+																role: 'assistant',
+																content: stepMessage,
+															},
+														]
 													);
 													await new Promise(
 														(
@@ -2979,7 +3502,7 @@ const AgentMode: React.FC<Props> = ({
 												working
 													.halt
 													?.reason !==
-												undefined
+													undefined
 											)
 												break;
 										}
@@ -3019,12 +3542,12 @@ const AgentMode: React.FC<Props> = ({
 												(
 													prev
 												) => [
-														...prev,
-														{
-															role: 'assistant',
-															content: '✨ Blog generation complete! Review your content.',
-														},
-													]
+													...prev,
+													{
+														role: 'assistant',
+														content: '✨ Blog generation complete! Review your content.',
+													},
+												]
 											);
 										}
 									} finally {
@@ -3039,214 +3562,21 @@ const AgentMode: React.FC<Props> = ({
 						</div>
 					)}
 
-				{/* Blog Info Panel */}
-				{showBlogInfo && (
-					<div className='mb-4 flex-shrink-0'>
-						<div className='p-4 border-2 border-orange-500 rounded-lg bg-white text-xs max-h-48 overflow-y-auto shadow-lg'>
-							{agent && (
-								<div className='space-y-2'>
-									{/* Primary Keyword */}
-									{agent.data
-										.primaryKeyword && (
-											<div>
-												<span className='font-semibold text-gray-700'>
-													Primary
-													Keyword:
-												</span>{' '}
-												<span className='text-blue-700'>
-													{
-														agent
-															.data
-															.primaryKeyword
-													}
-												</span>
-											</div>
-										)}
+				<BlogInfoPanel
+					show={showBlogInfo}
+					agent={agent}
+				/>
 
-									{/* Secondary Keywords */}
-									{agent.data
-										.secondaryKeywords &&
-										agent.data
-											.secondaryKeywords
-											.length >
-										0 && (
-											<div>
-												<span className='font-semibold text-gray-700'>
-													Secondary
-													Keywords:
-												</span>{' '}
-												<span className='text-blue-700'>
-													{agent.data.secondaryKeywords.join(
-														', '
-													)}
-												</span>
-											</div>
-										)}
+				<TracePanel
+					show={showTrace}
+					traceItems={traceItems}
+				/>
 
-									{/* Title */}
-									{agent.data.title && (
-										<div>
-											<span className='font-semibold text-gray-700'>
-												Title:
-											</span>{' '}
-											<span className='text-blue-700'>
-												{
-													agent
-														.data
-														.title
-												}
-											</span>
-										</div>
-									)}
-
-									{/* Outline */}
-									{agent.outline &&
-										agent.outline
-											.length >
-										0 && (
-											<div>
-												<div className='font-semibold text-gray-700 mb-1'>
-													Outline:
-												</div>
-												<div className='ml-2 space-y-1'>
-													{agent.outline.map(
-														(
-															section,
-															idx
-														) => (
-															<div
-																key={
-																	section.id
-																}
-															>
-																<div className='text-blue-700'>
-																	{idx +
-																		1}
-
-																	.{' '}
-																	{
-																		section.name
-																	}
-																</div>
-																{section.items &&
-																	section
-																		.items
-																		.length >
-																	0 && (
-																		<div className='ml-3 text-gray-600'>
-																			{section.items.map(
-																				(
-																					item
-																				) => (
-																					<div
-																						key={
-																							item.id
-																						}
-																					>
-																						•{' '}
-																						{
-																							item.name
-																						}
-																					</div>
-																				)
-																			)}
-																		</div>
-																	)}
-															</div>
-														)
-													)}
-												</div>
-											</div>
-										)}
-
-									{!agent.data
-										.primaryKeyword &&
-										!agent.data.title &&
-										(!agent.outline ||
-											agent.outline
-												.length ===
-											0) && (
-											<div className='text-gray-500'>
-												No blog
-												info
-												yet.
-												Start by
-												sending
-												a
-												message.
-											</div>
-										)}
-								</div>
-							)}
-							{!agent && (
-								<div className='text-gray-500'>
-									Start a conversation to
-									see blog generation info.
-								</div>
-							)}
-						</div>
-					</div>
-				)}
-
-				{/* Trace Panel */}
-				{showTrace && (
-					<div className='mb-4'>
-						<div className='p-3 border border-gray-200 rounded-lg bg-gray-50 max-h-40 overflow-auto text-xs text-gray-700'>
-							{traceItems.length === 0 && (
-								<div>No steps yet.</div>
-							)}
-							{traceItems.map((t, idx) => (
-								<div key={idx}>
-									{new Date(
-										t.at
-									).toLocaleTimeString()}
-									: {t.step}
-								</div>
-							))}
-						</div>
-					</div>
-				)}
-
-				{/* Settings Panel */}
-				{showSettings && (
-					<div className='mb-4 flex-shrink-0'>
-						<div className='p-4 border-2 border-blue-500 rounded-lg bg-white text-sm shadow-lg'>
-							<div className='space-y-4'>
-								<div>
-									<h3 className='font-bold text-gray-800 mb-3'>⚙️ Settings</h3>
-									<div className='space-y-3'>
-										<div>
-											<label htmlFor='agent-apiKey' className='block text-sm font-medium text-gray-700 mb-1'>
-												Gemini API Key *
-											</label>
-											<input
-												type='password'
-												id='agent-apiKey'
-												value={data.apiKey}
-												onChange={(e) => updateData({ apiKey: e.target.value })}
-												className='w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500 text-sm'
-												placeholder='Enter your Gemini API key'
-											/>
-											<p className='text-xs text-gray-500 mt-1'>
-												Your API key is stored only in your browser for this session.
-											</p>
-										</div>
-										{data.apiKey && (
-											<div className='text-xs text-green-600'>
-												✓ API key is configured
-											</div>
-										)}
-										{!data.apiKey && (
-											<div className='text-xs text-orange-600'>
-												⚠ Please enter your API key to use the agent
-											</div>
-										)}
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				)}
+				<SettingsPanel
+					show={showSettings}
+					data={data}
+					updateData={updateData}
+				/>
 
 				{/* Debug indicator - remove in production */}
 				{showBlogContent && (
@@ -3258,48 +3588,52 @@ const AgentMode: React.FC<Props> = ({
 				<div className='flex gap-4 flex-1 min-h-0 transition-all duration-700 ease-in-out'>
 					{/* Chat + Input */}
 					<div
-						className={`flex flex-col min-h-0 transition-all duration-700 ease-in-out ${showBlogContent ? 'w-[30%]' : 'w-full'
-							} ${showBlogContent
+						className={`flex flex-col min-h-0 transition-all duration-700 ease-in-out ${
+							showBlogContent ? 'w-[30%]' : 'w-full'
+						} ${
+							showBlogContent
 								? 'border-2 border-orange-300 rounded-xl bg-white shadow-lg'
 								: ''
-							}`}
+						}`}
 					>
 						<div className='flex-1 overflow-y-auto py-3 px-4'>
 							{messages.map((m, i) => (
 								<div
 									key={i}
-									className={`mb-4 ${m.role === 'user'
-										? 'flex justify-end'
-										: 'flex justify-start'
-										}`}
+									className={`mb-4 ${
+										m.role === 'user'
+											? 'flex justify-end'
+											: 'flex justify-start'
+									}`}
 								>
 									<div
-										className={`px-4 py-2.5 rounded-xl text-sm whitespace-pre-wrap ${m.role ===
+										className={`px-4 py-2.5 rounded-xl text-sm whitespace-pre-wrap ${
+											m.role ===
 											'user'
-											? 'bg-orange-500 text-white max-w-[75%]'
-											: m.keywordSelection
+												? 'bg-orange-500 text-white max-w-[75%]'
+												: m.keywordSelection
 												? 'bg-gray-100 border border-gray-200 max-w-full w-full'
 												: m.titleSelection
-													? 'bg-gray-100 border border-gray-200 max-w-full w-full'
-													: m.interlinkingForm
-														? 'bg-gray-100 border border-gray-200 max-w-full w-full'
-														: m.referencesForm
-															? 'bg-gray-100 border border-gray-200 max-w-full w-full'
-															: m.outlineApproval
-																? 'bg-gray-100 border border-gray-200 max-w-full w-full'
-																: m.controlLevelSelection
-																	? 'bg-gray-100 border border-gray-200 max-w-md'
-																	: 'bg-gray-100 text-gray-800 max-w-[75%]'
-											}`}
+												? 'bg-gray-100 border border-gray-200 max-w-full w-full'
+												: m.interlinkingForm
+												? 'bg-gray-100 border border-gray-200 max-w-full w-full'
+												: m.referencesForm
+												? 'bg-gray-100 border border-gray-200 max-w-full w-full'
+												: m.outlineApproval
+												? 'bg-gray-100 border border-gray-200 max-w-full w-full'
+												: m.controlLevelSelection
+												? 'bg-gray-100 border border-gray-200 max-w-md'
+												: 'bg-gray-100 text-gray-800 max-w-[75%]'
+										}`}
 									>
 										{m.role ===
 											'assistant' &&
-											!m.keywordSelection &&
-											!m.titleSelection &&
-											!m.interlinkingForm &&
-											!m.referencesForm &&
-											!m.outlineApproval &&
-											!m.controlLevelSelection ? (
+										!m.keywordSelection &&
+										!m.titleSelection &&
+										!m.interlinkingForm &&
+										!m.referencesForm &&
+										!m.outlineApproval &&
+										!m.controlLevelSelection ? (
 											<StreamingText
 												text={
 													m.content
@@ -3321,584 +3655,586 @@ const AgentMode: React.FC<Props> = ({
 										{m.keywordSelection
 											?.type ===
 											'primary' && (
-												<div className='mt-3 grid grid-cols-1 md:grid-cols-2 gap-2'>
-													{m.keywordSelection.candidates.map(
-														(
-															kw,
-															idx
-														) => (
-															<div
-																key={
-																	idx
-																}
-																className='flex items-center justify-between text-sm bg-white border border-gray-200 rounded-md p-2 hover:border-orange-400 transition-colors'
-															>
-																<div>
-																	<div className='font-medium text-gray-800'>
-																		{
-																			kw.text
-																		}
-																	</div>
-																	<div className='text-xs text-gray-500'>
-																		Vol:{' '}
-																		{
-																			kw.volume
-																		}{' '}
-																		·
-																		Diff:{' '}
-																		{kw.difficulty.toFixed(
-																			2
-																		)}
-																	</div>
+											<div className='mt-3 grid grid-cols-1 md:grid-cols-2 gap-2'>
+												{m.keywordSelection.candidates.map(
+													(
+														kw,
+														idx
+													) => (
+														<div
+															key={
+																idx
+															}
+															className='flex items-center justify-between text-sm bg-white border border-gray-200 rounded-md p-2 hover:border-orange-400 transition-colors'
+														>
+															<div>
+																<div className='font-medium text-gray-800'>
+																	{
+																		kw.text
+																	}
 																</div>
-																<button
-																	disabled={completedSelections.has(
-																		'primaryKeyword'
+																<div className='text-xs text-gray-500'>
+																	Vol:{' '}
+																	{
+																		kw.volume
+																	}{' '}
+																	·
+																	Diff:{' '}
+																	{kw.difficulty.toFixed(
+																		2
 																	)}
-																	className={`px-3 py-1 text-xs text-white rounded transition-colors ${completedSelections.has(
+																</div>
+															</div>
+															<button
+																disabled={completedSelections.has(
+																	'primaryKeyword'
+																)}
+																className={`px-3 py-1 text-xs text-white rounded transition-colors ${
+																	completedSelections.has(
 																		'primaryKeyword'
 																	)
 																		? 'bg-gray-400 cursor-not-allowed'
 																		: 'bg-orange-500 hover:bg-orange-600'
-																		}`}
-																	onClick={async () => {
-																		if (
-																			!agent
-																		)
-																			return;
+																}`}
+																onClick={async () => {
+																	if (
+																		!agent
+																	)
+																		return;
 
-																		setCompletedSelections(
-																			(
+																	setCompletedSelections(
+																		(
+																			prev
+																		) =>
+																			new Set(
 																				prev
-																			) =>
-																				new Set(
-																					prev
-																				).add(
-																					'primaryKeyword'
-																				)
-																		);
-																		setMessages(
-																			(
-																				prev
-																			) => [
-																					...prev,
-																					{
-																						role: 'user',
-																						content: `Select "${kw.text}" as primary keyword`,
-																					},
-																					{
-																						role: 'assistant',
-																						content: `✅ Selected "${kw.text}" as primary keyword. Continuing...`,
-																					},
-																				]
-																		);
+																			).add(
+																				'primaryKeyword'
+																			)
+																	);
+																	setMessages(
+																		(
+																			prev
+																		) => [
+																			...prev,
+																			{
+																				role: 'user',
+																				content: `Select "${kw.text}" as primary keyword`,
+																			},
+																			{
+																				role: 'assistant',
+																				content: `✅ Selected "${kw.text}" as primary keyword. Continuing...`,
+																			},
+																		]
+																	);
 
-																		const next =
-																			{
-																				...agent,
-																				data: {
-																					...agent.data,
-																					primaryKeyword:
-																						kw.text,
-																				},
-																			} as AgentState;
-																		setAgent(
-																			next
-																		);
-																		updateData(
-																			{
+																	const next =
+																		{
+																			...agent,
+																			data: {
+																				...agent.data,
 																				primaryKeyword:
 																					kw.text,
-																			}
-																		);
-																		setIsThinking(
-																			true
-																		);
+																			},
+																		} as AgentState;
+																	setAgent(
+																		next
+																	);
+																	updateData(
+																		{
+																			primaryKeyword:
+																				kw.text,
+																		}
+																	);
+																	setIsThinking(
+																		true
+																	);
 
-																		try {
-																			let working =
-																				next;
-																			let guard = 0;
-																			let lastTraceLength = 0;
+																	try {
+																		let working =
+																			next;
+																		let guard = 0;
+																		let lastTraceLength = 0;
 
-																			while (
-																				guard++ <
-																				20
-																			) {
-																				const {
-																					state: ns,
-																					halted,
-																					step,
-																				} = await lgRunNext(
-																					working
-																				);
-																				working =
-																					ns;
-
-																				if (
-																					working
-																						.trace
-																						.length >
-																					lastTraceLength
-																				) {
-																					const latestTrace =
-																						working
-																							.trace[
-																						working
-																							.trace
-																							.length -
-																						1
-																						];
-																					const stepMessage =
-																						getStepMessage(
-																							latestTrace.step,
-																							latestTrace.info
-																						);
-
-																					if (
-																						stepMessage
-																					) {
-																						setMessages(
-																							(
-																								prev
-																							) => [
-																									...prev,
-																									{
-																										role: 'assistant',
-																										content: stepMessage,
-																									},
-																								]
-																						);
-																						await new Promise(
-																							(
-																								resolve
-																							) =>
-																								setTimeout(
-																									resolve,
-																									300
-																								)
-																						);
-																					}
-																					lastTraceLength =
-																						working
-																							.trace
-																							.length;
-																				}
-
-																				// Break if halted and needs user input
-																				if (
-																					halted &&
-																					automationEngine.needsUserInput(
-																						ns
-																					)
-																				) {
-																					break;
-																				}
-																			}
-
-																			setAgent(
+																		while (
+																			guard++ <
+																			20
+																		) {
+																			const {
+																				state: ns,
+																				halted,
+																				step,
+																			} = await lgRunNext(
 																				working
 																			);
-																			setOutline(
-																				working.outline
-																			);
-																			setDraft(
-																				working.draft
-																			);
-																			setTraceItems(
-																				working.trace.map(
-																					(
-																						t
-																					) => ({
-																						step: t.step,
-																						at: t.at,
-																					})
-																				)
-																			);
-																			updateData(
-																				{
-																					outline: working.outline,
-																					blogContent:
-																						working.draft,
-																					secondaryKeywords:
-																						working
-																							.data
-																							.secondaryKeywords,
-																				}
-																			);
+																			working =
+																				ns;
 
 																			if (
 																				working
-																					.halt
-																					?.reason ===
-																				'await_secondary_selection'
+																					.trace
+																					.length >
+																				lastTraceLength
 																			) {
-																				setMessages(
-																					(
-																						prev
-																					) => [
+																				const latestTrace =
+																					working
+																						.trace[
+																						working
+																							.trace
+																							.length -
+																							1
+																					];
+																				const stepMessage =
+																					getStepMessage(
+																						latestTrace.step,
+																						latestTrace.info
+																					);
+
+																				if (
+																					stepMessage
+																				) {
+																					setMessages(
+																						(
+																							prev
+																						) => [
 																							...prev,
 																							{
 																								role: 'assistant',
-																								content: '🎯 Select up to 5 secondary keywords:',
-																								keywordSelection:
-																								{
-																									type: 'secondary',
-																									candidates:
-																										working.keywordResearch?.secondaryCandidates?.slice(
-																											0,
-																											12
-																										) ||
-																										[],
-																								},
+																								content: stepMessage,
 																							},
 																						]
-																				);
+																					);
+																					await new Promise(
+																						(
+																							resolve
+																						) =>
+																							setTimeout(
+																								resolve,
+																								300
+																							)
+																					);
+																				}
+																				lastTraceLength =
+																					working
+																						.trace
+																						.length;
 																			}
-																		} finally {
-																			setIsThinking(
-																				false
+
+																			// Break if halted and needs user input
+																			if (
+																				halted &&
+																				automationEngine.needsUserInput(
+																					ns
+																				)
+																			) {
+																				break;
+																			}
+																		}
+
+																		setAgent(
+																			working
+																		);
+																		setOutline(
+																			working.outline
+																		);
+																		setDraft(
+																			working.draft
+																		);
+																		setTraceItems(
+																			working.trace.map(
+																				(
+																					t
+																				) => ({
+																					step: t.step,
+																					at: t.at,
+																				})
+																			)
+																		);
+																		updateData(
+																			{
+																				outline: working.outline,
+																				blogContent:
+																					working.draft,
+																				secondaryKeywords:
+																					working
+																						.data
+																						.secondaryKeywords,
+																			}
+																		);
+
+																		if (
+																			working
+																				.halt
+																				?.reason ===
+																			'await_secondary_selection'
+																		) {
+																			setMessages(
+																				(
+																					prev
+																				) => [
+																					...prev,
+																					{
+																						role: 'assistant',
+																						content: '🎯 Select up to 5 secondary keywords:\n\n💡 Tip: If you would like to provide your own secondary keywords, simply type them in the chat (comma-separated)!',
+																						keywordSelection:
+																							{
+																								type: 'secondary',
+																								candidates:
+																									working.keywordResearch?.secondaryCandidates?.slice(
+																										0,
+																										12
+																									) ||
+																									[],
+																							},
+																					},
+																				]
 																			);
 																		}
-																	}}
-																>
-																	Select
-																</button>
-															</div>
-														)
-													)}
-												</div>
-											)}
+																	} finally {
+																		setIsThinking(
+																			false
+																		);
+																	}
+																}}
+															>
+																Select
+															</button>
+														</div>
+													)
+												)}
+											</div>
+										)}
 
 										{/* Secondary Keyword Selection */}
 										{m.keywordSelection
 											?.type ===
 											'secondary' && (
-												<>
-													<div className='mt-3 grid grid-cols-1 md:grid-cols-2 gap-2'>
-														{m.keywordSelection.candidates.map(
-															(
-																kw,
-																idx
-															) => {
-																const checked =
-																	selectedSecondaries.includes(
-																		kw.text
-																	);
-																return (
-																	<label
-																		key={
-																			idx
-																		}
-																		className='flex items-center justify-between text-sm bg-white border rounded p-2 cursor-pointer hover:bg-gray-50'
-																	>
-																		<div className='flex items-center gap-2'>
-																			<input
-																				type='checkbox'
-																				disabled={completedSelections.has(
-																					'secondaryKeywords'
-																				)}
-																				checked={
-																					checked
-																				}
-																				onChange={(
-																					e
-																				) => {
-																					setSelectedSecondaries(
-																						(
-																							prev
-																						) => {
-																							if (
-																								e
-																									.target
-																									.checked
-																							) {
-																								const next =
-																									[
-																										...prev,
-																										kw.text,
-																									];
-																								return next.slice(
-																									0,
-																									5
-																								);
-																							}
-																							return prev.filter(
-																								(
-																									x
-																								) =>
-																									x !==
-																									kw.text
+											<>
+												<div className='mt-3 grid grid-cols-1 md:grid-cols-2 gap-2'>
+													{m.keywordSelection.candidates.map(
+														(
+															kw,
+															idx
+														) => {
+															const checked =
+																selectedSecondaries.includes(
+																	kw.text
+																);
+															return (
+																<label
+																	key={
+																		idx
+																	}
+																	className='flex items-center justify-between text-sm bg-white border rounded p-2 cursor-pointer hover:bg-gray-50'
+																>
+																	<div className='flex items-center gap-2'>
+																		<input
+																			type='checkbox'
+																			disabled={completedSelections.has(
+																				'secondaryKeywords'
+																			)}
+																			checked={
+																				checked
+																			}
+																			onChange={(
+																				e
+																			) => {
+																				setSelectedSecondaries(
+																					(
+																						prev
+																					) => {
+																						if (
+																							e
+																								.target
+																								.checked
+																						) {
+																							const next =
+																								[
+																									...prev,
+																									kw.text,
+																								];
+																							return next.slice(
+																								0,
+																								5
 																							);
 																						}
-																					);
-																				}}
-																				className='w-4 h-4 text-orange-600 focus:ring-orange-500 border-gray-300 rounded'
-																			/>
-																			<div>
-																				<div className='font-medium text-gray-800'>
-																					{
-																						kw.text
+																						return prev.filter(
+																							(
+																								x
+																							) =>
+																								x !==
+																								kw.text
+																						);
 																					}
-																				</div>
-																				<div className='text-xs text-gray-500'>
-																					Vol:{' '}
-																					{
-																						kw.volume
-																					}{' '}
-																					·
-																					Diff:{' '}
-																					{kw.difficulty.toFixed(
-																						2
-																					)}
-																				</div>
+																				);
+																			}}
+																			className='w-4 h-4 text-orange-600 focus:ring-orange-500 border-gray-300 rounded'
+																		/>
+																		<div>
+																			<div className='font-medium text-gray-800'>
+																				{
+																					kw.text
+																				}
+																			</div>
+																			<div className='text-xs text-gray-500'>
+																				Vol:{' '}
+																				{
+																					kw.volume
+																				}{' '}
+																				·
+																				Diff:{' '}
+																				{kw.difficulty.toFixed(
+																					2
+																				)}
 																			</div>
 																		</div>
-																	</label>
-																);
-															}
-														)}
-													</div>
-													<div className='mt-3 text-right'>
-														<button
-															disabled={
-																completedSelections.has(
-																	'secondaryKeywords'
-																) ||
-																selectedSecondaries.length ===
+																	</div>
+																</label>
+															);
+														}
+													)}
+												</div>
+												<div className='mt-3 text-right'>
+													<button
+														disabled={
+															completedSelections.has(
+																'secondaryKeywords'
+															) ||
+															selectedSecondaries.length ===
 																0
-															}
-															className='px-4 py-2 text-sm bg-orange-600 text-white rounded hover:bg-orange-700 transition-colors disabled:bg-orange-300 disabled:cursor-not-allowed'
-															onClick={async () => {
-																if (
-																	!agent
-																)
-																	return;
+														}
+														className='px-4 py-2 text-sm bg-orange-600 text-white rounded hover:bg-orange-700 transition-colors disabled:bg-orange-300 disabled:cursor-not-allowed'
+														onClick={async () => {
+															if (
+																!agent
+															)
+																return;
 
-																setCompletedSelections(
-																	(
+															setCompletedSelections(
+																(
+																	prev
+																) =>
+																	new Set(
 																		prev
-																	) =>
-																		new Set(
-																			prev
-																		).add(
-																			'secondaryKeywords'
-																		)
-																);
-																setMessages(
-																	(
-																		prev
-																	) => [
-																			...prev,
-																			{
-																				role: 'user',
-																				content: `Selected ${selectedSecondaries.length
-																					} secondary keywords: ${selectedSecondaries.join(
-																						', '
-																					)}`,
-																			},
-																			{
-																				role: 'assistant',
-																				content: `✅ Added ${selectedSecondaries.length} secondary keywords. Continuing...`,
-																			},
-																		]
-																);
-
-																const next =
+																	).add(
+																		'secondaryKeywords'
+																	)
+															);
+															setMessages(
+																(
+																	prev
+																) => [
+																	...prev,
 																	{
-																		...agent,
-																		data: {
-																			...agent.data,
-																			secondaryKeywords:
-																				selectedSecondaries,
-																		},
-																	} as AgentState;
+																		role: 'user',
+																		content: `Selected ${
+																			selectedSecondaries.length
+																		} secondary keywords: ${selectedSecondaries.join(
+																			', '
+																		)}`,
+																	},
+																	{
+																		role: 'assistant',
+																		content: `✅ Added ${selectedSecondaries.length} secondary keywords. Continuing...`,
+																	},
+																]
+															);
+
+															const next =
+																{
+																	...agent,
+																	data: {
+																		...agent.data,
+																		secondaryKeywords:
+																			selectedSecondaries,
+																	},
+																} as AgentState;
+															setAgent(
+																next
+															);
+															updateData(
+																{
+																	secondaryKeywords:
+																		selectedSecondaries,
+																}
+															);
+															setIsThinking(
+																true
+															);
+
+															try {
+																let working =
+																	next;
+																let guard = 0;
+																while (
+																	guard++ <
+																	20
+																) {
+																	const {
+																		state: ns,
+																		halted,
+																	} =
+																		await lgRunNext(
+																			working
+																		);
+																	working =
+																		ns;
+
+																	// Break if halted and needs user input
+																	if (
+																		halted &&
+																		automationEngine.needsUserInput(
+																			ns
+																		)
+																	) {
+																		break;
+																	}
+																}
+
 																setAgent(
-																	next
+																	working
+																);
+																setOutline(
+																	working.outline
+																);
+																setDraft(
+																	working.draft
+																);
+																setTraceItems(
+																	working.trace.map(
+																		(
+																			t
+																		) => ({
+																			step: t.step,
+																			at: t.at,
+																		})
+																	)
 																);
 																updateData(
 																	{
-																		secondaryKeywords:
-																			selectedSecondaries,
+																		outline: working.outline,
+																		blogContent:
+																			working.draft,
+																		title: working
+																			.data
+																			.title,
 																	}
 																);
-																setIsThinking(
-																	true
-																);
 
-																try {
-																	let working =
-																		next;
-																	let guard = 0;
-																	while (
-																		guard++ <
-																		20
-																	) {
-																		const {
-																			state: ns,
-																			halted,
-																		} =
-																			await lgRunNext(
-																				working
-																			);
-																		working =
-																			ns;
-
-																		// Break if halted and needs user input
-																		if (
-																			halted &&
-																			automationEngine.needsUserInput(
-																				ns
-																			)
-																		) {
-																			break;
-																		}
-																	}
-
-																	setAgent(
-																		working
-																	);
-																	setOutline(
-																		working.outline
-																	);
-																	setDraft(
-																		working.draft
-																	);
-																	setTraceItems(
-																		working.trace.map(
-																			(
-																				t
-																			) => ({
-																				step: t.step,
-																				at: t.at,
-																			})
-																		)
-																	);
-																	updateData(
-																		{
-																			outline: working.outline,
-																			blogContent:
-																				working.draft,
-																			title: working
-																				.data
-																				.title,
-																		}
-																	);
-
-																	// ✨ Display title selection UI if needed
-																	if (
-																		working
-																			.halt
-																			?.reason ===
+																// ✨ Display title selection UI if needed
+																if (
+																	working
+																		.halt
+																		?.reason ===
 																		'await_title_selection' &&
-																		working.titleOptions &&
-																		working
-																			.titleOptions
-																			.length >
+																	working.titleOptions &&
+																	working
+																		.titleOptions
+																		.length >
 																		0
-																	) {
-																		setMessages(
-																			(
-																				prev
-																			) => [
-																					...prev,
+																) {
+																	setMessages(
+																		(
+																			prev
+																		) => [
+																			...prev,
+																			{
+																				role: 'assistant',
+																				content: '📝 Select a blog title from the options below:\n\n💡 Tip: If you would like to provide your own title, simply type it in the chat!',
+																				titleSelection:
 																					{
-																						role: 'assistant',
-																						content: '📝 Select a blog title from the options below:',
-																						titleSelection:
-																						{
-																							titles: working.titleOptions,
-																						},
+																						titles: working.titleOptions,
 																					},
-																				]
-																		);
-																	}
-
-																	// ✨ Display interlinking UI if needed
-																	if (
-																		working
-																			.halt
-																			?.reason ===
-																		'await_interlinking'
-																	) {
-																		setMessages(
-																			(
-																				prev
-																			) => [
-																					...prev,
-																					{
-																						role: 'assistant',
-																						content: '🔗 Add internal/external links (optional) or click "Continue" to skip:',
-																						interlinkingForm:
-																						{
-																							currentLinks:
-																								working
-																									.data
-																									.interlinks ||
-																								[],
-																						},
-																					},
-																				]
-																		);
-																	}
-
-																	// ✨ Display references form if needed
-																	if (
-																		working
-																			.halt
-																			?.reason ===
-																		'await_references'
-																	) {
-																		setMessages(
-																			(
-																				prev
-																			) => [
-																					...prev,
-																					{
-																						role: 'assistant',
-																						content: '📚 Add reference materials (URLs or files) to improve content quality, or click "Continue" to skip:',
-																						referencesForm:
-																						{
-																							currentUrls:
-																								working
-																									.data
-																									.referenceUrls ||
-																								[],
-																							currentFiles:
-																								working
-																									.data
-																									.referenceFiles ||
-																								[],
-																						},
-																					},
-																				]
-																		);
-																	}
-																} finally {
-																	setIsThinking(
-																		false
+																			},
+																		]
 																	);
 																}
-															}}
-														>
-															Continue
-															(
-															{
-																selectedSecondaries.length
-															}{' '}
-															selected)
-														</button>
-													</div>
-												</>
-											)}
+
+																// ✨ Display interlinking UI if needed
+																if (
+																	working
+																		.halt
+																		?.reason ===
+																	'await_interlinking'
+																) {
+																	setMessages(
+																		(
+																			prev
+																		) => [
+																			...prev,
+																			{
+																				role: 'assistant',
+																				content: '🔗 Add internal/external links (optional) or click "Continue" to skip:',
+																				interlinkingForm:
+																					{
+																						currentLinks:
+																							working
+																								.data
+																								.interlinks ||
+																							[],
+																					},
+																			},
+																		]
+																	);
+																}
+
+																// ✨ Display references form if needed
+																if (
+																	working
+																		.halt
+																		?.reason ===
+																	'await_references'
+																) {
+																	setMessages(
+																		(
+																			prev
+																		) => [
+																			...prev,
+																			{
+																				role: 'assistant',
+																				content: '📚 Add reference materials (URLs or files) to improve content quality, or click "Continue" to skip:',
+																				referencesForm:
+																					{
+																						currentUrls:
+																							working
+																								.data
+																								.referenceUrls ||
+																							[],
+																						currentFiles:
+																							working
+																								.data
+																								.referenceFiles ||
+																							[],
+																					},
+																			},
+																		]
+																	);
+																}
+															} finally {
+																setIsThinking(
+																	false
+																);
+															}
+														}}
+													>
+														Continue
+														(
+														{
+															selectedSecondaries.length
+														}{' '}
+														selected)
+													</button>
+												</div>
+											</>
+										)}
 
 										{/* Title Selection */}
 										{m.titleSelection &&
-											m.titleSelection
-												.titles &&
-											m.titleSelection
-												.titles
-												.length >
+										m.titleSelection
+											.titles &&
+										m.titleSelection
+											.titles
+											.length >
 											0 ? (
 											<div className='mt-3 space-y-2'>
 												{m.titleSelection.titles.map(
@@ -3921,12 +4257,13 @@ const AgentMode: React.FC<Props> = ({
 																disabled={completedSelections.has(
 																	'title'
 																)}
-																className={`px-3 py-1 text-xs text-white rounded transition-colors ml-3 ${completedSelections.has(
-																	'title'
-																)
-																	? 'bg-gray-400 cursor-not-allowed'
-																	: 'bg-purple-500 hover:bg-purple-600'
-																	}`}
+																className={`px-3 py-1 text-xs text-white rounded transition-colors ml-3 ${
+																	completedSelections.has(
+																		'title'
+																	)
+																		? 'bg-gray-400 cursor-not-allowed'
+																		: 'bg-purple-500 hover:bg-purple-600'
+																}`}
 																onClick={async () => {
 																	if (
 																		!agent
@@ -3947,16 +4284,16 @@ const AgentMode: React.FC<Props> = ({
 																		(
 																			prev
 																		) => [
-																				...prev,
-																				{
-																					role: 'user',
-																					content: `Select "${title}" as title`,
-																				},
-																				{
-																					role: 'assistant',
-																					content: `✅ Selected title. Continuing...`,
-																				},
-																			]
+																			...prev,
+																			{
+																				role: 'user',
+																				content: `Select "${title}" as title`,
+																			},
+																			{
+																				role: 'assistant',
+																				content: `✅ Selected title. Continuing...`,
+																			},
+																		]
 																	);
 
 																	const next =
@@ -4048,11 +4385,11 @@ const AgentMode: React.FC<Props> = ({
 																				(
 																					prev
 																				) => [
-																						...prev,
-																						{
-																							role: 'assistant',
-																							content: '🔗 Add internal/external links (optional) or click "Continue" to skip:',
-																							interlinkingForm:
+																					...prev,
+																					{
+																						role: 'assistant',
+																						content: '🔗 Add internal/external links (optional) or click "Continue" to skip:',
+																						interlinkingForm:
 																							{
 																								currentLinks:
 																									working
@@ -4060,8 +4397,8 @@ const AgentMode: React.FC<Props> = ({
 																										.interlinks ||
 																									[],
 																							},
-																						},
-																					]
+																					},
+																				]
 																			);
 																		}
 
@@ -4076,11 +4413,11 @@ const AgentMode: React.FC<Props> = ({
 																				(
 																					prev
 																				) => [
-																						...prev,
-																						{
-																							role: 'assistant',
-																							content: '📚 Add reference materials (URLs or files) to improve content quality, or click "Continue" to skip:',
-																							referencesForm:
+																					...prev,
+																					{
+																						role: 'assistant',
+																						content: '📚 Add reference materials (URLs or files) to improve content quality, or click "Continue" to skip:',
+																						referencesForm:
 																							{
 																								currentUrls:
 																									working
@@ -4093,8 +4430,8 @@ const AgentMode: React.FC<Props> = ({
 																										.referenceFiles ||
 																									[],
 																							},
-																						},
-																					]
+																					},
+																				]
 																			);
 																		}
 
@@ -4109,18 +4446,18 @@ const AgentMode: React.FC<Props> = ({
 																				(
 																					prev
 																				) => [
-																						...prev,
-																						{
-																							role: 'assistant',
-																							content: '📋 Outline is ready! Review it below and approve to continue, or provide feedback to regenerate:',
-																							outlineApproval:
+																					...prev,
+																					{
+																						role: 'assistant',
+																						content: '📋 Outline is ready! Review it below and approve to continue, or provide feedback to regenerate:',
+																						outlineApproval:
 																							{
 																								outline:
 																									working.outline ||
 																									[],
 																							},
-																						},
-																					]
+																					},
+																				]
 																			);
 																		}
 																	} finally {
@@ -4148,7 +4485,7 @@ const AgentMode: React.FC<Props> = ({
 														.interlinkingForm
 														.currentLinks
 														.length >
-													0 && (
+														0 && (
 														<div className='space-y-2 mb-3'>
 															{m.interlinkingForm.currentLinks.map(
 																(
@@ -4199,23 +4536,23 @@ const AgentMode: React.FC<Props> = ({
 																							) => {
 																								if (
 																									i ===
-																									messages.length -
-																									1 &&
+																										messages.length -
+																											1 &&
 																									msg.interlinkingForm
 																								) {
 																									return {
 																										...msg,
 																										interlinkingForm:
-																										{
-																											currentLinks:
-																												data.interlinks.filter(
-																													(
-																														l
-																													) =>
-																														l.id !==
-																														link.id
-																												),
-																										},
+																											{
+																												currentLinks:
+																													data.interlinks.filter(
+																														(
+																															l
+																														) =>
+																															l.id !==
+																															link.id
+																													),
+																											},
 																									};
 																								}
 																								return msg;
@@ -4285,11 +4622,11 @@ const AgentMode: React.FC<Props> = ({
 																interlinkUrl.trim()
 															) {
 																const newLink: Interlink =
-																{
-																	id: Date.now().toString(),
-																	keyword: interlinkKeyword.trim(),
-																	url: interlinkUrl.trim(),
-																};
+																	{
+																		id: Date.now().toString(),
+																		keyword: interlinkKeyword.trim(),
+																		url: interlinkUrl.trim(),
+																	};
 																updateData(
 																	{
 																		interlinks:
@@ -4311,20 +4648,20 @@ const AgentMode: React.FC<Props> = ({
 																			) => {
 																				if (
 																					i ===
-																					messages.length -
-																					1 &&
+																						messages.length -
+																							1 &&
 																					msg.interlinkingForm
 																				) {
 																					return {
 																						...msg,
 																						interlinkingForm:
-																						{
-																							currentLinks:
-																								[
-																									...data.interlinks,
-																									newLink,
-																								],
-																						},
+																							{
+																								currentLinks:
+																									[
+																										...data.interlinks,
+																										newLink,
+																									],
+																							},
 																					};
 																				}
 																				return msg;
@@ -4349,12 +4686,13 @@ const AgentMode: React.FC<Props> = ({
 														disabled={completedSelections.has(
 															'interlinking'
 														)}
-														className={`px-4 py-2 text-sm text-white rounded transition-colors ${completedSelections.has(
-															'interlinking'
-														)
-															? 'bg-gray-400 cursor-not-allowed'
-															: 'bg-green-600 hover:bg-green-700'
-															}`}
+														className={`px-4 py-2 text-sm text-white rounded transition-colors ${
+															completedSelections.has(
+																'interlinking'
+															)
+																? 'bg-gray-400 cursor-not-allowed'
+																: 'bg-green-600 hover:bg-green-700'
+														}`}
 														onClick={async () => {
 															if (
 																!agent
@@ -4375,28 +4713,28 @@ const AgentMode: React.FC<Props> = ({
 																(
 																	prev
 																) => [
-																		...prev,
-																		{
-																			role: 'user',
-																			content:
-																				data
-																					.interlinks
-																					.length >
-																					0
-																					? `Added ${data.interlinks.length} link(s). Continue.`
-																					: 'Skip interlinking',
-																		},
-																		{
-																			role: 'assistant',
-																			content:
-																				data
-																					.interlinks
-																					.length >
-																					0
-																					? `✅ Added ${data.interlinks.length} internal/external links. Continuing...`
-																					: '⏭️ Skipped interlinking. Continuing...',
-																		},
-																	]
+																	...prev,
+																	{
+																		role: 'user',
+																		content:
+																			data
+																				.interlinks
+																				.length >
+																			0
+																				? `Added ${data.interlinks.length} link(s). Continue.`
+																				: 'Skip interlinking',
+																	},
+																	{
+																		role: 'assistant',
+																		content:
+																			data
+																				.interlinks
+																				.length >
+																			0
+																				? `✅ Added ${data.interlinks.length} internal/external links. Continuing...`
+																				: '⏭️ Skipped interlinking. Continuing...',
+																	},
+																]
 															);
 
 															const next =
@@ -4479,11 +4817,11 @@ const AgentMode: React.FC<Props> = ({
 																		(
 																			prev
 																		) => [
-																				...prev,
-																				{
-																					role: 'assistant',
-																					content: '📚 Add reference materials (URLs or files) to improve content quality, or click "Continue" to skip:',
-																					referencesForm:
+																			...prev,
+																			{
+																				role: 'assistant',
+																				content: '📚 Add reference materials (URLs or files) to improve content quality, or click "Continue" to skip:',
+																				referencesForm:
 																					{
 																						currentUrls:
 																							working
@@ -4496,8 +4834,8 @@ const AgentMode: React.FC<Props> = ({
 																								.referenceFiles ||
 																							[],
 																					},
-																				},
-																			]
+																			},
+																		]
 																	);
 																}
 
@@ -4512,18 +4850,18 @@ const AgentMode: React.FC<Props> = ({
 																		(
 																			prev
 																		) => [
-																				...prev,
-																				{
-																					role: 'assistant',
-																					content: '📋 Outline is ready! Review it below and approve to continue, or provide feedback to regenerate:',
-																					outlineApproval:
+																			...prev,
+																			{
+																				role: 'assistant',
+																				content: '📋 Outline is ready! Review it below and approve to continue, or provide feedback to regenerate:',
+																				outlineApproval:
 																					{
 																						outline:
 																							working.outline ||
 																							[],
 																					},
-																				},
-																			]
+																			},
+																		]
 																	);
 																}
 															} finally {
@@ -4560,48 +4898,48 @@ const AgentMode: React.FC<Props> = ({
 															.currentUrls
 															.length >
 															0 && (
-																<div className='space-y-2 mb-3 max-h-32 overflow-y-auto'>
-																	{m.referencesForm.currentUrls.map(
-																		(
-																			url,
-																			idx
-																		) => (
-																			<div
-																				key={
-																					idx
+															<div className='space-y-2 mb-3 max-h-32 overflow-y-auto'>
+																{m.referencesForm.currentUrls.map(
+																	(
+																		url,
+																		idx
+																	) => (
+																		<div
+																			key={
+																				idx
+																			}
+																			className='flex items-center justify-between text-xs bg-gray-50 border rounded p-2'
+																		>
+																			<span className='truncate flex-1 text-blue-600'>
+																				{
+																					url
 																				}
-																				className='flex items-center justify-between text-xs bg-gray-50 border rounded p-2'
+																			</span>
+																			<button
+																				className='px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600 transition-colors ml-2'
+																				onClick={() => {
+																					updateData(
+																						{
+																							referenceUrls:
+																								data.referenceUrls.filter(
+																									(
+																										_,
+																										i
+																									) =>
+																										i !==
+																										idx
+																								),
+																						}
+																					);
+																				}}
 																			>
-																				<span className='truncate flex-1 text-blue-600'>
-																					{
-																						url
-																					}
-																				</span>
-																				<button
-																					className='px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600 transition-colors ml-2'
-																					onClick={() => {
-																						updateData(
-																							{
-																								referenceUrls:
-																									data.referenceUrls.filter(
-																										(
-																											_,
-																											i
-																										) =>
-																											i !==
-																											idx
-																									),
-																							}
-																						);
-																					}}
-																				>
-																					Remove
-																				</button>
-																			</div>
-																		)
-																	)}
-																</div>
-															)}
+																				Remove
+																			</button>
+																		</div>
+																	)
+																)}
+															</div>
+														)}
 														<div className='flex gap-2'>
 															<input
 																type='text'
@@ -4622,7 +4960,7 @@ const AgentMode: React.FC<Props> = ({
 																) => {
 																	if (
 																		e.key ===
-																		'Enter' &&
+																			'Enter' &&
 																		currentReferenceUrl.trim()
 																	) {
 																		const url =
@@ -4699,48 +5037,48 @@ const AgentMode: React.FC<Props> = ({
 															.currentFiles
 															.length >
 															0 && (
-																<div className='space-y-2 mb-3 max-h-32 overflow-y-auto'>
-																	{m.referencesForm.currentFiles.map(
-																		(
-																			file,
-																			idx
-																		) => (
-																			<div
-																				key={
-																					idx
+															<div className='space-y-2 mb-3 max-h-32 overflow-y-auto'>
+																{m.referencesForm.currentFiles.map(
+																	(
+																		file,
+																		idx
+																	) => (
+																		<div
+																			key={
+																				idx
+																			}
+																			className='flex items-center justify-between text-xs bg-gray-50 border rounded p-2'
+																		>
+																			<span className='truncate flex-1'>
+																				{
+																					file.name
 																				}
-																				className='flex items-center justify-between text-xs bg-gray-50 border rounded p-2'
+																			</span>
+																			<button
+																				className='px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600 transition-colors ml-2'
+																				onClick={() => {
+																					updateData(
+																						{
+																							referenceFiles:
+																								data.referenceFiles.filter(
+																									(
+																										_,
+																										i
+																									) =>
+																										i !==
+																										idx
+																								),
+																						}
+																					);
+																				}}
 																			>
-																				<span className='truncate flex-1'>
-																					{
-																						file.name
-																					}
-																				</span>
-																				<button
-																					className='px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600 transition-colors ml-2'
-																					onClick={() => {
-																						updateData(
-																							{
-																								referenceFiles:
-																									data.referenceFiles.filter(
-																										(
-																											_,
-																											i
-																										) =>
-																											i !==
-																											idx
-																									),
-																							}
-																						);
-																					}}
-																				>
-																					Remove
-																				</button>
-																			</div>
-																		)
-																	)}
-																</div>
-															)}
+																				Remove
+																			</button>
+																		</div>
+																	)
+																)}
+															</div>
+														)}
 														<input
 															type='file'
 															accept='.pdf,.docx'
@@ -4760,11 +5098,11 @@ const AgentMode: React.FC<Props> = ({
 																				file
 																			);
 																		const newFile: ReferenceFile =
-																		{
-																			name: file.name,
-																			mimeType: file.type,
-																			base64: base64,
-																		};
+																			{
+																				name: file.name,
+																				mimeType: file.type,
+																				base64: base64,
+																			};
 																		updateData(
 																			{
 																				referenceFiles:
@@ -4810,12 +5148,13 @@ const AgentMode: React.FC<Props> = ({
 														disabled={completedSelections.has(
 															'references'
 														)}
-														className={`w-full px-4 py-2 text-sm font-semibold text-white rounded-lg shadow-md transition-all ${completedSelections.has(
-															'references'
-														)
-															? 'bg-gray-400 cursor-not-allowed'
-															: 'bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 hover:shadow-lg'
-															}`}
+														className={`w-full px-4 py-2 text-sm font-semibold text-white rounded-lg shadow-md transition-all ${
+															completedSelections.has(
+																'references'
+															)
+																? 'bg-gray-400 cursor-not-allowed'
+																: 'bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 hover:shadow-lg'
+														}`}
 														onClick={async () => {
 															if (
 																!agent
@@ -4836,46 +5175,48 @@ const AgentMode: React.FC<Props> = ({
 																(
 																	prev
 																) => [
-																		...prev,
-																		{
-																			role: 'user',
-																			content:
+																	...prev,
+																	{
+																		role: 'user',
+																		content:
+																			(data
+																				.referenceUrls
+																				?.length ||
+																				0) +
 																				(data
-																					.referenceUrls
+																					.referenceFiles
 																					?.length ||
-																					0) +
-																					(data
-																						.referenceFiles
-																						?.length ||
-																						0) >
-																					0
-																					? `Added ${data
-																						.referenceUrls
-																						?.length ||
-																					0
-																					} URL(s) and ${data
-																						.referenceFiles
-																						?.length ||
-																					0
-																					} file(s). Continue.`
-																					: 'Skip references',
-																		},
-																		{
-																			role: 'assistant',
-																			content:
+																					0) >
+																			0
+																				? `Added ${
+																						data
+																							.referenceUrls
+																							?.length ||
+																						0
+																				  } URL(s) and ${
+																						data
+																							.referenceFiles
+																							?.length ||
+																						0
+																				  } file(s). Continue.`
+																				: 'Skip references',
+																	},
+																	{
+																		role: 'assistant',
+																		content:
+																			(data
+																				.referenceUrls
+																				?.length ||
+																				0) +
 																				(data
-																					.referenceUrls
+																					.referenceFiles
 																					?.length ||
-																					0) +
-																					(data
-																						.referenceFiles
-																						?.length ||
-																						0) >
-																					0
-																					? `✅ Added reference materials. Continuing...`
-																					: '⏭️ Skipped references. Continuing...',
-																		},
-																	]
+																					0) >
+																			0
+																				? `✅ Added reference materials. Continuing...`
+																				: '⏭️ Skipped references. Continuing...',
+																	},
+																]
 															);
 
 															const next =
@@ -4958,18 +5299,18 @@ const AgentMode: React.FC<Props> = ({
 																		(
 																			prev
 																		) => [
-																				...prev,
-																				{
-																					role: 'assistant',
-																					content: '📋 Outline is ready! Review it below and approve to continue, or provide feedback to regenerate:',
-																					outlineApproval:
+																			...prev,
+																			{
+																				role: 'assistant',
+																				content: '📋 Outline is ready! Review it below and approve to continue, or provide feedback to regenerate:',
+																				outlineApproval:
 																					{
 																						outline:
 																							working.outline ||
 																							[],
 																					},
-																				},
-																			]
+																			},
+																		]
 																	);
 																}
 															} finally {
@@ -4987,7 +5328,7 @@ const AgentMode: React.FC<Props> = ({
 																.referenceFiles
 																?.length ||
 																0) >
-															0
+														0
 															? '✅ Continue with References'
 															: '⏭️ Skip & Continue'}
 													</button>
@@ -5001,75 +5342,82 @@ const AgentMode: React.FC<Props> = ({
 												.outlineApproval
 												.outline && (
 												<div className='mt-3'>
-													<div className='bg-white p-4 rounded-md border border-blue-200 mb-4'>
-														<div className='font-bold text-lg mb-3 text-gray-800'>
-															📋
-															Blog
-															Outline
-														</div>
-														<div className='space-y-3 text-sm'>
-															{m.outlineApproval.outline.map(
+													<DraggableOutline
+														outline={
+															m
+																.outlineApproval
+																.outline
+														}
+														onOutlineChange={(
+															newOutline
+														) => {
+															// Update the outline in the message
+															setMessages(
 																(
-																	section,
-																	idx
-																) => (
-																	<div
-																		key={
-																			section.id
-																		}
-																		className='border-l-4 border-blue-400 pl-3'
-																	>
-																		<div className='font-semibold text-gray-800 mb-1'>
-																			{idx +
-																				1}
+																	prev
+																) =>
+																	prev.map(
+																		(
+																			msg,
+																			idx
+																		) =>
+																			idx ===
+																			messages.findIndex(
+																				(
+																					m2
+																				) =>
+																					m2 ===
+																					m
+																			)
+																				? {
+																						...msg,
+																						outlineApproval:
+																							{
+																								outline: newOutline,
+																							},
+																				  }
+																				: msg
+																	)
+															);
 
-																			.{' '}
-																			{
-																				section.name
-																			}
-																		</div>
-																		{section.items &&
-																			section
-																				.items
-																				.length >
-																			0 && (
-																				<ul className='ml-4 space-y-1 text-gray-600'>
-																					{section.items.map(
-																						(
-																							item
-																						) => (
-																							<li
-																								key={
-																									item.id
-																								}
-																								className='text-xs'
-																							>
-																								•{' '}
-																								{
-																									item.name
-																								}
-																							</li>
-																						)
-																					)}
-																				</ul>
-																			)}
-																	</div>
-																)
-															)}
-														</div>
-													</div>
+															// Update the agent state
+															if (
+																agent
+															) {
+																setAgent(
+																	{
+																		...agent,
+																		outline: newOutline,
+																	}
+																);
+															}
+
+															// Update the outline state
+															setOutline(
+																newOutline
+															);
+
+															// Persist to data
+															updateData(
+																{
+																	outline: newOutline,
+																}
+															);
+														}}
+													/>
 
 													<div className='flex gap-3'>
 														<button
 															disabled={completedSelections.has(
 																'outline'
 															)}
-															className={`px-6 py-3 text-sm font-semibold rounded-xl transition-all duration-200 ${completedSelections.has(
-																'outline'
-															)
-																? 'bg-gray-400 text-gray-200 cursor-not-allowed'
-																: 'text-white bg-gradient-to-r from-orange-500 to-orange-600 hover:shadow-lg hover:shadow-orange-500/30'
-																}`}
+															className={`px-6 py-3 text-sm font-semibold rounded-xl transition-all duration-200 ${
+																completedSelections.has(
+																	'outline'
+																)
+																	? 'bg-gray-400 text-gray-200 cursor-not-allowed'
+																	: 'text-white bg-gradient-to-r from-orange-500 to-orange-600 hover:shadow-lg hover:shadow-orange-500/30'
+															}`}
 															onClick={async () => {
 																if (
 																	!agent
@@ -5090,16 +5438,16 @@ const AgentMode: React.FC<Props> = ({
 																	(
 																		prev
 																	) => [
-																			...prev,
-																			{
-																				role: 'user',
-																				content: 'Approve outline',
-																			},
-																			{
-																				role: 'assistant',
-																				content: '✅ Outline approved! Starting blog generation...',
-																			},
-																		]
+																		...prev,
+																		{
+																			role: 'user',
+																			content: 'Approve outline',
+																		},
+																		{
+																			role: 'assistant',
+																			content: '✅ Outline approved! Starting blog generation...',
+																		},
+																	]
 																);
 
 																const next =
@@ -5151,10 +5499,10 @@ const AgentMode: React.FC<Props> = ({
 																			const latestTrace =
 																				working
 																					.trace[
-																				working
-																					.trace
-																					.length -
-																				1
+																					working
+																						.trace
+																						.length -
+																						1
 																				];
 																			const stepMessage =
 																				getStepMessage(
@@ -5169,12 +5517,12 @@ const AgentMode: React.FC<Props> = ({
 																					(
 																						prev
 																					) => [
-																							...prev,
-																							{
-																								role: 'assistant',
-																								content: stepMessage,
-																							},
-																						]
+																						...prev,
+																						{
+																							role: 'assistant',
+																							content: stepMessage,
+																						},
+																					]
 																				);
 																				await new Promise(
 																					(
@@ -5249,12 +5597,12 @@ const AgentMode: React.FC<Props> = ({
 																			(
 																				prev
 																			) => [
-																					...prev,
-																					{
-																						role: 'assistant',
-																						content: '🎉 Blog generation complete! Your content is ready in the Live Draft.',
-																					},
-																				]
+																				...prev,
+																				{
+																					role: 'assistant',
+																					content: '🎉 Blog generation complete! Your content is ready in the Live Draft.',
+																				},
+																			]
 																		);
 																	}
 																} finally {
@@ -5338,7 +5686,7 @@ const AgentMode: React.FC<Props> = ({
 										onKeyDown={(e) => {
 											if (
 												e.key ===
-												'Enter' &&
+													'Enter' &&
 												!e.shiftKey
 											) {
 												e.preventDefault();
@@ -5358,15 +5706,16 @@ const AgentMode: React.FC<Props> = ({
 											outlineApproved
 												? 'Chat disabled - Blog generation in progress...'
 												: isStreaming
-													? 'Assistant is streaming response...'
-													: isThinking
-														? 'Assistant is responding...'
-														: 'Message Bloggr AI...'
+												? 'Assistant is streaming response...'
+												: isThinking
+												? 'Assistant is responding...'
+												: 'Message Bloggr AI...'
 										}
-										className={`flex-1 px-2 py-2 border-0 focus:ring-0 focus:outline-none resize-none bg-transparent text-gray-900 placeholder-gray-400 ${isInputLocked
-											? 'cursor-not-allowed opacity-60'
-											: ''
-											}`}
+										className={`flex-1 px-2 py-2 border-0 focus:ring-0 focus:outline-none resize-none bg-transparent text-gray-900 placeholder-gray-400 ${
+											isInputLocked
+												? 'cursor-not-allowed opacity-60'
+												: ''
+										}`}
 										style={{
 											minHeight:
 												'24px',
@@ -5378,7 +5727,8 @@ const AgentMode: React.FC<Props> = ({
 										onClick={handleSend}
 										disabled={
 											!canSend ||
-											isThinking
+											isThinking ||
+											isStreaming
 										}
 										className='p-2 text-white bg-orange-500 rounded-lg hover:bg-orange-600 transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-orange-500'
 										title='Send message'
@@ -5486,11 +5836,12 @@ const AgentMode: React.FC<Props> = ({
 														'markdown'
 													)
 												}
-												className={`px-3 py-1 text-xs rounded ${viewMode ===
+												className={`px-3 py-1 text-xs rounded ${
+													viewMode ===
 													'markdown'
-													? 'bg-orange-500 text-white'
-													: 'text-gray-600 hover:bg-gray-200'
-													}`}
+														? 'bg-orange-500 text-white'
+														: 'text-gray-600 hover:bg-gray-200'
+												}`}
 											>
 												Preview
 											</button>
@@ -5500,11 +5851,12 @@ const AgentMode: React.FC<Props> = ({
 														'blog'
 													)
 												}
-												className={`px-3 py-1 text-xs rounded ${viewMode ===
+												className={`px-3 py-1 text-xs rounded ${
+													viewMode ===
 													'blog'
-													? 'bg-orange-500 text-white'
-													: 'text-gray-600 hover:bg-gray-200'
-													}`}
+														? 'bg-orange-500 text-white'
+														: 'text-gray-600 hover:bg-gray-200'
+												}`}
 											>
 												Raw
 											</button>

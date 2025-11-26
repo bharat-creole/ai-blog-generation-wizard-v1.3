@@ -15,7 +15,7 @@ const initialBlogData: BlogData = {
 	interlinks: [],
 	brandVoice: 'Default',
 	blogGuideline: 'Default',
-	llmModel: 'gemini-flash-latest',
+	llmModel: 'gemini-2.5-flash',
 	language: 'English',
 	outline: [],
 	blogContent: '',
@@ -79,9 +79,7 @@ const App: React.FC = () => {
 				showBlogInfo={showBlogInfo}
 				showTrace={showTrace}
 				showSettings={showSettings}
-				onCollapseSidebar={() =>
-					setSidebarCollapsed(true)
-				}
+				onCollapseSidebar={() => setSidebarCollapsed(true)}
 			/>
 		);
 	};
@@ -151,8 +149,9 @@ const App: React.FC = () => {
 				{/* Left Sidebar - Mode Navigation */}
 				<aside
 					className={`
-					${sidebarCollapsed ? 'w-20' : 'w-64'
-						} bg-white/80 backdrop-blur-lg border-r border-gray-200/50 shadow-lg flex flex-col
+					${
+						sidebarCollapsed ? 'w-20' : 'w-64'
+					} bg-white/80 backdrop-blur-lg border-r border-gray-200/50 shadow-lg flex flex-col
 					fixed lg:relative inset-y-0 left-0 z-50 transform transition-all duration-300 ease-in-out
 					${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
 					mt-[49px] lg:mt-0
@@ -216,13 +215,15 @@ const App: React.FC = () => {
 									}
 									setSidebarOpen(false);
 								}}
-								className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-200 ${view === AppView.Agent
-									? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg shadow-orange-500/30 scale-[1.02]'
-									: 'text-gray-700 hover:bg-gray-100 hover:shadow-md'
-									} ${sidebarCollapsed
+								className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-200 ${
+									view === AppView.Agent
+										? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg shadow-orange-500/30 scale-[1.02]'
+										: 'text-gray-700 hover:bg-gray-100 hover:shadow-md'
+								} ${
+									sidebarCollapsed
 										? 'justify-center'
 										: ''
-									}`}
+								}`}
 								title={
 									sidebarCollapsed
 										? 'Agent Mode'
@@ -240,21 +241,23 @@ const App: React.FC = () => {
 												Mode
 											</div>
 											<div
-												className={`text-xs ${view ===
+												className={`text-xs ${
+													view ===
 													AppView.Agent
-													? 'text-orange-100'
-													: 'text-gray-500'
-													}`}
+														? 'text-orange-100'
+														: 'text-gray-500'
+												}`}
 											>
 												AI-powered
 												chat
 											</div>
 										</div>
 										<svg
-											className={`w-4 h-4 transition-transform ${agentDropdownOpen
-												? 'rotate-180'
-												: ''
-												}`}
+											className={`w-4 h-4 transition-transform ${
+												agentDropdownOpen
+													? 'rotate-180'
+													: ''
+											}`}
 											fill='none'
 											stroke='currentColor'
 											viewBox='0 0 24 24'
@@ -272,7 +275,7 @@ const App: React.FC = () => {
 								)}
 								{sidebarCollapsed &&
 									view ===
-									AppView.Agent && (
+										AppView.Agent && (
 										<div className='absolute right-1 top-1 w-2 h-2 bg-white rounded-full animate-pulse' />
 									)}
 							</button>
@@ -288,10 +291,11 @@ const App: React.FC = () => {
 													!showBlogInfo
 												)
 											}
-											className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs transition-all ${showBlogInfo
-												? 'bg-orange-100 text-orange-700'
-												: 'text-gray-600 hover:bg-gray-100'
-												}`}
+											className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs transition-all ${
+												showBlogInfo
+													? 'bg-orange-100 text-orange-700'
+													: 'text-gray-600 hover:bg-gray-100'
+											}`}
 										>
 											<span>
 												{showBlogInfo
@@ -312,10 +316,11 @@ const App: React.FC = () => {
 													!showTrace
 												)
 											}
-											className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs transition-all ${showTrace
-												? 'bg-orange-100 text-orange-700'
-												: 'text-gray-600 hover:bg-gray-100'
-												}`}
+											className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs transition-all ${
+												showTrace
+													? 'bg-orange-100 text-orange-700'
+													: 'text-gray-600 hover:bg-gray-100'
+											}`}
 										>
 											<span>
 												{showTrace
@@ -335,10 +340,11 @@ const App: React.FC = () => {
 													!showSettings
 												)
 											}
-											className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs transition-all ${showSettings
-												? 'bg-orange-100 text-orange-700'
-												: 'text-gray-600 hover:bg-gray-100'
-												}`}
+											className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs transition-all ${
+												showSettings
+													? 'bg-orange-100 text-orange-700'
+													: 'text-gray-600 hover:bg-gray-100'
+											}`}
 										>
 											<span>
 												{showSettings
@@ -355,8 +361,6 @@ const App: React.FC = () => {
 									</div>
 								)}
 						</div>
-
-
 					</nav>
 
 					{/* Sidebar Footer */}

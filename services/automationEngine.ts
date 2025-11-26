@@ -32,7 +32,7 @@ export const autoFillPrimaryKeyword = async (
 				}
 			})
 		);
-		
+
 		const merged = keywordTool.dedupeMerge(batches.flat());
 		const ranked = keywordTool.scoreIdeas(
 			merged,
@@ -59,17 +59,17 @@ export const autoFillSecondaryKeywords = async (
 	}
 
 	const location = s.data.targetLocation || 'United States';
-	
+
 	// 📊 LOG: Auto-fill secondary keywords
 	console.log('🤖 [AUTO-FILL SECONDARY KEYWORDS] Starting...');
 	console.log(`   Primary Keyword: "${primary}"`);
 	console.log(`   Location: ${location}`);
-	
+
 	try {
 		console.log('   📡 Fetching secondary keywords...');
 		const ideas = await keywordTool.getKeywordIdeas(primary, location);
 		console.log(`   ✅ Got ${ideas.length} keyword ideas`);
-		
+
 		const merged = keywordTool.dedupeMerge(ideas);
 		const ranked = keywordTool.scoreIdeas(
 			merged,
@@ -102,11 +102,13 @@ export const shouldAutoFill = (
 ): boolean => {
 	// Check if field is in autoFillFields set
 	if (s.autoFillFields && s.autoFillFields.has(field)) {
+		console.log(`🤖 [AUTO-FILL] Field "${field}" - auto-fill enabled (in autoFillFields set)`);
 		return true;
 	}
 
 	// Check if full automation mode
 	if (s.preferences?.automationLevel === 'full') {
+		console.log(`🤖 [AUTO-FILL] Field "${field}" - auto-fill enabled (automation level: full)`);
 		return true;
 	}
 

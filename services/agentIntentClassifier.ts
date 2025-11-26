@@ -33,16 +33,16 @@ const cleanAndParseJson = (text: string): any => {
 
 export interface UserIntent {
 	type:
-	| 'full_automation'
-	| 'partial_info'
-	| 'query'
-	| 'refinement'
-	| 'manual_control'
-	| 'approval'
-	| 'skip_step'
-	| 'greeting'
-	| 'help_request'
-	| 'off_topic';
+		| 'full_automation'
+		| 'partial_info'
+		| 'query'
+		| 'refinement'
+		| 'manual_control'
+		| 'approval'
+		| 'skip_step'
+		| 'greeting'
+		| 'help_request'
+		| 'off_topic';
 	extractedData?: Partial<BlogData>;
 	missingFields?: string[];
 	autoFillRequested?: boolean;
@@ -63,7 +63,7 @@ export const classifyIntent = async (
 	const ai = new GoogleGenAI({ apiKey });
 
 	const prompt = `
-You are an intent classifier for a blog generation agent. Analyze the user's message and classify their intent.
+You are an intent classifier for a blog generation agent. Analyze the user's message carefully and classify their intent.
 
 USER MESSAGE: "${userMessage}"
 
@@ -74,34 +74,61 @@ CURRENT STATE:
 - Has outline: ${currentState.outline?.length > 0}
 - Current halt reason: ${currentState.halt?.reason || 'none'}
 
-INSTRUCTIONS:
-1. Classify the intent type:
-   - "greeting": User is greeting or saying hello (hi, hello, hey, good morning, etc.)
-   - "help_request": User is asking what you can do or how you can help
-   - "off_topic": User is asking about something completely unrelated to blog generation (weather, math, coding help, general questions, etc.)
-   - "full_automation": User wants agent to decide everything automatically
-   - "partial_info": User provides some information (topic, keywords, title, etc.)
-   - "query": User is asking a question ABOUT blog creation process
-   - "refinement": User wants to modify/improve existing content
-   - "manual_control": User explicitly wants to control specific steps
-   - "approval": User is approving/confirming something
-   - "skip_step": User wants to skip the current step
+CRITICAL CLASSIFICATION RULES (PRIORITY ORDER - CHECK IN THIS ORDER):
 
-2. Extract any blog data mentioned (topic, keywords, title, location, etc.)
+1. **GREETINGS** (HIGHEST PRIORITY)
+   - If user says ONLY: "hi", "hello", "hey", "good morning", "good evening", "howdy", or similar greetings
+   - Even if they include "hi" with something else, prioritize greeting if it's the main intent
+   - Example: "Hi" → type: "greeting"
+   - Example: "Hello there" → type: "greeting"
 
-3. Detect automation preferences:
-   - Does user want agent to auto-select options?
-   - Does user want to choose themselves?
-   - Does user want to skip optional steps?
+2. **AUTOMATION REQUESTS** (SECOND HIGHEST PRIORITY)
+   - If message contains automation phrases like: "generate blog by yourself", "handle it by yourself", "you handle it", "do it yourself", "handle it automatically", "you decide everything", "create blog yourself", "full auto", "automatic mode"
+   - These phrases mean user wants FULL automation, NOT that they're providing a topic
+   - Example: "generate blog by yourself" → type: "full_automation", autoFillRequested: true, extractedData.topic: null
+   - Example: "handle it by yourself" → type: "full_automation", autoFillRequested: true
+   - DO NOT extract "blog" or "it" as a topic when these phrases are used
 
-4. Identify specific requests or questions
+3. **HELP REQUESTS**
+   - "what can you do", "how can you help", "what are your capabilities"
+   - type: "help_request"
 
-IMPORTANT CLASSIFICATION RULES:
-- If user says "hi", "hello", "hey", or similar → type: "greeting"
-- If user asks "what can you do", "how can you help", "what are your capabilities" → type: "help_request"
-- If user asks about weather, math, code debugging, general knowledge questions NOT related to blog writing → type: "off_topic"
-- Only classify as "query" if the question is specifically about the blog creation process
-- Only classify as "partial_info" if user provides actual blog-related data (topic, keywords, etc.)
+4. **OFF-TOPIC QUESTIONS**
+   - Weather, math, coding help, general knowledge NOT related to blog writing
+   - type: "off_topic"
+
+5. **QUERY ABOUT BLOG PROCESS**
+   - Questions specifically about blog creation: "Can you suggest keywords?", "How's my SEO?"
+   - type: "query"
+
+6. **APPROVAL/CONFIRMATION**
+   - "yes", "ok", "approve", "proceed", "looks good", "continue"
+   - type: "approval"
+
+7. **SKIP REQUEST**
+   - "skip this", "skip step", "move on", "pass"
+   - type: "skip_step"
+
+8. **MANUAL CONTROL**
+   - "I want to choose", "let me select", "I'll pick"
+   - type: "manual_control"
+
+9. **REFINEMENT**
+   - User wants to modify existing content
+   - type: "refinement"
+
+10. **PARTIAL INFO** (LOWEST PRIORITY)
+   - User provides actual blog data: topic, keywords, title, location
+   - Example: "Write about cloud computing" → type: "partial_info", extractedData.topic: "cloud computing"
+   - Example: "Topic: AWS" → type: "partial_info", extractedData.topic: "AWS"
+   - ONLY use this if NO automation phrases are present
+
+TOPIC EXTRACTION RULES:
+- DO NOT extract "blog", "it", "yourself", "everything" as topics
+- Only extract meaningful topics: "cloud computing", "AWS", "machine learning", etc.
+- If message is ONLY automation phrases with no real topic, set extractedData.topic: null
+- If user says "generate blog by yourself", the topic is NULL (they're requesting automation)
+- If user says "write about AWS, you handle it", the topic is "AWS" AND autoFillRequested: true
 
 OUTPUT SCHEMA:
 {
@@ -123,15 +150,23 @@ OUTPUT SCHEMA:
 }
 
 EXAMPLES:
-- "Hi" or "Hello" → type: "greeting"
+- "Hi" → type: "greeting", extractedData.topic: null
+- "Hello" → type: "greeting", extractedData.topic: null
+- "Good morning" → type: "greeting", extractedData.topic: null
 - "What can you help me with?" → type: "help_request"
 - "What's the weather today?" → type: "off_topic"
-- "Write a blog about cloud computing, you decide everything" → type: "full_automation", autoFillRequested: true
-- "Topic: AWS, Keyword: database services" → type: "partial_info", extractedData filled
+- "Generate blog by yourself" → type: "full_automation", autoFillRequested: true, extractedData.topic: null
+- "Handle it yourself" → type: "full_automation", autoFillRequested: true, extractedData.topic: null
+- "Do it yourself" → type: "full_automation", autoFillRequested: true, extractedData.topic: null
+- "You handle it" → type: "full_automation", autoFillRequested: true, extractedData.topic: null
+- "Generate blog automatically" → type: "full_automation", autoFillRequested: true, extractedData.topic: null
+- "Write about cloud computing, you decide everything" → type: "full_automation", autoFillRequested: true, extractedData.topic: "cloud computing"
+- "Topic: AWS" → type: "partial_info", extractedData.topic: "AWS"
+- "Write a blog about machine learning" → type: "partial_info", extractedData.topic: "machine learning"
 - "Can you suggest good keywords?" → type: "query", specificRequest: "keyword suggestions"
 - "I want to pick my own title" → type: "manual_control", controlPreferences.wantsToChooseTitle: true
 - "Skip the interlinking" → type: "skip_step"
-- "Approve" or "Yes, proceed" → type: "approval"
+- "Yes, proceed" → type: "approval"
 `;
 
 	const responseSchema = {
@@ -156,14 +191,20 @@ EXAMPLES:
 				type: Type.OBJECT,
 				properties: {
 					topic: { type: Type.STRING, nullable: true },
-					primaryKeyword: { type: Type.STRING, nullable: true },
+					primaryKeyword: {
+						type: Type.STRING,
+						nullable: true,
+					},
 					secondaryKeywords: {
 						type: Type.ARRAY,
 						items: { type: Type.STRING },
 						nullable: true,
 					},
 					title: { type: Type.STRING, nullable: true },
-					targetLocation: { type: Type.STRING, nullable: true },
+					targetLocation: {
+						type: Type.STRING,
+						nullable: true,
+					},
 				},
 			},
 			autoFillRequested: { type: Type.BOOLEAN },
@@ -177,15 +218,11 @@ EXAMPLES:
 				},
 			},
 		},
-		required: [
-			'type',
-			'autoFillRequested',
-			'controlPreferences',
-		],
+		required: ['type', 'autoFillRequested', 'controlPreferences'],
 	};
 
 	const response = await ai.models.generateContent({
-		model: 'gemini-flash-latest',
+		model: 'gemini-2.5-flash',
 		contents: { parts: [{ text: prompt }] },
 		config: {
 			responseMimeType: 'application/json',
@@ -195,4 +232,3 @@ EXAMPLES:
 
 	return cleanAndParseJson(extractTextFromResponse(response));
 };
-

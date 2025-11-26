@@ -20,7 +20,7 @@ const extractTextFromResponse = (response: GenerateContentResponse): string => {
 				.filter((part: any) => part.text !== undefined)
 				.map((part: any) => part.text)
 				.join('');
-			
+
 			if (textParts) {
 				return textParts;
 			}
@@ -140,7 +140,7 @@ Output: {
 	};
 
 	const response = await ai.models.generateContent({
-		model: 'gemini-flash-latest',
+		model: 'gemini-2.5-flash',
 		contents: { parts: [{ text: prompt }] },
 		config: {
 			responseMimeType: 'application/json',
@@ -224,4 +224,3 @@ export const extractSeedsFromTitle = (title: string): string[] => {
 
 	return [...new Set(phrases)].slice(0, 3);
 };
-

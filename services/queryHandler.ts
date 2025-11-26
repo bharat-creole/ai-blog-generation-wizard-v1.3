@@ -10,7 +10,7 @@ const extractTextFromResponse = (response: GenerateContentResponse): string => {
 				.filter((part: any) => part.text !== undefined)
 				.map((part: any) => part.text)
 				.join('');
-			
+
 			if (textParts) {
 				return textParts;
 			}
@@ -24,7 +24,12 @@ const extractTextFromResponse = (response: GenerateContentResponse): string => {
 
 export interface QueryResponse {
 	answer: string;
-	actionRequired?: 'run_keyword_research' | 'run_title_generation' | 'show_seo_score' | 'skip_step' | 'none';
+	actionRequired?:
+		| 'run_keyword_research'
+		| 'run_title_generation'
+		| 'show_seo_score'
+		| 'skip_step'
+		| 'none';
 	stateUpdates?: Partial<AgentState>;
 }
 
@@ -65,7 +70,7 @@ RESPONSE FORMAT: Plain text answer
 `;
 
 	const response = await ai.models.generateContent({
-		model: 'gemini-flash-latest',
+		model: 'gemini-2.5-flash',
 		contents: { parts: [{ text: prompt }] },
 	});
 
@@ -135,7 +140,7 @@ Reason: [brief explanation]
 `;
 
 	const response = await ai.models.generateContent({
-		model: 'gemini-flash-latest',
+		model: 'gemini-2.5-flash',
 		contents: { parts: [{ text: prompt }] },
 	});
 
@@ -154,4 +159,3 @@ Reason: [brief explanation]
 
 	return { recommendation, reason };
 };
-

@@ -17,6 +17,16 @@ export const processMessage = async (
 	apiKey: string,
 	userSelectedAutomationMode?: 'full' | 'guided' | 'manual'
 ): Promise<ConversationResponse> => {
+	// 📥 LOG: Entry point - track ALL messages entering conversation handler
+	console.log('📥 [CONVERSATION HANDLER] Processing message');
+	console.log(`   User Query: "${userMessage}"`);
+	console.log(`   Has agent state: ${!!currentState}`);
+	console.log(
+		`   User selected automation mode: ${
+			userSelectedAutomationMode || 'none'
+		}`
+	);
+
 	// Step 1: Classify intent
 	const intent: UserIntent = await classifyIntent(
 		userMessage,
@@ -24,41 +34,222 @@ export const processMessage = async (
 		apiKey
 	);
 
+	// Step 1.5: Fallback check - if message contains automation phrases but was misclassified, override to full_automation
+	const automationPhrases = [
+		'by yourself',
+		'generate blog automatically',
+		'you decide',
+		'handle it yourself',
+		'handle it by yourself',
+		'do it yourself',
+		'create blog yourself',
+		'you choose everything',
+		'auto generate',
+		'full auto',
+		'automatic mode',
+		'you handle it',
+		'do it automatically',
+		'handle automatically',
+		'automatically generate',
+	];
+	const lowerMessage = userMessage.toLowerCase();
+	const hasAutomationPhrase = automationPhrases.some((phrase) =>
+		lowerMessage.includes(phrase)
+	);
+
+	// Override intent if automation phrase detected but not classified as full_automation
+	if (
+		hasAutomationPhrase &&
+		intent.type !== 'full_automation' &&
+		intent.type !== 'greeting'
+	) {
+		// 🤖 LOG: Auto mode triggered via fallback detection
+		console.log('🤖 [AUTO MODE TRIGGERED] Via Fallback Detection');
+		console.log(`   User Query: "${userMessage}"`);
+		console.log(`   Original Intent: ${intent.type}`);
+		console.log(`   Trigger: Automation phrase detected in message`);
+		console.log(
+			`   Matched phrase: ${automationPhrases.find((p) =>
+				lowerMessage.includes(p)
+			)}`
+		);
+
+		intent.type = 'full_automation';
+		intent.autoFillRequested = true;
+		// Don't extract "blog", "it", etc. as topic
+		if (
+			intent.extractedData?.topic &&
+			['blog', 'it', 'yourself', 'everything'].includes(
+				intent.extractedData.topic.toLowerCase()
+			)
+		) {
+			intent.extractedData.topic = null;
+		}
+	}
+
+	// 🎯 LOG: Intent classification result
+	console.log(`🎯 [INTENT CLASSIFIED] Type: ${intent.type}`);
+	if (intent.autoFillRequested) {
+		console.log(`   Auto-fill requested: true`);
+	}
+
 	// Step 2: Handle different intent types
 	switch (intent.type) {
 		case 'greeting':
+			// 👋 LOG: User sent a greeting
+			console.log('👋 [GREETING DETECTED]');
+			console.log(`   User Query: "${userMessage}"`);
+			console.log(
+				`   Has started blog creation: ${hasStartedBlogCreation(
+					currentState
+				)}`
+			);
+			console.log(`   Action: Sending welcome message`);
 			return handleGreeting(currentState);
 
 		case 'help_request':
+			// ❓ LOG: User requested help
+			console.log('❓ [HELP REQUEST DETECTED]');
+			console.log(`   User Query: "${userMessage}"`);
+			console.log(
+				`   Has started blog creation: ${hasStartedBlogCreation(
+					currentState
+				)}`
+			);
+			console.log(`   Action: Showing capabilities and help info`);
 			return handleHelpRequest(currentState);
 
 		case 'off_topic':
+			// 🚫 LOG: User asked off-topic question
+			console.log('🚫 [OFF-TOPIC QUERY DETECTED]');
+			console.log(`   User Query: "${userMessage}"`);
+			console.log(
+				`   Has started blog creation: ${hasStartedBlogCreation(
+					currentState
+				)}`
+			);
+			console.log(
+				`   Action: Politely redirecting to blog creation`
+			);
 			return handleOffTopic(currentState);
 
 		case 'full_automation':
-			return handleFullAutomation(userMessage, intent, currentState, userSelectedAutomationMode);
+			// 🤖 LOG: Auto mode triggered via intent classification
+			console.log('🤖 [AUTO MODE TRIGGERED] Via Intent Classifier');
+			console.log(`   User Query: "${userMessage}"`);
+			console.log(
+				`   Trigger: Intent classified as 'full_automation'`
+			);
+			console.log(
+				`   Auto-fill requested: ${intent.autoFillRequested}`
+			);
+			console.log(
+				`   Extracted topic: ${
+					intent.extractedData?.topic || 'none'
+				}`
+			);
+			return handleFullAutomation(
+				userMessage,
+				intent,
+				currentState,
+				userSelectedAutomationMode
+			);
 
 		case 'partial_info':
-			return handlePartialInfo(userMessage, intent, currentState, apiKey, userSelectedAutomationMode);
+			// 📝 LOG: User provided partial info
+			console.log('📝 [PARTIAL INFO PROVIDED]');
+			console.log(`   User Query: "${userMessage}"`);
+			console.log(
+				`   Has started blog creation: ${hasStartedBlogCreation(
+					currentState
+				)}`
+			);
+			console.log(`   Extracted data preview:`, {
+				topic: intent.extractedData?.topic || 'none',
+				primaryKeyword:
+					intent.extractedData?.primaryKeyword || 'none',
+				title: intent.extractedData?.title || 'none',
+			});
+			return handlePartialInfo(
+				userMessage,
+				intent,
+				currentState,
+				apiKey,
+				userSelectedAutomationMode
+			);
 
 		case 'query':
+			// 💬 LOG: User asked a question
+			console.log('💬 [QUERY DETECTED]');
+			console.log(`   User Query: "${userMessage}"`);
+			console.log(
+				`   Specific request: ${
+					intent.specificRequest || 'general question'
+				}`
+			);
+			console.log(
+				`   Action: Answering query and checking for action required`
+			);
 			return handleQueryIntent(userMessage, currentState, apiKey);
 
 		case 'approval':
+			// ✅ LOG: User approved
+			console.log('✅ [APPROVAL DETECTED]');
+			console.log(`   User Query: "${userMessage}"`);
+			console.log(
+				`   Current halt reason: ${
+					currentState.halt?.reason || 'none'
+				}`
+			);
+			console.log(`   Action: Proceeding with approved item`);
 			return handleApproval(currentState);
 
 		case 'skip_step':
+			// ⏭️ LOG: User wants to skip
+			console.log('⏭️ [SKIP REQUEST DETECTED]');
+			console.log(`   User Query: "${userMessage}"`);
+			console.log(
+				`   Current halt reason: ${
+					currentState.halt?.reason || 'none'
+				}`
+			);
+			console.log(`   Action: Skipping current step`);
 			return handleSkipStep(currentState);
 
 		case 'manual_control':
-			return handleManualControl(intent, currentState, userSelectedAutomationMode);
+			// 🎮 LOG: User wants manual control
+			console.log('🎮 [MANUAL CONTROL REQUEST DETECTED]');
+			console.log(`   User Query: "${userMessage}"`);
+			console.log(
+				`   Control preferences:`,
+				intent.controlPreferences
+			);
+			console.log(`   Action: Setting manual control preferences`);
+			return handleManualControl(
+				intent,
+				currentState,
+				userSelectedAutomationMode
+			);
 
 		case 'refinement':
+			// 🔄 LOG: User wants to refine/modify
+			console.log('🔄 [REFINEMENT REQUEST DETECTED]');
+			console.log(`   User Query: "${userMessage}"`);
+			console.log(
+				`   Current halt reason: ${
+					currentState.halt?.reason || 'none'
+				}`
+			);
+			console.log(
+				`   Outline approved: ${currentState.outlineApproved}`
+			);
+			console.log(`   Action: Handling refinement/modification`);
 			return handleRefinement(userMessage, currentState);
 
 		default:
 			return {
-				assistantMessage: "I understand. Let's proceed with your blog.",
+				assistantMessage:
+					"I understand. Let's proceed with your blog.",
 				stateUpdates: {},
 				shouldRunAgent: true,
 			};
@@ -82,7 +273,10 @@ const getMissingInfoMessage = (state: AgentState): string => {
 	const missing: string[] = [];
 
 	if (!state.data.topic) missing.push('**Topic**');
-	if (!state.data.primaryKeyword && !state.userProvidedFields?.has('primaryKeyword')) {
+	if (
+		!state.data.primaryKeyword &&
+		!state.userProvidedFields?.has('primaryKeyword')
+	) {
 		missing.push('**Primary Keyword** (or I can research it for you)');
 	}
 
@@ -90,7 +284,11 @@ const getMissingInfoMessage = (state: AgentState): string => {
 		return "Let's continue with your blog creation!";
 	}
 
-	return `To continue, I still need:\n${missing.map(m => `- ${m}`).join('\n')}\n\nPlease provide these details, or say **\"generate blog automatically\"** to let me handle everything!`;
+	return `To continue, I still need:\n${missing
+		.map((m) => `- ${m}`)
+		.join(
+			'\n'
+		)}\n\nPlease provide these details, or say **\"generate blog automatically\"** to let me handle everything!`;
 };
 
 // Handler for greetings
@@ -98,7 +296,9 @@ const handleGreeting = (currentState: AgentState): ConversationResponse => {
 	// If user has already started, acknowledge and resume
 	if (hasStartedBlogCreation(currentState)) {
 		return {
-			assistantMessage: `Hello! 👋 Nice to hear from you again!\n\n${getMissingInfoMessage(currentState)}`,
+			assistantMessage: `Hello! 👋 Nice to hear from you again!\n\n${getMissingInfoMessage(
+				currentState
+			)}`,
 			stateUpdates: {},
 			shouldRunAgent: false,
 		};
@@ -106,7 +306,8 @@ const handleGreeting = (currentState: AgentState): ConversationResponse => {
 
 	// First time greeting - full welcome
 	return {
-		assistantMessage: "Hello! 👋 Great to see you! I'm your Blog Agent, here to help you create SEO-optimized blog posts.\n\nTo get started, just tell me what topic you'd like to write about, or say **\"generate blog automatically\"** and I'll handle everything!\n\nHow can I help you today?",
+		assistantMessage:
+			"Hello! 👋 Great to see you! I'm your Blog Agent, here to help you create SEO-optimized blog posts.\n\nTo get started, just tell me what topic you'd like to write about, or say **\"generate blog automatically\"** and I'll handle everything!\n\nHow can I help you today?",
 		stateUpdates: {},
 		shouldRunAgent: false,
 	};
@@ -117,7 +318,9 @@ const handleHelpRequest = (currentState: AgentState): ConversationResponse => {
 	// If user has already started, give brief help and resume
 	if (hasStartedBlogCreation(currentState)) {
 		return {
-			assistantMessage: "I can help you create an SEO-optimized blog post! I'll handle keyword research, title generation, content outlining, and writing.\n\n" + getMissingInfoMessage(currentState),
+			assistantMessage:
+				"I can help you create an SEO-optimized blog post! I'll handle keyword research, title generation, content outlining, and writing.\n\n" +
+				getMissingInfoMessage(currentState),
 			stateUpdates: {},
 			shouldRunAgent: false,
 		};
@@ -125,7 +328,8 @@ const handleHelpRequest = (currentState: AgentState): ConversationResponse => {
 
 	// First time - full capabilities
 	return {
-		assistantMessage: "I'm your AI Blog Agent! 🤖 Here's what I can help you with:\n\n✍️ **Create SEO-Optimized Blogs** - I'll write comprehensive, engaging content\n🔍 **Keyword Research** - Find the best keywords for your topic\n📝 **Title Generation** - Create compelling, SEO-friendly titles\n📋 **Content Outlines** - Structure your blog professionally\n🔗 **Internal/External Links** - Add relevant references\n\n**To get started:**\n- Tell me your blog topic\n- Provide keywords if you have them\n- Or say **\"generate blog automatically\"** and let me handle everything!\n\nWhat would you like to create today?",
+		assistantMessage:
+			"I'm your AI Blog Agent! 🤖 Here's what I can help you with:\n\n✍️ **Create SEO-Optimized Blogs** - I'll write comprehensive, engaging content\n🔍 **Keyword Research** - Find the best keywords for your topic\n📝 **Title Generation** - Create compelling, SEO-friendly titles\n📋 **Content Outlines** - Structure your blog professionally\n🔗 **Internal/External Links** - Add relevant references\n\n**To get started:**\n- Tell me your blog topic\n- Provide keywords if you have them\n- Or say **\"generate blog automatically\"** and let me handle everything!\n\nWhat would you like to create today?",
 		stateUpdates: {},
 		shouldRunAgent: false,
 	};
@@ -136,7 +340,9 @@ const handleOffTopic = (currentState: AgentState): ConversationResponse => {
 	// If user has already started, politely redirect and resume
 	if (hasStartedBlogCreation(currentState)) {
 		return {
-			assistantMessage: "I appreciate the question, but let's focus on your blog for now! 📝\n\n" + getMissingInfoMessage(currentState),
+			assistantMessage:
+				"I appreciate the question, but let's focus on your blog for now! 📝\n\n" +
+				getMissingInfoMessage(currentState),
 			stateUpdates: {},
 			shouldRunAgent: false,
 		};
@@ -144,7 +350,8 @@ const handleOffTopic = (currentState: AgentState): ConversationResponse => {
 
 	// First time - full redirect message
 	return {
-		assistantMessage: "I appreciate your question, but I'm specifically designed to help you create amazing blog content! 📝\n\nI focus on:\n- Blog writing and content creation\n- SEO optimization\n- Keyword research\n- Title generation\n- Content outlines\n\nIf you'd like to create a blog post, I'm here to help! Just tell me your topic or say **\"generate blog automatically\"**.\n\nWhat blog would you like to create?",
+		assistantMessage:
+			"I appreciate your question, but I'm specifically designed to help you create amazing blog content! 📝\n\nI focus on:\n- Blog writing and content creation\n- SEO optimization\n- Keyword research\n- Title generation\n- Content outlines\n\nIf you'd like to create a blog post, I'm here to help! Just tell me your topic or say **\"generate blog automatically\"**.\n\nWhat blog would you like to create?",
 		stateUpdates: {},
 		shouldRunAgent: false,
 	};
@@ -157,13 +364,33 @@ const handleFullAutomation = (
 	userSelectedAutomationMode?: 'full' | 'guided' | 'manual'
 ): ConversationResponse => {
 	const topic =
-		intent.extractedData?.topic ||
-		currentState.data.topic ||
-		extractTopicFromMessage(userMessage);
+		intent.extractedData?.topic || currentState.data.topic || null;
 
-	// Use user's UI selection if they didn't explicitly request full automation in the message
-	const automationLevel = userSelectedAutomationMode || 'full';
-	const isFullAuto = automationLevel === 'full';
+	// If no topic is available, ask for it
+	if (!topic || topic.trim() === '') {
+		return {
+			assistantMessage:
+				"Great! I'll handle everything automatically. What topic would you like me to write about?",
+			stateUpdates: {
+				preferences: {
+					automationLevel: 'full',
+					skipOptionalSteps: true,
+					autoSelectBestOptions: true,
+				},
+				autoFillFields: new Set([
+					'primaryKeyword',
+					'secondaryKeywords',
+					'title',
+				]),
+			},
+			shouldRunAgent: false,
+		};
+	}
+
+	// ✅ ALWAYS use full automation - this function is only called when user requests automation
+	// Ignore UI control level setting when user explicitly says automation phrases
+	const automationLevel = 'full';
+	const isFullAuto = true;
 
 	const stateUpdates: Partial<AgentState> = {
 		data: {
@@ -171,19 +398,33 @@ const handleFullAutomation = (
 			topic,
 		} as BlogData,
 		preferences: {
-			automationLevel: automationLevel,
-			skipOptionalSteps: isFullAuto,
-			autoSelectBestOptions: isFullAuto,
+			automationLevel: 'full',
+			skipOptionalSteps: true,
+			autoSelectBestOptions: true,
 		},
-		autoFillFields: isFullAuto
-			? new Set(['primaryKeyword', 'secondaryKeywords', 'title'])
-			: new Set([]),
+		autoFillFields: new Set([
+			'primaryKeyword',
+			'secondaryKeywords',
+			'title',
+		]),
 		userProvidedFields: topic ? new Set(['topic']) : new Set([]),
 	};
 
 	const message = isFullAuto
 		? `Perfect! I'll create a comprehensive blog about "${topic}". I'll research keywords, generate a title, create an outline, and write the full content. This will take a few minutes. You can watch the progress in real-time.`
 		: `Got it! I'll help you create a blog about "${topic}". Let me start by researching keywords.`;
+
+	// 🤖 LOG: Auto mode state configuration
+	console.log('🤖 [AUTO MODE STATE SET]');
+	console.log(`   Topic: "${topic}"`);
+	console.log(`   Automation Level: ${automationLevel}`);
+	console.log(`   Skip Optional Steps: ${isFullAuto}`);
+	console.log(
+		`   Auto-fill Fields: [${Array.from(
+			stateUpdates.autoFillFields || []
+		).join(', ')}]`
+	);
+	console.log(`   Show Progress: ${isFullAuto}`);
 
 	return {
 		assistantMessage: message,
@@ -200,8 +441,61 @@ const handlePartialInfo = async (
 	apiKey: string,
 	userSelectedAutomationMode?: 'full' | 'guided' | 'manual'
 ): Promise<ConversationResponse> => {
+	// Check if message contains automation phrases (safety fallback)
+	const automationPhrases = [
+		'by yourself',
+		'generate blog automatically',
+		'you decide',
+		'handle it yourself',
+		'handle it by yourself',
+		'do it yourself',
+		'create blog yourself',
+		'you choose everything',
+		'auto generate',
+		'full auto',
+		'automatic mode',
+		'you handle it',
+		'do it automatically',
+		'handle automatically',
+		'automatically generate',
+	];
+	const lowerMessage = userMessage.toLowerCase();
+	const hasAutomationPhrase = automationPhrases.some((phrase) =>
+		lowerMessage.includes(phrase)
+	);
+
+	// If automation phrase detected, treat as full automation request
+	const shouldAutoFill = intent.autoFillRequested || hasAutomationPhrase;
+
+	// 🤖 LOG: Auto mode check in partial info handler
+	if (shouldAutoFill) {
+		console.log('🤖 [AUTO MODE TRIGGERED] Via Partial Info Handler');
+		console.log(`   User Query: "${userMessage}"`);
+		console.log(
+			`   Trigger: Auto-fill requested or automation phrase detected`
+		);
+		console.log(`   Intent auto-fill: ${intent.autoFillRequested}`);
+		console.log(`   Has automation phrase: ${hasAutomationPhrase}`);
+	}
+
 	// Extract data from message
 	const extractedData = await extractDataFromMessage(userMessage, apiKey);
+
+	// Filter out invalid topics (common words that aren't real topics)
+	const invalidTopics = [
+		'blog',
+		'it',
+		'yourself',
+		'everything',
+		'something',
+		'anything',
+	];
+	if (
+		extractedData.topic &&
+		invalidTopics.includes(extractedData.topic.toLowerCase().trim())
+	) {
+		extractedData.topic = null;
+	}
 
 	// Merge extracted data with current data
 	const updatedData: Partial<BlogData> = {
@@ -210,7 +504,7 @@ const handlePartialInfo = async (
 
 	const providedFields = new Set(currentState.userProvidedFields || []);
 
-	if (extractedData.topic) {
+	if (extractedData.topic && extractedData.topic.trim()) {
 		updatedData.topic = extractedData.topic;
 		providedFields.add('topic');
 	}
@@ -218,7 +512,10 @@ const handlePartialInfo = async (
 		updatedData.primaryKeyword = extractedData.primaryKeyword;
 		providedFields.add('primaryKeyword');
 	}
-	if (extractedData.secondaryKeywords && extractedData.secondaryKeywords.length > 0) {
+	if (
+		extractedData.secondaryKeywords &&
+		extractedData.secondaryKeywords.length > 0
+	) {
 		updatedData.secondaryKeywords = extractedData.secondaryKeywords;
 		providedFields.add('secondaryKeywords');
 	}
@@ -230,7 +527,10 @@ const handlePartialInfo = async (
 		updatedData.targetLocation = extractedData.targetLocation;
 		providedFields.add('targetLocation');
 	}
-	if (extractedData.referenceUrls && extractedData.referenceUrls.length > 0) {
+	if (
+		extractedData.referenceUrls &&
+		extractedData.referenceUrls.length > 0
+	) {
 		updatedData.referenceUrls = [
 			...(currentState.data.referenceUrls || []),
 			...extractedData.referenceUrls,
@@ -252,24 +552,66 @@ const handlePartialInfo = async (
 
 	// Build response message
 	const capturedItems = [];
-	if (extractedData.topic) capturedItems.push(`topic: "${extractedData.topic}"`);
+	if (extractedData.topic)
+		capturedItems.push(`topic: "${extractedData.topic}"`);
 	if (extractedData.primaryKeyword)
 		capturedItems.push(`keyword: "${extractedData.primaryKeyword}"`);
-	if (extractedData.title) capturedItems.push(`title: "${extractedData.title}"`);
+	if (extractedData.title)
+		capturedItems.push(`title: "${extractedData.title}"`);
 	if (extractedData.targetLocation)
 		capturedItems.push(`location: ${extractedData.targetLocation}`);
 
-	let message = `Got it! I've captured: ${capturedItems.join(', ')}.`;
+	// Check if we have any useful data
+	const hasTopic = !!(updatedData.topic || currentState.data.topic);
+	const hasLocation = !!(
+		updatedData.targetLocation ||
+		currentState.data.targetLocation ||
+		providedFields.has('targetLocation')
+	);
+	const hasKeyword = !!updatedData.primaryKeyword;
+	const hasTitle = !!updatedData.title;
 
-	// Check if location is missing
-	const hasTopic = !!(updatedData.topic);
-	const hasLocation = !!(extractedData.targetLocation || providedFields.has('targetLocation'));
-	const hasKeyword = !!(updatedData.primaryKeyword);
-	const hasTitle = !!(updatedData.title);
-
-	// Use user's UI selection or detect from message
-	const automationLevel = userSelectedAutomationMode || (intent.autoFillRequested ? 'full' : 'guided');
+	// ✅ Prioritize automation phrases over UI selection
+	// If shouldAutoFill is true (automation phrases detected), ALWAYS use 'full'
+	const automationLevel = shouldAutoFill
+		? 'full'
+		: userSelectedAutomationMode || 'guided';
 	const isFullAuto = automationLevel === 'full';
+
+	// If no meaningful data was extracted and automation is requested, ask for topic
+	if (!hasTopic && !hasKeyword && !hasTitle && capturedItems.length === 0) {
+		if (shouldAutoFill || hasAutomationPhrase) {
+			return {
+				assistantMessage:
+					"Great! I'll handle everything automatically. What topic would you like me to write about?",
+				stateUpdates: {
+					preferences: {
+						automationLevel: 'full',
+						skipOptionalSteps: true,
+						autoSelectBestOptions: true,
+					},
+					autoFillFields: new Set([
+						'primaryKeyword',
+						'secondaryKeywords',
+						'title',
+					]),
+				},
+				shouldRunAgent: false,
+			};
+		} else {
+			return {
+				assistantMessage:
+					"I'd love to help! Could you please provide more details? What topic would you like to write about?",
+				stateUpdates: {},
+				shouldRunAgent: false,
+			};
+		}
+	}
+
+	let message =
+		capturedItems.length > 0
+			? `Got it! I've captured: ${capturedItems.join(', ')}.`
+			: `Got it!`;
 
 	// If topic provided but location not provided and not already set, ask for location
 	if (hasTopic && !hasLocation && !isFullAuto) {
@@ -359,9 +701,7 @@ const handleQueryIntent = async (
 	};
 };
 
-const handleApproval = (
-	currentState: AgentState
-): ConversationResponse => {
+const handleApproval = (currentState: AgentState): ConversationResponse => {
 	const stateUpdates: Partial<AgentState> = {};
 
 	// Handle different approval contexts
@@ -399,9 +739,7 @@ const handleApproval = (
 	};
 };
 
-const handleSkipStep = (
-	currentState: AgentState
-): ConversationResponse => {
+const handleSkipStep = (currentState: AgentState): ConversationResponse => {
 	const stateUpdates: Partial<AgentState> = {};
 
 	// Mark current step as complete based on halt reason
@@ -465,12 +803,15 @@ const handleRefinement = (
 	currentState: AgentState
 ): ConversationResponse => {
 	// ✨ Check if we're in outline approval stage and user is providing feedback
-	if (currentState.halt?.reason === 'awaiting_approval' &&
+	if (
+		currentState.halt?.reason === 'awaiting_approval' &&
 		currentState.outline &&
 		currentState.outline.length > 0 &&
-		!currentState.outlineApproved) {
-
-		console.log('📝 [OUTLINE FEEDBACK] User provided feedback, preparing to regenerate outline...');
+		!currentState.outlineApproved
+	) {
+		console.log(
+			'📝 [OUTLINE FEEDBACK] User provided feedback, preparing to regenerate outline...'
+		);
 
 		return {
 			assistantMessage:
@@ -509,4 +850,3 @@ const extractTopicFromMessage = (message: string): string => {
 	const words = message.split(' ').slice(0, 5).join(' ');
 	return words || 'Blog Topic';
 };
-
