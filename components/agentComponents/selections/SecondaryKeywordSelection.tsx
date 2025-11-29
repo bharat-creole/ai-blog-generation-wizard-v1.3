@@ -74,15 +74,7 @@ const SecondaryKeywordSelection: React.FC<SecondaryKeywordSelectionProps> = ({
 				title: result.updatedState.data.title,
 			});
 
-			// Add assistant response
-			setMessages((prev) => [
-				...prev,
-				{
-					role: 'assistant',
-					content: result.response,
-					...result.metadata
-				},
-			]);
+			// Note: Assistant message is already added by useAgentExecutionV3 hook
 
 		} catch (error) {
 			console.error('Error selecting secondary keywords:', error);

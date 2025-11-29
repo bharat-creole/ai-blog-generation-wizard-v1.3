@@ -94,7 +94,7 @@ export const AgentStateAnnotation = Annotation.Root({
     }),
 
     // Halt reason (if paused for user input)
-    halt: Annotation<{ reason: 'await_keyword_selection' | 'await_secondary_selection' | 'await_title_selection' | 'await_interlinking_selection' | 'await_references_selection' | 'await_outline_start_confirmation' | 'awaiting_approval' | 'awaiting_automation_level_selection' | 'awaiting_blog_draft_approval' | string } | null>({
+    halt: Annotation<{ reason: 'await_keyword_selection' | 'await_secondary_selection' | 'await_title_selection' | 'await_interlinking_selection' | 'await_references_selection' | 'await_outline_start_confirmation' | 'awaiting_approval' | 'awaiting_automation_level_selection' | 'awaiting_blog_draft_approval' | 'await_auto_selection_confirmation' | string } | null>({
         reducer: (x, y) => y,
         default: () => null,
     }),
@@ -172,6 +172,12 @@ export const AgentStateAnnotation = Annotation.Root({
     toolOutputs: Annotation<ToolOutput[]>({
         reducer: (x, y) => x.concat(y),
         default: () => [],
+    }),
+
+    // Pending modification request (for confirmation flow)
+    pendingModificationRequest: Annotation<string | undefined>({
+        reducer: (x, y) => y,
+        default: () => undefined,
     }),
 });
 

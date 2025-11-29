@@ -50,15 +50,12 @@ const OutlineApproval: React.FC<OutlineApprovalProps> = ({
 		setCompletedSelections((prev) => new Set(prev).add('outline'));
 
 		// Add user message immediately
+		// Note: Assistant response will be added by useAgentExecutionV3 hook
 		setMessages((prev) => [
 			...prev,
 			{
 				role: 'user',
 				content: 'Approve outline',
-			},
-			{
-				role: 'assistant',
-				content: '✅ Outline approved! Starting blog generation... This may take a minute or two as I write each section.',
 			},
 		]);
 
@@ -95,15 +92,7 @@ const OutlineApproval: React.FC<OutlineApprovalProps> = ({
 				blogContent: result.updatedState.draft,
 			});
 
-			// Show completion message
-			setMessages((prev) => [
-				...prev,
-				{
-					role: 'assistant',
-					content: result.response,
-					...result.metadata
-				},
-			]);
+			// Note: Assistant message is already added by useAgentExecutionV3 hook
 
 		} catch (error) {
 			console.error('Error approving outline:', error);

@@ -1,5 +1,5 @@
 import { ChatMessage, OutlineSection } from '../../../types';
-import { AgentState } from '../../../services/langgraph/agentGraph';
+import { AgentState } from '../../../server/agent/state';
 
 /**
  * Creates a user chat message
@@ -40,8 +40,7 @@ export const createOutlineApprovalMessage = (
 ): ChatMessage => {
 	return {
 		role: 'assistant',
-		content:
-			'📋 Outline is ready! Review it below and approve to continue, or provide feedback to regenerate:',
+		content: '📋 Outline is ready! Review it below and approve to continue, or provide feedback to regenerate:',
 		outlineApproval: {
 			outline,
 		},
@@ -78,13 +77,10 @@ export const createKeywordSelectionMessage = (
  * @param titles - Array of title options
  * @returns ChatMessage with titleSelection metadata
  */
-export const createTitleSelectionMessage = (
-	titles: string[]
-): ChatMessage => {
+export const createTitleSelectionMessage = (titles: string[]): ChatMessage => {
 	return {
 		role: 'assistant',
-		content:
-			'📝 Select a blog title from the options below:\n\n💡 Tip: If you would like to provide your own title, simply type it in the chat!',
+		content: '📝 Select a blog title from the options below:\n\n💡 Tip: If you would like to provide your own title, simply type it in the chat!',
 		titleSelection: {
 			titles,
 		},
@@ -101,8 +97,7 @@ export const createInterlinkingFormMessage = (
 ): ChatMessage => {
 	return {
 		role: 'assistant',
-		content:
-			'🔗 Add internal/external links (optional) or click "Continue" to skip:',
+		content: '🔗 Add internal/external links (optional) or click "Continue" to skip:',
 		interlinkingForm: {
 			currentLinks,
 		},
@@ -121,8 +116,7 @@ export const createReferencesFormMessage = (
 ): ChatMessage => {
 	return {
 		role: 'assistant',
-		content:
-			'📚 Add reference materials (URLs or files) to improve content quality, or click "Continue" to skip:',
+		content: '📚 Add reference materials (URLs or files) to improve content quality, or click "Continue" to skip:',
 		referencesForm: {
 			currentUrls,
 			currentFiles,
@@ -142,4 +136,3 @@ export const shouldShowProgressMessage = (
 ): boolean => {
 	return traceLength > lastTraceLength;
 };
-

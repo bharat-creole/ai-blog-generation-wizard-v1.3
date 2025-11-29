@@ -1,5 +1,10 @@
-import { BlogData, AutomationLevel, ChatMessage, OutlineSection } from '../../../types';
-import { AgentState } from '../../../services/langgraph/agentGraph';
+import {
+	BlogData,
+	AutomationLevel,
+	ChatMessage,
+	OutlineSection,
+} from '../../../types';
+import { AgentState } from '../../../server/agent/state';
 
 /**
  * Flow context state interface
@@ -58,4 +63,3 @@ export interface ModificationFlowResult {
 	agent?: AgentState;
 	updatedData?: Partial<BlogData>;
 }
-

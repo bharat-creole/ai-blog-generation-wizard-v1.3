@@ -57,10 +57,12 @@ export const researchPrimaryNode = async (state: AgentState): Promise<Partial<Ag
 
     // ✨ Case 2: Auto-select if automation enabled
     if (automationEngine.shouldAutoFill(state as any, 'primaryKeyword') && ranked.length > 0) {
+        // ✨ NEW: Halt and ask for confirmation after auto-selection
         return {
             data: { ...state.data, primaryKeyword: ranked[0].text },
             currentStep: 'primary_keyword',
-            trace: [{ step: 'KeywordResearch.autoSelected', info: { keyword: ranked[0].text, score: ranked[0].score }, at: Date.now() }]
+            halt: { reason: 'await_auto_selection_confirmation' },
+            trace: [{ step: 'KeywordResearch.autoSelected', info: { keyword: ranked[0].text, score: ranked[0].score, field: 'primaryKeyword' }, at: Date.now() }]
         };
     }
 
@@ -123,10 +125,12 @@ export const researchSecondaryNode = async (state: AgentState): Promise<Partial<
 
     // ✨ Case 2: Auto-select if automation enabled
     if (automationEngine.shouldAutoFill(state as any, 'secondaryKeywords') && filteredRanked.length > 0) {
+        // ✨ NEW: Halt and ask for confirmation after auto-selection
         return {
             data: { ...state.data, secondaryKeywords: filteredRanked.slice(0, 5).map((k) => k.text) },
             currentStep: 'secondary_keywords',
-            trace: [{ step: 'KeywordResearch.secondaryAutoSelected', info: { count: 5 }, at: Date.now() }]
+            halt: { reason: 'await_auto_selection_confirmation' },
+            trace: [{ step: 'KeywordResearch.secondaryAutoSelected', info: { count: 5, field: 'secondaryKeywords' }, at: Date.now() }]
         };
     }
 

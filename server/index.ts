@@ -508,16 +508,52 @@ app.post('/api/agent/message', async (req, res) => {
 			console.log('🔍 [SERVER] No keywordCandidates in serialized state');
 		}
 
+		// ✨ Enhance assistant message based on halt reason if graph executed
+		let finalAssistantMessage = response.assistantMessage;
+		if (response.shouldRunAgent && updatedState.halt) {
+			const reason = updatedState.halt.reason;
+			// Only enhance if the message is generic or doesn't contain guidance
+			const isGenericMessage = !response.assistantMessage.includes('select') && 
+			                          !response.assistantMessage.includes('Tip') &&
+			                          !response.assistantMessage.includes('add') &&
+			                          !response.assistantMessage.includes('review');
+			
+			if (isGenericMessage) {
+				if (reason === 'await_keyword_selection') {
+					finalAssistantMessage = `🎯 **Primary Keyword Selection**\n\nPlease select a primary keyword from the options below, or if you would like to add your own, simply type it in the chat!`;
+				} else if (reason === 'await_secondary_selection') {
+					finalAssistantMessage = `🎯 **Secondary Keywords Selection**\n\nPlease select up to 5 secondary keywords from the options below, or if you would like to add your own, simply type them in the chat (comma-separated)!`;
+				} else if (reason === 'await_title_selection') {
+					finalAssistantMessage = `📝 **Title Selection**\n\nPlease select a blog title from the options below, or if you would like to add your own, simply type it in the chat!`;
+				} else if (reason === 'await_interlinking' || reason === 'await_interlinking_selection') {
+					finalAssistantMessage = `🔗 **Internal Links**\n\nPlease add any internal links to your existing content (optional), or click "Continue" to skip this step.`;
+				} else if (reason === 'await_references' || reason === 'await_references_selection') {
+					finalAssistantMessage = `📚 **Reference Materials**\n\nPlease add reference materials (URLs or files) to improve content quality (optional), or click "Continue" to skip this step.`;
+				} else if (reason === 'awaiting_approval') {
+					finalAssistantMessage = `📋 **Outline Review**\n\nPlease review the outline below and approve to continue, or provide feedback to regenerate.`;
+				} else if (reason === 'await_auto_selection_confirmation') {
+					// Get the field that was auto-selected from trace
+					const lastTrace = updatedState.trace?.[updatedState.trace.length - 1];
+					const field = lastTrace?.info?.field || 'item';
+					const selectedValue = field === 'primaryKeyword' ? updatedState.data.primaryKeyword :
+					                     field === 'secondaryKeywords' ? updatedState.data.secondaryKeywords?.join(', ') :
+					                     field === 'title' ? updatedState.data.title : 'selected value';
+					
+					finalAssistantMessage = `✅ **Auto-Selected:** ${selectedValue}\n\n**Do you want to make any changes, or would you like to proceed with this?**\n\nType "yes" to proceed, or tell me what you'd like to change.`;
+				}
+			}
+		}
+
 		if (stream) {
 			res.write(`event: done\ndata: ${JSON.stringify({
-				assistantMessage: response.assistantMessage,
+				assistantMessage: finalAssistantMessage,
 				state: serializedState,
 				executed: response.shouldRunAgent
 			})}\n\n`);
 			res.end();
 		} else {
 			return res.json({
-				assistantMessage: response.assistantMessage,
+				assistantMessage: finalAssistantMessage,
 				state: serializedState,
 				executed: response.shouldRunAgent
 			});

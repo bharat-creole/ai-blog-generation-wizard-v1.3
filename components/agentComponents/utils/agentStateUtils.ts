@@ -1,5 +1,5 @@
 import { BlogData, AutomationLevel } from '../../../types';
-import { AgentState } from '../../../services/langgraph/agentGraph';
+import { AgentState } from '../../../server/agent/state';
 
 /**
  * Setters interface for agent state updates
@@ -40,7 +40,10 @@ export const initializeAgentState = (
 		data: {
 			...data,
 			topic: userTopic || data.topic || '',
-			targetLocation: targetLocation || data.targetLocation || 'United States',
+			targetLocation:
+				targetLocation ||
+				data.targetLocation ||
+				'United States',
 			primaryKeyword: data.primaryKeyword || '',
 			secondaryKeywords: data.secondaryKeywords || [],
 			title: data.title || '',
@@ -87,9 +90,7 @@ export const updateAgentFromWorking = (
 	setters.setOutline(working.outline);
 	setters.setDraft(working.draft);
 	setters.setUserTopic(working.data.topic || '');
-	setters.setTargetLocation(
-		working.data.targetLocation || 'United States'
-	);
+	setters.setTargetLocation(working.data.targetLocation || 'United States');
 	setters.setTraceItems(
 		working.trace.map((t) => ({ step: t.step, at: t.at }))
 	);
@@ -161,4 +162,3 @@ export const updateAllStateFromWorking = (
 		syncAgentStateToData(working, updateData);
 	}
 };
-

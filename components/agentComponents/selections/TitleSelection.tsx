@@ -69,15 +69,7 @@ const TitleSelection: React.FC<TitleSelectionProps> = ({
 				blogContent: result.updatedState.draft,
 			});
 
-			// Add assistant response
-			setMessages((prev) => [
-				...prev,
-				{
-					role: 'assistant',
-					content: result.response,
-					...result.metadata
-				},
-			]);
+			// Note: Assistant message is already added by useAgentExecutionV3 hook
 
 		} catch (error) {
 			console.error('Error selecting title:', error);

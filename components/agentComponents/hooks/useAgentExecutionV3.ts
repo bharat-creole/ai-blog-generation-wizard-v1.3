@@ -101,6 +101,7 @@ export const useAgentExecutionV3 = (
                 let finalState: any = null;
                 let finalResponse = '';
                 let hasResolved = false;
+                let messageAdded = false; // Track if message has been added to prevent duplicates
                 let lastTraceLength = currentState.trace?.length || 0;
                 let accumulatedState: any = { ...currentState };
 
@@ -110,14 +111,9 @@ export const useAgentExecutionV3 = (
                     backendState,
                     {
                         onIntent: (data) => {
-                            // Initial assistant response (e.g. "I'll handle that...")
+                            // Store the initial assistant response
+                            // Don't add to messages here - wait for onComplete to add with metadata
                             finalResponse = data.assistantMessage;
-
-                            // Add assistant message immediately
-                            setMessages(prev => [
-                                ...prev,
-                                { role: 'assistant', content: data.assistantMessage }
-                            ]);
                         },
                         onProgress: (chunk) => {
                             // Extract state from chunk (chunk is usually { nodeName: { ...state } })
@@ -197,6 +193,7 @@ export const useAgentExecutionV3 = (
 
                             // Construct UI metadata based on state
                             const metadata: Partial<ChatMessage> = {};
+                            let enhancedMessage = data.assistantMessage;
 
                             if (updatedState.halt) {
                                 const reason = updatedState.halt.reason;
@@ -206,29 +203,86 @@ export const useAgentExecutionV3 = (
                                         type: 'primary',
                                         candidates: updatedState.keywordResearch?.primaryCandidates || []
                                     };
+                                    // Enhance message with guidance if not already present
+                                    if (!enhancedMessage.includes('select') && !enhancedMessage.includes('Tip')) {
+                                        enhancedMessage = `🎯 **Primary Keyword Selection**\n\nPlease select a primary keyword from the options below, or if you would like to add your own, simply type it in the chat!`;
+                                    }
                                 } else if (reason === 'await_secondary_selection') {
                                     metadata.keywordSelection = {
                                         type: 'secondary',
                                         candidates: updatedState.keywordResearch?.secondaryCandidates || []
                                     };
+                                    // Enhance message with guidance if not already present
+                                    if (!enhancedMessage.includes('select') && !enhancedMessage.includes('Tip')) {
+                                        enhancedMessage = `🎯 **Secondary Keywords Selection**\n\nPlease select up to 5 secondary keywords from the options below, or if you would like to add your own, simply type them in the chat (comma-separated)!`;
+                                    }
                                 } else if (reason === 'await_title_selection') {
                                     metadata.titleSelection = {
                                         titles: updatedState.titleOptions || []
                                     };
+                                    // Enhance message with guidance if not already present
+                                    if (!enhancedMessage.includes('select') && !enhancedMessage.includes('Tip')) {
+                                        enhancedMessage = `📝 **Title Selection**\n\nPlease select a blog title from the options below, or if you would like to add your own, simply type it in the chat!`;
+                                    }
                                 } else if (reason === 'await_interlinking' || reason === 'await_interlinking_selection') {
                                     metadata.interlinkingForm = {
                                         currentLinks: updatedState.data.interlinks || []
                                     };
+                                    // Enhance message with guidance if not already present
+                                    if (!enhancedMessage.includes('add') && !enhancedMessage.includes('optional')) {
+                                        enhancedMessage = `🔗 **Internal Links**\n\nPlease add any internal links to your existing content (optional), or click "Continue" to skip this step.`;
+                                    }
                                 } else if (reason === 'await_references' || reason === 'await_references_selection') {
                                     metadata.referencesForm = {
                                         currentUrls: updatedState.data.referenceUrls || [],
                                         currentFiles: updatedState.data.referenceFiles || []
                                     };
+                                    // Enhance message with guidance if not already present
+                                    if (!enhancedMessage.includes('add') && !enhancedMessage.includes('optional')) {
+                                        enhancedMessage = `📚 **Reference Materials**\n\nPlease add reference materials (URLs or files) to improve content quality (optional), or click "Continue" to skip this step.`;
+                                    }
                                 } else if (reason === 'awaiting_approval') {
                                     metadata.outlineApproval = {
                                         outline: updatedState.outline || []
                                     };
+                                    // Enhance message with guidance if not already present
+                                    if (!enhancedMessage.includes('review') && !enhancedMessage.includes('approve')) {
+                                        enhancedMessage = `📋 **Outline Review**\n\nPlease review the outline below and approve to continue, or provide feedback to regenerate.`;
+                                    }
+                                } else if (reason === 'await_auto_selection_confirmation') {
+                                    // Get the field that was auto-selected from trace
+                                    const lastTrace = updatedState.trace?.[updatedState.trace.length - 1];
+                                    const field = lastTrace?.info?.field || 'item';
+                                    const selectedValue = field === 'primaryKeyword' ? updatedState.data.primaryKeyword :
+                                        field === 'secondaryKeywords' ? updatedState.data.secondaryKeywords?.join(', ') :
+                                        field === 'title' ? updatedState.data.title : 'selected value';
+                                    
+                                    // Enhance message with confirmation prompt
+                                    if (!enhancedMessage.includes('make any changes') && !enhancedMessage.includes('proceed')) {
+                                        enhancedMessage = `✅ **Auto-Selected:** ${selectedValue}\n\n**Do you want to make any changes, or would you like to proceed with this?**\n\nType "yes" to proceed, or tell me what you'd like to change.`;
+                                    }
                                 }
+                            }
+
+                            // Add assistant message with metadata (only once, here in onComplete)
+                            // Prevent duplicate messages by checking if already added
+                            if (!messageAdded && enhancedMessage) {
+                                messageAdded = true;
+                                setMessages(prev => {
+                                    // Check if this message was already added (prevent duplicates)
+                                    const lastMessage = prev[prev.length - 1];
+                                    if (lastMessage?.role === 'assistant' && lastMessage?.content === enhancedMessage) {
+                                        return prev; // Already added, don't add again
+                                    }
+                                    return [
+                                        ...prev,
+                                        {
+                                            role: 'assistant',
+                                            content: enhancedMessage,
+                                            ...metadata
+                                        }
+                                    ];
+                                });
                             }
 
                             resolve({

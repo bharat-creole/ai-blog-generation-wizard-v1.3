@@ -20,10 +20,12 @@ export const titleGenerationNode = async (state: AgentState): Promise<Partial<Ag
 
     // ✨ Case 2: Auto-select if automation enabled
     if (automationEngine.shouldAutoFill(state as any, 'title') && titles.length > 0) {
+        // ✨ NEW: Halt and ask for confirmation after auto-selection
         return {
             data: { ...state.data, title: titles[0] },
             currentStep: 'title',
-            trace: [{ step: 'TitleGeneration.autoSelected', info: { title: titles[0] }, at: Date.now() }]
+            halt: { reason: 'await_auto_selection_confirmation' },
+            trace: [{ step: 'TitleGeneration.autoSelected', info: { title: titles[0], field: 'title' }, at: Date.now() }]
         };
     }
 

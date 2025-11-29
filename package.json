@@ -8,8 +8,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "serve:api": "tsx server/index.ts",
-    "dev:full": "concurrently \"vite\" \"tsx server/index.ts\"",
-    "test:google-ads": "tsx server/testGoogleAdsAPI.ts"
+    "dev:full": "concurrently \"vite\" \"tsx server/index.ts\""
   },
   "dependencies": {
     "@ax-llm/ax": "^14.0.37",

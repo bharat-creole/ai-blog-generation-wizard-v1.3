@@ -1,2 +1,2 @@
-declare module 'mammoth';
-declare module 'pdfjs-dist';
+// Type declarations for global modules
+// Add module declarations here as needed
