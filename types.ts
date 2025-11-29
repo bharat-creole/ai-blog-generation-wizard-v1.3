@@ -39,7 +39,7 @@ export interface BlogData {
     interlinks: Interlink[];
     brandVoice: string;
     blogGuideline: string;
-    llmModel: string;
+    llmModel: 'gemini-flash-latest';
     language: string;
     outline: OutlineSection[];
     blogContent: string;
@@ -67,6 +67,12 @@ export interface KeywordCandidate {
     text: string;
     volume: number;
     difficulty: number;
+}
+
+export interface ToolOutput {
+    type: 'keyword_options' | 'title_options' | 'outline_generated';
+    data: any;
+    timestamp: number;
 }
 
 export interface ChatMessage {

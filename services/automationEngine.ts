@@ -1,4 +1,4 @@
-import { AgentState } from './langgraph/agentGraph';
+import { AgentState } from '../server/agent/state';
 import * as keywordTool from './keywordService';
 import * as geminiService from './geminiService';
 

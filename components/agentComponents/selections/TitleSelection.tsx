@@ -1,7 +1,5 @@
 import React from 'react';
-import { AgentState } from '../../../services/langgraph/agentGraph';
-import { runNext as lgRunNext } from '../../../services/langgraph/agentGraph';
-import * as automationEngine from '../../../services/automationEngine';
+import { AgentState } from '../../../../server/agent/state';
 import { ChatMessage } from '../../../types';
 
 interface TitleSelectionProps {
@@ -16,6 +14,7 @@ interface TitleSelectionProps {
 	setOutline: React.Dispatch<React.SetStateAction<any[]>>;
 	setDraft: React.Dispatch<React.SetStateAction<string>>;
 	setTraceItems: React.Dispatch<React.SetStateAction<any[]>>;
+	sendUserMessage: (message: string, agentState: AgentState) => Promise<{ response: string; updatedState: AgentState; metadata?: any }>;
 }
 
 const TitleSelection: React.FC<TitleSelectionProps> = ({
@@ -30,70 +29,64 @@ const TitleSelection: React.FC<TitleSelectionProps> = ({
 	setOutline,
 	setDraft,
 	setTraceItems,
+	sendUserMessage,
 }) => {
 	const handleSelect = async (title: string) => {
 		if (!agent) return;
 
 		setCompletedSelections((prev) => new Set(prev).add('title'));
-		setMessages((prev) => [
-			...prev,
-			{
-				role: 'user',
-				content: `Select "${title}" as title`,
-			},
-			{
-				role: 'assistant',
-				content: `✅ Selected title. Continuing...`,
-			},
-		]);
 
-		const next = {
-			...agent,
-			data: {
-				...agent.data,
-				title,
-			},
-			titleSelected: true,
-		} as AgentState;
-		setAgent(next);
-		updateData({ title });
+		// Add user message immediately for UI feedback
+		const userMsg = {
+			role: 'user' as const,
+			content: `Select "${title}" as title`,
+		};
+
+		setMessages((prev) => [...prev, userMsg]);
 		setIsThinking(true);
 
 		try {
-			let working = next;
-			let guard = 0;
-			while (guard++ < 20) {
-				const { state: ns, halted } = await lgRunNext(working);
-				working = ns;
+			// Send selection to backend
+			const result = await sendUserMessage(
+				`Select "${title}" as title`,
+				agent
+			);
 
-				// Break if halted and needs user input
-				if (halted && automationEngine.needsUserInput(ns)) {
-					break;
-				}
+			// Update state from backend response
+			setAgent(result.updatedState);
+			setOutline(result.updatedState.outline);
+			setDraft(result.updatedState.draft);
+
+			// Update trace items if available
+			if (result.updatedState.trace) {
+				setTraceItems(result.updatedState.trace.map((t) => ({ step: t.step, at: t.at })));
 			}
 
-			setAgent(working);
-			setOutline(working.outline);
-			setDraft(working.draft);
-			setTraceItems(working.trace.map((t) => ({ step: t.step, at: t.at })));
+			// Update parent data
 			updateData({
-				outline: working.outline,
-				blogContent: working.draft,
+				title: result.updatedState.data.title,
+				outline: result.updatedState.outline,
+				blogContent: result.updatedState.draft,
 			});
 
-			// Display interlinking UI if needed
-			if (working.halt?.reason === 'await_interlinking') {
-				setMessages((prev) => [
-					...prev,
-					{
-						role: 'assistant',
-						content: '🔗 Add internal/external links (optional) or click "Continue" to skip:',
-						interlinkingForm: {
-							currentLinks: working.data.interlinks || [],
-						},
-					},
-				]);
-			}
+			// Add assistant response
+			setMessages((prev) => [
+				...prev,
+				{
+					role: 'assistant',
+					content: result.response,
+					...result.metadata
+				},
+			]);
+
+		} catch (error) {
+			console.error('Error selecting title:', error);
+			// Revert selection on error
+			setCompletedSelections((prev) => {
+				const newSet = new Set(prev);
+				newSet.delete('title');
+				return newSet;
+			});
 		} finally {
 			setIsThinking(false);
 		}
@@ -111,11 +104,10 @@ const TitleSelection: React.FC<TitleSelectionProps> = ({
 					<div className='flex-1 font-medium text-gray-800'>{title}</div>
 					<button
 						disabled={completedSelections.has('title')}
-						className={`px-3 py-1 text-xs text-white rounded transition-colors ml-3 ${
-							completedSelections.has('title')
+						className={`px-3 py-1 text-xs text-white rounded transition-colors ml-3 ${completedSelections.has('title')
 								? 'bg-gray-400 cursor-not-allowed'
 								: 'bg-purple-500 hover:bg-purple-600'
-						}`}
+							}`}
 						onClick={() => handleSelect(title)}
 					>
 						Select

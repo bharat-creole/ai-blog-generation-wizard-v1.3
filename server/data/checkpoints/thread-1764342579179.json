@@ -1,0 +1,456 @@
+{
+  "checkpoint": {
+    "v": 4,
+    "id": "1f0cc6c4-e077-6050-8004-abf5a8a34db8",
+    "ts": "2025-11-28T15:09:58.613Z",
+    "channel_values": {
+      "messages": [
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        }
+      ],
+      "apiKey": "AIzaSyCvU8EucCQSzVqfsSPcIrw271x5PZjKbVY",
+      "data": {
+        "apiKey": "AIzaSyCvU8EucCQSzVqfsSPcIrw271x5PZjKbVY",
+        "title": "AI Agents Explained: Your Essential Guide to Autonomous Tech",
+        "topic": "AI Agents",
+        "targetLocation": "United States",
+        "primaryKeyword": "ai",
+        "secondaryKeywords": [
+          "open ai",
+          "openai",
+          "ai chatbot",
+          "ai chat",
+          "scale ai"
+        ],
+        "suggestedTitles": [],
+        "referenceUrls": [],
+        "referenceFiles": [],
+        "interlinks": [],
+        "brandVoice": "Default",
+        "blogGuideline": "Default",
+        "llmModel": "gemini-2.5-flash",
+        "language": "English",
+        "outline": [],
+        "blogContent": ""
+      },
+      "outline": [
+        {
+          "id": "1",
+          "name": "What Exactly Are AI Agents?",
+          "items": [
+            {
+              "id": "11",
+              "name": "Defining AI Agents: Core Concepts"
+            },
+            {
+              "id": "12",
+              "name": "Key Components and Functionality"
+            },
+            {
+              "id": "13",
+              "name": "AI Agents vs. Traditional AI: A Clear Distinction"
+            }
+          ]
+        },
+        {
+          "id": "2",
+          "name": "The Inner Workings: How AI Agents Function",
+          "items": [
+            {
+              "id": "21",
+              "name": "The Perception-Cognition-Action Loop"
+            },
+            {
+              "id": "22",
+              "name": "Core Architectural Components"
+            },
+            {
+              "id": "23",
+              "name": "Enabling Technologies: LLMs, ML, and Beyond"
+            },
+            {
+              "id": "24",
+              "name": "Autonomy, Learning, and Adaptability"
+            }
+          ]
+        },
+        {
+          "id": "3",
+          "name": "Types of AI Agents and Their Characteristics",
+          "items": [
+            {
+              "id": "31",
+              "name": "Simple Reflex Agents: Immediate Responses"
+            },
+            {
+              "id": "32",
+              "name": "Model-Based Reflex Agents: Understanding the Environment"
+            },
+            {
+              "id": "33",
+              "name": "Goal-Based Agents: Planning for Future Objectives"
+            },
+            {
+              "id": "34",
+              "name": "Learning Agents: Adapting and Improving Over Time"
+            }
+          ]
+        },
+        {
+          "id": "4",
+          "name": "AI Agents vs. Other AI Technologies",
+          "items": [
+            {
+              "id": "41",
+              "name": "AI Agents vs. Traditional AI and Large Language Models"
+            },
+            {
+              "id": "42",
+              "name": "Beyond Bots: The Autonomy of AI Agents"
+            },
+            {
+              "id": "43",
+              "name": "AI Agents vs. Agentic AI: A Spectrum of Autonomy"
+            },
+            {
+              "id": "44",
+              "name": "Functionality and Use Cases: Where Each Technology Excels"
+            }
+          ]
+        },
+        {
+          "id": "5",
+          "name": "Real-World Applications of Autonomous AI Agents",
+          "items": [
+            {
+              "id": "51",
+              "name": "Transforming Healthcare and Personalized Treatment"
+            },
+            {
+              "id": "52",
+              "name": "Revolutionizing Financial Services and Fraud Prevention"
+            },
+            {
+              "id": "53",
+              "name": "Optimizing Logistics and Autonomous Mobility"
+            },
+            {
+              "id": "54",
+              "name": "Enhancing Business Operations and Customer Experience"
+            }
+          ]
+        },
+        {
+          "id": "6",
+          "name": "The Future of Autonomous Tech: Trends and Impact",
+          "items": [
+            {
+              "id": "61",
+              "name": "Key Trends Shaping Autonomous Tech"
+            },
+            {
+              "id": "62",
+              "name": "Transformative Applications Across Industries"
+            },
+            {
+              "id": "63",
+              "name": "Future Capabilities and Human-AI Collaboration"
+            },
+            {
+              "id": "64",
+              "name": "Addressing the Challenges and Ethical Landscape"
+            }
+          ]
+        },
+        {
+          "id": "7",
+          "name": "Conclusion: Embracing the Era of Intelligent Automation",
+          "items": [
+            {
+              "id": "71",
+              "name": "The Transformative Power of Autonomous AI"
+            },
+            {
+              "id": "72",
+              "name": "Navigating the Future: Challenges and Ethical Considerations"
+            },
+            {
+              "id": "73",
+              "name": "A New Paradigm of Human-AI Collaboration"
+            },
+            {
+              "id": "74",
+              "name": "Preparing for an Agent-Driven World"
+            }
+          ]
+        }
+      ],
+      "outlineApproved": false,
+      "draft": "",
+      "progress": {
+        "sectionIndex": 0
+      },
+      "preferences": {
+        "automationLevel": "full",
+        "skipOptionalSteps": true,
+        "autoSelectBestOptions": true
+      },
+      "policy": {
+        "referencesUsage": "both",
+        "grounding": true
+      },
+      "userProvidedFields": {},
+      "autoFillFields": {},
+      "trace": [
+        {
+          "step": "KeywordResearch.autoSelected",
+          "info": {
+            "keyword": "ai",
+            "score": 0.8209876543209876
+          },
+          "at": 1764342585052
+        },
+        {
+          "step": "KeywordResearch.secondaryAutoSelected",
+          "info": {
+            "count": 5
+          },
+          "at": 1764342585602
+        },
+        {
+          "step": "TitleGeneration.autoSelected",
+          "info": {
+            "title": "AI Agents Explained: Your Essential Guide to Autonomous Tech"
+          },
+          "at": 1764342588663
+        },
+        {
+          "step": "DiscoveryNode.generatedOutline",
+          "info": {
+            "h2Count": 7
+          },
+          "at": 1764342598611
+        }
+      ],
+      "halt": {
+        "reason": "awaiting_approval"
+      },
+      "keywordCandidates": [],
+      "titleCandidates": [],
+      "currentStep": "outline",
+      "toolOutputs": [
+        {
+          "type": "outline_generated",
+          "data": {
+            "outline": [
+              {
+                "id": "1",
+                "name": "What Exactly Are AI Agents?",
+                "items": [
+                  {
+                    "id": "11",
+                    "name": "Defining AI Agents: Core Concepts"
+                  },
+                  {
+                    "id": "12",
+                    "name": "Key Components and Functionality"
+                  },
+                  {
+                    "id": "13",
+                    "name": "AI Agents vs. Traditional AI: A Clear Distinction"
+                  }
+                ]
+              },
+              {
+                "id": "2",
+                "name": "The Inner Workings: How AI Agents Function",
+                "items": [
+                  {
+                    "id": "21",
+                    "name": "The Perception-Cognition-Action Loop"
+                  },
+                  {
+                    "id": "22",
+                    "name": "Core Architectural Components"
+                  },
+                  {
+                    "id": "23",
+                    "name": "Enabling Technologies: LLMs, ML, and Beyond"
+                  },
+                  {
+                    "id": "24",
+                    "name": "Autonomy, Learning, and Adaptability"
+                  }
+                ]
+              },
+              {
+                "id": "3",
+                "name": "Types of AI Agents and Their Characteristics",
+                "items": [
+                  {
+                    "id": "31",
+                    "name": "Simple Reflex Agents: Immediate Responses"
+                  },
+                  {
+                    "id": "32",
+                    "name": "Model-Based Reflex Agents: Understanding the Environment"
+                  },
+                  {
+                    "id": "33",
+                    "name": "Goal-Based Agents: Planning for Future Objectives"
+                  },
+                  {
+                    "id": "34",
+                    "name": "Learning Agents: Adapting and Improving Over Time"
+                  }
+                ]
+              },
+              {
+                "id": "4",
+                "name": "AI Agents vs. Other AI Technologies",
+                "items": [
+                  {
+                    "id": "41",
+                    "name": "AI Agents vs. Traditional AI and Large Language Models"
+                  },
+                  {
+                    "id": "42",
+                    "name": "Beyond Bots: The Autonomy of AI Agents"
+                  },
+                  {
+                    "id": "43",
+                    "name": "AI Agents vs. Agentic AI: A Spectrum of Autonomy"
+                  },
+                  {
+                    "id": "44",
+                    "name": "Functionality and Use Cases: Where Each Technology Excels"
+                  }
+                ]
+              },
+              {
+                "id": "5",
+                "name": "Real-World Applications of Autonomous AI Agents",
+                "items": [
+                  {
+                    "id": "51",
+                    "name": "Transforming Healthcare and Personalized Treatment"
+                  },
+                  {
+                    "id": "52",
+                    "name": "Revolutionizing Financial Services and Fraud Prevention"
+                  },
+                  {
+                    "id": "53",
+                    "name": "Optimizing Logistics and Autonomous Mobility"
+                  },
+                  {
+                    "id": "54",
+                    "name": "Enhancing Business Operations and Customer Experience"
+                  }
+                ]
+              },
+              {
+                "id": "6",
+                "name": "The Future of Autonomous Tech: Trends and Impact",
+                "items": [
+                  {
+                    "id": "61",
+                    "name": "Key Trends Shaping Autonomous Tech"
+                  },
+                  {
+                    "id": "62",
+                    "name": "Transformative Applications Across Industries"
+                  },
+                  {
+                    "id": "63",
+                    "name": "Future Capabilities and Human-AI Collaboration"
+                  },
+                  {
+                    "id": "64",
+                    "name": "Addressing the Challenges and Ethical Landscape"
+                  }
+                ]
+              },
+              {
+                "id": "7",
+                "name": "Conclusion: Embracing the Era of Intelligent Automation",
+                "items": [
+                  {
+                    "id": "71",
+                    "name": "The Transformative Power of Autonomous AI"
+                  },
+                  {
+                    "id": "72",
+                    "name": "Navigating the Future: Challenges and Ethical Considerations"
+                  },
+                  {
+                    "id": "73",
+                    "name": "A New Paradigm of Human-AI Collaboration"
+                  },
+                  {
+                    "id": "74",
+                    "name": "Preparing for an Agent-Driven World"
+                  }
+                ]
+              }
+            ],
+            "sectionCount": 7
+          },
+          "timestamp": 1764342598611
+        }
+      ],
+      "__pregel_tasks": [
+        [],
+        []
+      ]
+    },
+    "channel_versions": {
+      "__start__": 2,
+      "messages": 2,
+      "data": 5,
+      "apiKey": 2,
+      "outline": 6,
+      "outlineApproved": 6,
+      "draft": 6,
+      "progress": 2,
+      "preferences": 2,
+      "trace": 6,
+      "halt": 6,
+      "userProvidedFields": 2,
+      "autoFillFields": 2,
+      "branch:to:research_primary": 3,
+      "currentStep": 6,
+      "branch:to:research_secondary": 4,
+      "branch:to:title_generation": 5,
+      "branch:to:discovery": 6,
+      "toolOutputs": 6
+    },
+    "versions_seen": {
+      "__input__": {},
+      "__start__": {
+        "__start__": 1
+      },
+      "research_primary": {
+        "branch:to:research_primary": 2
+      },
+      "research_secondary": {
+        "branch:to:research_secondary": 3
+      },
+      "title_generation": {
+        "branch:to:title_generation": 4
+      },
+      "discovery": {
+        "branch:to:discovery": 5
+      }
+    }
+  },
+  "metadata": {
+    "source": "loop",
+    "step": 4,
+    "parents": {}
+  },
+  "parentCheckpointId": "1f0cc6c4-819a-65a0-8003-72a7b1dfe5c5",
+  "updatedAt": 1764342598613
+}

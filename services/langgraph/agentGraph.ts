@@ -5,49 +5,10 @@ import {
 	AgentPreferences,
 	ConversationContext,
 } from '../../types';
+import { AgentState, ReferencesUsage } from '../../server/agent/state';
 import * as geminiService from '../geminiService';
 import * as agentService from '../agentService';
 import * as automationEngine from '../automationEngine';
-
-export type ReferencesUsage = 'both' | 'outline-only' | 'content-only';
-
-export interface AgentState {
-	data: BlogData;
-	apiKey: string;
-	outline: OutlineSection[];
-	outlineApproved: boolean;
-	draft: string;
-	messages: { role: 'user' | 'assistant' | 'system'; content: string }[];
-	progress: { sectionIndex: number };
-	policy: { referencesUsage: ReferencesUsage; grounding: boolean };
-	trace: { step: string; info?: Record<string, any>; at: number }[];
-	halt?: { reason: string } | null;
-	// Keyword research
-	keywordResearch?: {
-		primaryCandidates?: import('../keywordService').KwRow[];
-		secondaryCandidates?: import('../keywordService').KwRow[];
-		snapshot?: Record<string, any>;
-	};
-	// Title generation
-	titleOptions?: string[];
-	titleSelected?: boolean;
-	// Interlinking
-	interlinkingCompleted?: boolean;
-	// References
-	referencesCollected?: boolean;
-	// Final blog generation
-	finalBlogGenerated?: boolean;
-	// ✨ NEW: User preferences for automation
-	preferences?: AgentPreferences;
-	// ✨ NEW: Conversation context
-	conversationContext?: ConversationContext;
-	// ✨ NEW: What's been explicitly set by user
-	userProvidedFields?: Set<string>;
-	// ✨ NEW: What agent should auto-fill
-	autoFillFields?: Set<string>;
-	// ✨ NEW: Outline feedback for regeneration
-	outlineFeedback?: string;
-}
 
 const appendTrace = (
 	s: AgentState,
@@ -402,8 +363,15 @@ export async function researchSecondaryNode(
 			`✅ [SECONDARY KEYWORD RESEARCH] Complete! Found ${ranked.length} unique keywords`
 		);
 
+		// ✨ CRITICAL FIX: Filter out primary keyword from secondary candidates
+		const filteredRanked = ranked.filter(k =>
+			k.text.toLowerCase() !== primary.toLowerCase()
+		);
+
+		console.log(`🔍 [SECONDARY KEYWORDS] Filtered ${ranked.length - filteredRanked.length} duplicate(s) of primary keyword "${primary}"`);
+
 		s.keywordResearch = s.keywordResearch || {};
-		s.keywordResearch.secondaryCandidates = ranked;
+		s.keywordResearch.secondaryCandidates = filteredRanked; // ✨ Use filtered list
 	} catch (err) {
 		console.error('❌ [SECONDARY KEYWORD RESEARCH] Failed:', err);
 		// Set empty results on failure
@@ -414,9 +382,9 @@ export async function researchSecondaryNode(
 	// ✨ Case 2: Auto-select if automation enabled
 	if (
 		automationEngine.shouldAutoFill(s, 'secondaryKeywords') &&
-		ranked.length > 0
+		s.keywordResearch.secondaryCandidates.length > 0
 	) {
-		s.data.secondaryKeywords = ranked.slice(0, 5).map((k) => k.text);
+		s.data.secondaryKeywords = s.keywordResearch.secondaryCandidates.slice(0, 5).map((k) => k.text);
 		appendTrace(s, 'KeywordResearch.secondaryAutoSelected', {
 			count: s.data.secondaryKeywords.length,
 		});
@@ -426,7 +394,7 @@ export async function researchSecondaryNode(
 	// ✨ Case 3: Show options to user (default behavior)
 	s.halt = { reason: 'await_secondary_selection' };
 	appendTrace(s, 'KeywordResearch.secondaryCandidates', {
-		count: ranked.length,
+		count: s.keywordResearch.secondaryCandidates.length,
 	});
 	return s;
 }

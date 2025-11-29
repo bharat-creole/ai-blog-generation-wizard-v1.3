@@ -1,5 +1,5 @@
 import { ChatMessage, BlogData, AutomationLevel } from '../../../types';
-import { AgentState } from '../../../services/langgraph/agentGraph';
+import { AgentState } from '../../../../server/agent/state';
 import * as conversationHandler from '../../../services/conversationHandler';
 import { FlowContext } from '../types/agentTypes';
 import {
@@ -144,6 +144,7 @@ export const runBlogGenerationLoop = async (
 	},
 	setMessages: React.Dispatch<React.SetStateAction<ChatMessage[]>>,
 	setIsStreaming: React.Dispatch<React.SetStateAction<boolean>>,
+	setIsThinking: React.Dispatch<React.SetStateAction<boolean>>,
 	onCollapseSidebar?: () => void
 ): Promise<AgentState> => {
 	const maxIterations =
@@ -165,6 +166,10 @@ export const runBlogGenerationLoop = async (
 			const stepMessage = getStepMessage(latestTrace.step, latestTrace.info);
 
 			if (stepMessage) {
+				// Turn off thinking indicator as soon as we start showing progress
+				// This allows progress messages to be visible in real-time
+				setIsThinking(false);
+				
 				setMessages((prev) => [
 					...prev,
 					createAssistantMessage(stepMessage),
@@ -320,6 +325,7 @@ export const handleBlogGeneration = async (
 				setters,
 				setMessages,
 				setIsStreaming,
+				setIsThinking,
 				onCollapseSidebar
 			);
 		}

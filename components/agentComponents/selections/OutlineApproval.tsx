@@ -1,10 +1,7 @@
 import React from 'react';
-import { AgentState } from '../../../services/langgraph/agentGraph';
-import { runNext as lgRunNext } from '../../../services/langgraph/agentGraph';
-import * as automationEngine from '../../../services/automationEngine';
+import { AgentState } from '../../../../server/agent/state';
 import { OutlineSection, ChatMessage } from '../../../types';
 import DraggableOutline from '../content/DraggableOutline';
-import { getStepMessage } from '../utils/agentHelpers';
 
 interface OutlineApprovalProps {
 	outline: OutlineSection[];
@@ -24,6 +21,7 @@ interface OutlineApprovalProps {
 	setViewMode: React.Dispatch<React.SetStateAction<string>>;
 	setShowBlogContent: React.Dispatch<React.SetStateAction<boolean>>;
 	onCollapseSidebar?: () => void;
+	sendUserMessage: (message: string, agentState: AgentState) => Promise<{ response: string; updatedState: AgentState; metadata?: any }>;
 }
 
 const OutlineApproval: React.FC<OutlineApprovalProps> = ({
@@ -44,11 +42,14 @@ const OutlineApproval: React.FC<OutlineApprovalProps> = ({
 	setViewMode,
 	setShowBlogContent,
 	onCollapseSidebar,
+	sendUserMessage,
 }) => {
 	const handleApprove = async () => {
 		if (!agent) return;
 
 		setCompletedSelections((prev) => new Set(prev).add('outline'));
+
+		// Add user message immediately
 		setMessages((prev) => [
 			...prev,
 			{
@@ -57,92 +58,63 @@ const OutlineApproval: React.FC<OutlineApprovalProps> = ({
 			},
 			{
 				role: 'assistant',
-				content: '✅ Outline approved! Starting blog generation...',
+				content: '✅ Outline approved! Starting blog generation... This may take a minute or two as I write each section.',
 			},
 		]);
 
-		const next = {
-			...agent,
-			outlineApproved: true,
-		} as AgentState;
-		setAgent(next);
+		// Update local state immediately for UI feedback
 		setOutlineApproved(true);
 		setViewMode('markdown');
-		setShowBlogContent(true); // Show blog content immediately for animation
+		setShowBlogContent(true);
 		setIsThinking(true);
-		
+
 		// Collapse sidebar when blog content appears
 		if (onCollapseSidebar) {
 			onCollapseSidebar();
 		}
 
 		try {
-			let working = next;
-			let guard = 0;
-			let lastTraceLength = 0;
+			// Send approval to backend - this will trigger the full generation loop
+			const result = await sendUserMessage(
+				'Approve outline',
+				agent
+			);
 
-			while (guard++ < 50) {
-				const { state: ns, halted, step } = await lgRunNext(working);
-				working = ns;
+			// Update state with the fully generated blog
+			setAgent(result.updatedState);
+			setOutlineState(result.updatedState.outline);
+			setDraft(result.updatedState.draft);
 
-				// Update live state during generation (for real-time content display)
-				setAgent(working);
-				setOutlineState(working.outline);
-				setDraft(working.draft); // Update draft in real-time as content is generated
-				setTraceItems(working.trace.map((t) => ({ step: t.step, at: t.at })));
-				
-				// Update blog data in real-time so content appears section by section
-				if (working.draft && working.draft.trim().length > 0) {
-					updateData({
-						blogContent: working.draft,
-						outline: working.outline,
-					});
-				}
-
-				// Show progress messages
-				if (working.trace.length > lastTraceLength) {
-					const latestTrace = working.trace[working.trace.length - 1];
-					const stepMessage = getStepMessage(latestTrace.step, latestTrace.info);
-
-					if (stepMessage) {
-						setMessages((prev) => [
-							...prev,
-							{
-								role: 'assistant',
-								content: stepMessage,
-							},
-						]);
-						await new Promise((resolve) => setTimeout(resolve, 300));
-					}
-					lastTraceLength = working.trace.length;
-				}
-
-				// Break if halted and needs user input
-				if (halted && automationEngine.needsUserInput(ns)) {
-					break;
-				}
+			if (result.updatedState.trace) {
+				setTraceItems(result.updatedState.trace.map((t) => ({ step: t.step, at: t.at })));
 			}
 
-			// Final state update
-			setAgent(working);
-			setOutlineState(working.outline);
-			setDraft(working.draft);
-			setTraceItems(working.trace.map((t) => ({ step: t.step, at: t.at })));
+			// Update parent data
 			updateData({
-				outline: working.outline,
-				blogContent: working.draft,
+				outline: result.updatedState.outline,
+				blogContent: result.updatedState.draft,
 			});
 
 			// Show completion message
-			if (working.finalBlogGenerated) {
-				setMessages((prev) => [
-					...prev,
-					{
-						role: 'assistant',
-						content: '🎉 Blog generation complete! Your content is ready in the Live Draft.',
-					},
-				]);
-			}
+			setMessages((prev) => [
+				...prev,
+				{
+					role: 'assistant',
+					content: result.response,
+					...result.metadata
+				},
+			]);
+
+		} catch (error) {
+			console.error('Error approving outline:', error);
+			// Revert on error
+			setCompletedSelections((prev) => {
+				const newSet = new Set(prev);
+				newSet.delete('outline');
+				return newSet;
+			});
+			setOutlineApproved(false);
+			setShowBlogContent(false);
 		} finally {
 			setIsThinking(false);
 		}
@@ -154,11 +126,11 @@ const OutlineApproval: React.FC<OutlineApprovalProps> = ({
 			prev.map((msg, idx) =>
 				idx === messages.findIndex((m2) => m2 === messages[messages.length - 1])
 					? {
-							...msg,
-							outlineApproval: {
-								outline: newOutline,
-							},
-					  }
+						...msg,
+						outlineApproval: {
+							outline: newOutline,
+						},
+					}
 					: msg
 			)
 		);
@@ -189,11 +161,10 @@ const OutlineApproval: React.FC<OutlineApprovalProps> = ({
 			<div className='flex gap-3'>
 				<button
 					disabled={completedSelections.has('outline')}
-					className={`px-6 py-3 text-sm font-semibold rounded-xl transition-all duration-200 ${
-						completedSelections.has('outline')
+					className={`px-6 py-3 text-sm font-semibold rounded-xl transition-all duration-200 ${completedSelections.has('outline')
 							? 'bg-gray-400 text-gray-200 cursor-not-allowed'
 							: 'text-white bg-gradient-to-r from-orange-500 to-orange-600 hover:shadow-lg hover:shadow-orange-500/30'
-					}`}
+						}`}
 					onClick={handleApprove}
 				>
 					✅ Approve Outline

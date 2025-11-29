@@ -1,12 +1,8 @@
 import React, { useCallback, useEffect } from 'react';
-import * as agentService from '../services/agentService';
 import {
-	runNext as lgRunNext,
 	AgentState,
 } from '../services/langgraph/agentGraph';
-import * as geminiService from '../services/geminiService';
-import * as conversationHandler from '../services/conversationHandler';
-import * as automationEngine from '../services/automationEngine';
+import { useAgentExecutionV3 } from './agentComponents/hooks/useAgentExecutionV3';
 import Spinner from './common/Spinner';
 import { BlogData, Interlink, AutomationLevel, ChatMessage } from '../types';
 
@@ -20,7 +16,6 @@ import { BlogContentDisplay } from './agentComponents/content/BlogContentDisplay
 // Extracted hooks
 import { useAgentState } from './agentComponents/hooks/useAgentState';
 import { useIntentAnalysis } from './agentComponents/hooks/useIntentAnalysis';
-import { useAgentExecution } from './agentComponents/hooks/useAgentExecution';
 
 // Extracted handlers
 import {
@@ -28,17 +23,8 @@ import {
 	handleOutlineRegeneration,
 	handleAdditionalModification,
 } from './agentComponents/handlers/modificationFlowHandler';
-import {
-	switchToAutomationMode,
-	runAutomationFlow,
-} from './agentComponents/handlers/automationFlowHandler';
-import { handleBlogGeneration } from './agentComponents/handlers/blogGenerationFlowHandler';
 
 // Extracted utilities
-import {
-	fileToBase64,
-	getStepMessage,
-} from './agentComponents/utils/agentHelpers';
 import {
 	extractTopicFromText,
 	findTopicInHistory,
@@ -47,16 +33,7 @@ import {
 import { createUserMessage } from './agentComponents/utils/messageUtils';
 import {
 	initializeAgentState,
-	updateAgentFromWorking,
-	syncAgentStateToData,
 } from './agentComponents/utils/agentStateUtils';
-import {
-	createOutlineApprovalMessage,
-	createKeywordSelectionMessage,
-	createTitleSelectionMessage,
-	createInterlinkingFormMessage,
-	createReferencesFormMessage,
-} from './agentComponents/utils/messageUtils';
 
 // Styles
 import { markdownStyles } from './agentComponents/styles/agentModeStyles';
@@ -143,7 +120,7 @@ const AgentMode: React.FC<Props> = ({
 	const { analyzeUserIntent } = useIntentAnalysis();
 
 	// Use agent execution hook
-	const { runAgentLoop } = useAgentExecution(setMessages, setIsStreaming);
+	const { sendUserMessage } = useAgentExecutionV3(setMessages, setIsStreaming, setIsThinking);
 
 	// Set streaming to true on mount for initial assistant message
 	useEffect(() => {
@@ -161,6 +138,32 @@ const AgentMode: React.FC<Props> = ({
 		}
 	}, [outlineApproved, draft]);
 
+	// ✨ FIX: Clear completedSelections when jumping back to a selection step
+	// This allows re-selection when user modifies their choices
+	useEffect(() => {
+		if (!agent?.halt?.reason) return;
+
+		const haltToSelectionMap: Record<string, string> = {
+			'await_keyword_selection': 'primaryKeyword',
+			'await_secondary_selection': 'secondaryKeywords',
+			'await_title_selection': 'title',
+			'awaiting_approval': 'outline',
+		};
+
+		const selectionKey = haltToSelectionMap[agent.halt.reason];
+
+		// If we're at a step that has a completed selection, clear it
+		// This allows re-selection when user goes back
+		if (selectionKey && completedSelections.has(selectionKey)) {
+			console.log(`🔄 [UI FIX] Clearing completed selection for: ${selectionKey} (halt reason: ${agent.halt.reason})`);
+			setCompletedSelections(prev => {
+				const newSet = new Set(prev);
+				newSet.delete(selectionKey);
+				return newSet;
+			});
+		}
+	}, [agent?.halt?.reason, completedSelections, setCompletedSelections]);
+
 	// Removed SEO ranking feature
 
 	const handleSend = useCallback(async () => {
@@ -174,6 +177,8 @@ const AgentMode: React.FC<Props> = ({
 
 		// Use extracted intent analysis
 		const intent = analyzeUserIntent(input.trim());
+
+		let messageSentToBackend = false; // Flag to prevent duplicate backend calls
 
 		// Handle general blog generation requests (generate blog, create blog, write blog, etc.)
 		if (intent.wantsBlogGeneration && !agent) {
@@ -230,7 +235,7 @@ const AgentMode: React.FC<Props> = ({
 					},
 				]);
 
-				// Continue with agent initialization below
+				// Continue to backend execution below...
 			}
 		}
 
@@ -276,8 +281,7 @@ const AgentMode: React.FC<Props> = ({
 				hasProvidedInfo: true,
 			}));
 
-			// Don't add userMsg here - let the general flow add it
-			// Continue with agent initialization below
+			// Continue to backend execution below
 		}
 
 		// Handle "generate blog automatically" with data analysis
@@ -376,8 +380,18 @@ const AgentMode: React.FC<Props> = ({
 					userRequestedAutomation: true,
 				}));
 
-				// Don't add messages here - let the general flow handle it
-				// Don't return - continue with agent initialization below
+				setMessages((prev) => [
+					...prev,
+					userMsg,
+					{
+						role: 'assistant',
+						content: dataStatus,
+					},
+				]);
+				setInput('');
+				setIsThinking(true);
+
+				// Continue to backend execution below...
 			}
 		} else if (intent.wantsFullAutomation && agent) {
 			// User wants full automation but agent already exists - update preferences
@@ -413,337 +427,125 @@ const AgentMode: React.FC<Props> = ({
 			setInput('');
 			setIsThinking(true);
 
-			// Don't return - continue with agent execution
-			try {
-				let working = updatedAgent;
-
-				// Run agent with full automation
-				const maxIterations = 100;
-				let guard = 0;
-				let lastTraceLength = 0;
-
-				while (guard++ < maxIterations) {
-					const {
-						state: ns,
-						halted,
-						step,
-					} = await lgRunNext(working);
-					working = ns;
-
-					// Show progress messages
-					if (working.trace.length > lastTraceLength) {
-						const latestTrace =
-							working.trace[
-								working.trace.length - 1
-							];
-						const stepMessage = getStepMessage(
-							latestTrace.step,
-							latestTrace.info
-						);
-
-						if (stepMessage) {
-							setMessages((prev) => [
-								...prev,
-								{
-									role: 'assistant',
-									content: stepMessage,
-								},
-							]);
-							setIsStreaming(true);
-
-							await new Promise((resolve) =>
-								setTimeout(resolve, 300)
-							);
-						}
-						lastTraceLength = working.trace.length;
-					}
-
-					// Update live state
-					setAgent(working);
-					setDraft(working.draft);
-					setOutline(working.outline);
-
-					// If outline was auto-approved, switch to blog content view
-					if (working.outlineApproved && !outlineApproved) {
-						setOutlineApproved(true);
-						setShowBlogContent(true);
-						setViewMode('markdown');
-						if (onCollapseSidebar) {
-							onCollapseSidebar();
-						}
-					}
-
-					// Only halt if user input is actually needed
-					if (
-						halted &&
-						automationEngine.needsUserInput(ns)
-					) {
-						break;
-					}
-				}
-
-				setAgent(working);
-				setOutline(working.outline);
-				setDraft(working.draft);
-				setUserTopic(working.data.topic || '');
-				setTargetLocation(
-					working.data.targetLocation || 'United States'
-				);
-				setTraceItems(
-					working.trace.map((t) => ({
-						step: t.step,
-						at: t.at,
-					}))
-				);
-				updateData({
-					outline: working.outline,
-					blogContent: working.draft,
-					primaryKeyword: working.data.primaryKeyword,
-					secondaryKeywords: working.data.secondaryKeywords,
-					topic: working.data.topic,
-					targetLocation: working.data.targetLocation,
-				});
-
-				// Check if blog generation is complete
-				if (
-					!working.halt &&
-					(working.progress.sectionIndex ?? 0) >=
-						(working.outline?.length || 0) &&
-					(working.outline?.length || 0) > 0
-				) {
-					setMessages((prev) => [
-						...prev,
-						{
-							role: 'assistant',
-							content: '✨ Blog generation complete! Review your content in the Live Draft panel.',
-						},
-					]);
-					setIsStreaming(true);
-				}
-			} catch (e: any) {
-				setError(e?.message || 'Agent failed to respond.');
-			} finally {
-				setIsThinking(false);
-			}
-
-			return; // Return after processing
+			// Continue to backend execution below...
 		}
 
-		// ✨ REMOVED: Early-return logic for irrelevant queries
-		// This was preventing greetings and help requests from reaching the conversation handler
-		// Now ALL messages go through conversationHandler.processMessage which has proper
-		// intent classification for greetings, help requests, and off-topic queries
-
-		// Handle modification requests when agent already exists
-		if (
-			agent &&
-			intent.wantsModification &&
-			!flowContext.modificationInProgress
-		) {
-			// Store the original modification request
+		// Handle automation during guided flow
+		if (intent.wantsAutomation && agent) {
+			// Update context to full automation
 			setFlowContext((prev) => ({
 				...prev,
-				modificationInProgress: true,
-				pendingModificationRequest: input.trim(), // Store the original request
+				automationLevel: 'full',
+				userRequestedAutomation: true,
 			}));
+
+			// Update agent preferences
+			const updatedAgent: AgentState = {
+				...agent,
+				preferences: {
+					...agent.preferences,
+					automationLevel: 'full' as AutomationLevel,
+					skipOptionalSteps: true,
+					autoSelectBestOptions: true,
+				},
+			};
+			setAgent(updatedAgent);
+
 			setMessages((prev) => [
 				...prev,
 				userMsg,
 				{
 					role: 'assistant',
-					content: "⚠️ I understand you want to modify the current information. This will affect the blog generation flow.\n\n**Please confirm:** Type **'yes'** to proceed with modifications, or **'no'** to continue with the current flow.",
+					content: "🔄 **Switching to Automation Mode**\n\nI'll handle all remaining steps automatically without asking questions. Let me complete your blog!",
 				},
 			]);
 			setInput('');
-			return;
-		}
+			setIsThinking(true);
 
-		// ✨ Handle modification confirmation response (yes/no)
-		if (
-			agent &&
-			flowContext.modificationInProgress &&
-			flowContext.pendingModificationRequest &&
-			/^(yes|no)$/i.test(input.trim())
-		) {
-			const handled = await handleModificationConfirmation(
-				input,
-				agent,
-				flowContext,
-				apiKey,
-				userMsg,
-				setFlowContext,
-				setMessages,
-				setAgent,
-				setOutlineApproved,
-				setOutline,
-				setDraft,
-				setShowBlogContent,
-				setInput,
-				setIsThinking,
-				setError,
-				updateData,
-				setUserTopic,
-				setTargetLocation,
-				setIsStreaming
-			);
-
-			if (handled) return;
-		}
-
-		// ✨ Handle modifications when in modification mode
-		if (agent && flowContext.modificationInProgress) {
-			// Check if user is done with modifications
-			if (
-				/^(continue|done|proceed|that's all|finish|complete)$/i.test(
-					input.trim()
-				)
-			) {
-				// Reset modification mode
-				setFlowContext((prev) => ({
-					...prev,
-					modificationInProgress: false,
-					pendingModificationRequest: null,
-				}));
-
-				setMessages((prev) => [
-					...prev,
-					userMsg,
-					{
-						role: 'assistant',
-						content: '✅ **Modifications Complete!**\n\nRegenerating the outline with your updated information...',
-					},
-				]);
-
-				setInput('');
-
-				// Regenerate outline with modified agent state
-				await handleOutlineRegeneration(
-					agent,
-					{
-						setAgent,
-						setOutline,
-						setDraft,
-						setUserTopic,
-						setTargetLocation,
-						setTraceItems,
-						setOutlineApproved,
-						setShowBlogContent,
-						setViewMode,
-						setShowOutline,
-					},
-					updateData,
-					setMessages,
-					setIsThinking,
-					setIsStreaming,
-					setError
-				);
-
-				return;
-			}
-
-			// ✨ User wants to make another modification while in modification mode
-			await handleAdditionalModification(
-				input,
-				agent,
-				flowContext,
-				apiKey,
-				userMsg,
-				setAgent,
-				setOutlineApproved,
-				setOutline,
-				setDraft,
-				setShowBlogContent,
-				setInput,
-				setIsThinking,
-				setError,
-				updateData,
-				setUserTopic,
-				setTargetLocation,
-				setMessages,
-				setFlowContext
-			);
-
-			return;
-
-			// Otherwise, process the modification request through conversation handler
-			// Fall through to normal message processing
-		}
-
-		// Handle automation during guided flow
-		if (intent.wantsAutomation && agent) {
-			const updatedAgent = switchToAutomationMode(
-				agent,
-				setFlowContext,
-				setAgent,
-				setMessages,
-				userMsg
-			);
-
+			// Continue to backend execution below...
+		} else if (!messageSentToBackend) { // Only add user message if not already handled by a specific flow
+			// Normal message flow
+			setMessages((prev) => [...prev, userMsg]);
 			setInput('');
-
-			try {
-				await runAutomationFlow(
-					updatedAgent,
-					{
-						setAgent,
-						setOutline,
-						setDraft,
-						setUserTopic,
-						setTargetLocation,
-						setTraceItems,
-						setShowBlogContent,
-						setViewMode,
-						setOutlineApproved,
-					},
-					updateData,
-					setMessages,
-					setIsThinking,
-					setIsStreaming,
-					setError,
-					onCollapseSidebar
-				);
-			} catch (e: any) {
-				setError(e?.message || 'Agent failed to respond.');
-			}
-
-			return; // Return after processing automation
 		}
 
-		setMessages((prev) => [...prev, userMsg]);
-		setInput('');
-
-		// Use blog generation handler
+		// V3: Send message to backend instead of using local handlers
 		try {
-			await handleBlogGeneration(
-				data,
-				userTopic,
-				targetLocation,
-				draft,
-				messages,
-				userMsg,
+			setIsThinking(true);
+
+			// Build current state
+			// If we just updated agent locally (e.g. for automation), use that
+			// Otherwise initialize or use existing
+			let stateToUse = agent;
+
+			if (!stateToUse) {
+				stateToUse = initializeAgentState(
+					data,
+					userTopic || '',
+					targetLocation || 'United States',
+					draft || '',
+					messages,
+					apiKey,
+					flowContext.automationLevel || 'guided'
+				);
+			}
+
+			// Ensure apiKey is set
+			const currentState: AgentState = {
+				...stateToUse,
 				apiKey,
-				flowContext,
-				agent,
+			};
+
+			// Send message to backend
+			const result = await sendUserMessage(input.trim(), currentState);
+
+			// Display assistant response
+			setMessages((prev) => [
+				...prev,
 				{
-					setAgent,
-					setOutline,
-					setDraft,
-					setUserTopic,
-					setTargetLocation,
-					setTraceItems,
-					setShowBlogContent,
-					setViewMode,
-					setOutlineApproved,
+					role: 'assistant',
+					content: result.response,
+					...result.metadata // ✨ Attach UI metadata (options, forms, etc.)
 				},
-				updateData,
-				setMessages,
-				setIsThinking,
-				setIsStreaming,
-				setError,
-				onCollapseSidebar
+			]);
+
+			// Update local state with backend response
+			setAgent(result.updatedState);
+			setOutline(result.updatedState.outline);
+			setDraft(result.updatedState.draft);
+			setOutlineApproved(result.updatedState.outlineApproved);
+			setUserTopic(result.updatedState.data.topic || userTopic);
+			setTraceItems(
+				result.updatedState.trace.map((t) => ({
+					step: t.step,
+					at: t.at,
+				}))
 			);
+
+			// Sync to parent data
+			updateData({
+				topic: result.updatedState.data.topic,
+				primaryKeyword: result.updatedState.data.primaryKeyword,
+				secondaryKeywords: result.updatedState.data.secondaryKeywords,
+				outline: result.updatedState.outline,
+				blogContent: result.updatedState.draft,
+				targetLocation: result.updatedState.data.targetLocation,
+			});
+
+			// If outline was approved, switch to blog content view
+			if (result.updatedState.outlineApproved && !outlineApproved) {
+				setOutlineApproved(true);
+				setShowBlogContent(true);
+				setViewMode('markdown');
+				if (onCollapseSidebar) {
+					onCollapseSidebar();
+				}
+			}
+
 		} catch (e: any) {
 			setError(e?.message || 'Agent failed to respond.');
+		} finally {
+			setIsThinking(false);
 		}
 	}, [
 		agent,
@@ -757,6 +559,26 @@ const AgentMode: React.FC<Props> = ({
 		userTopic,
 		targetLocation,
 		flowContext,
+		outline,
+		outlineApproved,
+		sendUserMessage,
+		setAgent,
+		setCompletedSelections,
+		setDraft,
+		setError,
+		setFlowContext,
+		setIsStreaming,
+		setIsThinking,
+		setMessages,
+		setOutline,
+		setOutlineApproved,
+		setShowBlogContent,
+		setInput,
+		setTargetLocation,
+		setTraceItems,
+		setUserTopic,
+		setViewMode,
+		onCollapseSidebar,
 	]);
 
 	return (
@@ -765,34 +587,6 @@ const AgentMode: React.FC<Props> = ({
 			<style>{markdownStyles}</style>
 
 			<div className='flex-1 flex flex-col overflow-hidden'>
-				{/* ✨ Full Automation Progress Indicator */}
-				{agent?.preferences?.automationLevel === 'full' &&
-					isThinking && (
-						<div className='mb-4 p-4 bg-blue-50 border border-blue-300 rounded-lg'>
-							<div className='flex items-center gap-3 mb-2'>
-								<Spinner className='w-5 h-5' />
-								<span className='font-semibold text-blue-800'>
-									Agent is working in full
-									automation mode...
-								</span>
-							</div>
-							<div className='text-sm text-blue-700'>
-								Current step:{' '}
-								{agent.trace.length > 0
-									? agent.trace[
-											agent.trace
-												.length -
-												1
-									  ]?.step
-									: 'Initializing'}
-							</div>
-							<div className='mt-2 text-xs text-blue-600'>
-								{agent.trace.length} steps
-								completed
-							</div>
-						</div>
-					)}
-
 				{error && (
 					<div
 						className='bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4'
@@ -861,6 +655,7 @@ const AgentMode: React.FC<Props> = ({
 						showBlogContent={showBlogContent}
 						setShowBlogContent={setShowBlogContent}
 						onCollapseSidebar={onCollapseSidebar}
+						sendUserMessage={sendUserMessage}
 					/>
 
 					{/* Draft + SEO */}

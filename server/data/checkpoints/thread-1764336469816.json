@@ -1,0 +1,131 @@
+{
+  "checkpoint": {
+    "v": 4,
+    "id": "1f0cc5e0-f49e-6ae0-8003-213f5c1f4ec6",
+    "ts": "2025-11-28T13:28:00.398Z",
+    "channel_values": {
+      "messages": [
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        }
+      ],
+      "apiKey": "AIzaSyBEVtTO5Fou8xo6OIF4E1YWj4HWbSBtZGM",
+      "data": {
+        "apiKey": "AIzaSyBEVtTO5Fou8xo6OIF4E1YWj4HWbSBtZGM",
+        "title": "Unlocking Potential: How ai Agents are Transforming Business",
+        "topic": "AI Agents",
+        "targetLocation": "United States",
+        "primaryKeyword": "ai",
+        "secondaryKeywords": [
+          "open ai",
+          "openai",
+          "ai chatbot",
+          "ai chat",
+          "scale ai"
+        ],
+        "suggestedTitles": [],
+        "referenceUrls": [],
+        "referenceFiles": [],
+        "interlinks": [],
+        "brandVoice": "Default",
+        "blogGuideline": "Default",
+        "llmModel": "gemini-2.5-flash",
+        "language": "English",
+        "outline": [],
+        "blogContent": ""
+      },
+      "outline": [],
+      "outlineApproved": false,
+      "draft": "",
+      "progress": {
+        "sectionIndex": 0
+      },
+      "preferences": {
+        "automationLevel": "full",
+        "skipOptionalSteps": true,
+        "autoSelectBestOptions": true
+      },
+      "policy": {
+        "referencesUsage": "both",
+        "grounding": true
+      },
+      "userProvidedFields": {},
+      "autoFillFields": {},
+      "trace": [
+        {
+          "step": "KeywordResearch.autoSelected",
+          "info": {
+            "keyword": "ai",
+            "score": 0.8522727272727273
+          },
+          "at": 1764336475059
+        },
+        {
+          "step": "KeywordResearch.secondaryAutoSelected",
+          "info": {
+            "count": 5
+          },
+          "at": 1764336475405
+        },
+        {
+          "step": "TitleGeneration.autoSelected",
+          "info": {
+            "title": "Unlocking Potential: How ai Agents are Transforming Business"
+          },
+          "at": 1764336480395
+        }
+      ],
+      "halt": null,
+      "keywordCandidates": [],
+      "titleCandidates": [],
+      "currentStep": "title",
+      "toolOutputs": [],
+      "__pregel_tasks": [
+        [],
+        []
+      ]
+    },
+    "channel_versions": {
+      "__start__": 2,
+      "messages": 2,
+      "data": 5,
+      "apiKey": 2,
+      "outline": 2,
+      "outlineApproved": 2,
+      "draft": 2,
+      "progress": 2,
+      "preferences": 2,
+      "trace": 5,
+      "halt": 2,
+      "userProvidedFields": 2,
+      "autoFillFields": 2,
+      "branch:to:research_primary": 3,
+      "currentStep": 5,
+      "branch:to:research_secondary": 4,
+      "branch:to:title_generation": 5
+    },
+    "versions_seen": {
+      "__input__": {},
+      "__start__": {
+        "__start__": 1
+      },
+      "research_primary": {
+        "branch:to:research_primary": 2
+      },
+      "research_secondary": {
+        "branch:to:research_secondary": 3
+      },
+      "title_generation": {
+        "branch:to:title_generation": 4
+      }
+    }
+  },
+  "metadata": {
+    "source": "loop",
+    "step": 3,
+    "parents": {}
+  },
+  "parentCheckpointId": "1f0cc5e0-c505-69f0-8002-65d836171fb3",
+  "updatedAt": 1764336480398
+}

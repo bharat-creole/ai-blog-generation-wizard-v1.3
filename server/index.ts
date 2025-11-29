@@ -226,8 +226,7 @@ app.post('/api/getKeywordsGoogleAds', async (req, res) => {
 		`      - Developer Token: ${developerToken ? '✓ Set' : '✗ Missing'}`
 	);
 	console.log(
-		`      - OAuth Credentials: ${
-			hasOAuthCreds ? '✓ Set' : '✗ Missing'
+		`      - OAuth Credentials: ${hasOAuthCreds ? '✓ Set' : '✗ Missing'
 		}`
 	);
 
@@ -398,6 +397,283 @@ app.post('/api/getKeywordsGoogleAds', async (req, res) => {
 
 		// Return simulated data as fallback
 		return res.json({ rows: simulateIdeas(seed) });
+	}
+});
+
+// ═══════════════════════════════════════════════════════════════════════
+// 🤖 LangGraph Agent API Endpoints
+// ═══════════════════════════════════════════════════════════════════════
+
+import { graph, checkpointer } from './agent/graph.js';
+import { HumanMessage, AIMessage } from '@langchain/core/messages';
+import { processMessage } from './agent/conversationHandler.js';
+
+// NEW: Main conversation endpoint - handles user messages with intent classification
+app.post('/api/agent/message', async (req, res) => {
+	const { message, threadId, currentState, stream = false } = req.body || {};
+
+	console.log(`\n${'═'.repeat(70)}`);
+	console.log(`💬 [AGENT] Message Request Received ${stream ? '(Streaming)' : ''}`);
+	console.log(`${'═'.repeat(70)}`);
+	console.log(`   Thread ID: ${threadId}`);
+	console.log(`   Message: "${message}"`);
+
+	if (!threadId || !message) {
+		return res.status(400).json({
+			error: 'threadId and message are required'
+		});
+	}
+
+	if (!currentState?.apiKey) {
+		return res.status(400).json({
+			error: 'API key is required in currentState'
+		});
+	}
+
+	// Setup streaming if requested
+	if (stream) {
+		res.setHeader('Content-Type', 'text/event-stream');
+		res.setHeader('Cache-Control', 'no-cache');
+		res.setHeader('Connection', 'keep-alive');
+		res.flushHeaders();
+	}
+
+	try {
+		// Process message through conversation handler
+		const response = await processMessage(
+			message,
+			currentState,
+			currentState.apiKey
+		);
+
+		console.log(`   📤 Response: "${response.assistantMessage.substring(0, 50)}..."`);
+		console.log(`   Should execute: ${response.shouldRunAgent}`);
+
+		// Merge state updates
+		let updatedState = { ...currentState, ...response.stateUpdates };
+
+		// Emit intent event
+		if (stream) {
+			res.write(`event: intent\ndata: ${JSON.stringify({
+				assistantMessage: response.assistantMessage,
+				shouldRunAgent: response.shouldRunAgent,
+				stateUpdates: response.stateUpdates
+			})}\n\n`);
+		}
+
+		// Only execute graph if conversation handler says to
+		if (response.shouldRunAgent) {
+			console.log(`   🚀 Executing LangGraph...`);
+			const config = { configurable: { thread_id: threadId } };
+
+			if (stream) {
+				// Stream graph execution
+				const streamIterator = await graph.stream(updatedState, config);
+				for await (const chunk of streamIterator) {
+					// Send each state update as progress event
+					res.write(`event: progress\ndata: ${JSON.stringify(chunk)}\n\n`);
+
+					// Update local state tracker
+					// Note: chunk is a partial state update, usually keyed by node name
+					// e.g. { research: { ... } }
+					const nodeName = Object.keys(chunk)[0];
+					if (nodeName && chunk[nodeName]) {
+						updatedState = { ...updatedState, ...chunk[nodeName] };
+					}
+				}
+				// Get final state after stream completes to ensure we have everything
+				const finalSnapshot = await graph.getState(config);
+				updatedState = finalSnapshot.values as any;
+			} else {
+				// Standard execution
+				const result = await graph.invoke(updatedState, config);
+				updatedState = result;
+			}
+		} else {
+			console.log(`   ⏸️  Skipping graph execution (conversation only)`);
+		}
+
+		console.log(`${'═'.repeat(70)}\n`);
+
+		// Serialize state for transport (convert Sets to Arrays)
+		const serializedState = {
+			...updatedState,
+			userProvidedFields: Array.from(updatedState.userProvidedFields || []),
+			autoFillFields: Array.from(updatedState.autoFillFields || [])
+		};
+
+		if (serializedState.keywordCandidates && serializedState.keywordCandidates.length > 0) {
+			console.log('🔍 [SERVER] Serialized keywordCandidates (first item):', serializedState.keywordCandidates[0]);
+		} else {
+			console.log('🔍 [SERVER] No keywordCandidates in serialized state');
+		}
+
+		if (stream) {
+			res.write(`event: done\ndata: ${JSON.stringify({
+				assistantMessage: response.assistantMessage,
+				state: serializedState,
+				executed: response.shouldRunAgent
+			})}\n\n`);
+			res.end();
+		} else {
+			return res.json({
+				assistantMessage: response.assistantMessage,
+				state: serializedState,
+				executed: response.shouldRunAgent
+			});
+		}
+
+	} catch (error: any) {
+		console.error(`   ❌ Message processing failed:`, error);
+		console.log(`${'═'.repeat(70)}\n`);
+
+		// Check if it's a rate limit error
+		const isRateLimit = error?.status === 429 || 
+			error?.error?.code === 429 || 
+			error?.error?.status === 'RESOURCE_EXHAUSTED' ||
+			(error?.message && /quota|rate limit|429/i.test(error.message));
+
+		let errorMessage = error.message || 'Message processing failed';
+		let statusCode = 500;
+
+		if (isRateLimit) {
+			// Extract retry delay from error
+			let retryDelay: number | null = null;
+			if (error?.error?.details) {
+				for (const detail of error.error.details) {
+					if (detail['@type'] === 'type.googleapis.com/google.rpc.RetryInfo') {
+						const delay = detail.retryDelay;
+						if (delay) {
+							retryDelay = parseFloat(delay) * 1000; // Convert to milliseconds
+						}
+					}
+				}
+			}
+			
+			// Create user-friendly error message
+			if (retryDelay) {
+				const seconds = Math.ceil(retryDelay / 1000);
+				errorMessage = `Rate limit exceeded. Please wait ${seconds} seconds before trying again. The system will automatically retry.`;
+			} else {
+				errorMessage = 'Rate limit exceeded. Please wait a moment and try again.';
+			}
+			statusCode = 429;
+		}
+
+		if (stream) {
+			res.write(`event: error\ndata: ${JSON.stringify({ 
+				error: errorMessage,
+				isRateLimit,
+				retryDelay: isRateLimit ? retryDelay : undefined
+			})}\n\n`);
+			res.end();
+		} else {
+			return res.status(statusCode).json({
+				error: errorMessage,
+				isRateLimit,
+				retryDelay: isRateLimit ? retryDelay : undefined
+			});
+		}
+	}
+});
+
+// Execute the agent and return results
+app.post('/api/agent/invoke', async (req, res) => {
+	const { state, threadId } = req.body || {};
+
+	console.log(`\\n${'═'.repeat(70)}`);
+	console.log(`🤖 [AGENT] Invoke Request Received`);
+	console.log(`${'═'.repeat(70)}`);
+	console.log(`   Thread ID: ${threadId}`);
+	console.log(`   Has State: ${!!state}`);
+
+	if (!threadId) {
+		return res.status(400).json({ error: 'threadId is required' });
+	}
+
+	try {
+		const config = { configurable: { thread_id: threadId } };
+		const result = await graph.invoke(state, config);
+
+		console.log(`   ✅ Agent execution complete`);
+		console.log(`${'═'.repeat(70)}\\n`);
+
+		return res.json({ state: result });
+	} catch (error: any) {
+		console.error(`   ❌ Agent execution failed:`, error);
+		console.log(`${'═'.repeat(70)}\\n`);
+		return res.status(500).json({
+			error: error.message || 'Agent execution failed'
+		});
+	}
+});
+
+// Stream agent execution with Server-Sent Events
+app.post('/api/agent/stream', async (req, res) => {
+	const { state, threadId } = req.body || {};
+
+	console.log(`\\n${'═'.repeat(70)}`);
+	console.log(`🤖 [AGENT] Stream Request Received`);
+	console.log(`${'═'.repeat(70)}`);
+	console.log(`   Thread ID: ${threadId}`);
+
+	if (!threadId) {
+		return res.status(400).json({ error: 'threadId is required' });
+	}
+
+	// Set up SSE headers
+	res.setHeader('Content-Type', 'text/event-stream');
+	res.setHeader('Cache-Control', 'no-cache');
+	res.setHeader('Connection', 'keep-alive');
+	res.flushHeaders();
+
+	try {
+		const config = { configurable: { thread_id: threadId } };
+		const stream = await graph.stream(state, config);
+
+		for await (const chunk of stream) {
+			// Send each state update as SSE event
+			res.write(`data: ${JSON.stringify(chunk)}\\n\\n`);
+		}
+
+		res.write('event: done\\ndata: {}\\n\\n');
+		res.end();
+
+		console.log(`   ✅ Stream complete`);
+		console.log(`${'═'.repeat(70)}\\n`);
+	} catch (error: any) {
+		console.error(`   ❌ Stream failed:`, error);
+		res.write(`event: error\\ndata: ${JSON.stringify({ error: error.message })}\\n\\n`);
+		res.end();
+		console.log(`${'═'.repeat(70)}\\n`);
+	}
+});
+
+// Get current agent state
+app.get('/api/agent/state/:threadId', async (req, res) => {
+	const { threadId } = req.params;
+
+	try {
+		const config = { configurable: { thread_id: threadId } };
+		const snapshot = await graph.getState(config);
+
+		return res.json({ state: snapshot.values });
+	} catch (error: any) {
+		console.error(`Failed to get state for thread ${threadId}:`, error);
+		return res.status(500).json({ error: error.message });
+	}
+});
+
+// Reset/delete agent state
+app.delete('/api/agent/state/:threadId', async (req, res) => {
+	const { threadId } = req.params;
+
+	try {
+		await checkpointer.deleteThread(threadId);
+		return res.json({ success: true });
+	} catch (error: any) {
+		console.error(`Failed to delete thread ${threadId}:`, error);
+		return res.status(500).json({ error: error.message });
 	}
 });
 

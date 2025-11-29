@@ -1,0 +1,150 @@
+{
+  "checkpoint": {
+    "v": 4,
+    "id": "1f0cb7dc-3818-6040-8001-6eebf283ebd4",
+    "ts": "2025-11-27T10:42:25.988Z",
+    "channel_values": {
+      "messages": [],
+      "apiKey": "AIzaSyBEVtTO5Fou8xo6OIF4E1YWj4HWbSBtZGM",
+      "data": {
+        "apiKey": "AIzaSyBEVtTO5Fou8xo6OIF4E1YWj4HWbSBtZGM",
+        "title": "",
+        "topic": "AIzaSyBEVtTO5Fou8xo6OIF4E1YWj4HWbSBtZGM",
+        "targetLocation": "United States",
+        "primaryKeyword": "",
+        "secondaryKeywords": [],
+        "suggestedTitles": [],
+        "referenceUrls": [],
+        "referenceFiles": [],
+        "interlinks": [],
+        "brandVoice": "Default",
+        "blogGuideline": "Default",
+        "llmModel": "gemini-2.5-flash",
+        "language": "English",
+        "outline": [],
+        "blogContent": ""
+      },
+      "outline": [],
+      "outlineApproved": true,
+      "draft": "United States",
+      "progress": {
+        "sectionIndex": 0
+      },
+      "preferences": {
+        "automationLevel": false,
+        "skipOptionalSteps": false,
+        "autoSelectBestOptions": false
+      },
+      "userProvidedFields": {},
+      "autoFillFields": {},
+      "trace": [
+        {
+          "step": "KeywordResearch.primaryCandidates",
+          "info": {
+            "count": 8
+          },
+          "at": 1764240145973
+        }
+      ],
+      "halt": {
+        "reason": "await_keyword_selection"
+      },
+      "keywordCandidates": [
+        {
+          "text": "aizasybevtto5fou8xo6oif4e1ywj4hwbsbtzgm",
+          "volume": 7845,
+          "difficulty": -0.88,
+          "source": "seed",
+          "score": 1
+        },
+        {
+          "text": "aizasybevtto5fou8xo6oif4e1ywj4hwbsbtzgm tutorial",
+          "volume": 7680,
+          "difficulty": 0.72,
+          "source": "seed",
+          "score": 0.7325550660792951
+        },
+        {
+          "text": "aizasybevtto5fou8xo6oif4e1ywj4hwbsbtzgm guide",
+          "volume": 7402,
+          "difficulty": 0.67,
+          "source": "seed",
+          "score": 0.7109754955947136
+        },
+        {
+          "text": "aizasybevtto5fou8xo6oif4e1ywj4hwbsbtzgm checklist",
+          "volume": 6237,
+          "difficulty": 0.35,
+          "source": "seed",
+          "score": 0.6378036894273128
+        },
+        {
+          "text": "aizasybevtto5fou8xo6oif4e1ywj4hwbsbtzgm best practices",
+          "volume": 5409,
+          "difficulty": -0.18,
+          "source": "seed",
+          "score": 0.6330743392070484
+        },
+        {
+          "text": "aizasybevtto5fou8xo6oif4e1ywj4hwbsbtzgm vs alternatives",
+          "volume": 3377,
+          "difficulty": -0.48,
+          "source": "seed",
+          "score": 0.46511233480176206
+        },
+        {
+          "text": "aizasybevtto5fou8xo6oif4e1ywj4hwbsbtzgm benefits",
+          "volume": 4483,
+          "difficulty": 0.57,
+          "source": "seed",
+          "score": 0.41798375550660793
+        },
+        {
+          "text": "aizasybevtto5fou8xo6oif4e1ywj4hwbsbtzgm for beginners",
+          "volume": 2170,
+          "difficulty": 0.63,
+          "source": "seed",
+          "score": 0.1640625
+        }
+      ],
+      "titleCandidates": [],
+      "__pregel_tasks": [
+        [],
+        []
+      ]
+    },
+    "channel_versions": {
+      "__start__": 2,
+      "messages": 2,
+      "data": 2,
+      "apiKey": 2,
+      "outline": 2,
+      "outlineApproved": 2,
+      "draft": 2,
+      "progress": 2,
+      "preferences": 2,
+      "trace": 3,
+      "halt": 3,
+      "userProvidedFields": 2,
+      "autoFillFields": 2,
+      "branch:to:research_primary": 3,
+      "keywordCandidates": 3
+    },
+    "versions_seen": {
+      "__input__": {},
+      "__start__": {
+        "__start__": 1
+      },
+      "research_primary": {
+        "branch:to:research_primary": 2
+      }
+    }
+  },
+  "metadata": {
+    "source": "loop",
+    "step": 1,
+    "parents": {}
+  },
+  "parentCheckpointId": "1f0cb7dc-2c02-6c10-8000-c00292d904fb",
+  "updatedAt": 1764240145989
+}

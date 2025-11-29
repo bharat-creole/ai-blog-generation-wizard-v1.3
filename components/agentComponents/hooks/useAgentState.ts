@@ -5,7 +5,7 @@ import {
 	OutlineSection,
 	AutomationLevel,
 } from '../../../types';
-import { AgentState } from '../../../services/langgraph/agentGraph';
+import { AgentState } from '../../../../server/agent/state';
 
 /**
  * Flow context state interface

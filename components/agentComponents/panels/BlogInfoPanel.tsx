@@ -1,5 +1,5 @@
 import React from 'react';
-import { AgentState } from '../../../services/langgraph/agentGraph';
+import { AgentState } from '../../../../server/agent/state';
 
 interface BlogInfoPanelProps {
     show: boolean;

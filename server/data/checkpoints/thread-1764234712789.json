@@ -1,0 +1,257 @@
+{
+  "checkpoint": {
+    "v": 4,
+    "id": "1f0cb711-eb38-65b0-8019-3b626ff0b619",
+    "ts": "2025-11-27T09:11:55.531Z",
+    "channel_values": {
+      "messages": [],
+      "apiKey": "AIzaSyBEVtTO5Fou8xo6OIF4E1YWj4HWbSBtZGM",
+      "data": {
+        "apiKey": "AIzaSyBEVtTO5Fou8xo6OIF4E1YWj4HWbSBtZGM",
+        "title": "",
+        "topic": "AI",
+        "targetLocation": "United States",
+        "primaryKeyword": "",
+        "secondaryKeywords": [],
+        "suggestedTitles": [],
+        "referenceUrls": [],
+        "referenceFiles": [],
+        "interlinks": [],
+        "brandVoice": "Default",
+        "blogGuideline": "Default",
+        "llmModel": "gemini-2.5-flash",
+        "language": "English",
+        "outline": [],
+        "blogContent": ""
+      },
+      "outline": [],
+      "outlineApproved": false,
+      "draft": "",
+      "progress": {
+        "sectionIndex": 0
+      },
+      "preferences": {
+        "automationLevel": false,
+        "skipOptionalSteps": false,
+        "autoSelectBestOptions": false
+      },
+      "userProvidedFields": {},
+      "autoFillFields": {},
+      "trace": [
+        {
+          "step": "KeywordResearch.userProvided",
+          "info": {
+            "keyword": ""
+          },
+          "at": 1764234715441
+        },
+        {
+          "step": "KeywordResearch.userProvided",
+          "info": {
+            "keyword": ""
+          },
+          "at": 1764234715448
+        },
+        {
+          "step": "KeywordResearch.userProvided",
+          "info": {
+            "keyword": ""
+          },
+          "at": 1764234715456
+        },
+        {
+          "step": "KeywordResearch.userProvided",
+          "info": {
+            "keyword": ""
+          },
+          "at": 1764234715460
+        },
+        {
+          "step": "KeywordResearch.userProvided",
+          "info": {
+            "keyword": ""
+          },
+          "at": 1764234715464
+        },
+        {
+          "step": "KeywordResearch.userProvided",
+          "info": {
+            "keyword": ""
+          },
+          "at": 1764234715467
+        },
+        {
+          "step": "KeywordResearch.userProvided",
+          "info": {
+            "keyword": ""
+          },
+          "at": 1764234715470
+        },
+        {
+          "step": "KeywordResearch.userProvided",
+          "info": {
+            "keyword": ""
+          },
+          "at": 1764234715479
+        },
+        {
+          "step": "KeywordResearch.userProvided",
+          "info": {
+            "keyword": ""
+          },
+          "at": 1764234715482
+        },
+        {
+          "step": "KeywordResearch.userProvided",
+          "info": {
+            "keyword": ""
+          },
+          "at": 1764234715484
+        },
+        {
+          "step": "KeywordResearch.userProvided",
+          "info": {
+            "keyword": ""
+          },
+          "at": 1764234715488
+        },
+        {
+          "step": "KeywordResearch.userProvided",
+          "info": {
+            "keyword": ""
+          },
+          "at": 1764234715490
+        },
+        {
+          "step": "KeywordResearch.userProvided",
+          "info": {
+            "keyword": ""
+          },
+          "at": 1764234715495
+        },
+        {
+          "step": "KeywordResearch.userProvided",
+          "info": {
+            "keyword": ""
+          },
+          "at": 1764234715498
+        },
+        {
+          "step": "KeywordResearch.userProvided",
+          "info": {
+            "keyword": ""
+          },
+          "at": 1764234715500
+        },
+        {
+          "step": "KeywordResearch.userProvided",
+          "info": {
+            "keyword": ""
+          },
+          "at": 1764234715503
+        },
+        {
+          "step": "KeywordResearch.userProvided",
+          "info": {
+            "keyword": ""
+          },
+          "at": 1764234715504
+        },
+        {
+          "step": "KeywordResearch.userProvided",
+          "info": {
+            "keyword": ""
+          },
+          "at": 1764234715506
+        },
+        {
+          "step": "KeywordResearch.userProvided",
+          "info": {
+            "keyword": ""
+          },
+          "at": 1764234715513
+        },
+        {
+          "step": "KeywordResearch.userProvided",
+          "info": {
+            "keyword": ""
+          },
+          "at": 1764234715519
+        },
+        {
+          "step": "KeywordResearch.userProvided",
+          "info": {
+            "keyword": ""
+          },
+          "at": 1764234715521
+        },
+        {
+          "step": "KeywordResearch.userProvided",
+          "info": {
+            "keyword": ""
+          },
+          "at": 1764234715524
+        },
+        {
+          "step": "KeywordResearch.userProvided",
+          "info": {
+            "keyword": ""
+          },
+          "at": 1764234715526
+        },
+        {
+          "step": "KeywordResearch.userProvided",
+          "info": {
+            "keyword": ""
+          },
+          "at": 1764234715527
+        },
+        {
+          "step": "KeywordResearch.userProvided",
+          "info": {
+            "keyword": ""
+          },
+          "at": 1764234715529
+        }
+      ],
+      "halt": null,
+      "__pregel_tasks": [
+        [],
+        []
+      ],
+      "branch:to:research_primary": "research_primary"
+    },
+    "channel_versions": {
+      "__start__": 2,
+      "messages": 2,
+      "data": 2,
+      "apiKey": 2,
+      "outline": 2,
+      "outlineApproved": 2,
+      "draft": 2,
+      "progress": 2,
+      "preferences": 2,
+      "trace": 27,
+      "halt": 2,
+      "userProvidedFields": 2,
+      "autoFillFields": 2,
+      "branch:to:research_primary": 27
+    },
+    "versions_seen": {
+      "__input__": {},
+      "__start__": {
+        "__start__": 1
+      },
+      "research_primary": {
+        "branch:to:research_primary": 26
+      }
+    }
+  },
+  "metadata": {
+    "source": "loop",
+    "step": 25,
+    "parents": {}
+  },
+  "parentCheckpointId": "1f0cb711-eb33-6790-8018-d6cd6faeee2c",
+  "updatedAt": 1764234715545
+}

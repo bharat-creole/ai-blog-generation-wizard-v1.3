@@ -1,0 +1,292 @@
+{
+  "checkpoint": {
+    "v": 4,
+    "id": "1f0cc214-0157-6321-8019-27f6fee9a579",
+    "ts": "2025-11-28T06:12:42.962Z",
+    "channel_values": {
+      "messages": [],
+      "apiKey": "AIzaSyBEVtTO5Fou8xo6OIF4E1YWj4HWbSBtZGM",
+      "data": {
+        "apiKey": "AIzaSyBEVtTO5Fou8xo6OIF4E1YWj4HWbSBtZGM",
+        "title": "",
+        "topic": "AI and ML",
+        "targetLocation": "United States",
+        "primaryKeyword": "AI",
+        "secondaryKeywords": [
+          "ai",
+          "generative ai",
+          "artificial intelligence",
+          "scale ai"
+        ],
+        "suggestedTitles": [],
+        "referenceUrls": [],
+        "referenceFiles": [],
+        "interlinks": [],
+        "brandVoice": "Default",
+        "blogGuideline": "Default",
+        "llmModel": "gemini-2.5-flash",
+        "language": "English",
+        "outline": [],
+        "blogContent": ""
+      },
+      "outline": [],
+      "outlineApproved": false,
+      "draft": "",
+      "progress": {
+        "sectionIndex": 0
+      },
+      "preferences": {
+        "automationLevel": false,
+        "skipOptionalSteps": false,
+        "autoSelectBestOptions": false
+      },
+      "userProvidedFields": {},
+      "autoFillFields": {},
+      "trace": [
+        {
+          "step": "KeywordResearch.primaryCandidates",
+          "info": {
+            "count": 30
+          },
+          "at": 1764310300047
+        },
+        {
+          "step": "KeywordResearch.secondaryCandidates",
+          "info": {
+            "count": 20
+          },
+          "at": 1764310306249
+        },
+        {
+          "step": "TitleGeneration.generated",
+          "info": {
+            "count": 5
+          },
+          "at": 1764310326231
+        },
+        {
+          "step": "KeywordResearch.userProvided",
+          "info": {
+            "keyword": "AI"
+          },
+          "at": 1764310362827
+        },
+        {
+          "step": "KeywordResearch.secondaryUserProvided",
+          "info": {
+            "count": 4
+          },
+          "at": 1764310362837
+        },
+        {
+          "step": "KeywordResearch.secondaryUserProvided",
+          "info": {
+            "count": 4
+          },
+          "at": 1764310362845
+        },
+        {
+          "step": "KeywordResearch.secondaryUserProvided",
+          "info": {
+            "count": 4
+          },
+          "at": 1764310362849
+        },
+        {
+          "step": "KeywordResearch.secondaryUserProvided",
+          "info": {
+            "count": 4
+          },
+          "at": 1764310362855
+        },
+        {
+          "step": "KeywordResearch.secondaryUserProvided",
+          "info": {
+            "count": 4
+          },
+          "at": 1764310362865
+        },
+        {
+          "step": "KeywordResearch.secondaryUserProvided",
+          "info": {
+            "count": 4
+          },
+          "at": 1764310362877
+        },
+        {
+          "step": "KeywordResearch.secondaryUserProvided",
+          "info": {
+            "count": 4
+          },
+          "at": 1764310362886
+        },
+        {
+          "step": "KeywordResearch.secondaryUserProvided",
+          "info": {
+            "count": 4
+          },
+          "at": 1764310362888
+        },
+        {
+          "step": "KeywordResearch.secondaryUserProvided",
+          "info": {
+            "count": 4
+          },
+          "at": 1764310362892
+        },
+        {
+          "step": "KeywordResearch.secondaryUserProvided",
+          "info": {
+            "count": 4
+          },
+          "at": 1764310362897
+        },
+        {
+          "step": "KeywordResearch.secondaryUserProvided",
+          "info": {
+            "count": 4
+          },
+          "at": 1764310362901
+        },
+        {
+          "step": "KeywordResearch.secondaryUserProvided",
+          "info": {
+            "count": 4
+          },
+          "at": 1764310362903
+        },
+        {
+          "step": "KeywordResearch.secondaryUserProvided",
+          "info": {
+            "count": 4
+          },
+          "at": 1764310362909
+        },
+        {
+          "step": "KeywordResearch.secondaryUserProvided",
+          "info": {
+            "count": 4
+          },
+          "at": 1764310362914
+        },
+        {
+          "step": "KeywordResearch.secondaryUserProvided",
+          "info": {
+            "count": 4
+          },
+          "at": 1764310362921
+        },
+        {
+          "step": "KeywordResearch.secondaryUserProvided",
+          "info": {
+            "count": 4
+          },
+          "at": 1764310362924
+        },
+        {
+          "step": "KeywordResearch.secondaryUserProvided",
+          "info": {
+            "count": 4
+          },
+          "at": 1764310362927
+        },
+        {
+          "step": "KeywordResearch.secondaryUserProvided",
+          "info": {
+            "count": 4
+          },
+          "at": 1764310362930
+        },
+        {
+          "step": "KeywordResearch.secondaryUserProvided",
+          "info": {
+            "count": 4
+          },
+          "at": 1764310362937
+        },
+        {
+          "step": "KeywordResearch.secondaryUserProvided",
+          "info": {
+            "count": 4
+          },
+          "at": 1764310362941
+        },
+        {
+          "step": "KeywordResearch.secondaryUserProvided",
+          "info": {
+            "count": 4
+          },
+          "at": 1764310362948
+        },
+        {
+          "step": "KeywordResearch.secondaryUserProvided",
+          "info": {
+            "count": 4
+          },
+          "at": 1764310362951
+        },
+        {
+          "step": "KeywordResearch.secondaryUserProvided",
+          "info": {
+            "count": 4
+          },
+          "at": 1764310362958
+        },
+        {
+          "step": "KeywordResearch.secondaryUserProvided",
+          "info": {
+            "count": 4
+          },
+          "at": 1764310362961
+        }
+      ],
+      "halt": null,
+      "keywordCandidates": [],
+      "titleCandidates": [],
+      "currentStep": "primary_keyword",
+      "toolOutputs": [],
+      "__pregel_tasks": [
+        [],
+        []
+      ],
+      "branch:to:research_secondary": "research_secondary"
+    },
+    "channel_versions": {
+      "__start__": 2,
+      "messages": 2,
+      "data": 2,
+      "apiKey": 2,
+      "outline": 2,
+      "outlineApproved": 2,
+      "draft": 2,
+      "progress": 2,
+      "preferences": 2,
+      "trace": 27,
+      "halt": 2,
+      "userProvidedFields": 2,
+      "autoFillFields": 2,
+      "branch:to:research_primary": 3,
+      "currentStep": 3,
+      "branch:to:research_secondary": 27
+    },
+    "versions_seen": {
+      "__input__": {},
+      "__start__": {
+        "__start__": 1
+      },
+      "research_primary": {
+        "branch:to:research_primary": 2
+      },
+      "research_secondary": {
+        "branch:to:research_secondary": 26
+      }
+    }
+  },
+  "metadata": {
+    "source": "loop",
+    "step": 25,
+    "parents": {}
+  },
+  "parentCheckpointId": "1f0cc214-0152-6500-8018-6e1d76e4697d",
+  "updatedAt": 1764310362984
+}

@@ -1,7 +1,5 @@
 import React from 'react';
-import { AgentState } from '../../../services/langgraph/agentGraph';
-import { runNext as lgRunNext } from '../../../services/langgraph/agentGraph';
-import * as automationEngine from '../../../services/automationEngine';
+import { AgentState } from '../../../../server/agent/state';
 import { KeywordCandidate, ChatMessage } from '../../../types';
 
 interface SecondaryKeywordSelectionProps {
@@ -18,6 +16,7 @@ interface SecondaryKeywordSelectionProps {
 	setOutline: React.Dispatch<React.SetStateAction<any[]>>;
 	setDraft: React.Dispatch<React.SetStateAction<string>>;
 	setTraceItems: React.Dispatch<React.SetStateAction<any[]>>;
+	sendUserMessage: (message: string, agentState: AgentState) => Promise<{ response: string; updatedState: AgentState; metadata?: any }>;
 }
 
 const SecondaryKeywordSelection: React.FC<SecondaryKeywordSelectionProps> = ({
@@ -34,74 +33,65 @@ const SecondaryKeywordSelection: React.FC<SecondaryKeywordSelectionProps> = ({
 	setOutline,
 	setDraft,
 	setTraceItems,
+	sendUserMessage,
 }) => {
 	const handleConfirm = async () => {
 		if (!agent) return;
 
 		setCompletedSelections((prev) => new Set(prev).add('secondaryKeywords'));
-		setMessages((prev) => [
-			...prev,
-			{
-				role: 'user',
-				content: `Selected ${selectedSecondaries.length} secondary keywords: ${selectedSecondaries.join(', ')}`,
-			},
-			{
-				role: 'assistant',
-				content: `✅ Added ${selectedSecondaries.length} secondary keywords. Continuing...`,
-			},
-		]);
 
-		const next = {
-			...agent,
-			data: {
-				...agent.data,
-				secondaryKeywords: selectedSecondaries,
-			},
-		} as AgentState;
-		setAgent(next);
-		updateData({ secondaryKeywords: selectedSecondaries });
+		// Add user message immediately for UI feedback
+		const userMsg = {
+			role: 'user' as const,
+			content: `Secondary keywords: ${selectedSecondaries.join(', ')}`,
+		};
+
+		setMessages((prev) => [...prev, userMsg]);
 		setIsThinking(true);
 
 		try {
-			let working = next;
-			let guard = 0;
-			while (guard++ < 20) {
-				const { state: ns, halted } = await lgRunNext(working);
-				working = ns;
+			// Send selection to backend
+			const result = await sendUserMessage(
+				`Secondary keywords: ${selectedSecondaries.join(', ')}`,
+				agent
+			);
 
-				// Break if halted and needs user input
-				if (halted && automationEngine.needsUserInput(ns)) {
-					break;
-				}
+			// Update state from backend response
+			setAgent(result.updatedState);
+			setOutline(result.updatedState.outline);
+			setDraft(result.updatedState.draft);
+
+			// Update trace items if available
+			if (result.updatedState.trace) {
+				setTraceItems(result.updatedState.trace.map((t) => ({ step: t.step, at: t.at })));
 			}
 
-			setAgent(working);
-			setOutline(working.outline);
-			setDraft(working.draft);
-			setTraceItems(working.trace.map((t) => ({ step: t.step, at: t.at })));
+			// Update parent data
 			updateData({
-				outline: working.outline,
-				blogContent: working.draft,
-				title: working.data.title,
+				secondaryKeywords: result.updatedState.data.secondaryKeywords,
+				outline: result.updatedState.outline,
+				blogContent: result.updatedState.draft,
+				title: result.updatedState.data.title,
 			});
 
-			// Display title selection UI if needed
-			if (
-				working.halt?.reason === 'await_title_selection' &&
-				working.titleOptions &&
-				working.titleOptions.length > 0
-			) {
-				setMessages((prev) => [
-					...prev,
-					{
-						role: 'assistant',
-						content: '📝 Select a title for your blog post:',
-						titleSelection: {
-							titles: working.titleOptions,
-						},
-					},
-				]);
-			}
+			// Add assistant response
+			setMessages((prev) => [
+				...prev,
+				{
+					role: 'assistant',
+					content: result.response,
+					...result.metadata
+				},
+			]);
+
+		} catch (error) {
+			console.error('Error selecting secondary keywords:', error);
+			// Revert selection on error
+			setCompletedSelections((prev) => {
+				const newSet = new Set(prev);
+				newSet.delete('secondaryKeywords');
+				return newSet;
+			});
 		} finally {
 			setIsThinking(false);
 		}

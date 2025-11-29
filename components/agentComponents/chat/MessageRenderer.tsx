@@ -1,7 +1,7 @@
 import React from 'react';
 import StreamingText from '../../StreamingText';
 import { ChatMessage } from '../../../types';
-import { AgentState } from '../../../services/langgraph/agentGraph';
+import { AgentState } from '../../../../server/agent/state';
 import { BlogData } from '../../../types';
 import PrimaryKeywordSelection from '../selections/PrimaryKeywordSelection';
 import SecondaryKeywordSelection from '../selections/SecondaryKeywordSelection';
@@ -40,6 +40,7 @@ interface MessageRendererProps {
 	setIsStreaming: React.Dispatch<React.SetStateAction<boolean>>;
 	setShowBlogContent: React.Dispatch<React.SetStateAction<boolean>>;
 	onCollapseSidebar?: () => void;
+	sendUserMessage: (message: string, agentState: AgentState) => Promise<{ response: string; updatedState: AgentState; metadata?: any }>;
 }
 
 /**
@@ -68,8 +69,10 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({
 	setIsStreaming,
 	setShowBlogContent,
 	onCollapseSidebar,
+	sendUserMessage,
 }) => {
 	const isAssistant = message.role === 'assistant';
+	const isSystem = message.role === 'system';
 	const hasMetadata =
 		message.keywordSelection ||
 		message.titleSelection ||
@@ -78,13 +81,14 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({
 		message.outlineApproval ||
 		message.controlLevelSelection;
 
-	const messageClasses = `px-4 py-2.5 rounded-xl text-sm whitespace-pre-wrap ${
-		message.role === 'user'
-			? 'bg-orange-500 text-white max-w-[75%]'
-			: hasMetadata
-			? 'bg-gray-100 border border-gray-200 max-w-full w-full'
-			: 'bg-gray-100 text-gray-800 max-w-[75%]'
-	}`;
+	const messageClasses = `px-4 py-2.5 rounded-xl text-sm whitespace-pre-wrap ${isSystem
+			? 'bg-blue-50 text-blue-700 border border-blue-100 w-full text-xs font-mono my-1'
+			: message.role === 'user'
+				? 'bg-orange-500 text-white max-w-[75%]'
+				: hasMetadata
+					? 'bg-gray-100 border border-gray-200 max-w-full w-full'
+					: 'bg-gray-100 text-gray-800 max-w-[75%]'
+		}`;
 
 	return (
 		<div className={messageClasses}>
@@ -113,6 +117,7 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({
 					setOutline={setOutline}
 					setDraft={setDraft}
 					setTraceItems={setTraceItems}
+					sendUserMessage={sendUserMessage}
 				/>
 			)}
 
@@ -132,6 +137,7 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({
 					setOutline={setOutline}
 					setDraft={setDraft}
 					setTraceItems={setTraceItems}
+					sendUserMessage={sendUserMessage}
 				/>
 			)}
 
@@ -151,6 +157,7 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({
 						setOutline={setOutline}
 						setDraft={setDraft}
 						setTraceItems={setTraceItems}
+						sendUserMessage={sendUserMessage}
 					/>
 				)}
 
@@ -170,6 +177,7 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({
 					setOutline={setOutline}
 					setDraft={setDraft}
 					setTraceItems={setTraceItems}
+					sendUserMessage={sendUserMessage}
 				/>
 			)}
 
@@ -189,6 +197,7 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({
 					setOutline={setOutline}
 					setDraft={setDraft}
 					setTraceItems={setTraceItems}
+					sendUserMessage={sendUserMessage}
 				/>
 			)}
 
@@ -212,6 +221,7 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({
 					setViewMode={setViewMode}
 					setShowBlogContent={setShowBlogContent}
 					onCollapseSidebar={onCollapseSidebar}
+					sendUserMessage={sendUserMessage}
 				/>
 			)}
 		</div>

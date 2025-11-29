@@ -1,0 +1,698 @@
+{
+  "checkpoint": {
+    "v": 4,
+    "id": "1f0cc51d-7c19-6250-8000-ae5158208c5a",
+    "ts": "2025-11-28T12:00:33.269Z",
+    "channel_values": {
+      "messages": [
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        }
+      ],
+      "apiKey": "AIzaSyBEVtTO5Fou8xo6OIF4E1YWj4HWbSBtZGM",
+      "data": {
+        "apiKey": "AIzaSyBEVtTO5Fou8xo6OIF4E1YWj4HWbSBtZGM",
+        "title": "Demystifying Artificial Intelligence and Machine Learning for US Economy",
+        "topic": "AI",
+        "targetLocation": "United States",
+        "primaryKeyword": "ai",
+        "secondaryKeywords": [
+          "scale ai",
+          "generative ai",
+          "artificial intelligence"
+        ],
+        "suggestedTitles": [],
+        "referenceUrls": [],
+        "referenceFiles": [],
+        "interlinks": [],
+        "brandVoice": "Default",
+        "blogGuideline": "Default",
+        "llmModel": "gemini-2.5-flash",
+        "language": "English",
+        "outline": [],
+        "blogContent": ""
+      },
+      "outline": [],
+      "outlineApproved": false,
+      "draft": "",
+      "progress": {
+        "sectionIndex": 0
+      },
+      "preferences": {
+        "automationLevel": "guided",
+        "skipOptionalSteps": false,
+        "autoSelectBestOptions": false
+      },
+      "policy": {
+        "referencesUsage": "both",
+        "grounding": true
+      },
+      "userProvidedFields": {},
+      "autoFillFields": {},
+      "trace": [
+        {
+          "step": "KeywordResearch.primaryCandidates",
+          "info": {
+            "count": 30
+          },
+          "at": 1764331053127
+        },
+        {
+          "step": "KeywordResearch.secondaryCandidates",
+          "info": {
+            "count": 19
+          },
+          "at": 1764331065860
+        },
+        {
+          "step": "TitleGeneration.generated",
+          "info": {
+            "count": 5
+          },
+          "at": 1764331090903
+        },
+        {
+          "step": "DiscoveryNode.generatedOutline",
+          "info": {
+            "h2Count": 9
+          },
+          "at": 1764331163864
+        }
+      ],
+      "halt": null,
+      "keywordCandidates": [],
+      "titleCandidates": [],
+      "currentStep": "title",
+      "toolOutputs": [
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "primary",
+            "candidates": [
+              {
+                "text": "ai",
+                "volume": 16600000,
+                "difficulty": 0.39,
+                "source": "seed",
+                "score": 0.85546875
+              },
+              {
+                "text": "open ai",
+                "volume": 9140000,
+                "difficulty": 0.16,
+                "source": "seed",
+                "score": 0.6753128619298098
+              },
+              {
+                "text": "openai",
+                "volume": 9140000,
+                "difficulty": 0.16,
+                "source": "seed",
+                "score": 0.5253128619298097
+              },
+              {
+                "text": "ai chatbot",
+                "volume": 3350000,
+                "difficulty": 0.17,
+                "source": "seed",
+                "score": 0.46184925208712857
+              },
+              {
+                "text": "ai chat",
+                "volume": 3350000,
+                "difficulty": 0.17,
+                "source": "seed",
+                "score": 0.46184925208712857
+              },
+              {
+                "text": "conversational ai",
+                "volume": 135000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.40408256825392996
+              },
+              {
+                "text": "scale ai",
+                "volume": 246000,
+                "difficulty": 0.07,
+                "source": "seed",
+                "score": 0.3885687391421057
+              },
+              {
+                "text": "ai assistant",
+                "volume": 301000,
+                "difficulty": 0.08,
+                "source": "seed",
+                "score": 0.38665310309570633
+              },
+              {
+                "text": "chatbot ai",
+                "volume": 1500000,
+                "difficulty": 0.27,
+                "source": "seed",
+                "score": 0.3558297372841993
+              },
+              {
+                "text": "ai chatbot online",
+                "volume": 1500000,
+                "difficulty": 0.27,
+                "source": "seed",
+                "score": 0.3558297372841993
+              },
+              {
+                "text": "ai chatgpt",
+                "volume": 450000,
+                "difficulty": 0.2,
+                "source": "seed",
+                "score": 0.34517085726091523
+              },
+              {
+                "text": "ai chat gpt",
+                "volume": 301000,
+                "difficulty": 0.2,
+                "source": "seed",
+                "score": 0.33977810309570633
+              },
+              {
+                "text": "google ai chatbot",
+                "volume": 27100,
+                "difficulty": 0.19,
+                "source": "seed",
+                "score": 0.3337710956067753
+              },
+              {
+                "text": "chat ai gpt",
+                "volume": 90500,
+                "difficulty": 0.22,
+                "source": "seed",
+                "score": 0.3243469806005622
+              },
+              {
+                "text": "ai technology",
+                "volume": 201000,
+                "difficulty": 0.27,
+                "source": "seed",
+                "score": 0.3088150549982507
+              },
+              {
+                "text": "chat gpt 4",
+                "volume": 2740000,
+                "difficulty": 0.14,
+                "source": "seed",
+                "score": 0.3014902836926492
+              },
+              {
+                "text": "vertex ai",
+                "volume": 135000,
+                "difficulty": 0.33,
+                "source": "seed",
+                "score": 0.28298881825392996
+              },
+              {
+                "text": "ai bot",
+                "volume": 110000,
+                "difficulty": 0.33,
+                "source": "seed",
+                "score": 0.28208399372956605
+              },
+              {
+                "text": "ai ops",
+                "volume": 27100,
+                "difficulty": 0.35,
+                "source": "seed",
+                "score": 0.2712710956067753
+              },
+              {
+                "text": "generative ai",
+                "volume": 368000,
+                "difficulty": 0.41,
+                "source": "seed",
+                "score": 0.2601717828210016
+              },
+              {
+                "text": "ai companies",
+                "volume": 49500,
+                "difficulty": 0.42,
+                "source": "seed",
+                "score": 0.2447380683806054
+              },
+              {
+                "text": "ai website",
+                "volume": 110000,
+                "difficulty": 0.45,
+                "source": "seed",
+                "score": 0.23520899372956605
+              },
+              {
+                "text": "artificial intelligence",
+                "volume": 1830000,
+                "difficulty": 0.23,
+                "source": "seed",
+                "score": 0.23339842100580294
+              },
+              {
+                "text": "openai chat",
+                "volume": 165000,
+                "difficulty": 0.12,
+                "source": "seed",
+                "score": 0.21610585768316665
+              },
+              {
+                "text": "midjourney",
+                "volume": 2740000,
+                "difficulty": 0.37,
+                "source": "seed",
+                "score": 0.2116465336926492
+              },
+              {
+                "text": "midjourney ai",
+                "volume": 450000,
+                "difficulty": 0.57,
+                "source": "seed",
+                "score": 0.20063960726091523
+              },
+              {
+                "text": "gpt 3",
+                "volume": 40500,
+                "difficulty": 0.15,
+                "source": "seed",
+                "score": 0.19988108155183437
+              },
+              {
+                "text": "chatbot online",
+                "volume": 22200,
+                "difficulty": 0.32,
+                "source": "seed",
+                "score": 0.1328125
+              },
+              {
+                "text": "chatbots",
+                "volume": 673000,
+                "difficulty": 0.42,
+                "source": "seed",
+                "score": 0.11730439201824129
+              },
+              {
+                "text": "nvidia h100",
+                "volume": 74000,
+                "difficulty": 0.66,
+                "source": "seed",
+                "score": 0.001874796414482018
+              }
+            ]
+          },
+          "timestamp": 1764331053127
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "secondary",
+            "candidates": [
+              {
+                "text": "open ai",
+                "volume": 9140000,
+                "difficulty": 0.16,
+                "source": "seed",
+                "score": 0.6918647687094708
+              },
+              {
+                "text": "openai",
+                "volume": 9140000,
+                "difficulty": 0.16,
+                "source": "seed",
+                "score": 0.5418647687094708
+              },
+              {
+                "text": "ai chatbot",
+                "volume": 3350000,
+                "difficulty": 0.17,
+                "source": "seed",
+                "score": 0.47807012073119637
+              },
+              {
+                "text": "ai chat",
+                "volume": 3350000,
+                "difficulty": 0.17,
+                "source": "seed",
+                "score": 0.47807012073119637
+              },
+              {
+                "text": "scale ai",
+                "volume": 246000,
+                "difficulty": 0.07,
+                "source": "seed",
+                "score": 0.40809998914210566
+              },
+              {
+                "text": "chatbot ai",
+                "volume": 1500000,
+                "difficulty": 0.27,
+                "source": "seed",
+                "score": 0.3687402245723349
+              },
+              {
+                "text": "ai chatbot online",
+                "volume": 1500000,
+                "difficulty": 0.27,
+                "source": "seed",
+                "score": 0.3687402245723349
+              },
+              {
+                "text": "google ai chatbot",
+                "volume": 27100,
+                "difficulty": 0.19,
+                "source": "seed",
+                "score": 0.3493298879796567
+              },
+              {
+                "text": "chat gpt 4",
+                "volume": 2740000,
+                "difficulty": 0.14,
+                "source": "seed",
+                "score": 0.31870426674349667
+              },
+              {
+                "text": "generative ai",
+                "volume": 368000,
+                "difficulty": 0.41,
+                "source": "seed",
+                "score": 0.2684477362108321
+              },
+              {
+                "text": "artificial intelligence",
+                "volume": 1830000,
+                "difficulty": 0.23,
+                "source": "seed",
+                "score": 0.24763306083631142
+              },
+              {
+                "text": "ai website",
+                "volume": 110000,
+                "difficulty": 0.45,
+                "source": "seed",
+                "score": 0.24216079457702366
+              },
+              {
+                "text": "openai chat",
+                "volume": 165000,
+                "difficulty": 0.12,
+                "source": "seed",
+                "score": 0.23398191700520055
+              },
+              {
+                "text": "midjourney",
+                "volume": 2740000,
+                "difficulty": 0.37,
+                "source": "seed",
+                "score": 0.22124663962485264
+              },
+              {
+                "text": "gpt 3",
+                "volume": 40500,
+                "difficulty": 0.15,
+                "source": "seed",
+                "score": 0.21676402646708862
+              },
+              {
+                "text": "midjourney ai",
+                "volume": 450000,
+                "difficulty": 0.57,
+                "source": "seed",
+                "score": 0.20361895048125422
+              },
+              {
+                "text": "chatbot online",
+                "volume": 22200,
+                "difficulty": 0.32,
+                "source": "seed",
+                "score": 0.1440677966101695
+              },
+              {
+                "text": "chatbots",
+                "volume": 673000,
+                "difficulty": 0.42,
+                "source": "seed",
+                "score": 0.12524930727247857
+              },
+              {
+                "text": "nvidia h100",
+                "volume": 74000,
+                "difficulty": 0.66,
+                "source": "seed",
+                "score": 0.001874796414482018
+              }
+            ]
+          },
+          "timestamp": 1764331065860
+        },
+        {
+          "type": "title_options",
+          "data": {
+            "titles": [
+              "The Future is Now: How ai is Transforming Every Industry",
+              "Unlock Innovation: A Business Leader's Guide to Leveraging ai",
+              "Understanding ai: Your Beginner-Friendly Introduction to Artificial Intelligence",
+              "Beyond the Algorithms: The Human Impact of ai in the Modern World",
+              "Top 5 Ways ai Can Boost Your Productivity Today"
+            ]
+          },
+          "timestamp": 1764331090903
+        },
+        {
+          "type": "outline_generated",
+          "data": {
+            "outline": [
+              {
+                "id": "1",
+                "name": "What is Artificial Intelligence? Defining the Basics",
+                "items": [
+                  {
+                    "id": "11",
+                    "name": "What is AI? A Simple Definition"
+                  },
+                  {
+                    "id": "12",
+                    "name": "Key Capabilities: What AI Can Do"
+                  },
+                  {
+                    "id": "13",
+                    "name": "How AI Systems Learn"
+                  },
+                  {
+                    "id": "14",
+                    "name": "Narrow AI vs. General AI"
+                  }
+                ]
+              },
+              {
+                "id": "2",
+                "name": "How Does AI Work? Understanding the Core Mechanics",
+                "items": [
+                  {
+                    "id": "21",
+                    "name": "The Foundation: Data, Algorithms, and Computing Power"
+                  },
+                  {
+                    "id": "22",
+                    "name": "Machine Learning: How AI Learns"
+                  },
+                  {
+                    "id": "23",
+                    "name": "Neural Networks and Deep Learning Explained"
+                  },
+                  {
+                    "id": "24",
+                    "name": "The Iterative Process: Training, Evaluation, and Improvement"
+                  }
+                ]
+              },
+              {
+                "id": "3",
+                "name": "Exploring the Different Types of AI",
+                "items": [
+                  {
+                    "id": "31",
+                    "name": "Understanding AI by Capability: Narrow, General, and Superintelligence"
+                  },
+                  {
+                    "id": "32",
+                    "name": "AI by Functionality: Reactive, Limited Memory, Theory of Mind, and Self-Aware Systems"
+                  },
+                  {
+                    "id": "33",
+                    "name": "Modern AI Paradigms: Generative AI and Large Language Models"
+                  }
+                ]
+              },
+              {
+                "id": "4",
+                "name": "Key Concepts: Machine Learning, Deep Learning, and Neural Networks",
+                "items": [
+                  {
+                    "id": "41",
+                    "name": "Machine Learning Explained: The Foundation of AI"
+                  },
+                  {
+                    "id": "42",
+                    "name": "Neural Networks: Mimicking the Human Brain"
+                  },
+                  {
+                    "id": "43",
+                    "name": "Deep Learning: Unveiling Multi-Layered Intelligence"
+                  },
+                  {
+                    "id": "44",
+                    "name": "Connecting the Dots: How They Work Together"
+                  }
+                ]
+              },
+              {
+                "id": "5",
+                "name": "AI in Action: Real-World Applications and Examples",
+                "items": [
+                  {
+                    "id": "51",
+                    "name": "AI in Your Daily Routine: Smart Devices and Personalized Experiences"
+                  },
+                  {
+                    "id": "52",
+                    "name": "Transforming Industries: AI in Business, Healthcare, and Beyond"
+                  },
+                  {
+                    "id": "53",
+                    "name": "AI for Enhanced Safety and Efficiency: Transportation, Navigation, and Security"
+                  }
+                ]
+              },
+              {
+                "id": "6",
+                "name": "The Emergence of Generative AI",
+                "items": [
+                  {
+                    "id": "61",
+                    "name": "Early Concepts and Precursors to Generative AI"
+                  },
+                  {
+                    "id": "62",
+                    "name": "Foundational Machine Learning and Neural Network Advancements"
+                  },
+                  {
+                    "id": "63",
+                    "name": "The Dawn of Deep Generative Models: GANs and VAEs"
+                  },
+                  {
+                    "id": "64",
+                    "name": "The Generative AI Revolution: Transformers and Large Language Models"
+                  }
+                ]
+              },
+              {
+                "id": "7",
+                "name": "Ethical Considerations and Challenges in AI Development",
+                "items": [
+                  {
+                    "id": "71",
+                    "name": "Addressing Bias and Ensuring Fairness in AI"
+                  },
+                  {
+                    "id": "72",
+                    "name": "Data Privacy and Security in AI Systems"
+                  },
+                  {
+                    "id": "73",
+                    "name": "Transparency, Explainability, and Accountability in AI"
+                  },
+                  {
+                    "id": "74",
+                    "name": "The Impact of AI on Society and Human Autonomy"
+                  }
+                ]
+              },
+              {
+                "id": "8",
+                "name": "The Future of Artificial Intelligence",
+                "items": [
+                  {
+                    "id": "81",
+                    "name": "The Evolution of AI Capabilities"
+                  },
+                  {
+                    "id": "82",
+                    "name": "Transforming Industries and the Workforce"
+                  },
+                  {
+                    "id": "83",
+                    "name": "Ethical AI and Future Regulations"
+                  },
+                  {
+                    "id": "84",
+                    "name": "The Rise of Autonomous AI Agents"
+                  }
+                ]
+              },
+              {
+                "id": "9",
+                "name": "Conclusion: Navigating the AI Landscape",
+                "items": [
+                  {
+                    "id": "91",
+                    "name": "Embracing the Evolving AI Future"
+                  },
+                  {
+                    "id": "92",
+                    "name": "Ethical AI and Responsible Innovation"
+                  },
+                  {
+                    "id": "93",
+                    "name": "AI's Societal Impact and Opportunities"
+                  },
+                  {
+                    "id": "94",
+                    "name": "Strategic Integration and Continuous Learning"
+                  }
+                ]
+              }
+            ],
+            "sectionCount": 9
+          },
+          "timestamp": 1764331163864
+        }
+      ],
+      "__pregel_tasks": [
+        [],
+        []
+      ]
+    },
+    "channel_versions": {
+      "__start__": 2,
+      "messages": 2,
+      "data": 2,
+      "apiKey": 2,
+      "outline": 2,
+      "outlineApproved": 2,
+      "draft": 2,
+      "progress": 2,
+      "preferences": 2,
+      "trace": 2,
+      "halt": 2,
+      "userProvidedFields": 2,
+      "autoFillFields": 2,
+      "currentStep": 2,
+      "toolOutputs": 2
+    },
+    "versions_seen": {
+      "__input__": {},
+      "__start__": {
+        "__start__": 1
+      }
+    }
+  },
+  "metadata": {
+    "source": "loop",
+    "step": 0,
+    "parents": {}
+  },
+  "parentCheckpointId": "1f0cc51d-7c11-6d21-ffff-801c87af4e48",
+  "updatedAt": 1764331233270
+}

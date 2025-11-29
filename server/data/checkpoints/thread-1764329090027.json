@@ -1,0 +1,823 @@
+{
+  "checkpoint": {
+    "v": 4,
+    "id": "1f0cc4ce-4833-6430-8001-a15dcad31c5e",
+    "ts": "2025-11-28T11:25:07.187Z",
+    "channel_values": {
+      "messages": [
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        }
+      ],
+      "apiKey": "AIzaSyBEVtTO5Fou8xo6OIF4E1YWj4HWbSBtZGM",
+      "data": {
+        "apiKey": "AIzaSyBEVtTO5Fou8xo6OIF4E1YWj4HWbSBtZGM",
+        "title": "Beyond the Hype: Practical Applications of ai You Can't Ignore",
+        "topic": "AI",
+        "targetLocation": "United States",
+        "primaryKeyword": "ai",
+        "secondaryKeywords": [
+          "artificial intelligence",
+          "generative ai",
+          "scale ai"
+        ],
+        "suggestedTitles": [],
+        "referenceUrls": [],
+        "referenceFiles": [],
+        "interlinks": [],
+        "brandVoice": "Default",
+        "blogGuideline": "Default",
+        "llmModel": "gemini-2.5-flash",
+        "language": "English",
+        "outline": [],
+        "blogContent": ""
+      },
+      "outline": [
+        {
+          "id": "1",
+          "name": "Introduction: Cutting Through the Hype to Real-World AI",
+          "items": [
+            {
+              "id": "11",
+              "name": "Deconstructing the AI Hype Cycle"
+            },
+            {
+              "id": "12",
+              "name": "Beyond the Buzzwords: Defining Real-World AI"
+            },
+            {
+              "id": "13",
+              "name": "AI's True Potential: Solving Tangible Problems"
+            },
+            {
+              "id": "14",
+              "name": "Setting the Stage for Practical Applications"
+            }
+          ]
+        },
+        {
+          "id": "2",
+          "name": "Boosting Efficiency: AI for Automation and Optimized Workflows",
+          "items": [
+            {
+              "id": "21",
+              "name": "Defining AI Workflow Automation"
+            },
+            {
+              "id": "22",
+              "name": "Key Benefits and Impact on Productivity"
+            },
+            {
+              "id": "23",
+              "name": "Real-World Applications Across Industries"
+            },
+            {
+              "id": "24",
+              "name": "Tools and Technologies Driving AI Automation"
+            }
+          ]
+        },
+        {
+          "id": "3",
+          "name": "Smarter Decisions: Leveraging AI for Predictive Analytics and Insights",
+          "items": [
+            {
+              "id": "31",
+              "name": "Understanding AI Predictive Analytics"
+            },
+            {
+              "id": "32",
+              "name": "Key Benefits for Enhanced Decision-Making"
+            },
+            {
+              "id": "33",
+              "name": "Core Components and Methodologies"
+            },
+            {
+              "id": "34",
+              "name": "Real-World Applications and Use Cases"
+            }
+          ]
+        },
+        {
+          "id": "4",
+          "name": "Transforming Customer Experience: AI-Powered Service and Personalization",
+          "items": [
+            {
+              "id": "41",
+              "name": "Real-time Hyper-Personalization Strategies"
+            },
+            {
+              "id": "42",
+              "name": "AI-Powered Chatbots and Virtual Assistants"
+            },
+            {
+              "id": "43",
+              "name": "Predictive Analytics for Proactive Customer Journeys"
+            },
+            {
+              "id": "44",
+              "name": "Driving Customer Engagement and Loyalty with AI"
+            }
+          ]
+        },
+        {
+          "id": "5",
+          "name": "Industry-Specific Innovations: AI's Impact Across Sectors",
+          "items": [
+            {
+              "id": "51",
+              "name": "Healthcare and Life Sciences: Revolutionizing Diagnosis and Treatment"
+            },
+            {
+              "id": "52",
+              "name": "Financial Services: Enhancing Security and Personalizing Experiences"
+            },
+            {
+              "id": "53",
+              "name": "Manufacturing and Supply Chain: Driving Efficiency Through Automation"
+            },
+            {
+              "id": "54",
+              "name": "Retail and E-commerce: Tailoring Customer Journeys with AI"
+            }
+          ]
+        },
+        {
+          "id": "6",
+          "name": "The Rise of Generative AI: Practical Applications Beyond Text",
+          "items": [
+            {
+              "id": "61",
+              "name": "Synthetic Data Generation and its Impact"
+            },
+            {
+              "id": "62",
+              "name": "Revolutionizing Software Development with Automated Code"
+            },
+            {
+              "id": "63",
+              "name": "Enhancing Decision-Making through Predictive Modeling"
+            },
+            {
+              "id": "64",
+              "name": "New Frontiers in Visual and Audio Content Creation"
+            }
+          ]
+        },
+        {
+          "id": "7",
+          "name": "Conclusion: Embracing AI's Tangible Impact Today",
+          "items": [
+            {
+              "id": "71",
+              "name": "AI's Pervasive Role in Everyday Life"
+            },
+            {
+              "id": "72",
+              "name": "Transforming Industries and Business Operations"
+            },
+            {
+              "id": "73",
+              "name": "Empowering Personal Productivity and Creativity"
+            },
+            {
+              "id": "74",
+              "name": "The Path Forward: Sustaining AI's Positive Momentum"
+            }
+          ]
+        }
+      ],
+      "outlineApproved": false,
+      "draft": "",
+      "progress": {
+        "sectionIndex": 0
+      },
+      "preferences": {
+        "automationLevel": "guided",
+        "skipOptionalSteps": false,
+        "autoSelectBestOptions": false
+      },
+      "policy": {
+        "referencesUsage": "both",
+        "grounding": true
+      },
+      "userProvidedFields": {},
+      "autoFillFields": {},
+      "trace": [
+        {
+          "step": "KeywordResearch.primaryCandidates",
+          "info": {
+            "count": 30
+          },
+          "at": 1764329022955
+        },
+        {
+          "step": "KeywordResearch.secondaryCandidates",
+          "info": {
+            "count": 19
+          },
+          "at": 1764329030540
+        },
+        {
+          "step": "TitleGeneration.generated",
+          "info": {
+            "count": 5
+          },
+          "at": 1764329062583
+        },
+        {
+          "step": "DiscoveryNode.generatedOutline",
+          "info": {
+            "h2Count": 7
+          },
+          "at": 1764329107184
+        }
+      ],
+      "halt": {
+        "reason": "awaiting_approval"
+      },
+      "keywordCandidates": [],
+      "titleCandidates": [],
+      "currentStep": "outline",
+      "toolOutputs": [
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "primary",
+            "candidates": [
+              {
+                "text": "ai",
+                "volume": 16600000,
+                "difficulty": 0.39,
+                "source": "seed",
+                "score": 0.85546875
+              },
+              {
+                "text": "open ai",
+                "volume": 9140000,
+                "difficulty": 0.16,
+                "source": "seed",
+                "score": 0.6753128619298098
+              },
+              {
+                "text": "openai",
+                "volume": 9140000,
+                "difficulty": 0.16,
+                "source": "seed",
+                "score": 0.5253128619298097
+              },
+              {
+                "text": "ai chatbot",
+                "volume": 3350000,
+                "difficulty": 0.17,
+                "source": "seed",
+                "score": 0.46184925208712857
+              },
+              {
+                "text": "ai chat",
+                "volume": 3350000,
+                "difficulty": 0.17,
+                "source": "seed",
+                "score": 0.46184925208712857
+              },
+              {
+                "text": "conversational ai",
+                "volume": 135000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.40408256825392996
+              },
+              {
+                "text": "scale ai",
+                "volume": 246000,
+                "difficulty": 0.07,
+                "source": "seed",
+                "score": 0.3885687391421057
+              },
+              {
+                "text": "ai assistant",
+                "volume": 301000,
+                "difficulty": 0.08,
+                "source": "seed",
+                "score": 0.38665310309570633
+              },
+              {
+                "text": "chatbot ai",
+                "volume": 1500000,
+                "difficulty": 0.27,
+                "source": "seed",
+                "score": 0.3558297372841993
+              },
+              {
+                "text": "ai chatbot online",
+                "volume": 1500000,
+                "difficulty": 0.27,
+                "source": "seed",
+                "score": 0.3558297372841993
+              },
+              {
+                "text": "ai chatgpt",
+                "volume": 450000,
+                "difficulty": 0.2,
+                "source": "seed",
+                "score": 0.34517085726091523
+              },
+              {
+                "text": "ai chat gpt",
+                "volume": 301000,
+                "difficulty": 0.2,
+                "source": "seed",
+                "score": 0.33977810309570633
+              },
+              {
+                "text": "google ai chatbot",
+                "volume": 27100,
+                "difficulty": 0.19,
+                "source": "seed",
+                "score": 0.3337710956067753
+              },
+              {
+                "text": "chat ai gpt",
+                "volume": 90500,
+                "difficulty": 0.22,
+                "source": "seed",
+                "score": 0.3243469806005622
+              },
+              {
+                "text": "ai technology",
+                "volume": 201000,
+                "difficulty": 0.27,
+                "source": "seed",
+                "score": 0.3088150549982507
+              },
+              {
+                "text": "chat gpt 4",
+                "volume": 2740000,
+                "difficulty": 0.14,
+                "source": "seed",
+                "score": 0.3014902836926492
+              },
+              {
+                "text": "vertex ai",
+                "volume": 135000,
+                "difficulty": 0.33,
+                "source": "seed",
+                "score": 0.28298881825392996
+              },
+              {
+                "text": "ai bot",
+                "volume": 110000,
+                "difficulty": 0.33,
+                "source": "seed",
+                "score": 0.28208399372956605
+              },
+              {
+                "text": "ai ops",
+                "volume": 27100,
+                "difficulty": 0.35,
+                "source": "seed",
+                "score": 0.2712710956067753
+              },
+              {
+                "text": "generative ai",
+                "volume": 368000,
+                "difficulty": 0.41,
+                "source": "seed",
+                "score": 0.2601717828210016
+              },
+              {
+                "text": "ai companies",
+                "volume": 49500,
+                "difficulty": 0.42,
+                "source": "seed",
+                "score": 0.2447380683806054
+              },
+              {
+                "text": "ai website",
+                "volume": 110000,
+                "difficulty": 0.45,
+                "source": "seed",
+                "score": 0.23520899372956605
+              },
+              {
+                "text": "artificial intelligence",
+                "volume": 1830000,
+                "difficulty": 0.23,
+                "source": "seed",
+                "score": 0.23339842100580294
+              },
+              {
+                "text": "openai chat",
+                "volume": 165000,
+                "difficulty": 0.12,
+                "source": "seed",
+                "score": 0.21610585768316665
+              },
+              {
+                "text": "midjourney",
+                "volume": 2740000,
+                "difficulty": 0.37,
+                "source": "seed",
+                "score": 0.2116465336926492
+              },
+              {
+                "text": "midjourney ai",
+                "volume": 450000,
+                "difficulty": 0.57,
+                "source": "seed",
+                "score": 0.20063960726091523
+              },
+              {
+                "text": "gpt 3",
+                "volume": 40500,
+                "difficulty": 0.15,
+                "source": "seed",
+                "score": 0.19988108155183437
+              },
+              {
+                "text": "chatbot online",
+                "volume": 22200,
+                "difficulty": 0.32,
+                "source": "seed",
+                "score": 0.1328125
+              },
+              {
+                "text": "chatbots",
+                "volume": 673000,
+                "difficulty": 0.42,
+                "source": "seed",
+                "score": 0.11730439201824129
+              },
+              {
+                "text": "nvidia h100",
+                "volume": 74000,
+                "difficulty": 0.66,
+                "source": "seed",
+                "score": 0.001874796414482018
+              }
+            ]
+          },
+          "timestamp": 1764329022955
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "secondary",
+            "candidates": [
+              {
+                "text": "open ai",
+                "volume": 9140000,
+                "difficulty": 0.16,
+                "source": "seed",
+                "score": 0.6918647687094708
+              },
+              {
+                "text": "openai",
+                "volume": 9140000,
+                "difficulty": 0.16,
+                "source": "seed",
+                "score": 0.5418647687094708
+              },
+              {
+                "text": "ai chatbot",
+                "volume": 3350000,
+                "difficulty": 0.17,
+                "source": "seed",
+                "score": 0.47807012073119637
+              },
+              {
+                "text": "ai chat",
+                "volume": 3350000,
+                "difficulty": 0.17,
+                "source": "seed",
+                "score": 0.47807012073119637
+              },
+              {
+                "text": "scale ai",
+                "volume": 246000,
+                "difficulty": 0.07,
+                "source": "seed",
+                "score": 0.40809998914210566
+              },
+              {
+                "text": "chatbot ai",
+                "volume": 1500000,
+                "difficulty": 0.27,
+                "source": "seed",
+                "score": 0.3687402245723349
+              },
+              {
+                "text": "ai chatbot online",
+                "volume": 1500000,
+                "difficulty": 0.27,
+                "source": "seed",
+                "score": 0.3687402245723349
+              },
+              {
+                "text": "google ai chatbot",
+                "volume": 27100,
+                "difficulty": 0.19,
+                "source": "seed",
+                "score": 0.3493298879796567
+              },
+              {
+                "text": "chat gpt 4",
+                "volume": 2740000,
+                "difficulty": 0.14,
+                "source": "seed",
+                "score": 0.31870426674349667
+              },
+              {
+                "text": "generative ai",
+                "volume": 368000,
+                "difficulty": 0.41,
+                "source": "seed",
+                "score": 0.2684477362108321
+              },
+              {
+                "text": "artificial intelligence",
+                "volume": 1830000,
+                "difficulty": 0.23,
+                "source": "seed",
+                "score": 0.24763306083631142
+              },
+              {
+                "text": "ai website",
+                "volume": 110000,
+                "difficulty": 0.45,
+                "source": "seed",
+                "score": 0.24216079457702366
+              },
+              {
+                "text": "openai chat",
+                "volume": 165000,
+                "difficulty": 0.12,
+                "source": "seed",
+                "score": 0.23398191700520055
+              },
+              {
+                "text": "midjourney",
+                "volume": 2740000,
+                "difficulty": 0.37,
+                "source": "seed",
+                "score": 0.22124663962485264
+              },
+              {
+                "text": "gpt 3",
+                "volume": 40500,
+                "difficulty": 0.15,
+                "source": "seed",
+                "score": 0.21676402646708862
+              },
+              {
+                "text": "midjourney ai",
+                "volume": 450000,
+                "difficulty": 0.57,
+                "source": "seed",
+                "score": 0.20361895048125422
+              },
+              {
+                "text": "chatbot online",
+                "volume": 22200,
+                "difficulty": 0.32,
+                "source": "seed",
+                "score": 0.1440677966101695
+              },
+              {
+                "text": "chatbots",
+                "volume": 673000,
+                "difficulty": 0.42,
+                "source": "seed",
+                "score": 0.12524930727247857
+              },
+              {
+                "text": "nvidia h100",
+                "volume": 74000,
+                "difficulty": 0.66,
+                "source": "seed",
+                "score": 0.001874796414482018
+              }
+            ]
+          },
+          "timestamp": 1764329030540
+        },
+        {
+          "type": "title_options",
+          "data": {
+            "titles": [
+              "The ai Revolution: Transforming Industries Across the United States",
+              "Mastering ai: Essential Strategies for Business Growth",
+              "Beyond the Hype: Practical Applications of ai You Can't Ignore",
+              "Unlock Innovation: How ai is Driving the Next Wave of Technology",
+              "Your Guide to ai: Understanding the Power of Artificial Intelligence"
+            ]
+          },
+          "timestamp": 1764329062583
+        },
+        {
+          "type": "outline_generated",
+          "data": {
+            "outline": [
+              {
+                "id": "1",
+                "name": "Introduction: Cutting Through the Hype to Real-World AI",
+                "items": [
+                  {
+                    "id": "11",
+                    "name": "Deconstructing the AI Hype Cycle"
+                  },
+                  {
+                    "id": "12",
+                    "name": "Beyond the Buzzwords: Defining Real-World AI"
+                  },
+                  {
+                    "id": "13",
+                    "name": "AI's True Potential: Solving Tangible Problems"
+                  },
+                  {
+                    "id": "14",
+                    "name": "Setting the Stage for Practical Applications"
+                  }
+                ]
+              },
+              {
+                "id": "2",
+                "name": "Boosting Efficiency: AI for Automation and Optimized Workflows",
+                "items": [
+                  {
+                    "id": "21",
+                    "name": "Defining AI Workflow Automation"
+                  },
+                  {
+                    "id": "22",
+                    "name": "Key Benefits and Impact on Productivity"
+                  },
+                  {
+                    "id": "23",
+                    "name": "Real-World Applications Across Industries"
+                  },
+                  {
+                    "id": "24",
+                    "name": "Tools and Technologies Driving AI Automation"
+                  }
+                ]
+              },
+              {
+                "id": "3",
+                "name": "Smarter Decisions: Leveraging AI for Predictive Analytics and Insights",
+                "items": [
+                  {
+                    "id": "31",
+                    "name": "Understanding AI Predictive Analytics"
+                  },
+                  {
+                    "id": "32",
+                    "name": "Key Benefits for Enhanced Decision-Making"
+                  },
+                  {
+                    "id": "33",
+                    "name": "Core Components and Methodologies"
+                  },
+                  {
+                    "id": "34",
+                    "name": "Real-World Applications and Use Cases"
+                  }
+                ]
+              },
+              {
+                "id": "4",
+                "name": "Transforming Customer Experience: AI-Powered Service and Personalization",
+                "items": [
+                  {
+                    "id": "41",
+                    "name": "Real-time Hyper-Personalization Strategies"
+                  },
+                  {
+                    "id": "42",
+                    "name": "AI-Powered Chatbots and Virtual Assistants"
+                  },
+                  {
+                    "id": "43",
+                    "name": "Predictive Analytics for Proactive Customer Journeys"
+                  },
+                  {
+                    "id": "44",
+                    "name": "Driving Customer Engagement and Loyalty with AI"
+                  }
+                ]
+              },
+              {
+                "id": "5",
+                "name": "Industry-Specific Innovations: AI's Impact Across Sectors",
+                "items": [
+                  {
+                    "id": "51",
+                    "name": "Healthcare and Life Sciences: Revolutionizing Diagnosis and Treatment"
+                  },
+                  {
+                    "id": "52",
+                    "name": "Financial Services: Enhancing Security and Personalizing Experiences"
+                  },
+                  {
+                    "id": "53",
+                    "name": "Manufacturing and Supply Chain: Driving Efficiency Through Automation"
+                  },
+                  {
+                    "id": "54",
+                    "name": "Retail and E-commerce: Tailoring Customer Journeys with AI"
+                  }
+                ]
+              },
+              {
+                "id": "6",
+                "name": "The Rise of Generative AI: Practical Applications Beyond Text",
+                "items": [
+                  {
+                    "id": "61",
+                    "name": "Synthetic Data Generation and its Impact"
+                  },
+                  {
+                    "id": "62",
+                    "name": "Revolutionizing Software Development with Automated Code"
+                  },
+                  {
+                    "id": "63",
+                    "name": "Enhancing Decision-Making through Predictive Modeling"
+                  },
+                  {
+                    "id": "64",
+                    "name": "New Frontiers in Visual and Audio Content Creation"
+                  }
+                ]
+              },
+              {
+                "id": "7",
+                "name": "Conclusion: Embracing AI's Tangible Impact Today",
+                "items": [
+                  {
+                    "id": "71",
+                    "name": "AI's Pervasive Role in Everyday Life"
+                  },
+                  {
+                    "id": "72",
+                    "name": "Transforming Industries and Business Operations"
+                  },
+                  {
+                    "id": "73",
+                    "name": "Empowering Personal Productivity and Creativity"
+                  },
+                  {
+                    "id": "74",
+                    "name": "The Path Forward: Sustaining AI's Positive Momentum"
+                  }
+                ]
+              }
+            ],
+            "sectionCount": 7
+          },
+          "timestamp": 1764329107184
+        }
+      ],
+      "__pregel_tasks": [
+        [],
+        []
+      ]
+    },
+    "channel_versions": {
+      "__start__": 2,
+      "messages": 2,
+      "data": 2,
+      "apiKey": 2,
+      "outline": 3,
+      "outlineApproved": 3,
+      "draft": 3,
+      "progress": 2,
+      "preferences": 2,
+      "trace": 3,
+      "halt": 3,
+      "userProvidedFields": 2,
+      "autoFillFields": 2,
+      "currentStep": 3,
+      "toolOutputs": 3,
+      "branch:to:discovery": 3
+    },
+    "versions_seen": {
+      "__input__": {},
+      "__start__": {
+        "__start__": 1
+      },
+      "discovery": {
+        "branch:to:discovery": 2
+      }
+    }
+  },
+  "metadata": {
+    "source": "loop",
+    "step": 1,
+    "parents": {}
+  },
+  "parentCheckpointId": "1f0cc4cd-d0f3-6eb0-8000-2b6aa573fa31",
+  "updatedAt": 1764329107187
+}

@@ -22,10 +22,43 @@ export const processMessage = async (
 	console.log(`   User Query: "${userMessage}"`);
 	console.log(`   Has agent state: ${!!currentState}`);
 	console.log(
-		`   User selected automation mode: ${
-			userSelectedAutomationMode || 'none'
+		`   User selected automation mode: ${userSelectedAutomationMode || 'none'
 		}`
 	);
+
+	// Step 0: Handle specific halt reasons before general intent classification
+	if (currentState.halt?.reason === 'await_keyword_selection') {
+		console.log('📝 [DIRECT INPUT] Handling primary keyword selection');
+		const stateUpdates: Partial<AgentState> = {
+			data: {
+				...currentState.data,
+				primaryKeyword: userMessage.trim(),
+			} as BlogData,
+			halt: null, // Clear halt to allow agent to proceed
+		};
+		return {
+			assistantMessage: `Got it! I've updated the primary keyword to "${userMessage.trim()}".`,
+			stateUpdates,
+			shouldRunAgent: true,
+		};
+	}
+
+	if (currentState.halt?.reason === 'await_secondary_selection') {
+		console.log('📝 [DIRECT INPUT] Handling secondary keyword selection');
+		const secondaryKeywords = userMessage.split(',').map(k => k.trim()).filter(k => k);
+		const stateUpdates: Partial<AgentState> = {
+			data: {
+				...currentState.data,
+				secondaryKeywords,
+			} as BlogData,
+			halt: null, // Clear halt
+		};
+		return {
+			assistantMessage: `Got it! I've captured: ${secondaryKeywords.length} secondary keywords.`,
+			stateUpdates,
+			shouldRunAgent: true,
+		};
+	}
 
 	// Step 1: Classify intent
 	const intent: UserIntent = await classifyIntent(
@@ -144,8 +177,7 @@ export const processMessage = async (
 				`   Auto-fill requested: ${intent.autoFillRequested}`
 			);
 			console.log(
-				`   Extracted topic: ${
-					intent.extractedData?.topic || 'none'
+				`   Extracted topic: ${intent.extractedData?.topic || 'none'
 				}`
 			);
 			return handleFullAutomation(
@@ -183,8 +215,7 @@ export const processMessage = async (
 			console.log('💬 [QUERY DETECTED]');
 			console.log(`   User Query: "${userMessage}"`);
 			console.log(
-				`   Specific request: ${
-					intent.specificRequest || 'general question'
+				`   Specific request: ${intent.specificRequest || 'general question'
 				}`
 			);
 			console.log(
@@ -197,8 +228,7 @@ export const processMessage = async (
 			console.log('✅ [APPROVAL DETECTED]');
 			console.log(`   User Query: "${userMessage}"`);
 			console.log(
-				`   Current halt reason: ${
-					currentState.halt?.reason || 'none'
+				`   Current halt reason: ${currentState.halt?.reason || 'none'
 				}`
 			);
 			console.log(`   Action: Proceeding with approved item`);
@@ -209,8 +239,7 @@ export const processMessage = async (
 			console.log('⏭️ [SKIP REQUEST DETECTED]');
 			console.log(`   User Query: "${userMessage}"`);
 			console.log(
-				`   Current halt reason: ${
-					currentState.halt?.reason || 'none'
+				`   Current halt reason: ${currentState.halt?.reason || 'none'
 				}`
 			);
 			console.log(`   Action: Skipping current step`);
@@ -236,8 +265,7 @@ export const processMessage = async (
 			console.log('🔄 [REFINEMENT REQUEST DETECTED]');
 			console.log(`   User Query: "${userMessage}"`);
 			console.log(
-				`   Current halt reason: ${
-					currentState.halt?.reason || 'none'
+				`   Current halt reason: ${currentState.halt?.reason || 'none'
 				}`
 			);
 			console.log(
@@ -651,6 +679,15 @@ const handlePartialInfo = async (
 		}
 	}
 
+	// Check if critical fields were updated that require flow restart
+	const criticalFieldsUpdated =
+		(extractedData.topic &&
+			currentState.data.topic &&
+			extractedData.topic !== currentState.data.topic) ||
+		(extractedData.primaryKeyword &&
+			currentState.data.primaryKeyword &&
+			extractedData.primaryKeyword !== currentState.data.primaryKeyword);
+
 	const stateUpdates: Partial<AgentState> = {
 		data: updatedData as BlogData,
 		userProvidedFields: providedFields,
@@ -661,6 +698,19 @@ const handlePartialInfo = async (
 			autoSelectBestOptions: isFullAuto,
 		},
 	};
+
+	// ✨ RESET LOGIC: If critical fields changed, reset downstream progress
+	if (criticalFieldsUpdated) {
+		console.log('🔄 [FLOW RESTART] Critical fields updated, resetting progress flags');
+		stateUpdates.titleSelected = false;
+		stateUpdates.titleOptions = [];
+		stateUpdates.outline = [];
+		stateUpdates.outlineApproved = false;
+		stateUpdates.draft = '';
+		stateUpdates.finalBlogGenerated = false;
+		stateUpdates.progress = { sectionIndex: 0 };
+		stateUpdates.halt = null; // Clear halt to trigger re-routing
+	}
 
 	return {
 		assistantMessage: message,
@@ -821,6 +871,38 @@ const handleRefinement = (
 				outlineApproved: false, // Keep it unapproved
 			},
 			shouldRunAgent: true, // Run the agent to regenerate
+		};
+	}
+
+	// ✨ Check if user is refining topic or keywords
+	const extractedTopic = extractTopicFromMessage(userMessage);
+	const isTopicRefinement =
+		extractedTopic &&
+		extractedTopic.toLowerCase() !== 'blog topic' &&
+		extractedTopic.length > 3;
+
+	if (isTopicRefinement) {
+		console.log(
+			`🔄 [REFINEMENT] Topic change detected: "${extractedTopic}". Resetting flow.`
+		);
+		return {
+			assistantMessage: `Got it! I'll update the topic to "${extractedTopic}" and restart the process.`,
+			stateUpdates: {
+				data: {
+					...currentState.data,
+					topic: extractedTopic,
+				} as BlogData,
+				// Reset all progress flags
+				titleSelected: false,
+				titleOptions: [],
+				outline: [],
+				outlineApproved: false,
+				draft: '',
+				finalBlogGenerated: false,
+				progress: { sectionIndex: 0 },
+				halt: null,
+			},
+			shouldRunAgent: true,
 		};
 	}
 

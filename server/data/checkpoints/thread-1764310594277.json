@@ -1,0 +1,528 @@
+{
+  "checkpoint": {
+    "v": 4,
+    "id": "1f0cc21c-dd01-6a80-8001-1c12fa7c9451",
+    "ts": "2025-11-28T06:16:40.744Z",
+    "channel_values": {
+      "messages": [],
+      "apiKey": "AIzaSyBEVtTO5Fou8xo6OIF4E1YWj4HWbSBtZGM",
+      "data": {
+        "apiKey": "AIzaSyBEVtTO5Fou8xo6OIF4E1YWj4HWbSBtZGM",
+        "title": "",
+        "topic": "AI",
+        "targetLocation": "United States",
+        "primaryKeyword": "",
+        "secondaryKeywords": [],
+        "suggestedTitles": [],
+        "referenceUrls": [],
+        "referenceFiles": [],
+        "interlinks": [],
+        "brandVoice": "Default",
+        "blogGuideline": "Default",
+        "llmModel": "gemini-2.5-flash",
+        "language": "English",
+        "outline": [],
+        "blogContent": ""
+      },
+      "outline": [],
+      "outlineApproved": false,
+      "draft": "",
+      "progress": {
+        "sectionIndex": 0
+      },
+      "preferences": {
+        "automationLevel": false,
+        "skipOptionalSteps": false,
+        "autoSelectBestOptions": false
+      },
+      "userProvidedFields": {},
+      "autoFillFields": {},
+      "trace": [
+        {
+          "step": "KeywordResearch.primaryCandidates",
+          "info": {
+            "count": 30
+          },
+          "at": 1764310600738
+        }
+      ],
+      "halt": {
+        "reason": "await_keyword_selection"
+      },
+      "keywordCandidates": [
+        {
+          "text": "ai",
+          "volume": 16600000,
+          "difficulty": 0.39,
+          "source": "seed",
+          "score": 0.85546875
+        },
+        {
+          "text": "open ai",
+          "volume": 9140000,
+          "difficulty": 0.16,
+          "source": "seed",
+          "score": 0.6753128619298098
+        },
+        {
+          "text": "openai",
+          "volume": 9140000,
+          "difficulty": 0.16,
+          "source": "seed",
+          "score": 0.5253128619298097
+        },
+        {
+          "text": "ai chatbot",
+          "volume": 3350000,
+          "difficulty": 0.17,
+          "source": "seed",
+          "score": 0.46184925208712857
+        },
+        {
+          "text": "ai chat",
+          "volume": 3350000,
+          "difficulty": 0.17,
+          "source": "seed",
+          "score": 0.46184925208712857
+        },
+        {
+          "text": "conversational ai",
+          "volume": 135000,
+          "difficulty": 0.02,
+          "source": "seed",
+          "score": 0.40408256825392996
+        },
+        {
+          "text": "scale ai",
+          "volume": 246000,
+          "difficulty": 0.07,
+          "source": "seed",
+          "score": 0.3885687391421057
+        },
+        {
+          "text": "ai assistant",
+          "volume": 301000,
+          "difficulty": 0.08,
+          "source": "seed",
+          "score": 0.38665310309570633
+        },
+        {
+          "text": "chatbot ai",
+          "volume": 1500000,
+          "difficulty": 0.27,
+          "source": "seed",
+          "score": 0.3558297372841993
+        },
+        {
+          "text": "ai chatbot online",
+          "volume": 1500000,
+          "difficulty": 0.27,
+          "source": "seed",
+          "score": 0.3558297372841993
+        },
+        {
+          "text": "ai chatgpt",
+          "volume": 450000,
+          "difficulty": 0.2,
+          "source": "seed",
+          "score": 0.34517085726091523
+        },
+        {
+          "text": "ai chat gpt",
+          "volume": 301000,
+          "difficulty": 0.2,
+          "source": "seed",
+          "score": 0.33977810309570633
+        },
+        {
+          "text": "google ai chatbot",
+          "volume": 27100,
+          "difficulty": 0.19,
+          "source": "seed",
+          "score": 0.3337710956067753
+        },
+        {
+          "text": "chat ai gpt",
+          "volume": 90500,
+          "difficulty": 0.22,
+          "source": "seed",
+          "score": 0.3243469806005622
+        },
+        {
+          "text": "ai technology",
+          "volume": 201000,
+          "difficulty": 0.27,
+          "source": "seed",
+          "score": 0.3088150549982507
+        },
+        {
+          "text": "chat gpt 4",
+          "volume": 2740000,
+          "difficulty": 0.14,
+          "source": "seed",
+          "score": 0.3014902836926492
+        },
+        {
+          "text": "vertex ai",
+          "volume": 135000,
+          "difficulty": 0.33,
+          "source": "seed",
+          "score": 0.28298881825392996
+        },
+        {
+          "text": "ai bot",
+          "volume": 110000,
+          "difficulty": 0.33,
+          "source": "seed",
+          "score": 0.28208399372956605
+        },
+        {
+          "text": "ai ops",
+          "volume": 27100,
+          "difficulty": 0.35,
+          "source": "seed",
+          "score": 0.2712710956067753
+        },
+        {
+          "text": "generative ai",
+          "volume": 368000,
+          "difficulty": 0.41,
+          "source": "seed",
+          "score": 0.2601717828210016
+        },
+        {
+          "text": "ai companies",
+          "volume": 49500,
+          "difficulty": 0.42,
+          "source": "seed",
+          "score": 0.2447380683806054
+        },
+        {
+          "text": "ai website",
+          "volume": 110000,
+          "difficulty": 0.45,
+          "source": "seed",
+          "score": 0.23520899372956605
+        },
+        {
+          "text": "artificial intelligence",
+          "volume": 1830000,
+          "difficulty": 0.23,
+          "source": "seed",
+          "score": 0.23339842100580294
+        },
+        {
+          "text": "openai chat",
+          "volume": 165000,
+          "difficulty": 0.12,
+          "source": "seed",
+          "score": 0.21610585768316665
+        },
+        {
+          "text": "midjourney",
+          "volume": 2740000,
+          "difficulty": 0.37,
+          "source": "seed",
+          "score": 0.2116465336926492
+        },
+        {
+          "text": "midjourney ai",
+          "volume": 450000,
+          "difficulty": 0.57,
+          "source": "seed",
+          "score": 0.20063960726091523
+        },
+        {
+          "text": "gpt 3",
+          "volume": 40500,
+          "difficulty": 0.15,
+          "source": "seed",
+          "score": 0.19988108155183437
+        },
+        {
+          "text": "chatbot online",
+          "volume": 22200,
+          "difficulty": 0.32,
+          "source": "seed",
+          "score": 0.1328125
+        },
+        {
+          "text": "chatbots",
+          "volume": 673000,
+          "difficulty": 0.42,
+          "source": "seed",
+          "score": 0.11730439201824129
+        },
+        {
+          "text": "nvidia h100",
+          "volume": 74000,
+          "difficulty": 0.66,
+          "source": "seed",
+          "score": 0.001874796414482018
+        }
+      ],
+      "titleCandidates": [],
+      "currentStep": "primary_keyword",
+      "toolOutputs": [
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "primary",
+            "candidates": [
+              {
+                "text": "ai",
+                "volume": 16600000,
+                "difficulty": 0.39,
+                "source": "seed",
+                "score": 0.85546875
+              },
+              {
+                "text": "open ai",
+                "volume": 9140000,
+                "difficulty": 0.16,
+                "source": "seed",
+                "score": 0.6753128619298098
+              },
+              {
+                "text": "openai",
+                "volume": 9140000,
+                "difficulty": 0.16,
+                "source": "seed",
+                "score": 0.5253128619298097
+              },
+              {
+                "text": "ai chatbot",
+                "volume": 3350000,
+                "difficulty": 0.17,
+                "source": "seed",
+                "score": 0.46184925208712857
+              },
+              {
+                "text": "ai chat",
+                "volume": 3350000,
+                "difficulty": 0.17,
+                "source": "seed",
+                "score": 0.46184925208712857
+              },
+              {
+                "text": "conversational ai",
+                "volume": 135000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.40408256825392996
+              },
+              {
+                "text": "scale ai",
+                "volume": 246000,
+                "difficulty": 0.07,
+                "source": "seed",
+                "score": 0.3885687391421057
+              },
+              {
+                "text": "ai assistant",
+                "volume": 301000,
+                "difficulty": 0.08,
+                "source": "seed",
+                "score": 0.38665310309570633
+              },
+              {
+                "text": "chatbot ai",
+                "volume": 1500000,
+                "difficulty": 0.27,
+                "source": "seed",
+                "score": 0.3558297372841993
+              },
+              {
+                "text": "ai chatbot online",
+                "volume": 1500000,
+                "difficulty": 0.27,
+                "source": "seed",
+                "score": 0.3558297372841993
+              },
+              {
+                "text": "ai chatgpt",
+                "volume": 450000,
+                "difficulty": 0.2,
+                "source": "seed",
+                "score": 0.34517085726091523
+              },
+              {
+                "text": "ai chat gpt",
+                "volume": 301000,
+                "difficulty": 0.2,
+                "source": "seed",
+                "score": 0.33977810309570633
+              },
+              {
+                "text": "google ai chatbot",
+                "volume": 27100,
+                "difficulty": 0.19,
+                "source": "seed",
+                "score": 0.3337710956067753
+              },
+              {
+                "text": "chat ai gpt",
+                "volume": 90500,
+                "difficulty": 0.22,
+                "source": "seed",
+                "score": 0.3243469806005622
+              },
+              {
+                "text": "ai technology",
+                "volume": 201000,
+                "difficulty": 0.27,
+                "source": "seed",
+                "score": 0.3088150549982507
+              },
+              {
+                "text": "chat gpt 4",
+                "volume": 2740000,
+                "difficulty": 0.14,
+                "source": "seed",
+                "score": 0.3014902836926492
+              },
+              {
+                "text": "vertex ai",
+                "volume": 135000,
+                "difficulty": 0.33,
+                "source": "seed",
+                "score": 0.28298881825392996
+              },
+              {
+                "text": "ai bot",
+                "volume": 110000,
+                "difficulty": 0.33,
+                "source": "seed",
+                "score": 0.28208399372956605
+              },
+              {
+                "text": "ai ops",
+                "volume": 27100,
+                "difficulty": 0.35,
+                "source": "seed",
+                "score": 0.2712710956067753
+              },
+              {
+                "text": "generative ai",
+                "volume": 368000,
+                "difficulty": 0.41,
+                "source": "seed",
+                "score": 0.2601717828210016
+              },
+              {
+                "text": "ai companies",
+                "volume": 49500,
+                "difficulty": 0.42,
+                "source": "seed",
+                "score": 0.2447380683806054
+              },
+              {
+                "text": "ai website",
+                "volume": 110000,
+                "difficulty": 0.45,
+                "source": "seed",
+                "score": 0.23520899372956605
+              },
+              {
+                "text": "artificial intelligence",
+                "volume": 1830000,
+                "difficulty": 0.23,
+                "source": "seed",
+                "score": 0.23339842100580294
+              },
+              {
+                "text": "openai chat",
+                "volume": 165000,
+                "difficulty": 0.12,
+                "source": "seed",
+                "score": 0.21610585768316665
+              },
+              {
+                "text": "midjourney",
+                "volume": 2740000,
+                "difficulty": 0.37,
+                "source": "seed",
+                "score": 0.2116465336926492
+              },
+              {
+                "text": "midjourney ai",
+                "volume": 450000,
+                "difficulty": 0.57,
+                "source": "seed",
+                "score": 0.20063960726091523
+              },
+              {
+                "text": "gpt 3",
+                "volume": 40500,
+                "difficulty": 0.15,
+                "source": "seed",
+                "score": 0.19988108155183437
+              },
+              {
+                "text": "chatbot online",
+                "volume": 22200,
+                "difficulty": 0.32,
+                "source": "seed",
+                "score": 0.1328125
+              },
+              {
+                "text": "chatbots",
+                "volume": 673000,
+                "difficulty": 0.42,
+                "source": "seed",
+                "score": 0.11730439201824129
+              },
+              {
+                "text": "nvidia h100",
+                "volume": 74000,
+                "difficulty": 0.66,
+                "source": "seed",
+                "score": 0.001874796414482018
+              }
+            ]
+          },
+          "timestamp": 1764310600738
+        }
+      ],
+      "__pregel_tasks": [
+        [],
+        []
+      ]
+    },
+    "channel_versions": {
+      "__start__": 2,
+      "messages": 2,
+      "data": 2,
+      "apiKey": 2,
+      "outline": 2,
+      "outlineApproved": 2,
+      "draft": 2,
+      "progress": 2,
+      "preferences": 2,
+      "trace": 3,
+      "halt": 3,
+      "userProvidedFields": 2,
+      "autoFillFields": 2,
+      "currentStep": 3,
+      "branch:to:research_primary": 3,
+      "keywordCandidates": 3,
+      "toolOutputs": 3
+    },
+    "versions_seen": {
+      "__input__": {},
+      "__start__": {
+        "__start__": 1
+      },
+      "research_primary": {
+        "branch:to:research_primary": 2
+      }
+    }
+  },
+  "metadata": {
+    "source": "loop",
+    "step": 1,
+    "parents": {}
+  },
+  "parentCheckpointId": "1f0cc21c-bf39-6250-8000-d7506ef6625a",
+  "updatedAt": 1764310600745
+}

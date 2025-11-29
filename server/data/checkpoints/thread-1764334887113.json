@@ -1,0 +1,1350 @@
+{
+  "checkpoint": {
+    "v": 4,
+    "id": "1f0cc5a5-bf91-69a0-8001-b01572ee4faa",
+    "ts": "2025-11-28T13:01:31.066Z",
+    "channel_values": {
+      "messages": [
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        }
+      ],
+      "apiKey": "AIzaSyBEVtTO5Fou8xo6OIF4E1YWj4HWbSBtZGM",
+      "data": {
+        "apiKey": "AIzaSyBEVtTO5Fou8xo6OIF4E1YWj4HWbSBtZGM",
+        "topic": "AI agents",
+        "targetLocation": "United States",
+        "secondaryKeywords": [],
+        "suggestedTitles": [],
+        "referenceUrls": [],
+        "referenceFiles": [],
+        "interlinks": [],
+        "brandVoice": "Default",
+        "blogGuideline": "Default",
+        "llmModel": "gemini-2.5-flash",
+        "language": "English",
+        "outline": [],
+        "blogContent": ""
+      },
+      "outline": [],
+      "outlineApproved": false,
+      "draft": "",
+      "progress": {
+        "sectionIndex": 0
+      },
+      "preferences": {
+        "automationLevel": "guided",
+        "skipOptionalSteps": false,
+        "autoSelectBestOptions": false
+      },
+      "policy": {
+        "referencesUsage": "both",
+        "grounding": true
+      },
+      "userProvidedFields": {},
+      "autoFillFields": {},
+      "trace": [
+        {
+          "step": "KeywordResearch.primaryCandidates",
+          "info": {
+            "count": 50
+          },
+          "at": 1764334835904
+        },
+        {
+          "step": "KeywordResearch.secondaryCandidates",
+          "info": {
+            "count": 19
+          },
+          "at": 1764334847139
+        },
+        {
+          "step": "TitleGeneration.generated",
+          "info": {
+            "count": 5
+          },
+          "at": 1764334865005
+        },
+        {
+          "step": "KeywordResearch.primaryCandidates",
+          "info": {
+            "count": 50
+          },
+          "at": 1764334891063
+        }
+      ],
+      "halt": {
+        "reason": "await_keyword_selection"
+      },
+      "keywordCandidates": [
+        {
+          "text": "ai",
+          "volume": 16600000,
+          "difficulty": 0.39,
+          "source": "seed",
+          "score": 0.8522727272727273
+        },
+        {
+          "text": "open ai",
+          "volume": 9140000,
+          "difficulty": 0.16,
+          "source": "seed",
+          "score": 0.5947391409121031
+        },
+        {
+          "text": "openai",
+          "volume": 9140000,
+          "difficulty": 0.16,
+          "source": "seed",
+          "score": 0.5197391409121032
+        },
+        {
+          "text": "agents",
+          "volume": 673000,
+          "difficulty": 0,
+          "source": "seed",
+          "score": 0.42429061991686245
+        },
+        {
+          "text": "ai chatbot",
+          "volume": 3350000,
+          "difficulty": 0.17,
+          "source": "seed",
+          "score": 0.3816615458762576
+        },
+        {
+          "text": "ai chat",
+          "volume": 3350000,
+          "difficulty": 0.17,
+          "source": "seed",
+          "score": 0.3816615458762576
+        },
+        {
+          "text": "valorant agents",
+          "volume": 90500,
+          "difficulty": 0,
+          "source": "seed",
+          "score": 0.3282351346466655
+        },
+        {
+          "text": "best valorant agents",
+          "volume": 9900,
+          "difficulty": 0,
+          "source": "seed",
+          "score": 0.3253217061268751
+        },
+        {
+          "text": "valorant all agents",
+          "volume": 5400,
+          "difficulty": 0,
+          "source": "seed",
+          "score": 0.32515904572564613
+        },
+        {
+          "text": "all agents valorant",
+          "volume": 2400,
+          "difficulty": 0,
+          "source": "seed",
+          "score": 0.32505060545816017
+        },
+        {
+          "text": "agents in valorant",
+          "volume": 1900,
+          "difficulty": 0,
+          "source": "seed",
+          "score": 0.3250325320802458
+        },
+        {
+          "text": "all agents in valorant",
+          "volume": 1000,
+          "difficulty": 0,
+          "source": "seed",
+          "score": 0.325
+        },
+        {
+          "text": "conversational ai",
+          "volume": 135000,
+          "difficulty": 0.02,
+          "source": "seed",
+          "score": 0.32226790770528346
+        },
+        {
+          "text": "all agents",
+          "volume": 2400,
+          "difficulty": 0.03,
+          "source": "seed",
+          "score": 0.31368696909452376
+        },
+        {
+          "text": "csgo agents",
+          "volume": 4400,
+          "difficulty": 0.04,
+          "source": "seed",
+          "score": 0.3099713838183023
+        },
+        {
+          "text": "scale ai",
+          "volume": 246000,
+          "difficulty": 0.07,
+          "source": "seed",
+          "score": 0.30734080366287125
+        },
+        {
+          "text": "ai assistant",
+          "volume": 301000,
+          "difficulty": 0.08,
+          "source": "seed",
+          "score": 0.305540996445569
+        },
+        {
+          "text": "chat gpt 4",
+          "volume": 2740000,
+          "difficulty": 0.14,
+          "source": "seed",
+          "score": 0.29597566118440866
+        },
+        {
+          "text": "chatbot ai",
+          "volume": 1500000,
+          "difficulty": 0.27,
+          "source": "seed",
+          "score": 0.2769112597144406
+        },
+        {
+          "text": "ai chatbot online",
+          "volume": 1500000,
+          "difficulty": 0.27,
+          "source": "seed",
+          "score": 0.2769112597144406
+        },
+        {
+          "text": "ai chatgpt",
+          "volume": 450000,
+          "difficulty": 0.2,
+          "source": "seed",
+          "score": 0.2654723176094946
+        },
+        {
+          "text": "ai chat gpt",
+          "volume": 301000,
+          "difficulty": 0.2,
+          "source": "seed",
+          "score": 0.26008645099102357
+        },
+        {
+          "text": "google ai chatbot",
+          "volume": 27100,
+          "difficulty": 0.19,
+          "source": "seed",
+          "score": 0.2539737333574312
+        },
+        {
+          "text": "best agent in valorant",
+          "volume": 12100,
+          "difficulty": 0,
+          "source": "seed",
+          "score": 0.2504012289896982
+        },
+        {
+          "text": "agent valorant",
+          "volume": 12100,
+          "difficulty": 0,
+          "source": "seed",
+          "score": 0.2504012289896982
+        },
+        {
+          "text": "agent 3 splatoon",
+          "volume": 5400,
+          "difficulty": 0,
+          "source": "seed",
+          "score": 0.2501590457256461
+        },
+        {
+          "text": "agent 4",
+          "volume": 3600,
+          "difficulty": 0,
+          "source": "seed",
+          "score": 0.25009398156515456
+        },
+        {
+          "text": "agent 8 splatoon",
+          "volume": 2900,
+          "difficulty": 0,
+          "source": "seed",
+          "score": 0.2500686788360745
+        },
+        {
+          "text": "agent 8 valorant",
+          "volume": 1300,
+          "difficulty": 0,
+          "source": "seed",
+          "score": 0.2500108440267486
+        },
+        {
+          "text": "agent under fire",
+          "volume": 2900,
+          "difficulty": 0.01,
+          "source": "seed",
+          "score": 0.2462808000481957
+        },
+        {
+          "text": "chat ai gpt",
+          "volume": 90500,
+          "difficulty": 0.22,
+          "source": "seed",
+          "score": 0.24490180131333217
+        },
+        {
+          "text": "007 agent under fire",
+          "volume": 9900,
+          "difficulty": 0.03,
+          "source": "seed",
+          "score": 0.23895806976323877
+        },
+        {
+          "text": "agent 3",
+          "volume": 6600,
+          "difficulty": 0.05,
+          "source": "seed",
+          "score": 0.23126302789324657
+        },
+        {
+          "text": "ai technology",
+          "volume": 201000,
+          "difficulty": 0.27,
+          "source": "seed",
+          "score": 0.22995662389300559
+        },
+        {
+          "text": "artificial intelligence",
+          "volume": 1830000,
+          "difficulty": 0.23,
+          "source": "seed",
+          "score": 0.22899120428941502
+        },
+        {
+          "text": "agent peely",
+          "volume": 6600,
+          "difficulty": 0.08,
+          "source": "seed",
+          "score": 0.21989939152961022
+        },
+        {
+          "text": "openai chat",
+          "volume": 165000,
+          "difficulty": 0.12,
+          "source": "seed",
+          "score": 0.2104735225013555
+        },
+        {
+          "text": "midjourney",
+          "volume": 2740000,
+          "difficulty": 0.37,
+          "source": "seed",
+          "score": 0.20885444906319658
+        },
+        {
+          "text": "vertex ai",
+          "volume": 135000,
+          "difficulty": 0.33,
+          "source": "seed",
+          "score": 0.20484366528104103
+        },
+        {
+          "text": "ai bot",
+          "volume": 110000,
+          "difficulty": 0.33,
+          "source": "seed",
+          "score": 0.2039399963853244
+        },
+        {
+          "text": "gpt 3",
+          "volume": 40500,
+          "difficulty": 0.15,
+          "source": "seed",
+          "score": 0.19460961503705043
+        },
+        {
+          "text": "ai ops",
+          "volume": 27100,
+          "difficulty": 0.35,
+          "source": "seed",
+          "score": 0.19336767275137057
+        },
+        {
+          "text": "agent 21",
+          "volume": 2900,
+          "difficulty": 0.16,
+          "source": "seed",
+          "score": 0.18946261823001387
+        },
+        {
+          "text": "generative ai",
+          "volume": 368000,
+          "difficulty": 0.41,
+          "source": "seed",
+          "score": 0.18296282908608955
+        },
+        {
+          "text": "ai companies",
+          "volume": 49500,
+          "difficulty": 0.42,
+          "source": "seed",
+          "score": 0.16766220856678113
+        },
+        {
+          "text": "ai website",
+          "volume": 110000,
+          "difficulty": 0.45,
+          "source": "seed",
+          "score": 0.15848545093077898
+        },
+        {
+          "text": "chatbot online",
+          "volume": 22200,
+          "difficulty": 0.32,
+          "source": "seed",
+          "score": 0.12955419001144647
+        },
+        {
+          "text": "midjourney ai",
+          "volume": 450000,
+          "difficulty": 0.57,
+          "source": "seed",
+          "score": 0.1253208024579794
+        },
+        {
+          "text": "chatbots",
+          "volume": 673000,
+          "difficulty": 0.42,
+          "source": "seed",
+          "score": 0.11519971082595337
+        },
+        {
+          "text": "nvidia h100",
+          "volume": 74000,
+          "difficulty": 0.66,
+          "source": "seed",
+          "score": 0.0026387131754924994
+        }
+      ],
+      "titleCandidates": [],
+      "currentStep": "primary_keyword",
+      "toolOutputs": [
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "primary",
+            "candidates": [
+              {
+                "text": "ai",
+                "volume": 16600000,
+                "difficulty": 0.39,
+                "source": "seed",
+                "score": 0.8522727272727273
+              },
+              {
+                "text": "open ai",
+                "volume": 9140000,
+                "difficulty": 0.16,
+                "source": "seed",
+                "score": 0.5947391409121031
+              },
+              {
+                "text": "openai",
+                "volume": 9140000,
+                "difficulty": 0.16,
+                "source": "seed",
+                "score": 0.5197391409121032
+              },
+              {
+                "text": "agents",
+                "volume": 673000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.42429061991686245
+              },
+              {
+                "text": "ai chatbot",
+                "volume": 3350000,
+                "difficulty": 0.17,
+                "source": "seed",
+                "score": 0.3816615458762576
+              },
+              {
+                "text": "ai chat",
+                "volume": 3350000,
+                "difficulty": 0.17,
+                "source": "seed",
+                "score": 0.3816615458762576
+              },
+              {
+                "text": "valorant agents",
+                "volume": 90500,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3282351346466655
+              },
+              {
+                "text": "best valorant agents",
+                "volume": 9900,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3253217061268751
+              },
+              {
+                "text": "valorant all agents",
+                "volume": 5400,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.32515904572564613
+              },
+              {
+                "text": "all agents valorant",
+                "volume": 2400,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.32505060545816017
+              },
+              {
+                "text": "agents in valorant",
+                "volume": 1900,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3250325320802458
+              },
+              {
+                "text": "all agents in valorant",
+                "volume": 1000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.325
+              },
+              {
+                "text": "conversational ai",
+                "volume": 135000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.32226790770528346
+              },
+              {
+                "text": "all agents",
+                "volume": 2400,
+                "difficulty": 0.03,
+                "source": "seed",
+                "score": 0.31368696909452376
+              },
+              {
+                "text": "csgo agents",
+                "volume": 4400,
+                "difficulty": 0.04,
+                "source": "seed",
+                "score": 0.3099713838183023
+              },
+              {
+                "text": "scale ai",
+                "volume": 246000,
+                "difficulty": 0.07,
+                "source": "seed",
+                "score": 0.30734080366287125
+              },
+              {
+                "text": "ai assistant",
+                "volume": 301000,
+                "difficulty": 0.08,
+                "source": "seed",
+                "score": 0.305540996445569
+              },
+              {
+                "text": "chat gpt 4",
+                "volume": 2740000,
+                "difficulty": 0.14,
+                "source": "seed",
+                "score": 0.29597566118440866
+              },
+              {
+                "text": "chatbot ai",
+                "volume": 1500000,
+                "difficulty": 0.27,
+                "source": "seed",
+                "score": 0.2769112597144406
+              },
+              {
+                "text": "ai chatbot online",
+                "volume": 1500000,
+                "difficulty": 0.27,
+                "source": "seed",
+                "score": 0.2769112597144406
+              },
+              {
+                "text": "ai chatgpt",
+                "volume": 450000,
+                "difficulty": 0.2,
+                "source": "seed",
+                "score": 0.2654723176094946
+              },
+              {
+                "text": "ai chat gpt",
+                "volume": 301000,
+                "difficulty": 0.2,
+                "source": "seed",
+                "score": 0.26008645099102357
+              },
+              {
+                "text": "google ai chatbot",
+                "volume": 27100,
+                "difficulty": 0.19,
+                "source": "seed",
+                "score": 0.2539737333574312
+              },
+              {
+                "text": "best agent in valorant",
+                "volume": 12100,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2504012289896982
+              },
+              {
+                "text": "agent valorant",
+                "volume": 12100,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2504012289896982
+              },
+              {
+                "text": "agent 3 splatoon",
+                "volume": 5400,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2501590457256461
+              },
+              {
+                "text": "agent 4",
+                "volume": 3600,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25009398156515456
+              },
+              {
+                "text": "agent 8 splatoon",
+                "volume": 2900,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2500686788360745
+              },
+              {
+                "text": "agent 8 valorant",
+                "volume": 1300,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2500108440267486
+              },
+              {
+                "text": "agent under fire",
+                "volume": 2900,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.2462808000481957
+              },
+              {
+                "text": "chat ai gpt",
+                "volume": 90500,
+                "difficulty": 0.22,
+                "source": "seed",
+                "score": 0.24490180131333217
+              },
+              {
+                "text": "007 agent under fire",
+                "volume": 9900,
+                "difficulty": 0.03,
+                "source": "seed",
+                "score": 0.23895806976323877
+              },
+              {
+                "text": "agent 3",
+                "volume": 6600,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.23126302789324657
+              },
+              {
+                "text": "ai technology",
+                "volume": 201000,
+                "difficulty": 0.27,
+                "source": "seed",
+                "score": 0.22995662389300559
+              },
+              {
+                "text": "artificial intelligence",
+                "volume": 1830000,
+                "difficulty": 0.23,
+                "source": "seed",
+                "score": 0.22899120428941502
+              },
+              {
+                "text": "agent peely",
+                "volume": 6600,
+                "difficulty": 0.08,
+                "source": "seed",
+                "score": 0.21989939152961022
+              },
+              {
+                "text": "openai chat",
+                "volume": 165000,
+                "difficulty": 0.12,
+                "source": "seed",
+                "score": 0.2104735225013555
+              },
+              {
+                "text": "midjourney",
+                "volume": 2740000,
+                "difficulty": 0.37,
+                "source": "seed",
+                "score": 0.20885444906319658
+              },
+              {
+                "text": "vertex ai",
+                "volume": 135000,
+                "difficulty": 0.33,
+                "source": "seed",
+                "score": 0.20484366528104103
+              },
+              {
+                "text": "ai bot",
+                "volume": 110000,
+                "difficulty": 0.33,
+                "source": "seed",
+                "score": 0.2039399963853244
+              },
+              {
+                "text": "gpt 3",
+                "volume": 40500,
+                "difficulty": 0.15,
+                "source": "seed",
+                "score": 0.19460961503705043
+              },
+              {
+                "text": "ai ops",
+                "volume": 27100,
+                "difficulty": 0.35,
+                "source": "seed",
+                "score": 0.19336767275137057
+              },
+              {
+                "text": "agent 21",
+                "volume": 2900,
+                "difficulty": 0.16,
+                "source": "seed",
+                "score": 0.18946261823001387
+              },
+              {
+                "text": "generative ai",
+                "volume": 368000,
+                "difficulty": 0.41,
+                "source": "seed",
+                "score": 0.18296282908608955
+              },
+              {
+                "text": "ai companies",
+                "volume": 49500,
+                "difficulty": 0.42,
+                "source": "seed",
+                "score": 0.16766220856678113
+              },
+              {
+                "text": "ai website",
+                "volume": 110000,
+                "difficulty": 0.45,
+                "source": "seed",
+                "score": 0.15848545093077898
+              },
+              {
+                "text": "chatbot online",
+                "volume": 22200,
+                "difficulty": 0.32,
+                "source": "seed",
+                "score": 0.12955419001144647
+              },
+              {
+                "text": "midjourney ai",
+                "volume": 450000,
+                "difficulty": 0.57,
+                "source": "seed",
+                "score": 0.1253208024579794
+              },
+              {
+                "text": "chatbots",
+                "volume": 673000,
+                "difficulty": 0.42,
+                "source": "seed",
+                "score": 0.11519971082595337
+              },
+              {
+                "text": "nvidia h100",
+                "volume": 74000,
+                "difficulty": 0.66,
+                "source": "seed",
+                "score": 0.0026387131754924994
+              }
+            ]
+          },
+          "timestamp": 1764334835904
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "secondary",
+            "candidates": [
+              {
+                "text": "open ai",
+                "volume": 9140000,
+                "difficulty": 0.16,
+                "source": "seed",
+                "score": 0.6168647687094707
+              },
+              {
+                "text": "openai",
+                "volume": 9140000,
+                "difficulty": 0.16,
+                "source": "seed",
+                "score": 0.5418647687094708
+              },
+              {
+                "text": "ai chatbot",
+                "volume": 3350000,
+                "difficulty": 0.17,
+                "source": "seed",
+                "score": 0.40307012073119636
+              },
+              {
+                "text": "ai chat",
+                "volume": 3350000,
+                "difficulty": 0.17,
+                "source": "seed",
+                "score": 0.40307012073119636
+              },
+              {
+                "text": "scale ai",
+                "volume": 246000,
+                "difficulty": 0.07,
+                "source": "seed",
+                "score": 0.3330999891421057
+              },
+              {
+                "text": "chat gpt 4",
+                "volume": 2740000,
+                "difficulty": 0.14,
+                "source": "seed",
+                "score": 0.31870426674349667
+              },
+              {
+                "text": "chatbot ai",
+                "volume": 1500000,
+                "difficulty": 0.27,
+                "source": "seed",
+                "score": 0.29374022457233495
+              },
+              {
+                "text": "ai chatbot online",
+                "volume": 1500000,
+                "difficulty": 0.27,
+                "source": "seed",
+                "score": 0.29374022457233495
+              },
+              {
+                "text": "google ai chatbot",
+                "volume": 27100,
+                "difficulty": 0.19,
+                "source": "seed",
+                "score": 0.2743298879796567
+              },
+              {
+                "text": "artificial intelligence",
+                "volume": 1830000,
+                "difficulty": 0.23,
+                "source": "seed",
+                "score": 0.24763306083631142
+              },
+              {
+                "text": "openai chat",
+                "volume": 165000,
+                "difficulty": 0.12,
+                "source": "seed",
+                "score": 0.23398191700520055
+              },
+              {
+                "text": "midjourney",
+                "volume": 2740000,
+                "difficulty": 0.37,
+                "source": "seed",
+                "score": 0.22124663962485264
+              },
+              {
+                "text": "gpt 3",
+                "volume": 40500,
+                "difficulty": 0.15,
+                "source": "seed",
+                "score": 0.21676402646708862
+              },
+              {
+                "text": "generative ai",
+                "volume": 368000,
+                "difficulty": 0.41,
+                "source": "seed",
+                "score": 0.1934477362108321
+              },
+              {
+                "text": "ai website",
+                "volume": 110000,
+                "difficulty": 0.45,
+                "source": "seed",
+                "score": 0.16716079457702368
+              },
+              {
+                "text": "chatbot online",
+                "volume": 22200,
+                "difficulty": 0.32,
+                "source": "seed",
+                "score": 0.1440677966101695
+              },
+              {
+                "text": "midjourney ai",
+                "volume": 450000,
+                "difficulty": 0.57,
+                "source": "seed",
+                "score": 0.12861895048125424
+              },
+              {
+                "text": "chatbots",
+                "volume": 673000,
+                "difficulty": 0.42,
+                "source": "seed",
+                "score": 0.12524930727247857
+              },
+              {
+                "text": "nvidia h100",
+                "volume": 74000,
+                "difficulty": 0.66,
+                "source": "seed",
+                "score": 0.001874796414482018
+              }
+            ]
+          },
+          "timestamp": 1764334847139
+        },
+        {
+          "type": "title_options",
+          "data": {
+            "titles": [
+              "The Future is Here: How AI Agents are Transforming US Businesses",
+              "Beyond the Hype: Understanding the Power of AI Agents for Innovation",
+              "Your Guide to AI Agents: Automating Success in the Digital Age",
+              "Revolutionizing Industries: The Untapped Potential of AI Agents",
+              "Smart Solutions: Leveraging AI Agents for Growth in the United States"
+            ]
+          },
+          "timestamp": 1764334865005
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "primary",
+            "candidates": [
+              {
+                "text": "ai",
+                "volume": 16600000,
+                "difficulty": 0.39,
+                "source": "seed",
+                "score": 0.8522727272727273
+              },
+              {
+                "text": "open ai",
+                "volume": 9140000,
+                "difficulty": 0.16,
+                "source": "seed",
+                "score": 0.5947391409121031
+              },
+              {
+                "text": "openai",
+                "volume": 9140000,
+                "difficulty": 0.16,
+                "source": "seed",
+                "score": 0.5197391409121032
+              },
+              {
+                "text": "agents",
+                "volume": 673000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.42429061991686245
+              },
+              {
+                "text": "ai chatbot",
+                "volume": 3350000,
+                "difficulty": 0.17,
+                "source": "seed",
+                "score": 0.3816615458762576
+              },
+              {
+                "text": "ai chat",
+                "volume": 3350000,
+                "difficulty": 0.17,
+                "source": "seed",
+                "score": 0.3816615458762576
+              },
+              {
+                "text": "valorant agents",
+                "volume": 90500,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3282351346466655
+              },
+              {
+                "text": "best valorant agents",
+                "volume": 9900,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3253217061268751
+              },
+              {
+                "text": "valorant all agents",
+                "volume": 5400,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.32515904572564613
+              },
+              {
+                "text": "all agents valorant",
+                "volume": 2400,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.32505060545816017
+              },
+              {
+                "text": "agents in valorant",
+                "volume": 1900,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3250325320802458
+              },
+              {
+                "text": "all agents in valorant",
+                "volume": 1000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.325
+              },
+              {
+                "text": "conversational ai",
+                "volume": 135000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.32226790770528346
+              },
+              {
+                "text": "all agents",
+                "volume": 2400,
+                "difficulty": 0.03,
+                "source": "seed",
+                "score": 0.31368696909452376
+              },
+              {
+                "text": "csgo agents",
+                "volume": 4400,
+                "difficulty": 0.04,
+                "source": "seed",
+                "score": 0.3099713838183023
+              },
+              {
+                "text": "scale ai",
+                "volume": 246000,
+                "difficulty": 0.07,
+                "source": "seed",
+                "score": 0.30734080366287125
+              },
+              {
+                "text": "ai assistant",
+                "volume": 301000,
+                "difficulty": 0.08,
+                "source": "seed",
+                "score": 0.305540996445569
+              },
+              {
+                "text": "chat gpt 4",
+                "volume": 2740000,
+                "difficulty": 0.14,
+                "source": "seed",
+                "score": 0.29597566118440866
+              },
+              {
+                "text": "chatbot ai",
+                "volume": 1500000,
+                "difficulty": 0.27,
+                "source": "seed",
+                "score": 0.2769112597144406
+              },
+              {
+                "text": "ai chatbot online",
+                "volume": 1500000,
+                "difficulty": 0.27,
+                "source": "seed",
+                "score": 0.2769112597144406
+              },
+              {
+                "text": "ai chatgpt",
+                "volume": 450000,
+                "difficulty": 0.2,
+                "source": "seed",
+                "score": 0.2654723176094946
+              },
+              {
+                "text": "ai chat gpt",
+                "volume": 301000,
+                "difficulty": 0.2,
+                "source": "seed",
+                "score": 0.26008645099102357
+              },
+              {
+                "text": "google ai chatbot",
+                "volume": 27100,
+                "difficulty": 0.19,
+                "source": "seed",
+                "score": 0.2539737333574312
+              },
+              {
+                "text": "best agent in valorant",
+                "volume": 12100,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2504012289896982
+              },
+              {
+                "text": "agent valorant",
+                "volume": 12100,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2504012289896982
+              },
+              {
+                "text": "agent 3 splatoon",
+                "volume": 5400,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2501590457256461
+              },
+              {
+                "text": "agent 4",
+                "volume": 3600,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25009398156515456
+              },
+              {
+                "text": "agent 8 splatoon",
+                "volume": 2900,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2500686788360745
+              },
+              {
+                "text": "agent 8 valorant",
+                "volume": 1300,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2500108440267486
+              },
+              {
+                "text": "agent under fire",
+                "volume": 2900,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.2462808000481957
+              },
+              {
+                "text": "chat ai gpt",
+                "volume": 90500,
+                "difficulty": 0.22,
+                "source": "seed",
+                "score": 0.24490180131333217
+              },
+              {
+                "text": "007 agent under fire",
+                "volume": 9900,
+                "difficulty": 0.03,
+                "source": "seed",
+                "score": 0.23895806976323877
+              },
+              {
+                "text": "agent 3",
+                "volume": 6600,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.23126302789324657
+              },
+              {
+                "text": "ai technology",
+                "volume": 201000,
+                "difficulty": 0.27,
+                "source": "seed",
+                "score": 0.22995662389300559
+              },
+              {
+                "text": "artificial intelligence",
+                "volume": 1830000,
+                "difficulty": 0.23,
+                "source": "seed",
+                "score": 0.22899120428941502
+              },
+              {
+                "text": "agent peely",
+                "volume": 6600,
+                "difficulty": 0.08,
+                "source": "seed",
+                "score": 0.21989939152961022
+              },
+              {
+                "text": "openai chat",
+                "volume": 165000,
+                "difficulty": 0.12,
+                "source": "seed",
+                "score": 0.2104735225013555
+              },
+              {
+                "text": "midjourney",
+                "volume": 2740000,
+                "difficulty": 0.37,
+                "source": "seed",
+                "score": 0.20885444906319658
+              },
+              {
+                "text": "vertex ai",
+                "volume": 135000,
+                "difficulty": 0.33,
+                "source": "seed",
+                "score": 0.20484366528104103
+              },
+              {
+                "text": "ai bot",
+                "volume": 110000,
+                "difficulty": 0.33,
+                "source": "seed",
+                "score": 0.2039399963853244
+              },
+              {
+                "text": "gpt 3",
+                "volume": 40500,
+                "difficulty": 0.15,
+                "source": "seed",
+                "score": 0.19460961503705043
+              },
+              {
+                "text": "ai ops",
+                "volume": 27100,
+                "difficulty": 0.35,
+                "source": "seed",
+                "score": 0.19336767275137057
+              },
+              {
+                "text": "agent 21",
+                "volume": 2900,
+                "difficulty": 0.16,
+                "source": "seed",
+                "score": 0.18946261823001387
+              },
+              {
+                "text": "generative ai",
+                "volume": 368000,
+                "difficulty": 0.41,
+                "source": "seed",
+                "score": 0.18296282908608955
+              },
+              {
+                "text": "ai companies",
+                "volume": 49500,
+                "difficulty": 0.42,
+                "source": "seed",
+                "score": 0.16766220856678113
+              },
+              {
+                "text": "ai website",
+                "volume": 110000,
+                "difficulty": 0.45,
+                "source": "seed",
+                "score": 0.15848545093077898
+              },
+              {
+                "text": "chatbot online",
+                "volume": 22200,
+                "difficulty": 0.32,
+                "source": "seed",
+                "score": 0.12955419001144647
+              },
+              {
+                "text": "midjourney ai",
+                "volume": 450000,
+                "difficulty": 0.57,
+                "source": "seed",
+                "score": 0.1253208024579794
+              },
+              {
+                "text": "chatbots",
+                "volume": 673000,
+                "difficulty": 0.42,
+                "source": "seed",
+                "score": 0.11519971082595337
+              },
+              {
+                "text": "nvidia h100",
+                "volume": 74000,
+                "difficulty": 0.66,
+                "source": "seed",
+                "score": 0.0026387131754924994
+              }
+            ]
+          },
+          "timestamp": 1764334891063
+        }
+      ],
+      "__pregel_tasks": [
+        [],
+        []
+      ]
+    },
+    "channel_versions": {
+      "__start__": 2,
+      "messages": 2,
+      "data": 2,
+      "apiKey": 2,
+      "outline": 2,
+      "outlineApproved": 2,
+      "draft": 2,
+      "progress": 2,
+      "preferences": 2,
+      "trace": 3,
+      "halt": 3,
+      "userProvidedFields": 2,
+      "autoFillFields": 2,
+      "currentStep": 3,
+      "toolOutputs": 3,
+      "branch:to:research_primary": 3,
+      "keywordCandidates": 3
+    },
+    "versions_seen": {
+      "__input__": {},
+      "__start__": {
+        "__start__": 1
+      },
+      "research_primary": {
+        "branch:to:research_primary": 2
+      }
+    }
+  },
+  "metadata": {
+    "source": "loop",
+    "step": 1,
+    "parents": {}
+  },
+  "parentCheckpointId": "1f0cc5a5-baa5-6d60-8000-420e7303e461",
+  "updatedAt": 1764334891066
+}

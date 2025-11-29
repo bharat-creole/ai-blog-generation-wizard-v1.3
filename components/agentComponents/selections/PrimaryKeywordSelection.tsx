@@ -1,8 +1,5 @@
 import React from 'react';
-import { AgentState } from '../../../services/langgraph/agentGraph';
-import { runNext as lgRunNext } from '../../../services/langgraph/agentGraph';
-import * as automationEngine from '../../../services/automationEngine';
-import { getStepMessage } from '../utils/agentHelpers';
+import { AgentState } from '../../../../server/agent/state';
 import { KeywordCandidate, ChatMessage } from '../../../types';
 
 interface PrimaryKeywordSelectionProps {
@@ -17,6 +14,7 @@ interface PrimaryKeywordSelectionProps {
 	setOutline: React.Dispatch<React.SetStateAction<any[]>>;
 	setDraft: React.Dispatch<React.SetStateAction<string>>;
 	setTraceItems: React.Dispatch<React.SetStateAction<any[]>>;
+	sendUserMessage: (message: string, agentState: AgentState) => Promise<{ response: string; updatedState: AgentState; metadata?: any }>;
 }
 
 const PrimaryKeywordSelection: React.FC<PrimaryKeywordSelectionProps> = ({
@@ -31,89 +29,65 @@ const PrimaryKeywordSelection: React.FC<PrimaryKeywordSelectionProps> = ({
 	setOutline,
 	setDraft,
 	setTraceItems,
+	sendUserMessage,
 }) => {
 	const handleSelect = async (kw: KeywordCandidate) => {
 		if (!agent) return;
 
 		setCompletedSelections((prev) => new Set(prev).add('primaryKeyword'));
-		setMessages((prev) => [
-			...prev,
-			{
-				role: 'user',
-				content: `Select "${kw.text}" as primary keyword`,
-			},
-			{
-				role: 'assistant',
-				content: `✅ Selected "${kw.text}" as primary keyword. Continuing...`,
-			},
-		]);
 
-		const next = {
-			...agent,
-			data: {
-				...agent.data,
-				primaryKeyword: kw.text,
-			},
-		} as AgentState;
-		setAgent(next);
-		updateData({ primaryKeyword: kw.text });
+		// Add user message immediately for UI feedback
+		const userMsg = {
+			role: 'user' as const,
+			content: `Primary keyword: ${kw.text}`,
+		};
+
+		setMessages((prev) => [...prev, userMsg]);
 		setIsThinking(true);
 
 		try {
-			let working = next;
-			let guard = 0;
-			let lastTraceLength = 0;
+			// Send selection to backend
+			const result = await sendUserMessage(
+				`Primary keyword: ${kw.text}`,
+				agent
+			);
 
-			while (guard++ < 20) {
-				const { state: ns, halted } = await lgRunNext(working);
-				working = ns;
+			// Update state from backend response
+			setAgent(result.updatedState);
+			setOutline(result.updatedState.outline);
+			setDraft(result.updatedState.draft);
 
-				if (working.trace.length > lastTraceLength) {
-					const latestTrace = working.trace[working.trace.length - 1];
-					const stepMessage = getStepMessage(latestTrace.step, latestTrace.info);
-
-					if (stepMessage) {
-						setMessages((prev) => [
-							...prev,
-							{
-								role: 'assistant',
-								content: stepMessage,
-							},
-						]);
-						await new Promise((resolve) => setTimeout(resolve, 300));
-					}
-					lastTraceLength = working.trace.length;
-				}
-
-				// Break if halted and needs user input
-				if (halted && automationEngine.needsUserInput(ns)) {
-					break;
-				}
+			// Update trace items if available
+			if (result.updatedState.trace) {
+				setTraceItems(result.updatedState.trace.map((t) => ({ step: t.step, at: t.at })));
 			}
 
-			setAgent(working);
-			setOutline(working.outline);
-			setDraft(working.draft);
-			setTraceItems(working.trace.map((t) => ({ step: t.step, at: t.at })));
+			// Update parent data
 			updateData({
-				outline: working.outline,
-				blogContent: working.draft,
-				secondaryKeywords: working.data.secondaryKeywords,
+				primaryKeyword: result.updatedState.data.primaryKeyword,
+				secondaryKeywords: result.updatedState.data.secondaryKeywords,
+				outline: result.updatedState.outline,
+				blogContent: result.updatedState.draft,
 			});
 
-			if (working.halt?.reason === 'await_secondary_selection') {
-				setMessages((prev) => [
-					...prev,
-					{
-						role: 'assistant',
-						content: '🎯 Select up to 5 secondary keywords:\n\n💡 Tip: If you would like to provide your own secondary keywords, simply type them in the chat (comma-separated)!',
-						keywordSelection: {
-							type: 'secondary',
-							candidates: working.keywordResearch?.secondaryCandidates?.slice(0, 12) || [],
-						},
-					},
-				]);
-			}
+			// Add assistant response
+			setMessages((prev) => [
+				...prev,
+				{
+					role: 'assistant',
+					content: result.response,
+					...result.metadata
+				},
+			]);
+
+		} catch (error) {
+			console.error('Error selecting primary keyword:', error);
+			// Revert selection on error
+			setCompletedSelections((prev) => {
+				const newSet = new Set(prev);
+				newSet.delete('primaryKeyword');
+				return newSet;
+			});
 		} finally {
 			setIsThinking(false);
 		}
@@ -134,11 +108,10 @@ const PrimaryKeywordSelection: React.FC<PrimaryKeywordSelectionProps> = ({
 					</div>
 					<button
 						disabled={completedSelections.has('primaryKeyword')}
-						className={`px-3 py-1 text-xs text-white rounded transition-colors ${
-							completedSelections.has('primaryKeyword')
+						className={`px-3 py-1 text-xs text-white rounded transition-colors ${completedSelections.has('primaryKeyword')
 								? 'bg-gray-400 cursor-not-allowed'
 								: 'bg-orange-500 hover:bg-orange-600'
-						}`}
+							}`}
 						onClick={() => handleSelect(kw)}
 					>
 						Select

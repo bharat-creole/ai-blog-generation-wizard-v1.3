@@ -1,5 +1,5 @@
 import { ChatMessage, AutomationLevel } from '../../../types';
-import { AgentState } from '../../../services/langgraph/agentGraph';
+import { AgentState } from '../../../../server/agent/state';
 import { FlowContext } from '../types/agentTypes';
 import { createAssistantMessage } from '../utils/messageUtils';
 import { updateAgentFromWorking, updateAllStateFromWorking, AgentStateSetters } from '../utils/agentStateUtils';
@@ -101,6 +101,10 @@ export const runAutomationFlow = async (
 				const stepMessage = getStepMessage(latestTrace.step, latestTrace.info);
 
 				if (stepMessage) {
+					// Turn off thinking indicator as soon as we start showing progress
+					// This allows progress messages to be visible in real-time
+					setIsThinking(false);
+					
 					setMessages((prev) => [
 						...prev,
 						createAssistantMessage(stepMessage),

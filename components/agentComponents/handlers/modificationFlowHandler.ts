@@ -1,5 +1,5 @@
 import { ChatMessage, BlogData, AutomationLevel } from '../../../types';
-import { AgentState } from '../../../services/langgraph/agentGraph';
+import { AgentState } from '../../../../server/agent/state';
 import * as conversationHandler from '../../../services/conversationHandler';
 import { FlowContext } from '../types/agentTypes';
 import {
@@ -60,7 +60,8 @@ export const handleModificationConfirmation = async (
 	updateData: (data: Partial<BlogData>) => void,
 	setUserTopic: React.Dispatch<React.SetStateAction<string>>,
 	setTargetLocation: React.Dispatch<React.SetStateAction<string>>,
-	setIsStreaming: React.Dispatch<React.SetStateAction<boolean>>
+	setIsStreaming: React.Dispatch<React.SetStateAction<boolean>>,
+	sendUserMessage: (message: string, currentState: AgentState) => Promise<{ response: string; updatedState: AgentState; metadata?: Partial<ChatMessage> }>
 ): Promise<boolean> => {
 	const confirmed = /^yes$/i.test(input.trim());
 
@@ -79,21 +80,17 @@ export const handleModificationConfirmation = async (
 		setIsThinking(true);
 
 		try {
-			const modificationResponse = await conversationHandler.processMessage(
+			// ✨ Use backend API via sendUserMessage
+			const result = await sendUserMessage(
 				modificationRequest,
-				modifiedAgent,
-				apiKey,
-				flowContext.automationLevel
+				modifiedAgent
 			);
 
-			const updatedAgent = {
-				...modifiedAgent,
-				...modificationResponse.stateUpdates,
-			};
+			const updatedAgent = result.updatedState;
 			setAgent(updatedAgent);
 
-			if (modificationResponse.stateUpdates?.data) {
-				const updatedData = modificationResponse.stateUpdates.data;
+			if (updatedAgent.data) {
+				const updatedData = updatedAgent.data;
 				updateData({ ...updatedData });
 
 				if (updatedData.topic) setUserTopic(updatedData.topic);
@@ -105,7 +102,11 @@ export const handleModificationConfirmation = async (
 			setMessages((prev) => [
 				...prev,
 				userMsg,
-				createAssistantMessage(modificationResponse.assistantMessage),
+				{
+					role: 'assistant',
+					content: result.response,
+					...result.metadata
+				},
 				createAssistantMessage(
 					'✅ **Modification Applied!**\n\nWould you like to make any other changes to:\n- Primary keyword\n- Secondary keywords\n- Title\n- Target location\n- Internal/External links\n- Reference materials\n\nJust tell me what to change, or say **"continue"** or **"done"** to regenerate the outline.'
 				),
@@ -201,6 +202,10 @@ export const handleOutlineRegeneration = async (
 				const stepMessage = getStepMessage(latestTrace.step, latestTrace.info);
 
 				if (stepMessage) {
+					// Turn off thinking indicator as soon as we start showing progress
+					// This allows progress messages to be visible in real-time
+					setIsThinking(false);
+					
 					setMessages((prev) => [
 						...prev,
 						createAssistantMessage(stepMessage),

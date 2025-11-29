@@ -1,7 +1,7 @@
 import React from 'react';
 import Spinner from '../../common/Spinner';
 import { ChatMessage } from '../../../types';
-import { AgentState } from '../../../services/langgraph/agentGraph';
+import { AgentState } from '../../../../server/agent/state';
 import { BlogData } from '../../../types';
 import { MessageRenderer } from './MessageRenderer';
 import { ChatInput } from './ChatInput';
@@ -43,6 +43,7 @@ interface ChatInterfaceProps {
 	showBlogContent: boolean;
 	setShowBlogContent: React.Dispatch<React.SetStateAction<boolean>>;
 	onCollapseSidebar?: () => void;
+	sendUserMessage: (message: string, agentState: AgentState) => Promise<{ response: string; updatedState: AgentState; metadata?: any }>;
 }
 
 /**
@@ -54,7 +55,7 @@ interface ChatInterfaceProps {
  * - Provides chat input with send functionality
  * - Handles scrolling to latest message
  * - Adapts width based on blog content visibility
- * 
+ * - 
  * @param props - ChatInterfaceProps containing all necessary state and handlers
  * @returns JSX.Element - Chat interface component
  */
@@ -88,26 +89,24 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 	showBlogContent,
 	setShowBlogContent,
 	onCollapseSidebar,
+	sendUserMessage,
 }) => {
 	return (
 		<div
-			className={`flex flex-col min-h-0 transition-all duration-700 ease-in-out ${
-				showBlogContent ? 'w-[30%]' : 'w-full'
-			} ${
-				showBlogContent
+			className={`flex flex-col min-h-0 transition-all duration-700 ease-in-out ${showBlogContent ? 'w-[30%]' : 'w-full'
+				} ${showBlogContent
 					? 'border-2 border-orange-300 rounded-xl bg-white shadow-lg'
 					: ''
-			}`}
+				}`}
 		>
 			<div className='flex-1 overflow-y-auto py-3 px-4'>
 				{messages.map((m, i) => (
 					<div
 						key={i}
-						className={`mb-4 ${
-							m.role === 'user'
+						className={`mb-4 ${m.role === 'user'
 								? 'flex justify-end'
 								: 'flex justify-start'
-						}`}
+							}`}
 					>
 						<MessageRenderer
 							message={m}
@@ -132,6 +131,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 							setIsStreaming={setIsStreaming}
 							setShowBlogContent={setShowBlogContent}
 							onCollapseSidebar={onCollapseSidebar}
+							sendUserMessage={sendUserMessage}
 						/>
 					</div>
 				))}

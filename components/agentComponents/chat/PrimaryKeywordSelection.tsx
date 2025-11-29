@@ -1,5 +1,5 @@
 import React from 'react';
-import { AgentState } from '../../../services/langgraph/agentGraph';
+import { AgentState } from '../../../../server/agent/state';
 import { runNext as lgRunNext } from '../../../services/langgraph/agentGraph';
 import * as automationEngine from '../../../services/automationEngine';
 import { getStepMessage } from '../utils/agentHelpers';
@@ -85,6 +85,10 @@ const PrimaryKeywordSelection: React.FC<PrimaryKeywordSelectionProps> = ({
                     const stepMessage = getStepMessage(latestTrace.step, latestTrace.info);
 
                     if (stepMessage) {
+                        // Turn off thinking indicator as soon as we start showing progress
+                        // This allows progress messages to be visible in real-time
+                        setIsThinking(false);
+                        
                         setMessages((prev) => [
                             ...prev,
                             {

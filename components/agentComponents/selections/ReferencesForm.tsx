@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
-import { AgentState } from '../../../services/langgraph/agentGraph';
-import { runNext as lgRunNext } from '../../../services/langgraph/agentGraph';
-import * as automationEngine from '../../../services/automationEngine';
+import { AgentState } from '../../../../server/agent/state';
 import { ReferenceFile, ChatMessage, BlogData } from '../../../types';
 import { fileToBase64 } from '../utils/agentHelpers';
 
@@ -19,6 +17,7 @@ interface ReferencesFormProps {
 	setOutline: React.Dispatch<React.SetStateAction<any[]>>;
 	setDraft: React.Dispatch<React.SetStateAction<string>>;
 	setTraceItems: React.Dispatch<React.SetStateAction<any[]>>;
+	sendUserMessage: (message: string, agentState: AgentState) => Promise<{ response: string; updatedState: AgentState; metadata?: any }>;
 }
 
 const ReferencesForm: React.FC<ReferencesFormProps> = ({
@@ -35,6 +34,7 @@ const ReferencesForm: React.FC<ReferencesFormProps> = ({
 	setOutline,
 	setDraft,
 	setTraceItems,
+	sendUserMessage,
 }) => {
 	const [currentReferenceUrl, setCurrentReferenceUrl] = useState('');
 
@@ -42,66 +42,60 @@ const ReferencesForm: React.FC<ReferencesFormProps> = ({
 		if (!agent) return;
 
 		setCompletedSelections((prev) => new Set(prev).add('references'));
-		setMessages((prev) => [
-			...prev,
-			{
-				role: 'user',
-				content:
-					(data.referenceUrls?.length || 0) + (data.referenceFiles?.length || 0) > 0
-						? `Added ${data.referenceUrls?.length || 0} URL(s) and ${data.referenceFiles?.length || 0} file(s). Continue.`
-						: 'Skip references',
-			},
-			{
-				role: 'assistant',
-				content:
-					(data.referenceUrls?.length || 0) + (data.referenceFiles?.length || 0) > 0
-						? `✅ Added reference materials. Continuing...`
-						: '⏭️ Skipped references. Continuing...',
-			},
-		]);
 
-		const next = {
-			...agent,
-			referencesCollected: true,
-		} as AgentState;
-		setAgent(next);
+		const userMsg = {
+			role: 'user' as const,
+			content:
+				(data.referenceUrls?.length || 0) + (data.referenceFiles?.length || 0) > 0
+					? `Added ${data.referenceUrls?.length || 0} URL(s) and ${data.referenceFiles?.length || 0} file(s). Continue.`
+					: 'Skip references',
+		};
+
+		setMessages((prev) => [...prev, userMsg]);
 		setIsThinking(true);
 
 		try {
-			let working = next;
-			let guard = 0;
-			while (guard++ < 20) {
-				const { state: ns, halted } = await lgRunNext(working);
-				working = ns;
+			// Send to backend
+			const result = await sendUserMessage(
+				(data.referenceUrls?.length || 0) + (data.referenceFiles?.length || 0) > 0
+					? `Added ${data.referenceUrls?.length || 0} URL(s) and ${data.referenceFiles?.length || 0} file(s). Continue.`
+					: 'Skip references',
+				agent
+			);
 
-				// Break if halted and needs user input
-				if (halted && automationEngine.needsUserInput(ns)) {
-					break;
-				}
+			// Update state from backend response
+			setAgent(result.updatedState);
+			setOutline(result.updatedState.outline);
+			setDraft(result.updatedState.draft);
+
+			if (result.updatedState.trace) {
+				setTraceItems(result.updatedState.trace.map((t) => ({ step: t.step, at: t.at })));
 			}
 
-			setAgent(working);
-			setOutline(working.outline);
-			setDraft(working.draft);
-			setTraceItems(working.trace.map((t) => ({ step: t.step, at: t.at })));
+			// Update parent data
 			updateData({
-				outline: working.outline,
-				blogContent: working.draft,
+				outline: result.updatedState.outline,
+				blogContent: result.updatedState.draft,
 			});
 
-			// Display outline approval if needed
-			if (working.halt?.reason === 'awaiting_approval') {
-				setMessages((prev) => [
-					...prev,
-					{
-						role: 'assistant',
-						content: '📋 Outline is ready! Review it below and approve to continue, or provide feedback to regenerate:',
-						outlineApproval: {
-							outline: working.outline || [],
-						},
-					},
-				]);
-			}
+			// Add assistant response
+			setMessages((prev) => [
+				...prev,
+				{
+					role: 'assistant',
+					content: result.response,
+					...result.metadata
+				},
+			]);
+
+		} catch (error) {
+			console.error('Error processing references:', error);
+			// Revert on error
+			setCompletedSelections((prev) => {
+				const newSet = new Set(prev);
+				newSet.delete('references');
+				return newSet;
+			});
 		} finally {
 			setIsThinking(false);
 		}
@@ -234,11 +228,10 @@ const ReferencesForm: React.FC<ReferencesFormProps> = ({
 				</div>
 				<button
 					disabled={completedSelections.has('references')}
-					className={`w-full px-4 py-2 text-sm font-semibold text-white rounded-lg shadow-md transition-all ${
-						completedSelections.has('references')
+					className={`w-full px-4 py-2 text-sm font-semibold text-white rounded-lg shadow-md transition-all ${completedSelections.has('references')
 							? 'bg-gray-400 cursor-not-allowed'
 							: 'bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 hover:shadow-lg'
-					}`}
+						}`}
 					onClick={handleContinue}
 				>
 					Continue

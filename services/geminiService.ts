@@ -5,6 +5,7 @@ import {
 	Part,
 } from '@google/genai';
 import { BlogData, OutlineSection } from '../types';
+import { retryWithBackoff } from '../utils/retryWithBackoff';
 
 // Helper to safely extract text from Gemini response (handles non-text parts like thoughtSignature)
 const extractTextFromResponse = (response: GenerateContentResponse): string => {
@@ -209,16 +210,25 @@ export const generateTitles = async (
     ["10 AWS Database Services You Need to Know", "The Ultimate Guide to AWS Databases in ${data.targetLocation}", "Why ${data.primaryKeyword} is Crucial for Your Business"]
     `;
 
-	const response: GenerateContentResponse = await ai.models.generateContent(
-		{
-			model: 'gemini-2.5-flash',
-			contents: { parts: [{ text: prompt }] },
-			config: {
-				responseMimeType: 'application/json',
-				responseSchema: {
-					type: Type.ARRAY,
-					items: { type: Type.STRING },
+	const response: GenerateContentResponse = await retryWithBackoff(
+		async () => {
+			return await ai.models.generateContent({
+				model: 'gemini-2.5-flash',
+				contents: { parts: [{ text: prompt }] },
+				config: {
+					responseMimeType: 'application/json',
+					responseSchema: {
+						type: Type.ARRAY,
+						items: { type: Type.STRING },
+					},
 				},
+			});
+		},
+		{
+			maxRetries: 3,
+			initialDelay: 1000,
+			onRetry: (attempt, delay) => {
+				console.log(`   ⏳ Rate limit hit. Retrying in ${Math.ceil(delay / 1000)}s (attempt ${attempt}/3)...`);
 			},
 		}
 	);
@@ -257,13 +267,24 @@ export const generateOutline = async (
 	const plannerPrompt = PLANNING_PROMPT(data);
 	const plannerContentParts = await buildContentParts(plannerPrompt, data);
 	const plannerResponse: GenerateContentResponse =
-		await ai.models.generateContent({
-			model: 'gemini-2.5-flash',
-			contents: { parts: plannerContentParts },
-			config: {
-				tools: [{ googleSearch: {} }, { urlContext: {} }],
+		await retryWithBackoff(
+			async () => {
+				return await ai.models.generateContent({
+					model: 'gemini-2.5-flash',
+					contents: { parts: plannerContentParts },
+					config: {
+						tools: [{ googleSearch: {} }, { urlContext: {} }],
+					},
+				});
 			},
-		});
+			{
+				maxRetries: 3,
+				initialDelay: 1000,
+				onRetry: (attempt, delay) => {
+					console.log(`   ⏳ Rate limit hit. Retrying in ${Math.ceil(delay / 1000)}s (attempt ${attempt}/3)...`);
+				},
+			}
+		);
 	const h2Plan: string[] = cleanAndParseJson(plannerResponse.text);
 
 	if (!h2Plan || h2Plan.length === 0) {
@@ -282,13 +303,24 @@ export const generateOutline = async (
 		);
 
 		const executorResponse: GenerateContentResponse =
-			await ai.models.generateContent({
-				model: 'gemini-2.5-flash',
-				contents: { parts: executorContentParts },
-				config: {
-					tools: [{ googleSearch: {} }, { urlContext: {} }],
+			await retryWithBackoff(
+				async () => {
+					return await ai.models.generateContent({
+						model: 'gemini-2.5-flash',
+						contents: { parts: executorContentParts },
+						config: {
+							tools: [{ googleSearch: {} }, { urlContext: {} }],
+						},
+					});
 				},
-			});
+				{
+					maxRetries: 3,
+					initialDelay: 1000,
+					onRetry: (attempt, delay) => {
+						console.log(`   ⏳ Rate limit hit. Retrying in ${Math.ceil(delay / 1000)}s (attempt ${attempt}/3)...`);
+					},
+				}
+			);
 
 		return cleanAndParseJson(executorResponse.text) as OutlineSection;
 	});

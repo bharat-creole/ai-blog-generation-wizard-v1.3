@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
-import { AgentState } from '../../../services/langgraph/agentGraph';
-import { runNext as lgRunNext } from '../../../services/langgraph/agentGraph';
-import * as automationEngine from '../../../services/automationEngine';
+import { AgentState } from '../../../../server/agent/state';
 import { Interlink, ChatMessage, BlogData } from '../../../types';
 
 interface InterlinkingFormProps {
@@ -18,6 +16,7 @@ interface InterlinkingFormProps {
 	setOutline: React.Dispatch<React.SetStateAction<any[]>>;
 	setDraft: React.Dispatch<React.SetStateAction<string>>;
 	setTraceItems: React.Dispatch<React.SetStateAction<any[]>>;
+	sendUserMessage: (message: string, agentState: AgentState) => Promise<{ response: string; updatedState: AgentState; metadata?: any }>;
 }
 
 const InterlinkingForm: React.FC<InterlinkingFormProps> = ({
@@ -34,6 +33,7 @@ const InterlinkingForm: React.FC<InterlinkingFormProps> = ({
 	setOutline,
 	setDraft,
 	setTraceItems,
+	sendUserMessage,
 }) => {
 	const [interlinkKeyword, setInterlinkKeyword] = useState('');
 	const [interlinkUrl, setInterlinkUrl] = useState('');
@@ -42,81 +42,60 @@ const InterlinkingForm: React.FC<InterlinkingFormProps> = ({
 		if (!agent) return;
 
 		setCompletedSelections((prev) => new Set(prev).add('interlinking'));
-		setMessages((prev) => [
-			...prev,
-			{
-				role: 'user',
-				content:
-					data.interlinks.length > 0
-						? `Added ${data.interlinks.length} link(s). Continue.`
-						: 'Skip interlinking',
-			},
-			{
-				role: 'assistant',
-				content:
-					data.interlinks.length > 0
-						? `✅ Added ${data.interlinks.length} internal/external links. Continuing...`
-						: '⏭️ Skipped interlinking. Continuing...',
-			},
-		]);
 
-		const next = {
-			...agent,
-			interlinkingCompleted: true,
-		} as AgentState;
-		setAgent(next);
+		const userMsg = {
+			role: 'user' as const,
+			content:
+				data.interlinks.length > 0
+					? `Added ${data.interlinks.length} link(s). Continue.`
+					: 'Skip interlinking',
+		};
+
+		setMessages((prev) => [...prev, userMsg]);
 		setIsThinking(true);
 
 		try {
-			let working = next;
-			let guard = 0;
-			while (guard++ < 20) {
-				const { state: ns, halted } = await lgRunNext(working);
-				working = ns;
+			// Send to backend
+			const result = await sendUserMessage(
+				data.interlinks.length > 0
+					? `Added ${data.interlinks.length} link(s). Continue.`
+					: 'Skip interlinking',
+				agent
+			);
 
-				// Break if halted and needs user input
-				if (halted && automationEngine.needsUserInput(ns)) {
-					break;
-				}
+			// Update state from backend response
+			setAgent(result.updatedState);
+			setOutline(result.updatedState.outline);
+			setDraft(result.updatedState.draft);
+
+			if (result.updatedState.trace) {
+				setTraceItems(result.updatedState.trace.map((t) => ({ step: t.step, at: t.at })));
 			}
 
-			setAgent(working);
-			setOutline(working.outline);
-			setDraft(working.draft);
-			setTraceItems(working.trace.map((t) => ({ step: t.step, at: t.at })));
+			// Update parent data
 			updateData({
-				outline: working.outline,
-				blogContent: working.draft,
+				outline: result.updatedState.outline,
+				blogContent: result.updatedState.draft,
 			});
 
-			// Display references form if needed
-			if (working.halt?.reason === 'await_references') {
-				setMessages((prev) => [
-					...prev,
-					{
-						role: 'assistant',
-						content: '📚 Add reference materials (URLs or files) to improve content quality, or click "Continue" to skip:',
-						referencesForm: {
-							currentUrls: working.data.referenceUrls || [],
-							currentFiles: working.data.referenceFiles || [],
-						},
-					},
-				]);
-			}
+			// Add assistant response
+			setMessages((prev) => [
+				...prev,
+				{
+					role: 'assistant',
+					content: result.response,
+					...result.metadata
+				},
+			]);
 
-			// Display outline approval if needed
-			if (working.halt?.reason === 'awaiting_approval') {
-				setMessages((prev) => [
-					...prev,
-					{
-						role: 'assistant',
-						content: '📋 Outline is ready! Review it below and approve to continue, or provide feedback to regenerate:',
-						outlineApproval: {
-							outline: working.outline || [],
-						},
-					},
-				]);
-			}
+		} catch (error) {
+			console.error('Error processing interlinking:', error);
+			// Revert on error
+			setCompletedSelections((prev) => {
+				const newSet = new Set(prev);
+				newSet.delete('interlinking');
+				return newSet;
+			});
 		} finally {
 			setIsThinking(false);
 		}
@@ -224,11 +203,10 @@ const InterlinkingForm: React.FC<InterlinkingFormProps> = ({
 			<div className='text-right'>
 				<button
 					disabled={completedSelections.has('interlinking')}
-					className={`px-4 py-2 text-sm text-white rounded transition-colors ${
-						completedSelections.has('interlinking')
+					className={`px-4 py-2 text-sm text-white rounded transition-colors ${completedSelections.has('interlinking')
 							? 'bg-gray-400 cursor-not-allowed'
 							: 'bg-green-600 hover:bg-green-700'
-					}`}
+						}`}
 					onClick={handleContinue}
 				>
 					Continue{' '}
