@@ -1,7 +1,5 @@
 import React, { useCallback, useEffect } from 'react';
-import {
-	AgentState,
-} from '../services/langgraph/agentGraph';
+import { AgentState } from '../services/langgraph/agentGraph';
 import { useAgentExecutionV3 } from './agentComponents/hooks/useAgentExecutionV3';
 import Spinner from './common/Spinner';
 import { BlogData, Interlink, AutomationLevel, ChatMessage } from '../types';
@@ -31,9 +29,7 @@ import {
 	validateTopic,
 } from './agentComponents/utils/topicExtraction';
 import { createUserMessage } from './agentComponents/utils/messageUtils';
-import {
-	initializeAgentState,
-} from './agentComponents/utils/agentStateUtils';
+import { initializeAgentState } from './agentComponents/utils/agentStateUtils';
 
 // Styles
 import { markdownStyles } from './agentComponents/styles/agentModeStyles';
@@ -119,8 +115,18 @@ const AgentMode: React.FC<Props> = ({
 	// Use intent analysis hook
 	const { analyzeUserIntent } = useIntentAnalysis();
 
-	// Use agent execution hook
-	const { sendUserMessage } = useAgentExecutionV3(setMessages, setIsStreaming, setIsThinking);
+	// Use agent execution hook with setters for real-time updates
+	const { sendUserMessage } = useAgentExecutionV3(
+		setMessages,
+		setIsStreaming,
+		setIsThinking,
+		{
+			setDraft,
+			setAgent,
+			setOutline,
+			updateData,
+		}
+	);
 
 	// Set streaming to true on mount for initial assistant message
 	useEffect(() => {
@@ -144,10 +150,10 @@ const AgentMode: React.FC<Props> = ({
 		if (!agent?.halt?.reason) return;
 
 		const haltToSelectionMap: Record<string, string> = {
-			'await_keyword_selection': 'primaryKeyword',
-			'await_secondary_selection': 'secondaryKeywords',
-			'await_title_selection': 'title',
-			'awaiting_approval': 'outline',
+			await_keyword_selection: 'primaryKeyword',
+			await_secondary_selection: 'secondaryKeywords',
+			await_title_selection: 'title',
+			awaiting_approval: 'outline',
 		};
 
 		const selectionKey = haltToSelectionMap[agent.halt.reason];
@@ -155,8 +161,10 @@ const AgentMode: React.FC<Props> = ({
 		// If we're at a step that has a completed selection, clear it
 		// This allows re-selection when user goes back
 		if (selectionKey && completedSelections.has(selectionKey)) {
-			console.log(`🔄 [UI FIX] Clearing completed selection for: ${selectionKey} (halt reason: ${agent.halt.reason})`);
-			setCompletedSelections(prev => {
+			console.log(
+				`🔄 [UI FIX] Clearing completed selection for: ${selectionKey} (halt reason: ${agent.halt.reason})`
+			);
+			setCompletedSelections((prev) => {
 				const newSet = new Set(prev);
 				newSet.delete(selectionKey);
 				return newSet;
@@ -235,6 +243,7 @@ const AgentMode: React.FC<Props> = ({
 					},
 				]);
 
+				messageSentToBackend = true; // Mark that user message was already added
 				// Continue to backend execution below...
 			}
 		}
@@ -388,6 +397,7 @@ const AgentMode: React.FC<Props> = ({
 						content: dataStatus,
 					},
 				]);
+				messageSentToBackend = true; // Mark that user message was already added
 				setInput('');
 				setIsThinking(true);
 
@@ -424,6 +434,7 @@ const AgentMode: React.FC<Props> = ({
 					content: "🚀 **Switched to Full Automation Mode!**\n\nI'll handle all remaining steps automatically. No more questions - let me complete your blog!",
 				},
 			]);
+			messageSentToBackend = true; // Mark that user message was already added
 			setInput('');
 			setIsThinking(true);
 
@@ -459,11 +470,13 @@ const AgentMode: React.FC<Props> = ({
 					content: "🔄 **Switching to Automation Mode**\n\nI'll handle all remaining steps automatically without asking questions. Let me complete your blog!",
 				},
 			]);
+			messageSentToBackend = true; // Mark that user message was already added
 			setInput('');
 			setIsThinking(true);
 
 			// Continue to backend execution below...
-		} else if (!messageSentToBackend) { // Only add user message if not already handled by a specific flow
+		} else if (!messageSentToBackend) {
+			// Only add user message if not already handled by a specific flow
 			// Normal message flow
 			setMessages((prev) => [...prev, userMsg]);
 			setInput('');
@@ -497,7 +510,10 @@ const AgentMode: React.FC<Props> = ({
 			};
 
 			// Send message to backend
-			const result = await sendUserMessage(input.trim(), currentState);
+			const result = await sendUserMessage(
+				input.trim(),
+				currentState
+			);
 
 			// Display assistant response
 			setMessages((prev) => [
@@ -505,7 +521,7 @@ const AgentMode: React.FC<Props> = ({
 				{
 					role: 'assistant',
 					content: result.response,
-					...result.metadata // ✨ Attach UI metadata (options, forms, etc.)
+					...result.metadata, // ✨ Attach UI metadata (options, forms, etc.)
 				},
 			]);
 
@@ -526,7 +542,8 @@ const AgentMode: React.FC<Props> = ({
 			updateData({
 				topic: result.updatedState.data.topic,
 				primaryKeyword: result.updatedState.data.primaryKeyword,
-				secondaryKeywords: result.updatedState.data.secondaryKeywords,
+				secondaryKeywords:
+					result.updatedState.data.secondaryKeywords,
 				outline: result.updatedState.outline,
 				blogContent: result.updatedState.draft,
 				targetLocation: result.updatedState.data.targetLocation,
@@ -541,7 +558,6 @@ const AgentMode: React.FC<Props> = ({
 					onCollapseSidebar();
 				}
 			}
-
 		} catch (e: any) {
 			setError(e?.message || 'Agent failed to respond.');
 		} finally {
