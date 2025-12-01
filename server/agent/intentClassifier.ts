@@ -94,9 +94,12 @@ CRITICAL CLASSIFICATION RULES (PRIORITY ORDER - CHECK IN THIS ORDER):
    - "what can you do", "how can you help", "what are your capabilities"
    - type: "help_request"
 
-4. **OFF-TOPIC QUESTIONS**
+4. **OFF-TOPIC QUESTIONS / GIBBERISH / INVALID INPUT**
    - Weather, math, coding help, general knowledge NOT related to blog writing
+   - Random characters, gibberish, nonsensical text (e.g., "dljfdlhassdnlajsdnaljs", "asdfghjkl", "123456789")
+   - Single characters, repeated characters, or text with no meaningful words
    - type: "off_topic"
+   - **CRITICAL**: If input is gibberish or random characters, set type: "off_topic" and extractedData.topic: null
 
 5. **QUERY ABOUT BLOG PROCESS**
    - Questions specifically about blog creation: "Can you suggest keywords?", "How's my SEO?"
@@ -131,6 +134,13 @@ TOPIC EXTRACTION RULES:
 - If message is ONLY automation phrases with no real topic, set extractedData.topic: null
 - If user says "generate blog by yourself", the topic is NULL (they're requesting automation)
 - If user says "write about AWS, you handle it", the topic is "AWS" AND autoFillRequested: true
+- **CRITICAL**: DO NOT extract gibberish, random characters, or nonsensical text as topics
+- Examples of INVALID topics (set extractedData.topic: null):
+  * "dljfdlhassdnlajsdnaljs" → type: "off_topic", extractedData.topic: null
+  * "asdfghjkl" → type: "off_topic", extractedData.topic: null
+  * "123456789" → type: "off_topic", extractedData.topic: null
+  * "aaaaa" → type: "off_topic", extractedData.topic: null
+  * Random keyboard mashing → type: "off_topic", extractedData.topic: null
 
 CORRECTION PATTERN DETECTION (CRITICAL):
 - Detect when user is correcting themselves: "as X actually", "I mean X", "correction: X", "actually X", "no, X"

@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useEffect, useRef, useMemo } from 'react';
 import { AgentState } from '../../../../server/agent/state';
 import { ChatMessage } from '../../../types';
 
 interface TitleSelectionProps {
 	titles: string[];
 	agent: AgentState | null;
+	selectedTitle: string | null;
+	setSelectedTitle: React.Dispatch<React.SetStateAction<string | null>>;
 	completedSelections: Set<string>;
 	setCompletedSelections: React.Dispatch<React.SetStateAction<Set<string>>>;
 	setMessages: React.Dispatch<React.SetStateAction<ChatMessage[]>>;
@@ -20,6 +22,8 @@ interface TitleSelectionProps {
 const TitleSelection: React.FC<TitleSelectionProps> = ({
 	titles,
 	agent,
+	selectedTitle,
+	setSelectedTitle,
 	completedSelections,
 	setCompletedSelections,
 	setMessages,
@@ -31,15 +35,43 @@ const TitleSelection: React.FC<TitleSelectionProps> = ({
 	setTraceItems,
 	sendUserMessage,
 }) => {
-	const handleSelect = async (title: string) => {
-		if (!agent) return;
+	// Create a stable key from titles to detect actual changes
+	const titlesKey = useMemo(() => {
+		return titles.sort().join('|');
+	}, [titles]);
+
+	// Track previous titles to detect when they change
+	const prevTitlesRef = useRef<string>('');
+
+	// Reset selection whenever component loads with new titles
+	useEffect(() => {
+		const isCompleted = completedSelections.has('title');
+		
+		// Reset if:
+		// 1. Titles changed (different set of titles)
+		// 2. Component is shown with titles and selection is not completed
+		const shouldReset = 
+			titlesKey !== prevTitlesRef.current &&
+			titles.length > 0 &&
+			!isCompleted;
+		
+		if (shouldReset) {
+			setSelectedTitle(null);
+		}
+		
+		// Always update ref to track current titles
+		prevTitlesRef.current = titlesKey;
+	}, [titlesKey, titles.length, completedSelections, setSelectedTitle]);
+
+	const handleConfirm = async () => {
+		if (!agent || !selectedTitle) return;
 
 		setCompletedSelections((prev) => new Set(prev).add('title'));
 
 		// Add user message immediately for UI feedback
 		const userMsg = {
 			role: 'user' as const,
-			content: `Select "${title}" as title`,
+			content: `Select "${selectedTitle}" as title`,
 		};
 
 		setMessages((prev) => [...prev, userMsg]);
@@ -48,7 +80,7 @@ const TitleSelection: React.FC<TitleSelectionProps> = ({
 		try {
 			// Send selection to backend
 			const result = await sendUserMessage(
-				`Select "${title}" as title`,
+				`Select "${selectedTitle}" as title`,
 				agent
 			);
 
@@ -95,26 +127,47 @@ const TitleSelection: React.FC<TitleSelectionProps> = ({
 	if (!titles || titles.length === 0) return null;
 
 	return (
-		<div className='mt-3 space-y-2'>
-			{titles.map((title, idx) => (
-				<div
-					key={idx}
-					className='flex items-center justify-between text-sm bg-white border rounded p-3 hover:bg-gray-50 transition-colors'
-				>
-					<div className='flex-1 font-medium text-gray-800'>{title}</div>
-					<button
-						disabled={completedSelections.has('title')}
-						className={`px-3 py-1 text-xs text-white rounded transition-colors ml-3 ${completedSelections.has('title')
-								? 'bg-gray-400 cursor-not-allowed'
-								: 'bg-purple-500 hover:bg-purple-600'
+		<>
+			<div className='mt-3 space-y-2'>
+				{titles.map((title, idx) => {
+					const isSelected = selectedTitle === title;
+					return (
+						<label
+							key={idx}
+							className={`flex items-center justify-between text-sm bg-white border rounded p-3 cursor-pointer transition-colors ${
+								isSelected
+									? 'border-purple-500 bg-purple-50'
+									: 'border-gray-200 hover:border-purple-400 hover:bg-gray-50'
 							}`}
-						onClick={() => handleSelect(title)}
-					>
-						Select
-					</button>
-				</div>
-			))}
-		</div>
+						>
+							<div className='flex items-center gap-2 flex-1'>
+								<input
+									type='radio'
+									name='title'
+									disabled={completedSelections.has('title')}
+									checked={isSelected}
+									onChange={() => setSelectedTitle(title)}
+									className='w-4 h-4 text-purple-600 focus:ring-purple-500 border-gray-300'
+								/>
+								<div className='flex-1 font-medium text-gray-800'>{title}</div>
+							</div>
+						</label>
+					);
+				})}
+			</div>
+			<div className='mt-3 text-right'>
+				<button
+					disabled={
+						completedSelections.has('title') ||
+						!selectedTitle
+					}
+					className='px-4 py-2 text-sm bg-purple-600 text-white rounded hover:bg-purple-700 transition-colors disabled:bg-purple-300 disabled:cursor-not-allowed'
+					onClick={handleConfirm}
+				>
+					Confirm Selection
+				</button>
+			</div>
+		</>
 	);
 };
 

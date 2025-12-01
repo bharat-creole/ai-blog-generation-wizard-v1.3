@@ -8,6 +8,100 @@ import { classifyIntent, UserIntent } from './intentClassifier';
 import { BlogData } from '../../types';
 import * as automationEngine from '../../services/automationEngine';
 
+/**
+ * Validates if a topic is valid (not gibberish or irrelevant)
+ */
+const isValidTopic = (topic: string | null | undefined): boolean => {
+	if (!topic || !topic.trim()) return false;
+
+	const trimmed = topic.trim();
+
+	// Too short to be meaningful
+	if (trimmed.length < 3) return false;
+
+	// Check for common invalid patterns
+	const invalidPatterns = [
+		/^[^a-zA-Z]*$/, // No letters at all
+		/^(blog|it|yourself|everything|anything|something|whatever|random)$/i, // Common invalid words
+		/^[a-z]{1,2}$/i, // Single or double letter
+	];
+
+	for (const pattern of invalidPatterns) {
+		if (pattern.test(trimmed)) return false;
+	}
+
+	// Check for gibberish: too many repeated characters or random character sequences
+	const hasRepeatedChars = /(.)\1{4,}/.test(trimmed); // Same char repeated 5+ times
+	const hasRandomChars = /[^a-zA-Z0-9\s]{3,}/.test(trimmed); // 3+ special chars in a row
+	const tooManySpecialChars =
+		(trimmed.match(/[^a-zA-Z0-9\s]/g) || []).length >
+		trimmed.length * 0.3; // More than 30% special chars
+
+	if (hasRepeatedChars || hasRandomChars || tooManySpecialChars)
+		return false;
+
+	// Check if it looks like random keyboard mashing (no vowels or all consonants)
+	const hasVowels = /[aeiouAEIOU]/.test(trimmed);
+	const consonantRatio =
+		(
+			trimmed.match(
+				/[bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ]/g
+			) || []
+		).length / trimmed.length;
+
+	// If no vowels and high consonant ratio, likely gibberish
+	if (!hasVowels && consonantRatio > 0.7 && trimmed.length > 5)
+		return false;
+
+	// Check for common words that aren't topics
+	const commonNonTopics = [
+		'yes',
+		'no',
+		'ok',
+		'okay',
+		'sure',
+		'maybe',
+		'thanks',
+		'thank you',
+	];
+	if (commonNonTopics.includes(trimmed.toLowerCase())) return false;
+
+	return true;
+};
+
+/**
+ * Detects if input is gibberish/nonsensical
+ */
+const isGibberish = (text: string): boolean => {
+	if (!text || text.trim().length < 3) return false;
+
+	const trimmed = text.trim();
+
+	// Check for random character sequences (like "dljfdlhassdnlajsdnaljs")
+	// High ratio of consonants to vowels, no recognizable words
+	const vowels = (trimmed.match(/[aeiouAEIOU]/g) || []).length;
+	const consonants = (
+		trimmed.match(/[bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ]/g) || []
+	).length;
+	const totalLetters = vowels + consonants;
+
+	if (totalLetters === 0) return true; // No letters at all
+
+	// If very low vowel ratio and long string, likely gibberish
+	const vowelRatio = vowels / totalLetters;
+	if (vowelRatio < 0.15 && trimmed.length > 8) return true;
+
+	// Check for repeated character patterns (like "aaaaa" or "abcabcabc")
+	const hasRepeatedPattern = /(.{2,})\1{2,}/.test(trimmed);
+	if (hasRepeatedPattern && trimmed.length > 10) return true;
+
+	// Check if it's mostly special characters or numbers
+	const letterRatio = totalLetters / trimmed.length;
+	if (letterRatio < 0.5 && trimmed.length > 5) return true;
+
+	return false;
+};
+
 export interface ConversationResponse {
 	assistantMessage: string;
 	assistantMessages?: string[]; // Optional array of separate messages for different steps
@@ -30,12 +124,22 @@ export const processMessage = async (
 	console.log('📊 [STATE] Current State:');
 	console.log(`   currentStep: ${currentState.currentStep || 'undefined'}`);
 	console.log(`   topic: ${currentState.data?.topic || 'none'}`);
-	console.log(`   primaryKeyword: ${currentState.data?.primaryKeyword || 'none'}`);
+	console.log(
+		`   primaryKeyword: ${currentState.data?.primaryKeyword || 'none'}`
+	);
 	console.log(`   title: ${currentState.data?.title || 'none'}`);
-	console.log(`   hasOutline: ${currentState.outline?.length > 0 ? 'yes' : 'no'}`);
-	console.log(`   outlineApproved: ${currentState.outlineApproved || false}`);
+	console.log(
+		`   hasOutline: ${currentState.outline?.length > 0 ? 'yes' : 'no'}`
+	);
+	console.log(
+		`   outlineApproved: ${currentState.outlineApproved || false}`
+	);
 	console.log(`   halt: ${currentState.halt?.reason || 'none'}`);
-	console.log(`   automationLevel: ${currentState.preferences?.automationLevel || 'none'}`);
+	console.log(
+		`   automationLevel: ${
+			currentState.preferences?.automationLevel || 'none'
+		}`
+	);
 
 	// Step 1: Classify intent
 	const intent: UserIntent = await classifyIntent(
@@ -54,7 +158,8 @@ export const processMessage = async (
 			topic: intent.extractedData.topic || null,
 			primaryKeyword: intent.extractedData.primaryKeyword || null,
 			title: intent.extractedData.title || null,
-			secondaryKeywords: intent.extractedData.secondaryKeywords?.length || 0,
+			secondaryKeywords:
+				intent.extractedData.secondaryKeywords?.length || 0,
 		});
 	}
 	if (intent.controlPreferences) {
@@ -70,6 +175,15 @@ export const processMessage = async (
 			return handleHelpRequest(currentState);
 
 		case 'off_topic':
+			// Check if the message itself is gibberish
+			if (isGibberish(userMessage)) {
+				return {
+					assistantMessage:
+						"I couldn't understand your message. Please provide a clear blog topic to get started.\\n\\n**Examples:**\\n- 'Write about cloud computing'\\n- 'Topic: Machine learning'\\n- 'I want to create a blog on web development'",
+					stateUpdates: {},
+					shouldRunAgent: false,
+				};
+			}
 			return handleOffTopic(currentState);
 
 		case 'full_automation':
@@ -139,10 +253,20 @@ const handleHelpRequest = (_currentState: AgentState): ConversationResponse => {
 };
 
 // Handler for off-topic queries
-const handleOffTopic = (_currentState: AgentState): ConversationResponse => {
+const handleOffTopic = (currentState: AgentState): ConversationResponse => {
+	// Check if user has already started blog creation
+	if (hasStartedBlogCreation(currentState)) {
+		return {
+			assistantMessage:
+				"I'm specifically designed to help you create blog content! 📝\\n\\nLet's continue with your blog. What would you like to do next?",
+			stateUpdates: {},
+			shouldRunAgent: false,
+		};
+	}
+
 	return {
 		assistantMessage:
-			"I'm specifically designed to help you create blog content! 📝\\n\\nTell me what blog topic you'd like to write about.",
+			"I'm specifically designed to help you create blog content! 📝\\n\\nPlease provide a clear, meaningful blog topic to get started.\\n\\n**Examples:**\\n- 'Cloud computing'\\n- 'Machine learning'\\n- 'Web development best practices'",
 		stateUpdates: {},
 		shouldRunAgent: false,
 	};
@@ -150,11 +274,45 @@ const handleOffTopic = (_currentState: AgentState): ConversationResponse => {
 
 // Handler for full automation
 const handleFullAutomation = (
-	_userMessage: string,
+	userMessage: string,
 	intent: UserIntent,
 	currentState: AgentState
 ): ConversationResponse => {
 	const extractedData = intent.extractedData || {};
+
+	// ✨ VALIDATION: Check if topic is valid (if provided)
+	if (extractedData.topic) {
+		// Check if the topic itself is gibberish
+		if (isGibberish(extractedData.topic)) {
+			return {
+				assistantMessage:
+					"I couldn't understand that topic. Please provide a clear, meaningful topic for your blog.\n\n**Examples of good topics:**\n- 'Cloud computing'\n- 'Machine learning'\n- 'Remote work benefits'",
+				stateUpdates: {},
+				shouldRunAgent: false,
+			};
+		}
+
+		// Check if topic is valid
+		if (!isValidTopic(extractedData.topic)) {
+			return {
+				assistantMessage:
+					"That doesn't look like a valid blog topic. Please provide a clear topic related to your blog content.",
+				stateUpdates: {},
+				shouldRunAgent: false,
+			};
+		}
+	}
+
+	// Check if the entire message is gibberish (when no valid topic extracted)
+	if (!extractedData.topic && isGibberish(userMessage)) {
+		return {
+			assistantMessage:
+				"I couldn't understand your message. Please provide a clear blog topic or say 'generate blog automatically' with a topic.\n\n**Examples:**\n- 'Generate blog automatically about cloud computing'\n- 'Write about machine learning, you handle it'",
+			stateUpdates: {},
+			shouldRunAgent: false,
+		};
+	}
+
 	const updatedData = {
 		...currentState.data,
 		...(extractedData.topic && { topic: extractedData.topic }),
@@ -184,12 +342,52 @@ const handleFullAutomation = (
 
 // Handler for partial info
 const handlePartialInfo = (
-	_userMessage: string,
+	userMessage: string,
 	intent: UserIntent,
 	currentState: AgentState
 ): ConversationResponse => {
 	const extractedData = intent.extractedData || {};
-	
+
+	// ✨ VALIDATION: Check if topic is valid (not gibberish or invalid)
+	if (extractedData.topic) {
+		// Check if the topic itself is gibberish
+		if (isGibberish(extractedData.topic)) {
+			return {
+				assistantMessage:
+					"I couldn't understand that topic. Please provide a clear, meaningful topic for your blog.\n\n**Examples of good topics:**\n- 'Cloud computing'\n- 'Machine learning'\n- 'Remote work benefits'\n- 'Web development best practices'",
+				stateUpdates: {},
+				shouldRunAgent: false,
+			};
+		}
+
+		// Check if topic is valid
+		if (!isValidTopic(extractedData.topic)) {
+			return {
+				assistantMessage:
+					"That doesn't look like a valid blog topic. Please provide a clear topic related to your blog content.\n\n**Examples:**\n- 'Artificial intelligence in healthcare'\n- 'Best practices for e-commerce'\n- 'Sustainable energy solutions'",
+				stateUpdates: {},
+				shouldRunAgent: false,
+			};
+		}
+	}
+
+	// Check if the entire message is gibberish (when no valid data extracted)
+	if (
+		!extractedData.topic &&
+		!extractedData.primaryKeyword &&
+		!extractedData.title &&
+		!extractedData.secondaryKeywords
+	) {
+		if (isGibberish(userMessage)) {
+			return {
+				assistantMessage:
+					"I couldn't understand your message. Please provide a clear blog topic or tell me what you'd like to write about.\n\n**Examples:**\n- 'Write about cloud computing'\n- 'Topic: Machine learning'\n- 'I want to create a blog on web development'",
+				stateUpdates: {},
+				shouldRunAgent: false,
+			};
+		}
+	}
+
 	// ✨ STEP 1: Update ALL provided fields in state first
 	const updatedData = {
 		...currentState.data,
@@ -218,11 +416,13 @@ const handlePartialInfo = (
 	if (extractedData.title)
 		capturedItems.push(`title: "${extractedData.title}"`);
 
-	// Create base capture message
+	// Create base capture message with better formatting
 	const baseMessage =
 		capturedItems.length > 0
-			? `Got it! I've captured: ${capturedItems.join(', ')}.`
-			: `Got it! Ready to proceed.`;
+			? `✅ **Information captured!**\n\nI've saved: ${capturedItems.join(
+					', '
+			  )}.`
+			: `✅ **Ready to proceed!**`;
 
 	// ✨ CRITICAL: Reset flags if critical fields changed
 	const criticalFieldsUpdated =
@@ -230,10 +430,12 @@ const handlePartialInfo = (
 			extractedData.topic !== currentState.data.topic) ||
 		(extractedData.primaryKeyword &&
 			extractedData.primaryKeyword !==
-			currentState.data.primaryKeyword);
+				currentState.data.primaryKeyword);
 
 	// Helper to safely convert to Set
-	const toSet = (value: Set<string> | string[] | undefined): Set<string> => {
+	const toSet = (
+		value: Set<string> | string[] | undefined
+	): Set<string> => {
 		if (!value) return new Set();
 		if (value instanceof Set) return value;
 		if (Array.isArray(value)) return new Set(value);
@@ -245,7 +447,12 @@ const handlePartialInfo = (
 		// Merge with existing userProvidedFields instead of replacing
 		userProvidedFields: new Set([
 			...toSet(currentState.userProvidedFields),
-			...Object.keys(extractedData).filter(key => extractedData[key as keyof typeof extractedData] != null)
+			...Object.keys(extractedData).filter(
+				(key) =>
+					extractedData[
+						key as keyof typeof extractedData
+					] != null
+			),
 		]),
 	};
 
@@ -268,12 +475,15 @@ const handlePartialInfo = (
 		shouldRunAgent: boolean;
 	} => {
 		// Check in order: topic → primary_keyword → secondary_keywords → title → outline
-		
-		// 1. Check if topic is missing
-		if (!updatedData.topic?.trim()) {
+
+		// 1. Check if topic is missing or invalid
+		if (
+			!updatedData.topic?.trim() ||
+			!isValidTopic(updatedData.topic)
+		) {
 			return {
 				step: 'topic',
-				message: 'Please provide a topic for your blog.',
+				message: 'Please provide a valid topic for your blog.\n\n**Examples:**\n- "Cloud computing"\n- "Machine learning"\n- "Web development best practices"',
 				shouldRunAgent: false,
 			};
 		}
@@ -282,7 +492,7 @@ const handlePartialInfo = (
 		if (!updatedData.primaryKeyword?.trim()) {
 			return {
 				step: 'primary_keyword',
-				message: 'Let me research keywords for you.',
+				message: "🔍 **Researching primary keywords...**\n\nI'm analyzing your topic to find the best primary keyword options for SEO optimization.",
 				shouldRunAgent: true,
 			};
 		}
@@ -294,7 +504,7 @@ const handlePartialInfo = (
 		) {
 			return {
 				step: 'secondary_keywords',
-				message: 'Moving on to secondary keyword research.',
+				message: "🔍 **Researching secondary keywords...**\n\nI'm finding related keywords that complement your primary keyword to expand your content's reach.",
 				shouldRunAgent: true,
 			};
 		}
@@ -303,7 +513,7 @@ const handlePartialInfo = (
 		if (!updatedData.title?.trim()) {
 			return {
 				step: 'title',
-				message: 'Generating titles now.',
+				message: "📝 **Generating title options...**\n\nI'm creating engaging title options that incorporate your keywords and appeal to your target audience.",
 				shouldRunAgent: true,
 			};
 		}
@@ -349,7 +559,7 @@ const handlePartialInfo = (
 
 	const nextStep = determineNextStep();
 	stateUpdates.currentStep = nextStep.step;
-	
+
 	// Set halt reason if needed
 	if (nextStep.step === 'references') {
 		stateUpdates.halt = { reason: 'await_references_selection' };
@@ -368,7 +578,8 @@ const handlePartialInfo = (
 
 	return {
 		assistantMessage: assistantMessage,
-		assistantMessages: assistantMessages.length > 1 ? assistantMessages : undefined,
+		assistantMessages:
+			assistantMessages.length > 1 ? assistantMessages : undefined,
 		stateUpdates,
 		shouldRunAgent: nextStep.shouldRunAgent,
 	};
@@ -461,7 +672,7 @@ const handleRefinement = (
 			`🔄 [REFINEMENT] Topic change detected: "${newTopic}". Resetting flow.`
 		);
 		return {
-			assistantMessage: `Got it! I'll update the topic to "${newTopic}" and restart the process.`,
+			assistantMessage: `✅ **Topic updated!**\n\nI've set your blog topic to "${newTopic}". I'll restart the process with this new topic.`,
 			stateUpdates: {
 				...clearDependentFields('topic'),
 				currentStep: 'topic', // ✨ Jump to topic step
@@ -479,7 +690,7 @@ const handleRefinement = (
 			`🔄 [REFINEMENT] Primary keyword change: "${newPrimaryKeyword}"`
 		);
 		return {
-			assistantMessage: `Got it! I've updated the primary keyword to "${newPrimaryKeyword}".`,
+			assistantMessage: `✅ **Primary keyword updated!**\n\nI've set your primary keyword to "${newPrimaryKeyword}". I'll now research secondary keywords that complement it.`,
 			stateUpdates: {
 				...clearDependentFields('primaryKeyword'),
 				currentStep: 'primary_keyword', // ✨ Jump to primary keyword step
@@ -497,7 +708,7 @@ const handleRefinement = (
 	if (newSecondaryKeywords) {
 		console.log(`🔄 [REFINEMENT] Secondary keywords update`);
 		return {
-			assistantMessage: `Got it! I've updated the secondary keywords.`,
+			assistantMessage: `✅ **Secondary keywords updated!**\n\nI've updated your secondary keywords. I'll now generate title options that incorporate these keywords.`,
 			stateUpdates: {
 				...clearDependentFields('secondaryKeywords'),
 				currentStep: 'secondary_keywords', // ✨ Jump to secondary keywords step
@@ -521,7 +732,7 @@ const handleRefinement = (
 	if (newTitle && !isAskingForOptions) {
 		console.log(`🔄 [REFINEMENT] Title change: "${newTitle}"`);
 		return {
-			assistantMessage: `Got it! I've updated the title to "${newTitle}".`,
+			assistantMessage: `✅ **Title updated!**\n\nI've set your blog title to "${newTitle}". Ready to proceed with outline generation.`,
 			stateUpdates: {
 				...clearDependentFields('title'),
 				currentStep: 'title', // ✨ Jump to title step
@@ -587,7 +798,7 @@ const handleRefinement = (
 		}
 
 		return {
-			assistantMessage: `Sure! Let me show you options for ${modificationRequest}.`,
+			assistantMessage: `✅ **Generating new options...**\n\nI'll show you fresh options for ${modificationRequest}. Please wait a moment while I research and generate them.`,
 			stateUpdates,
 			shouldRunAgent: true,
 		};
@@ -647,7 +858,8 @@ const handleApproval = (currentState: AgentState): ConversationResponse => {
 	) {
 		// User approved outline generation
 		return {
-			assistantMessage: 'Great! Generating your outline now...',
+			assistantMessage:
+				"📋 **Generating your blog outline...**\n\nI'm creating a comprehensive outline that structures your content logically and covers all key points based on your topic and keywords.",
 			stateUpdates: {
 				currentStep: 'outline',
 				halt: null,
@@ -659,7 +871,8 @@ const handleApproval = (currentState: AgentState): ConversationResponse => {
 	if (currentState.halt?.reason === 'awaiting_approval') {
 		// User approved the outline
 		return {
-			assistantMessage: 'Great! Proceeding with blog generation...',
+			assistantMessage:
+				"✍️ **Starting blog generation...**\n\nI'll now create your blog post section by section, incorporating all your keywords and following the approved outline.",
 			stateUpdates: {
 				outlineApproved: true,
 				halt: null,
@@ -669,7 +882,10 @@ const handleApproval = (currentState: AgentState): ConversationResponse => {
 	}
 
 	// Handle references step approval
-	if (currentStep === 'references' || currentState.halt?.reason === 'await_references_selection') {
+	if (
+		currentStep === 'references' ||
+		currentState.halt?.reason === 'await_references_selection'
+	) {
 		// Check if we should move to interlinking or outline
 		if (
 			!currentState.data.interlinks ||
@@ -677,7 +893,8 @@ const handleApproval = (currentState: AgentState): ConversationResponse => {
 		) {
 			// Move to interlinking step
 			return {
-				assistantMessage: 'Great! Please add any internal links to your existing content (optional).',
+				assistantMessage:
+					'Great! Please add any internal links to your existing content (optional).',
 				stateUpdates: {
 					currentStep: 'interlinking',
 					halt: { reason: 'await_interlinking_selection' },
@@ -687,7 +904,8 @@ const handleApproval = (currentState: AgentState): ConversationResponse => {
 		} else {
 			// Both optional steps have data, proceed to outline
 			return {
-				assistantMessage: 'Great! Generating outline now...',
+				assistantMessage:
+					"📋 **Generating your blog outline...**\n\nI'm creating a comprehensive outline that structures your content logically and covers all key points based on your topic and keywords.",
 				stateUpdates: {
 					currentStep: 'outline',
 					halt: null,
@@ -698,10 +916,14 @@ const handleApproval = (currentState: AgentState): ConversationResponse => {
 	}
 
 	// Handle interlinking step approval
-	if (currentStep === 'interlinking' || currentState.halt?.reason === 'await_interlinking_selection') {
+	if (
+		currentStep === 'interlinking' ||
+		currentState.halt?.reason === 'await_interlinking_selection'
+	) {
 		// Move to outline generation
 		return {
-			assistantMessage: 'Great! Generating outline now...',
+			assistantMessage:
+				"📋 **Generating your blog outline...**\n\nI'm creating a comprehensive outline that structures your content logically and covers all key points based on your topic and keywords.",
 			stateUpdates: {
 				currentStep: 'outline',
 				halt: null,
@@ -712,7 +934,7 @@ const handleApproval = (currentState: AgentState): ConversationResponse => {
 
 	// Default approval
 	return {
-		assistantMessage: 'Great! Proceeding...',
+		assistantMessage: '✅ **Proceeding to next step...**',
 		stateUpdates: {
 			halt: null,
 		},
@@ -783,4 +1005,3 @@ const extractTopicFromMessage = (message: string): string => {
 
 	return '';
 };
-

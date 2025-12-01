@@ -155,7 +155,7 @@ const SecondaryKeywordSelection: React.FC<SecondaryKeywordSelectionProps> = ({
 								<div>
 									<div className='font-medium text-gray-800'>{kw.text}</div>
 									<div className='text-xs text-gray-500'>
-										Vol: {kw.volume} · Diff: {kw.difficulty.toFixed(2)}
+										Vol: {kw.volume}
 									</div>
 								</div>
 							</div>

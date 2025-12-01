@@ -18,8 +18,12 @@ interface MessageRendererProps {
 	agent: AgentState | null;
 	data: BlogData;
 	selectedSecondaries: string[];
-	completedSelections: Set<string>;
 	setSelectedSecondaries: React.Dispatch<React.SetStateAction<string[]>>;
+	selectedPrimary: string | null;
+	setSelectedPrimary: React.Dispatch<React.SetStateAction<string | null>>;
+	selectedTitle: string | null;
+	setSelectedTitle: React.Dispatch<React.SetStateAction<string | null>>;
+	completedSelections: Set<string>;
 	setCompletedSelections: React.Dispatch<React.SetStateAction<Set<string>>>;
 	setMessages: React.Dispatch<React.SetStateAction<ChatMessage[]>>;
 	setAgent: React.Dispatch<React.SetStateAction<AgentState | null>>;
@@ -51,8 +55,12 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({
 	agent,
 	data,
 	selectedSecondaries,
-	completedSelections,
 	setSelectedSecondaries,
+	selectedPrimary,
+	setSelectedPrimary,
+	selectedTitle,
+	setSelectedTitle,
+	completedSelections,
 	setCompletedSelections,
 	setMessages,
 	setAgent,
@@ -108,6 +116,24 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({
 		}
 	}, [message.content, isAssistant, hasMetadata]);
 
+	// Get streaming completion callback from message metadata
+	const streamingCompleteCallback = (message as any)._streamingCompleteCallback;
+	const messageId = (message as any)._messageId;
+	const callbackCalledRef = React.useRef<string | null>(null);
+
+	// For non-streaming messages (with metadata), call callback immediately after render
+	// These messages don't stream, so we can proceed to next message right away
+	React.useEffect(() => {
+		if (streamingCompleteCallback && hasMetadata && messageId && callbackCalledRef.current !== messageId) {
+			// Use a small timeout to ensure the message is rendered first
+			const timer = setTimeout(() => {
+				callbackCalledRef.current = messageId;
+				streamingCompleteCallback();
+			}, 50);
+			return () => clearTimeout(timer);
+		}
+	}, [streamingCompleteCallback, hasMetadata, messageId]);
+
 	return (
 		<div className={messageClasses}>
 			{/* Render message content */}
@@ -115,7 +141,15 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({
 				<StreamingText
 					text={message.content}
 					speed={15}
-					onComplete={() => setIsStreaming(false)}
+					onComplete={() => {
+						setIsStreaming(false);
+						// Call the queue callback to trigger next message
+						// Only call if not already called (safeguard)
+						if (streamingCompleteCallback && messageId && callbackCalledRef.current !== messageId) {
+							callbackCalledRef.current = messageId;
+							streamingCompleteCallback();
+						}
+					}}
 				/>
 			) : (
 				message.content
@@ -126,6 +160,8 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({
 				<PrimaryKeywordSelection
 					candidates={message.keywordSelection.candidates}
 					agent={agent}
+					selectedPrimary={selectedPrimary}
+					setSelectedPrimary={setSelectedPrimary}
 					completedSelections={completedSelections}
 					setCompletedSelections={setCompletedSelections}
 					setMessages={setMessages}
@@ -166,6 +202,8 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({
 					<TitleSelection
 						titles={message.titleSelection.titles}
 						agent={agent}
+						selectedTitle={selectedTitle}
+						setSelectedTitle={setSelectedTitle}
 						completedSelections={completedSelections}
 						setCompletedSelections={setCompletedSelections}
 						setMessages={setMessages}

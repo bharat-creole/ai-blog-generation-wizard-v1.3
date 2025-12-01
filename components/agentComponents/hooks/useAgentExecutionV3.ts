@@ -188,6 +188,124 @@ export const useAgentExecutionV3 = (
 					let accumulatedState: any = { ...currentState };
 					let lastShownSectionIndex = -1; // Track last section index we've shown a message for
 					let shownPreMessages = new Set<string>(); // Track which pre-messages we've shown
+					let writingSectionNumber: number | null = null; // Track which section's "Writing" message is currently streaming
+					let pendingCompletionMessages: Map<number, string> = new Map(); // Store completion messages waiting for "Writing" to finish
+
+					// ✨ Message queue system - ensures messages are displayed one at a time
+					// Messages wait for the previous message to finish streaming before displaying
+					const messageQueue: Array<{ 
+						content: string; 
+						metadata?: any;
+						onStreamingComplete?: () => void;
+					}> = [];
+					let isProcessingQueue = false;
+					let currentMessageStreaming = false;
+					let currentMessageCompleteCallback: (() => void) | null = null;
+
+					const processMessageQueue = () => {
+						// Don't process if already processing or queue is empty
+						if (isProcessingQueue || messageQueue.length === 0) {
+							return;
+						}
+						
+						// Don't process if current message is still streaming
+						if (currentMessageStreaming) {
+							return;
+						}
+						
+						isProcessingQueue = true;
+						const message = messageQueue.shift();
+						
+						if (message) {
+							// Mark that we're starting to stream this message
+							currentMessageStreaming = true;
+							
+							// Create a unique ID for this message to track completion
+							const messageId = `msg_${Date.now()}_${Math.random()}`;
+							
+							// Add onStreamingComplete callback to metadata
+							// Check if this is a "Writing section" message - add extra pause after it
+							const isWritingSectionMessage = message.content.includes('✍️ Writing section');
+							const pauseAfterStreaming = isWritingSectionMessage ? 800 : 0; // 800ms pause after "Writing section" messages
+							
+							// Extract section number from "Writing section X..." message
+							if (isWritingSectionMessage) {
+								const match = message.content.match(/Writing section (\d+)/);
+								if (match) {
+									writingSectionNumber = parseInt(match[1], 10);
+								}
+							}
+							
+							const messageMetadata = {
+								...(message.metadata || {}),
+								_streamingCompleteCallback: () => {
+									// Add pause after "Writing section" messages complete
+									if (pauseAfterStreaming > 0 && writingSectionNumber !== null) {
+										setTimeout(() => {
+											// Check if there's a pending completion message for this section
+											const pendingMessage = pendingCompletionMessages.get(writingSectionNumber!);
+											if (pendingMessage) {
+												pendingCompletionMessages.delete(writingSectionNumber!);
+												// Keep thinking indicator on until completion message is displayed
+												// It will be turned off when completion message is queued
+												queueMessage(pendingMessage);
+											}
+											// Note: Keep thinking indicator on if no completion message yet
+											// It will be turned off when completion message arrives
+											
+											writingSectionNumber = null;
+											currentMessageStreaming = false;
+											currentMessageCompleteCallback = null;
+											isProcessingQueue = false;
+											// Process next message after pause
+											processMessageQueue();
+										}, pauseAfterStreaming);
+									} else {
+										currentMessageStreaming = false;
+										currentMessageCompleteCallback = null;
+										isProcessingQueue = false;
+										// Process next message after current one completes streaming
+										processMessageQueue();
+									}
+								},
+								_messageId: messageId,
+							};
+							
+							// Store callback for this message
+							currentMessageCompleteCallback = messageMetadata._streamingCompleteCallback;
+							
+							setMessages((prev) => {
+								const newMessages = [
+									...prev,
+									{
+										role: 'assistant',
+										content: message.content,
+										...messageMetadata,
+									},
+								];
+								return newMessages;
+							});
+						} else {
+							isProcessingQueue = false;
+						}
+					};
+
+					const queueMessage = (content: string, metadata?: any) => {
+						messageQueue.push({ content, metadata });
+						processMessageQueue();
+					};
+
+					const waitForQueueToComplete = (callback: () => void) => {
+						const checkQueue = () => {
+							// Wait until queue is empty AND no message is currently streaming
+							if (messageQueue.length === 0 && !isProcessingQueue && !currentMessageStreaming) {
+								callback();
+							} else {
+								setTimeout(checkQueue, 100);
+							}
+						};
+						checkQueue();
+					};
 
 					// Helper to get pre-execution message based on current step
 					const getPreExecutionMessage = (state: any): string | null => {
@@ -228,28 +346,13 @@ export const useAgentExecutionV3 = (
 							// Initial assistant response (e.g. "I'll handle that...")
 							finalResponse = data.assistantMessage;
 
-							// ✨ NEW: If multiple messages are provided, add them separately
+							// ✨ NEW: If multiple messages are provided, queue them one at a time
 							// This allows separate messages for different steps (e.g., "Got it! I've captured..." + "Let me research keywords...")
 							if (data.assistantMessages && Array.isArray(data.assistantMessages) && data.assistantMessages.length > 1) {
-								console.log(`📨 [INTENT] Adding ${data.assistantMessages.length} separate messages:`, data.assistantMessages);
-								// Add each message separately with a small delay for better UX
-								data.assistantMessages.forEach((msg, index) => {
-									setTimeout(() => {
-										setMessages((prev) => {
-											const newMessages = [
-												...prev,
-												{
-													role: 'assistant',
-													content: msg,
-												},
-											];
-											console.log(`✅ [INTENT] Added message ${index + 1}/${data.assistantMessages.length}: "${msg}"`, {
-												totalMessages: newMessages.length,
-												timestamp: new Date().toISOString()
-											});
-											return newMessages;
-										});
-									}, index * 150); // 150ms delay between messages for better readability
+								console.log(`📨 [INTENT] Queueing ${data.assistantMessages.length} separate messages:`, data.assistantMessages);
+								// Queue each message to be displayed one at a time
+								data.assistantMessages.forEach((msg) => {
+									queueMessage(msg);
 								});
 								// Mark that messages were already added, so AgentMode.tsx won't add the single message
 								finalResponse = ''; // Clear finalResponse to prevent duplicate
@@ -277,79 +380,81 @@ export const useAgentExecutionV3 = (
 
 							// Show pre-execution message when we first detect a node is executing
 							// Show it immediately when we see the node name, before merging state
-							if (nodeName && !shownPreMessages.has(`pre_${nodeName}`)) {
-								// Check if this chunk already contains results (if it does, node already completed)
-								// Only check chunk, not accumulated state, to allow showing message for new executions
-								const hasResultsInChunk = 
-									stateUpdate.toolOutputs?.length > 0 ||
-									stateUpdate.keywordCandidates?.length > 0 ||
-									stateUpdate.titleCandidates?.length > 0 ||
-									stateUpdate.halt?.reason === 'await_keyword_selection' ||
-									stateUpdate.halt?.reason === 'await_secondary_selection' ||
-									stateUpdate.halt?.reason === 'await_title_selection';
+							// For proposal node, track per section to show message for each section
+							if (nodeName) {
+								// For proposal node, use section-specific key to show message for each section
+								let messageKey: string;
+								if (nodeName === 'proposal') {
+									const sectionIndex = accumulatedState.progress?.sectionIndex ?? 0;
+									messageKey = `pre_${nodeName}_${sectionIndex}`;
+								} else {
+									messageKey = `pre_${nodeName}`;
+								}
 
-								// Only show pre-message if this chunk doesn't already have results
-								// This means the node just started executing, not completed
-								if (!hasResultsInChunk) {
-									let preMessage: string | null = null;
-									
-									if (nodeName === 'research_primary') {
-										preMessage = '🔍 Generating primary keywords...';
-									} else if (nodeName === 'research_secondary') {
-										preMessage = '🔍 Generating secondary keywords...';
-									} else if (nodeName === 'title_generation') {
-										preMessage = '📝 Generating title options...';
-									} else if (nodeName === 'discovery') {
-										preMessage = '📋 Generating outline...';
+								if (!shownPreMessages.has(messageKey)) {
+									// Check if this chunk already contains results (if it does, node already completed)
+									// Only check chunk, not accumulated state, to allow showing message for new executions
+									const hasResultsInChunk = 
+										stateUpdate.toolOutputs?.length > 0 ||
+										stateUpdate.keywordCandidates?.length > 0 ||
+										stateUpdate.titleCandidates?.length > 0 ||
+										stateUpdate.halt?.reason === 'await_keyword_selection' ||
+										stateUpdate.halt?.reason === 'await_secondary_selection' ||
+										stateUpdate.halt?.reason === 'await_title_selection';
+
+									// Only show pre-message if this chunk doesn't already have results
+									// This means the node just started executing, not completed
+									if (!hasResultsInChunk) {
+										let preMessage: string | null = null;
+										
+										if (nodeName === 'research_primary') {
+											preMessage = '🔍 Generating primary keywords...';
+										} else if (nodeName === 'research_secondary') {
+											preMessage = '🔍 Generating secondary keywords...';
+										} else if (nodeName === 'title_generation') {
+											preMessage = '📝 Generating title options...';
+										} else if (nodeName === 'discovery') {
+											preMessage = '📋 Generating outline...';
 									} else if (nodeName === 'proposal') {
-										const sectionIndex = accumulatedState.progress?.sectionIndex || 0;
-										preMessage = `✍️ Writing section ${sectionIndex + 1}...`;
+										// When proposal node starts, sectionIndex is the section that will be generated (0-based)
+										// So we show sectionIndex + 1 for user-friendly display
+										const sectionIndex = accumulatedState.progress?.sectionIndex ?? 0;
+										const sectionNumber = sectionIndex + 1;
+										preMessage = `✍️ Writing section ${sectionNumber}...`;
 									}
 
 									if (preMessage) {
-										shownPreMessages.add(`pre_${nodeName}`);
-										if (setIsThinking) setIsThinking(false);
-										
-										// Log when message is being sent to frontend
-										console.log(`🚀 [PRE-MESSAGE] Sending to frontend: "${preMessage}"`, {
-											node: nodeName,
-											timestamp: new Date().toISOString(),
-											chunkKeys: Object.keys(chunk),
-											stateUpdateKeys: Object.keys(stateUpdate),
-											hasResults: hasResultsInChunk
-										});
-										
-										// Add message to state (this triggers UI update)
-										setMessages((prev) => {
-											const newMessages = [
-												...prev,
-												{
-													role: 'assistant',
-													content: preMessage,
-												},
-											];
+										shownPreMessages.add(messageKey);
+										// For proposal node, keep thinking indicator on while generating
+										if (nodeName === 'proposal') {
+											if (setIsThinking) setIsThinking(true);
+										} else {
+											if (setIsThinking) setIsThinking(false);
+										}
 											
-											// Log when message is added to state
-											console.log(`✅ [PRE-MESSAGE] Added to messages state: "${preMessage}"`, {
-												totalMessages: newMessages.length,
-												lastMessage: newMessages[newMessages.length - 1],
-												timestamp: new Date().toISOString()
+											// Log when message is being queued
+											console.log(`🚀 [PRE-MESSAGE] Queueing: "${preMessage}"`, {
+												node: nodeName,
+												messageKey,
+												timestamp: new Date().toISOString(),
+												chunkKeys: Object.keys(chunk),
+												stateUpdateKeys: Object.keys(stateUpdate),
+												hasResults: hasResultsInChunk
 											});
 											
-											return newMessages;
+											// Queue message to be displayed one at a time
+											queueMessage(preMessage);
+										}
+									} else {
+										// Mark as shown even if we don't show the message (to prevent duplicates)
+										shownPreMessages.add(messageKey);
+										console.log(`[PRE-MESSAGE] Skipped for ${nodeName}: Results already in chunk`, {
+											messageKey,
+											toolOutputs: stateUpdate.toolOutputs?.length,
+											keywordCandidates: stateUpdate.keywordCandidates?.length,
+											haltReason: stateUpdate.halt?.reason
 										});
-										
-										// Log confirmation
-										console.log(`📺 [PRE-MESSAGE] Should now be displayed in UI: "${preMessage}"`);
 									}
-								} else {
-									// Mark as shown even if we don't show the message (to prevent duplicates)
-									shownPreMessages.add(`pre_${nodeName}`);
-									console.log(`[PRE-MESSAGE] Skipped for ${nodeName}: Results already in chunk`, {
-										toolOutputs: stateUpdate.toolOutputs?.length,
-										keywordCandidates: stateUpdate.keywordCandidates?.length,
-										haltReason: stateUpdate.halt?.reason
-									});
 								}
 							}
 
@@ -382,27 +487,35 @@ export const useAgentExecutionV3 = (
 									options.updateData({ blogContent: draftValue });
 								}
 
-								// Show progress message for section generation
-								if (accumulatedState.progress?.sectionIndex !== undefined) {
-									const sectionIndex = accumulatedState.progress.sectionIndex;
-									const latestTrace = accumulatedState.trace?.[accumulatedState.trace.length - 1];
-									const sectionName = latestTrace?.info?.section || `Section ${sectionIndex}`;
+								// Show progress message for section generation completion
+								// Check if we have a trace entry indicating a section was just generated
+								const latestTrace = accumulatedState.trace?.[accumulatedState.trace.length - 1];
+								if (
+									latestTrace?.step === 'ProposalNode.generatedSection' &&
+									accumulatedState.progress?.sectionIndex !== undefined
+								) {
+									// Trace has 0-based sectionIndex, progress has incremented (1-based) sectionIndex
+									// Use progress.sectionIndex as it represents the completed section number
+									const completedSectionNumber = accumulatedState.progress.sectionIndex;
+									const sectionName = latestTrace.info?.section || `Section ${completedSectionNumber}`;
+									const completionMessage = `✅ Section ${completedSectionNumber} completed: "${sectionName}"`;
 									
 									// Only show message if this is a new section (not duplicate)
-									if (sectionIndex > lastShownSectionIndex) {
-										// Update the last shown section index
-										lastShownSectionIndex = sectionIndex;
-										
-										if (setIsThinking) setIsThinking(false);
-										
-										// Show completion message in chat
-										setMessages((prev) => [
-											...prev,
-											{
-												role: 'assistant',
-												content: `✅ Section - ${sectionIndex} completed: "${sectionName}"`,
-											},
-										]);
+									if (completedSectionNumber > lastShownSectionIndex) {
+										// Check if the "Writing section" message for this section is still streaming
+										if (writingSectionNumber === completedSectionNumber) {
+											// "Writing section" message is still active for this section
+											// Store the completion message to be queued after "Writing" finishes
+											pendingCompletionMessages.set(completedSectionNumber, completionMessage);
+											console.log(`⏳ [SECTION] Storing completion message for section ${completedSectionNumber}, waiting for "Writing" to finish`);
+										} else {
+											// "Writing section" message has finished or wasn't shown
+											// Queue completion message immediately
+											lastShownSectionIndex = completedSectionNumber;
+											// Turn off thinking indicator when section completes
+											if (setIsThinking) setIsThinking(false);
+											queueMessage(completionMessage);
+										}
 									}
 								}
 							}
@@ -453,14 +566,8 @@ export const useAgentExecutionV3 = (
 												false
 											);
 
-										setMessages(
-											(prev) => [
-												...prev,
-												createAssistantMessage(
-													stepMessage
-												),
-											]
-										);
+										// Queue step message
+										queueMessage(stepMessage);
 									}
 								}
 								lastTraceLength =
@@ -501,13 +608,8 @@ export const useAgentExecutionV3 = (
 							if (progressMsg) {
 								if (setIsThinking)
 									setIsThinking(false);
-								setMessages((prev) => [
-									...prev,
-									{
-										role: 'assistant',
-										content: progressMsg,
-									},
-								]);
+								// Queue progress message
+								queueMessage(progressMsg);
 							}
 						},
 						onComplete: (data) => {
@@ -626,12 +728,20 @@ export const useAgentExecutionV3 = (
 								}
 							}
 
-							// Use finalResponse (which may be empty if separate messages were already added)
-							// instead of data.assistantMessage to prevent duplicates
-							resolve({
-								response: finalResponse, // Use finalResponse instead of data.assistantMessage
-								updatedState,
-								metadata,
+							// Queue final response if it exists and wasn't already queued
+							// If we queue it, clear finalResponse so AgentMode won't add it again
+							if (finalResponse && finalResponse.trim()) {
+								queueMessage(finalResponse, metadata);
+								finalResponse = ''; // Clear to prevent duplicate in AgentMode
+							}
+
+							// Wait for queue to finish processing before resolving
+							waitForQueueToComplete(() => {
+								resolve({
+									response: '', // Empty since we queued it
+									updatedState,
+									metadata,
+								});
 							});
 						},
 						onError: (error) => {
@@ -651,23 +761,11 @@ export const useAgentExecutionV3 = (
 								);
 
 							if (isRateLimit) {
-								// Show user-friendly rate limit message
-								setMessages((prev) => [
-									...prev,
-									{
-										role: 'assistant',
-										content: `⚠️ **Rate Limit Exceeded**\n\n${errorMessage}\n\nThe system will automatically retry. Please wait a moment.`,
-									},
-								]);
+								// Queue user-friendly rate limit message
+								queueMessage(`⚠️ **Rate Limit Exceeded**\n\n${errorMessage}\n\nThe system will automatically retry. Please wait a moment.`);
 							} else {
-								// Show general error message
-								setMessages((prev) => [
-									...prev,
-									{
-										role: 'assistant',
-										content: `❌ **Error**\n\n${errorMessage}`,
-									},
-								]);
+								// Queue general error message
+								queueMessage(`❌ **Error**\n\n${errorMessage}`);
 							}
 
 							console.error('Stream Error:', error);

@@ -14,7 +14,13 @@ interface ChatInterfaceProps {
 	agent: AgentState | null;
 	data: BlogData;
 	selectedSecondaries: string[];
+	setSelectedSecondaries: React.Dispatch<React.SetStateAction<string[]>>;
+	selectedPrimary: string | null;
+	setSelectedPrimary: React.Dispatch<React.SetStateAction<string | null>>;
+	selectedTitle: string | null;
+	setSelectedTitle: React.Dispatch<React.SetStateAction<string | null>>;
 	completedSelections: Set<string>;
+	setCompletedSelections: React.Dispatch<React.SetStateAction<Set<string>>>;
 	input: string;
 	setInput: React.Dispatch<React.SetStateAction<string>>;
 	canSend: boolean;
@@ -22,8 +28,6 @@ interface ChatInterfaceProps {
 	outlineApproved: boolean;
 	isStreaming: boolean;
 	isThinking: boolean;
-	setSelectedSecondaries: React.Dispatch<React.SetStateAction<string[]>>;
-	setCompletedSelections: React.Dispatch<React.SetStateAction<Set<string>>>;
 	setMessages: React.Dispatch<React.SetStateAction<ChatMessage[]>>;
 	setAgent: React.Dispatch<React.SetStateAction<AgentState | null>>;
 	updateData: (data: Partial<BlogData>) => void;
@@ -64,7 +68,13 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 	agent,
 	data,
 	selectedSecondaries,
+	setSelectedSecondaries,
+	selectedPrimary,
+	setSelectedPrimary,
+	selectedTitle,
+	setSelectedTitle,
 	completedSelections,
+	setCompletedSelections,
 	input,
 	setInput,
 	canSend,
@@ -72,8 +82,6 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 	outlineApproved,
 	isStreaming,
 	isThinking,
-	setSelectedSecondaries,
-	setCompletedSelections,
 	setMessages,
 	setAgent,
 	updateData,
@@ -113,8 +121,12 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 							agent={agent}
 							data={data}
 							selectedSecondaries={selectedSecondaries}
-							completedSelections={completedSelections}
 							setSelectedSecondaries={setSelectedSecondaries}
+							selectedPrimary={selectedPrimary}
+							setSelectedPrimary={setSelectedPrimary}
+							selectedTitle={selectedTitle}
+							setSelectedTitle={setSelectedTitle}
+							completedSelections={completedSelections}
 							setCompletedSelections={setCompletedSelections}
 							setMessages={setMessages}
 							setAgent={setAgent}

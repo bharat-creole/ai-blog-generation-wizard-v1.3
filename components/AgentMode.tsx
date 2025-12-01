@@ -28,7 +28,13 @@ import {
 	findTopicInHistory,
 	validateTopic,
 } from './agentComponents/utils/topicExtraction';
-import { createUserMessage } from './agentComponents/utils/messageUtils';
+import { 
+	createUserMessage,
+	createKeywordSelectionMessage,
+	createTitleSelectionMessage,
+	createInterlinkingFormMessage,
+	createReferencesFormMessage,
+} from './agentComponents/utils/messageUtils';
 import { initializeAgentState } from './agentComponents/utils/agentStateUtils';
 
 // Styles
@@ -95,6 +101,10 @@ const AgentMode: React.FC<Props> = ({
 		setAgent,
 		selectedSecondaries,
 		setSelectedSecondaries,
+		selectedPrimary,
+		setSelectedPrimary,
+		selectedTitle,
+		setSelectedTitle,
 		viewMode,
 		setViewMode,
 		showOutline,
@@ -550,12 +560,39 @@ const AgentMode: React.FC<Props> = ({
 					},
 				]);
 			} else if (result.metadata) {
-				// If no response but has metadata (like keyword selection UI), add empty message with metadata
+				// If no response but has metadata (like keyword selection UI), create message with content
+				let messageContent = '';
+				
+				// Generate appropriate message content based on metadata type
+				if (result.metadata.keywordSelection) {
+					const keywordMsg = createKeywordSelectionMessage(
+						result.metadata.keywordSelection.type,
+						result.metadata.keywordSelection.candidates || []
+					);
+					messageContent = keywordMsg.content;
+				} else if (result.metadata.titleSelection) {
+					const titleMsg = createTitleSelectionMessage(
+						result.metadata.titleSelection.titles || []
+					);
+					messageContent = titleMsg.content;
+				} else if (result.metadata.interlinkingForm) {
+					const interlinkingMsg = createInterlinkingFormMessage(
+						result.metadata.interlinkingForm.currentLinks || []
+					);
+					messageContent = interlinkingMsg.content;
+				} else if (result.metadata.referencesForm) {
+					const referencesMsg = createReferencesFormMessage(
+						result.metadata.referencesForm.currentUrls || [],
+						result.metadata.referencesForm.currentFiles || []
+					);
+					messageContent = referencesMsg.content;
+				}
+				
 				setMessages((prev) => [
 					...prev,
 					{
 						role: 'assistant',
-						content: '',
+						content: messageContent,
 						...result.metadata,
 					},
 				]);
@@ -678,7 +715,13 @@ const AgentMode: React.FC<Props> = ({
 						agent={agent}
 						data={data}
 						selectedSecondaries={selectedSecondaries}
+						setSelectedSecondaries={setSelectedSecondaries}
+						selectedPrimary={selectedPrimary}
+						setSelectedPrimary={setSelectedPrimary}
+						selectedTitle={selectedTitle}
+						setSelectedTitle={setSelectedTitle}
 						completedSelections={completedSelections}
+						setCompletedSelections={setCompletedSelections}
 						input={input}
 						setInput={setInput}
 						canSend={canSend}
@@ -686,12 +729,6 @@ const AgentMode: React.FC<Props> = ({
 						outlineApproved={outlineApproved}
 						isStreaming={isStreaming}
 						isThinking={isThinking}
-						setSelectedSecondaries={
-							setSelectedSecondaries
-						}
-						setCompletedSelections={
-							setCompletedSelections
-						}
 						setMessages={setMessages}
 						setAgent={setAgent}
 						updateData={updateData}

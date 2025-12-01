@@ -122,7 +122,7 @@ const PrimaryKeywordSelection: React.FC<PrimaryKeywordSelectionProps> = ({
                     ...prev,
                     {
                         role: 'assistant',
-                        content: '🎯 Select up to 5 secondary keywords:',
+                        content: '🎯 **Which secondary keywords should we target?**\n\nSelect up to 5 related keywords that complement your primary keyword. These help cover related search terms and improve your content\'s reach.\n\n💡 *Tip: You can also type your own secondary keywords in the chat (comma-separated).*',
                         keywordSelection: {
                             type: 'secondary',
                             candidates: working.keywordResearch?.secondaryCandidates?.slice(0, 12) || [],
@@ -145,7 +145,7 @@ const PrimaryKeywordSelection: React.FC<PrimaryKeywordSelectionProps> = ({
                     <div>
                         <div className='font-medium text-gray-800'>{kw.text}</div>
                         <div className='text-xs text-gray-500'>
-                            Vol: {kw.volume} · Diff: {kw.difficulty.toFixed(2)}
+                            Vol: {kw.volume}
                         </div>
                     </div>
                     <button

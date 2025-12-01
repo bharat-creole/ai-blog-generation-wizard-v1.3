@@ -41,7 +41,7 @@ export const createOutlineApprovalMessage = (
 	return {
 		role: 'assistant',
 		content:
-			'📋 Outline is ready! Review it below and approve to continue, or provide feedback to regenerate:',
+			'📋 **Review and approve your blog outline**\n\nThe outline below shows the structure and sections for your blog post. Review it carefully to ensure it covers all the important points and flows logically.\n\n💡 *Tip: You can approve to continue with blog generation, or provide feedback if you\'d like any changes to the outline.*',
 		outlineApproval: {
 			outline,
 		},
@@ -60,8 +60,8 @@ export const createKeywordSelectionMessage = (
 ): ChatMessage => {
 	const content =
 		type === 'primary'
-			? '🎯 Please select a primary keyword from the options below:\n\n💡 Tip: If you would like to provide your own primary keyword, simply type it in the chat!'
-			: '🎯 Select up to 5 secondary keywords:\n\n💡 Tip: If you would like to provide your own secondary keywords, simply type them in the chat (comma-separated)!';
+			? '🎯 **What main keyword should this article rank for?**\n\nSelect the primary keyword that best represents your target search term. This will be the main focus keyword for SEO optimization.\n\n💡 *Tip: You can also type your own primary keyword in the chat if you prefer.*'
+			: '🎯 **Which secondary keywords should we target?**\n\nSelect up to 5 related keywords that complement your primary keyword. These help cover related search terms and improve your content\'s reach.\n\n💡 *Tip: You can also type your own secondary keywords in the chat (comma-separated).*';
 
 	return {
 		role: 'assistant',
@@ -84,7 +84,7 @@ export const createTitleSelectionMessage = (
 	return {
 		role: 'assistant',
 		content:
-			'📝 Select a blog title from the options below:\n\n💡 Tip: If you would like to provide your own title, simply type it in the chat!',
+			'📝 **Which title should we use for your blog post?**\n\nChoose the title that best captures your content and appeals to your target audience. A great title is clear, engaging, and includes your primary keyword.\n\n💡 *Tip: You can also type your own custom title in the chat if you prefer.*',
 		titleSelection: {
 			titles,
 		},
@@ -102,7 +102,7 @@ export const createInterlinkingFormMessage = (
 	return {
 		role: 'assistant',
 		content:
-			'🔗 Add internal/external links (optional) or click "Continue" to skip:',
+			'🔗 **Would you like to add internal or external links to your blog?**\n\nAdding relevant links helps improve SEO, provides additional context to readers, and creates a better user experience. You can link to your own content (internal links) or authoritative external sources.\n\n💡 *Tip: This step is optional. You can click "Continue" to skip and proceed without adding links.*',
 		interlinkingForm: {
 			currentLinks,
 		},
@@ -122,7 +122,7 @@ export const createReferencesFormMessage = (
 	return {
 		role: 'assistant',
 		content:
-			'📚 Add reference materials (URLs or files) to improve content quality, or click "Continue" to skip:',
+			'📚 **Do you have reference materials to enhance your blog content?**\n\nAdding reference URLs or files helps ensure accuracy, provides credible sources, and allows the AI to incorporate specific information from your materials into the blog post.\n\n💡 *Tip: This step is optional. You can click "Continue" to skip and proceed without adding references.*',
 		referencesForm: {
 			currentUrls,
 			currentFiles,

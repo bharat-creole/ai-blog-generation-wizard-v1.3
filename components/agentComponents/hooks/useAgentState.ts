@@ -78,6 +78,10 @@ export interface UseAgentStateReturn {
 	setAgent: React.Dispatch<React.SetStateAction<AgentState | null>>;
 	selectedSecondaries: string[];
 	setSelectedSecondaries: React.Dispatch<React.SetStateAction<string[]>>;
+	selectedPrimary: string | null;
+	setSelectedPrimary: React.Dispatch<React.SetStateAction<string | null>>;
+	selectedTitle: string | null;
+	setSelectedTitle: React.Dispatch<React.SetStateAction<string | null>>;
 	viewMode: 'outline' | 'blog' | 'markdown';
 	setViewMode: React.Dispatch<
 		React.SetStateAction<'outline' | 'blog' | 'markdown'>
@@ -169,6 +173,8 @@ export const useAgentState = (
 	const [selectedSecondaries, setSelectedSecondaries] = useState<string[]>(
 		[]
 	);
+	const [selectedPrimary, setSelectedPrimary] = useState<string | null>(null);
+	const [selectedTitle, setSelectedTitle] = useState<string | null>(null);
 	const [viewMode, setViewMode] = useState<'outline' | 'blog' | 'markdown'>(
 		'outline'
 	);
@@ -234,6 +240,10 @@ export const useAgentState = (
 		setAgent,
 		selectedSecondaries,
 		setSelectedSecondaries,
+		selectedPrimary,
+		setSelectedPrimary,
+		selectedTitle,
+		setSelectedTitle,
 		viewMode,
 		setViewMode,
 		showOutline,
