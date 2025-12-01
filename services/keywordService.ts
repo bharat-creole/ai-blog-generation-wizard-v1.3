@@ -9,69 +9,108 @@ export type KwRow = {
 
 // Common stop words to filter out (not useful for keyword research)
 const STOP_WORDS = new Set([
-	'the', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for',
-	'of', 'with', 'by', 'from', 'as', 'is', 'was', 'are', 'be',
-	'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would',
-	'should', 'could', 'may', 'might', 'must', 'can', 'its', 'it',
-	'this', 'that', 'these', 'those', 'a', 'an', 'how', 'what',
-	'when', 'where', 'who', 'which', 'why', 'there', 'here'
+	'the',
+	'and',
+	'or',
+	'but',
+	'in',
+	'on',
+	'at',
+	'to',
+	'for',
+	'of',
+	'with',
+	'by',
+	'from',
+	'as',
+	'is',
+	'was',
+	'are',
+	'be',
+	'have',
+	'has',
+	'had',
+	'do',
+	'does',
+	'did',
+	'will',
+	'would',
+	'should',
+	'could',
+	'may',
+	'might',
+	'must',
+	'can',
+	'its',
+	'it',
+	'this',
+	'that',
+	'these',
+	'those',
+	'a',
+	'an',
+	'how',
+	'what',
+	'when',
+	'where',
+	'who',
+	'which',
+	'why',
+	'there',
+	'here',
 ]);
 
 // Common acronyms and their expansions for better keyword research
 const ACRONYM_EXPANSIONS: Record<string, string[]> = {
-	'ai': ['artificial intelligence', 'ai'],
-	'asi': ['artificial superintelligence', 'asi', 'super ai'],
-	'agi': ['artificial general intelligence', 'agi'],
-	'ml': ['machine learning', 'ml'],
-	'nlp': ['natural language processing', 'nlp'],
-	'iot': ['internet of things', 'iot'],
-	'ar': ['augmented reality', 'ar'],
-	'vr': ['virtual reality', 'vr'],
-	'seo': ['search engine optimization', 'seo'],
-	'api': ['application programming interface', 'api'],
-	'saas': ['software as a service', 'saas'],
-	'b2b': ['business to business', 'b2b'],
-	'b2c': ['business to consumer', 'b2c'],
+	ai: ['artificial intelligence', 'ai'],
+	asi: ['artificial superintelligence', 'asi', 'super ai'],
+	agi: ['artificial general intelligence', 'agi'],
+	ml: ['machine learning', 'ml'],
+	nlp: ['natural language processing', 'nlp'],
+	iot: ['internet of things', 'iot'],
+	ar: ['augmented reality', 'ar'],
+	vr: ['virtual reality', 'vr'],
+	seo: ['search engine optimization', 'seo'],
+	api: ['application programming interface', 'api'],
+	saas: ['software as a service', 'saas'],
+	b2b: ['business to business', 'b2b'],
+	b2c: ['business to consumer', 'b2c'],
 };
 
 // Enhanced seed extraction with intent-based keyword generation
 export function extractSeedsFromTitle(title: string, max = 5): string[] {
-	console.log(`🔍 [Keyword Extraction] Analyzing: "${title}"`);
-	
 	if (!title || title.trim().length === 0) {
 		return [];
 	}
 
 	const originalTitle = title;
 	const seeds: string[] = [];
-	
+
 	// Step 1: Preserve original case for acronym detection
 	const words = originalTitle
 		.replace(/[^\w\s]/g, ' ')
 		.split(/\s+/)
 		.filter(Boolean);
-	
+
 	// Step 2: Identify acronyms (2-5 uppercase letters)
 	const acronyms: string[] = [];
-	words.forEach(word => {
+	words.forEach((word) => {
 		if (/^[A-Z]{2,5}$/.test(word)) {
 			acronyms.push(word);
-			console.log(`   📌 Found acronym: "${word}"`);
 		}
 	});
-	
+
 	// Step 3: Expand acronyms if known
-	acronyms.forEach(acronym => {
+	acronyms.forEach((acronym) => {
 		const key = acronym.toLowerCase();
 		if (ACRONYM_EXPANSIONS[key]) {
 			const expansions = ACRONYM_EXPANSIONS[key];
 			seeds.push(...expansions);
-			console.log(`   ✨ Expanded "${acronym}" → [${expansions.join(', ')}]`);
 		} else {
 			seeds.push(acronym.toLowerCase());
 		}
 	});
-	
+
 	// Step 4: Extract meaningful tokens (lowercase, filter stop words)
 	const tokens = originalTitle
 		.toLowerCase()
@@ -80,20 +119,19 @@ export function extractSeedsFromTitle(title: string, max = 5): string[] {
 		.filter(Boolean)
 		.filter((t) => t.length >= 3)
 		.filter((t) => !STOP_WORDS.has(t));
-	
-	console.log(`   📝 Meaningful tokens: [${tokens.join(', ')}]`);
-	
+
 	// Step 5: Extract 2-3 word phrases (most valuable for keyword research)
 	const phrases: string[] = [];
-	
+
 	// 2-word phrases
 	for (let i = 0; i < tokens.length - 1; i++) {
 		const phrase = `${tokens[i]} ${tokens[i + 1]}`;
-		if (phrase.length >= 6) { // Avoid very short phrases
+		if (phrase.length >= 6) {
+			// Avoid very short phrases
 			phrases.push(phrase);
 		}
 	}
-	
+
 	// 3-word phrases (most natural search queries)
 	for (let i = 0; i < tokens.length - 2; i++) {
 		const phrase = `${tokens[i]} ${tokens[i + 1]} ${tokens[i + 2]}`;
@@ -101,30 +139,27 @@ export function extractSeedsFromTitle(title: string, max = 5): string[] {
 			phrases.push(phrase);
 		}
 	}
-	
-	console.log(`   💬 Extracted phrases: [${phrases.slice(0, 3).join(', ')}${phrases.length > 3 ? '...' : ''}]`);
-	
+
 	// Step 6: Add individual important tokens
 	seeds.push(...tokens);
-	
+
 	// Step 7: Add phrases (prioritize 3-word, then 2-word)
 	seeds.push(...phrases);
-	
+
 	// Step 8: Also include the full original phrase (cleaned)
 	const fullPhrase = originalTitle
 		.toLowerCase()
 		.replace(/[^a-z0-9\s]/g, ' ')
 		.replace(/\s+/g, ' ')
 		.trim();
-	
+
 	if (fullPhrase.length >= 10 && fullPhrase.length <= 100) {
 		seeds.unshift(fullPhrase); // Add at beginning
-		console.log(`   🎯 Full phrase: "${fullPhrase}"`);
 	}
-	
+
 	// Step 9: Deduplicate and prioritize
 	const uniqueSeeds = Array.from(new Set(seeds))
-		.filter(s => s.length >= 2) // At least 2 characters
+		.filter((s) => s.length >= 2) // At least 2 characters
 		.sort((a, b) => {
 			// Prioritize: phrases > acronyms > single words
 			const aWords = a.split(' ').length;
@@ -132,11 +167,9 @@ export function extractSeedsFromTitle(title: string, max = 5): string[] {
 			if (aWords !== bWords) return bWords - aWords; // More words = higher priority
 			return b.length - a.length; // Longer = higher priority
 		});
-	
+
 	const finalSeeds = uniqueSeeds.slice(0, Math.max(1, max));
-	
-	console.log(`   ✅ Final ${finalSeeds.length} seeds: [${finalSeeds.join(', ')}]`);
-	
+
 	return finalSeeds;
 }
 
@@ -145,10 +178,10 @@ export function generateIntentVariations(baseKeyword: string): string[] {
 	if (!baseKeyword || baseKeyword.trim().length === 0) {
 		return [];
 	}
-	
+
 	const base = baseKeyword.trim().toLowerCase();
 	const variations: string[] = [base]; // Always include the original
-	
+
 	// Intent patterns for different search behaviors
 	const intentPatterns = [
 		// Informational intent
@@ -157,46 +190,45 @@ export function generateIntentVariations(baseKeyword: string): string[] {
 		`${base} explained`,
 		`${base} definition`,
 		`${base} overview`,
-		
+
 		// How-to intent
 		`how to ${base}`,
 		`${base} guide`,
 		`${base} tutorial`,
 		`${base} tips`,
-		
+
 		// Comparison intent
 		`${base} vs`,
 		`${base} comparison`,
 		`${base} alternatives`,
 		`best ${base}`,
-		
+
 		// Problem-solving intent
 		`${base} benefits`,
 		`${base} challenges`,
 		`${base} solutions`,
 		`${base} impact`,
 		`${base} effects`,
-		
+
 		// Future/Trend intent
 		`future of ${base}`,
 		`${base} trends`,
 		`${base} predictions`,
-		
+
 		// Application intent
 		`${base} applications`,
 		`${base} use cases`,
 		`${base} examples`,
 	];
-	
+
 	// Only add variations that make sense (not too long)
-	intentPatterns.forEach(pattern => {
-		if (pattern.length <= 60) { // Reasonable search query length
+	intentPatterns.forEach((pattern) => {
+		if (pattern.length <= 60) {
+			// Reasonable search query length
 			variations.push(pattern);
 		}
 	});
-	
-	console.log(`   🎨 Generated ${variations.length} intent variations for: "${base}"`);
-	
+
 	return variations;
 }
 
@@ -259,46 +291,26 @@ async function getKeywordIdeasViaGoogleAdsServer(
 	// Default to localhost:3001 if not set
 	const baseUrl = API_BASE || 'http://localhost:3001';
 	const url = `${baseUrl}/api/getKeywordsGoogleAds`;
-	
-	console.log(`🔍 [Google Ads API] Calling server endpoint for: "${seed}"`);
-	console.log(`   📍 Location: ${location}`);
-	console.log(`   🔗 Full URL: ${url}`);
-	
-	const startTime = Date.now();
+
 	const r = await fetch(url, {
 		method: 'POST',
 		headers: { 'content-type': 'application/json' },
 		body: JSON.stringify({ seed, location }),
 	});
-	const duration = Date.now() - startTime;
-	
-	console.log(`   ⏱️  Response time: ${duration}ms`);
-	console.log(`   📊 Status: ${r.status} ${r.statusText}`);
-	
+
 	if (!r.ok) {
-		console.error(`   ❌ [Google Ads API] HTTP Error: ${r.status} ${r.statusText}`);
 		throw new Error(`Google Ads Server API failed: ${r.status}`);
 	}
-	
+
 	const { rows } = await r.json();
-	
+
 	const keywords = (rows || []).map((it: any) => ({
 		text: String(it.text || ''),
 		volume: Number(it.volume || 0),
 		difficulty: Number(it.difficulty ?? 0.5),
 		source: 'seed',
 	}));
-	
-	console.log(`   ✅ [Google Ads API] Successfully fetched ${keywords.length} keywords`);
-	
-	// Log sample keywords
-	if (keywords.length > 0) {
-		console.log(`   📋 Sample results (top 3):`);
-		keywords.slice(0, 3).forEach((kw, idx) => {
-			console.log(`      ${idx + 1}. "${kw.text}" - Vol: ${kw.volume}, Diff: ${kw.difficulty.toFixed(2)}`);
-		});
-	}
-	
+
 	return keywords;
 }
 
@@ -327,108 +339,44 @@ export async function getKeywordIdeas(
 	seed: string,
 	location: string
 ): Promise<KwRow[]> {
-	console.log(`\n═══════════════════════════════════════════════════════`);
-	console.log(`🔍 KEYWORD RESEARCH INITIATED`);
-	console.log(`   Seed: "${seed}"`);
-	console.log(`   Location: ${location}`);
-	console.log(`   USE_SERVER: ${USE_SERVER}`);
-	console.log(`   API_BASE: ${API_BASE || '(not set)'}`);
-	console.log(`═══════════════════════════════════════════════════════\n`);
-	
 	// ✨ Priority 1: Try Google Ads REST API via server (HIGHEST PRIORITY)
 	// Always try Google Ads API first
-	console.log(`🎯 [PRIORITY 1] Google Ads REST API (via server)`);
-	console.log(`───────────────────────────────────────────────────────`);
 	try {
-		const results = await getKeywordIdeasViaGoogleAdsServer(seed, location);
+		const results = await getKeywordIdeasViaGoogleAdsServer(
+			seed,
+			location
+		);
 		if (results && results.length > 0) {
-			console.log(`\n✅ ═══════════════════════════════════════════════════════`);
-			console.log(`✅ SUCCESS: Google Ads REST API`);
-			console.log(`✅ Returned ${results.length} keywords`);
-			console.log(`✅ ═══════════════════════════════════════════════════════\n`);
 			return results;
 		}
-		console.log(`   ⚠️  No results returned from Google Ads API`);
-		console.log(`   🔄 Proceeding to next fallback...\n`);
 	} catch (e) {
-		const errorMessage = e instanceof Error ? e.message : String(e);
-		console.error(`\n❌ ═══════════════════════════════════════════════════════`);
-		console.error(`❌ FAILED: Google Ads REST API`);
-		console.error(`❌ Error: ${errorMessage}`);
-		console.error(`❌ ═══════════════════════════════════════════════════════\n`);
-		console.log(`   🔄 Falling back to Bloggr AI API...\n`);
+		// Silent fallback
 	}
 
 	// ✨ Priority 2: Try bloggr.ai API
-	console.log(`🎯 [PRIORITY 2] Bloggr AI API`);
-	console.log(`───────────────────────────────────────────────────────`);
 	try {
-		console.log(`   📡 Calling Bloggr AI API...`);
 		const results = await getKeywordIdeasViaBloggrAI(seed, location);
 		if (results && results.length > 0) {
-			console.log(`   ✅ Bloggr AI returned ${results.length} keywords`);
-			console.log(`\n✅ ═══════════════════════════════════════════════════════`);
-			console.log(`✅ SUCCESS: Bloggr AI API`);
-			console.log(`✅ Returned ${results.length} keywords`);
-			console.log(`✅ ═══════════════════════════════════════════════════════\n`);
 			return results;
 		}
-		console.log(`   ⚠️  No results returned from Bloggr AI`);
-		console.log(`   🔄 Proceeding to next fallback...\n`);
 	} catch (e) {
-		// Detect CORS errors specifically
-		const errorMessage = e instanceof Error ? e.message : String(e);
-		if (
-			errorMessage.includes('CORS') ||
-			errorMessage.includes('NetworkError') ||
-			e instanceof TypeError
-		) {
-			console.error(`\n❌ ═══════════════════════════════════════════════════════`);
-			console.error(`❌ FAILED: Bloggr AI API (CORS Error)`);
-			console.error(`❌ This API is blocked by browser security policy`);
-			console.error(`❌ Only accessible from https://bloggr.ai domain`);
-			console.error(`❌ ═══════════════════════════════════════════════════════\n`);
-		} else {
-			console.error(`\n❌ ═══════════════════════════════════════════════════════`);
-			console.error(`❌ FAILED: Bloggr AI API`);
-			console.error(`❌ Error: ${errorMessage}`);
-			console.error(`❌ ═══════════════════════════════════════════════════════\n`);
-		}
-		console.log(`   🔄 Falling back to server API...\n`);
+		// Silent fallback
 	}
 
 	// ✨ Priority 3: Fallback to original server API (google-ads-api library)
 	if (USE_SERVER || API_BASE) {
-		console.log(`🎯 [PRIORITY 3] Server API (google-ads-api library)`);
-		console.log(`───────────────────────────────────────────────────────`);
 		try {
-			console.log(`   📡 Calling server API...`);
 			const results = await getKeywordIdeasViaServer(
 				seed,
 				location
 			);
-			console.log(`   ✅ Server API returned ${results.length} keywords`);
-			console.log(`\n✅ ═══════════════════════════════════════════════════════`);
-			console.log(`✅ SUCCESS: Server API (google-ads-api library)`);
-			console.log(`✅ Returned ${results.length} keywords`);
-			console.log(`✅ ═══════════════════════════════════════════════════════\n`);
 			return results;
 		} catch (e) {
-			const errorMessage = e instanceof Error ? e.message : String(e);
-			console.error(`\n❌ ═══════════════════════════════════════════════════════`);
-			console.error(`❌ FAILED: Server API (google-ads-api library)`);
-			console.error(`❌ Error: ${errorMessage}`);
-			console.error(`❌ ═══════════════════════════════════════════════════════\n`);
-			console.log(`   🔄 Falling back to local simulation...\n`);
+			// Silent fallback
 		}
 	}
 
 	// ✨ Priority 4: Local simulation (no external API - LAST RESORT)
-	console.log(`🎯 [PRIORITY 4] Local Simulation (Fallback)`);
-	console.log(`───────────────────────────────────────────────────────`);
-	console.log(`   ⚠️  All API services failed or unavailable`);
-	console.log(`   💡 Using simulated keyword data`);
-	
 	// Produce a small set of variants with pseudo volumes/difficulties.
 	const base = seed.trim();
 	const variants = Array.from(
@@ -451,12 +399,7 @@ export async function getKeywordIdeas(
 		const difficulty = ((h >> 8) % 100) / 100; // 0..1
 		return { text: v, volume, difficulty, source: 'seed' };
 	});
-	
-	console.log(`   ✅ Generated ${rows.length} simulated keywords`);
-	console.log(`\n✅ ═══════════════════════════════════════════════════════`);
-	console.log(`✅ SUCCESS: Local Simulation`);
-	console.log(`✅ Generated ${rows.length} keywords`);
-	console.log(`✅ ═══════════════════════════════════════════════════════\n`);
+
 	return rows;
 }
 

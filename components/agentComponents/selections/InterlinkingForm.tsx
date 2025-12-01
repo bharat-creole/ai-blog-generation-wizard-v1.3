@@ -176,20 +176,18 @@ const InterlinkingForm: React.FC<InterlinkingFormProps> = ({
 
 			<div className='flex gap-2 mb-3'>
 				<input
-					disabled={completedSelections.has('interlinking')}
 					type='text'
 					placeholder='Keyword/Anchor Text'
 					value={interlinkKeyword}
 					onChange={(e) => setInterlinkKeyword(e.target.value)}
-					className='flex-1 px-3 py-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-green-500 focus:border-green-500 disabled:bg-gray-100 disabled:cursor-not-allowed'
+					className='flex-1 px-3 py-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-green-500 focus:border-green-500'
 				/>
 				<input
-					disabled={completedSelections.has('interlinking')}
 					type='text'
 					placeholder='URL'
 					value={interlinkUrl}
 					onChange={(e) => setInterlinkUrl(e.target.value)}
-					className='flex-1 px-3 py-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-green-500 focus:border-green-500 disabled:bg-gray-100 disabled:cursor-not-allowed'
+					className='flex-1 px-3 py-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-green-500 focus:border-green-500'
 				/>
 				<button
 					className='px-3 py-2 text-sm bg-green-500 text-white rounded hover:bg-green-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed'
@@ -209,7 +207,7 @@ const InterlinkingForm: React.FC<InterlinkingFormProps> = ({
 						}`}
 					onClick={handleContinue}
 				>
-					Continue{' '}
+					Continue (skip){' '}
 					{data.interlinks.length > 0 && `(${data.interlinks.length} links)`}
 				</button>
 			</div>

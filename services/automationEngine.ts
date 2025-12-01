@@ -91,7 +91,12 @@ export const autoFillTitle = async (s: AgentState): Promise<string> => {
 		throw new Error('Primary keyword required to generate title');
 	}
 
-	const titles = await geminiService.generateTitles(s.data, s.apiKey);
+	// Get apiKey from state or environment variable
+	const apiKey = s.apiKey || process.env.GEMINI_API_KEY;
+	if (!apiKey) {
+		throw new Error('API Key is required. Please provide apiKey in state or set GEMINI_API_KEY in your .env.local file.');
+	}
+	const titles = await geminiService.generateTitles(s.data, apiKey);
 	// Auto-select the first (best) title
 	return titles.length > 0 ? titles[0] : s.data.topic || 'Untitled Blog';
 };

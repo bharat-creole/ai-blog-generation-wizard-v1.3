@@ -28,28 +28,66 @@ export interface UseAgentExecutionReturn {
 }
 
 /**
- * Convert V1 state to backend-compatible format
+ * Remove duplicates from trace array
  */
-const mapV1ToBackend = (v1: AgentStateV1): any => {
+const deduplicateTrace = (trace: any[]): any[] => {
+	if (!trace || !Array.isArray(trace)) return [];
+	const seen = new Set<string>();
+	return trace.filter((item) => {
+		const key = `${item.step}-${item.at}-${JSON.stringify(item.info)}`;
+		if (seen.has(key)) return false;
+		seen.add(key);
+		return true;
+	});
+};
+
+/**
+ * Remove duplicates from toolOutputs array
+ */
+const deduplicateToolOutputs = (toolOutputs: any[]): any[] => {
+	if (!toolOutputs || !Array.isArray(toolOutputs)) return [];
+	const seen = new Set<string>();
+	return toolOutputs.filter((item) => {
+		const key = `${item.type}-${item.timestamp}-${JSON.stringify(item.data)}`;
+		if (seen.has(key)) return false;
+		seen.add(key);
+		return true;
+	});
+};
+
+/**
+ * Convert V1 state to backend-compatible format
+ * Sanitizes state by removing unnecessary fields and deduplicating arrays
+ */
+const mapV1ToBackend = (v1: AgentStateV1, apiKey?: string): any => {
+	// Deduplicate trace and toolOutputs
+	const cleanedTrace = deduplicateTrace(v1.trace || []);
+	const cleanedToolOutputs = deduplicateToolOutputs(v1.toolOutputs || []);
+
+	// Only include essential fields in the payload
 	return {
 		messages: v1.messages.map((m) => ({
 			role: m.role,
 			content: m.content,
 		})),
 		data: v1.data,
-		apiKey: v1.apiKey,
+		// apiKey should be passed separately in request, not stored in state
+		// Only include if explicitly provided (for backward compatibility)
+		...(apiKey && { apiKey }),
 		outline: v1.outline,
 		outlineApproved: v1.outlineApproved,
 		draft: v1.draft,
 		progress: v1.progress,
 		preferences: v1.preferences,
-		trace: v1.trace,
+		// Only send last 50 trace entries to reduce payload size
+		trace: cleanedTrace.slice(-50),
 		halt: v1.halt || null,
 		userProvidedFields: Array.from(v1.userProvidedFields || []),
 		autoFillFields: Array.from(v1.autoFillFields || []),
 		// ✨ Map new V2 fields
 		currentStep: v1.currentStep,
-		toolOutputs: v1.toolOutputs,
+		// Only send last 10 tool outputs to reduce payload size
+		toolOutputs: cleanedToolOutputs.slice(-10),
 	};
 };
 
@@ -103,18 +141,39 @@ export const useAgentExecutionV3 = (
 	setIsThinking?: React.Dispatch<React.SetStateAction<boolean>>,
 	options?: UseAgentExecutionV3Options
 ): UseAgentExecutionReturn => {
+	// Store threadId in a ref to persist across calls
+	const threadIdRef = useRef<string | null>(null);
+
 	// Direct message sending (new API)
 	const sendUserMessage = useCallback(
 		async (
 			message: string,
-			currentState: AgentStateV1
+			currentState: AgentStateV1,
+			apiKey?: string
 		): Promise<{
 			response: string;
 			updatedState: AgentStateV1;
 			metadata?: Partial<ChatMessage>;
 		}> => {
-			const backendState = mapV1ToBackend(currentState);
-			const threadId = `thread-${Date.now()}`; // Generate unique thread ID per session
+			// Get apiKey from environment variable as fallback
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore
+			const envApiKey = import.meta.env?.VITE_GEMINI_API_KEY || import.meta.env?.GEMINI_API_KEY;
+			
+			// Extract apiKey from parameter, state, or environment variable (in that order)
+			const apiKeyToUse = apiKey || currentState?.apiKey || envApiKey;
+			if (!apiKeyToUse) {
+				throw new Error('apiKey is required. Please provide apiKey as a parameter, in state, or set VITE_GEMINI_API_KEY in your .env.local file.');
+			}
+			// Remove apiKey from state before mapping
+			const stateWithoutApiKey = { ...currentState };
+			delete stateWithoutApiKey.apiKey;
+			const backendState = mapV1ToBackend(stateWithoutApiKey, apiKeyToUse);
+			// Use existing threadId or create a new one for the session
+			if (!threadIdRef.current) {
+				threadIdRef.current = `thread-${Date.now()}`;
+			}
+			const threadId = threadIdRef.current;
 
 			setIsStreaming(true);
 			if (setIsThinking) setIsThinking(true);
@@ -128,22 +187,171 @@ export const useAgentExecutionV3 = (
 						currentState.trace?.length || 0;
 					let accumulatedState: any = { ...currentState };
 					let lastShownSectionIndex = -1; // Track last section index we've shown a message for
+					let shownPreMessages = new Set<string>(); // Track which pre-messages we've shown
 
-					streamMessage(message, threadId, backendState, {
+					// Helper to get pre-execution message based on current step
+					const getPreExecutionMessage = (state: any): string | null => {
+						const currentStep = state.currentStep;
+						const haltReason = state.halt?.reason;
+
+						// Check if we're about to execute a node
+						if (haltReason) return null; // Don't show if halted
+
+						// Determine which node will execute next based on currentStep
+						if (currentStep === 'topic' && !state.data?.primaryKeyword) {
+							return '🔍 Generating primary keywords...';
+						}
+						if (currentStep === 'primary_keyword' && !state.data?.primaryKeyword) {
+							return '🔍 Generating primary keywords...';
+						}
+						if (currentStep === 'secondary_keywords' && (!state.data?.secondaryKeywords || state.data.secondaryKeywords.length === 0)) {
+							return '🔍 Generating secondary keywords...';
+						}
+						if (currentStep === 'title' && !state.data?.title) {
+							return '📝 Generating title options...';
+						}
+						if (currentStep === 'outline' && (!state.outline || state.outline.length === 0)) {
+							return '📋 Generating outline...';
+						}
+						if (currentStep === 'generation' && state.outlineApproved) {
+							const sectionIndex = state.progress?.sectionIndex || 0;
+							if (sectionIndex < (state.outline?.length || 0)) {
+								return `✍️ Writing section ${sectionIndex + 1}...`;
+							}
+						}
+
+						return null;
+					};
+
+					streamMessage(message, threadId, backendState, apiKeyToUse, {
 						onIntent: (data) => {
 							// Initial assistant response (e.g. "I'll handle that...")
 							finalResponse = data.assistantMessage;
 
-							// Don't add message here - it will be added in AgentMode.tsx with metadata
+							// ✨ NEW: If multiple messages are provided, add them separately
+							// This allows separate messages for different steps (e.g., "Got it! I've captured..." + "Let me research keywords...")
+							if (data.assistantMessages && Array.isArray(data.assistantMessages) && data.assistantMessages.length > 1) {
+								console.log(`📨 [INTENT] Adding ${data.assistantMessages.length} separate messages:`, data.assistantMessages);
+								// Add each message separately with a small delay for better UX
+								data.assistantMessages.forEach((msg, index) => {
+									setTimeout(() => {
+										setMessages((prev) => {
+											const newMessages = [
+												...prev,
+												{
+													role: 'assistant',
+													content: msg,
+												},
+											];
+											console.log(`✅ [INTENT] Added message ${index + 1}/${data.assistantMessages.length}: "${msg}"`, {
+												totalMessages: newMessages.length,
+												timestamp: new Date().toISOString()
+											});
+											return newMessages;
+										});
+									}, index * 150); // 150ms delay between messages for better readability
+								});
+								// Mark that messages were already added, so AgentMode.tsx won't add the single message
+								finalResponse = ''; // Clear finalResponse to prevent duplicate
+							}
+							// If single message, don't add here - it will be added in AgentMode.tsx with metadata
 							// This prevents duplicate messages
 						},
 						onProgress: (chunk) => {
+							// Debug: Log chunk structure
+							console.log('[PROGRESS CHUNK]', {
+								chunkKeys: Object.keys(chunk),
+								chunkStructure: chunk
+							});
+
 							// Extract state from chunk (chunk is usually { nodeName: { ...state } })
-							const nodeName =
-								Object.keys(chunk)[0];
+							const nodeName = Object.keys(chunk)[0];
 							const stateUpdate = nodeName
 								? chunk[nodeName]
 								: chunk;
+
+							console.log('[PROGRESS] Node detected:', nodeName, {
+								hasStateUpdate: !!stateUpdate,
+								stateUpdateKeys: stateUpdate ? Object.keys(stateUpdate) : []
+							});
+
+							// Show pre-execution message when we first detect a node is executing
+							// Show it immediately when we see the node name, before merging state
+							if (nodeName && !shownPreMessages.has(`pre_${nodeName}`)) {
+								// Check if this chunk already contains results (if it does, node already completed)
+								// Only check chunk, not accumulated state, to allow showing message for new executions
+								const hasResultsInChunk = 
+									stateUpdate.toolOutputs?.length > 0 ||
+									stateUpdate.keywordCandidates?.length > 0 ||
+									stateUpdate.titleCandidates?.length > 0 ||
+									stateUpdate.halt?.reason === 'await_keyword_selection' ||
+									stateUpdate.halt?.reason === 'await_secondary_selection' ||
+									stateUpdate.halt?.reason === 'await_title_selection';
+
+								// Only show pre-message if this chunk doesn't already have results
+								// This means the node just started executing, not completed
+								if (!hasResultsInChunk) {
+									let preMessage: string | null = null;
+									
+									if (nodeName === 'research_primary') {
+										preMessage = '🔍 Generating primary keywords...';
+									} else if (nodeName === 'research_secondary') {
+										preMessage = '🔍 Generating secondary keywords...';
+									} else if (nodeName === 'title_generation') {
+										preMessage = '📝 Generating title options...';
+									} else if (nodeName === 'discovery') {
+										preMessage = '📋 Generating outline...';
+									} else if (nodeName === 'proposal') {
+										const sectionIndex = accumulatedState.progress?.sectionIndex || 0;
+										preMessage = `✍️ Writing section ${sectionIndex + 1}...`;
+									}
+
+									if (preMessage) {
+										shownPreMessages.add(`pre_${nodeName}`);
+										if (setIsThinking) setIsThinking(false);
+										
+										// Log when message is being sent to frontend
+										console.log(`🚀 [PRE-MESSAGE] Sending to frontend: "${preMessage}"`, {
+											node: nodeName,
+											timestamp: new Date().toISOString(),
+											chunkKeys: Object.keys(chunk),
+											stateUpdateKeys: Object.keys(stateUpdate),
+											hasResults: hasResultsInChunk
+										});
+										
+										// Add message to state (this triggers UI update)
+										setMessages((prev) => {
+											const newMessages = [
+												...prev,
+												{
+													role: 'assistant',
+													content: preMessage,
+												},
+											];
+											
+											// Log when message is added to state
+											console.log(`✅ [PRE-MESSAGE] Added to messages state: "${preMessage}"`, {
+												totalMessages: newMessages.length,
+												lastMessage: newMessages[newMessages.length - 1],
+												timestamp: new Date().toISOString()
+											});
+											
+											return newMessages;
+										});
+										
+										// Log confirmation
+										console.log(`📺 [PRE-MESSAGE] Should now be displayed in UI: "${preMessage}"`);
+									}
+								} else {
+									// Mark as shown even if we don't show the message (to prevent duplicates)
+									shownPreMessages.add(`pre_${nodeName}`);
+									console.log(`[PRE-MESSAGE] Skipped for ${nodeName}: Results already in chunk`, {
+										toolOutputs: stateUpdate.toolOutputs?.length,
+										keywordCandidates: stateUpdate.keywordCandidates?.length,
+										haltReason: stateUpdate.halt?.reason
+									});
+								}
+							}
 
 							// Merge state update into accumulated state first
 							// If trace exists, it might be appended, so we need to check the full trace
@@ -308,10 +516,15 @@ export const useAgentExecutionV3 = (
 							setIsStreaming(false);
 
 							// Map response back to V1 format
+							// Remove apiKey from returned state if present
+							const stateWithoutApiKey = { ...data.state };
+							delete stateWithoutApiKey.apiKey;
 							const updatedState = mapBackendToV1(
-								data.state,
+								stateWithoutApiKey,
 								currentState
 							);
+							// Ensure apiKey is not in final state
+							delete updatedState.apiKey;
 							finalState = updatedState;
 
 							console.log('✅ Message processed:', {
@@ -413,8 +626,10 @@ export const useAgentExecutionV3 = (
 								}
 							}
 
+							// Use finalResponse (which may be empty if separate messages were already added)
+							// instead of data.assistantMessage to prevent duplicates
 							resolve({
-								response: data.assistantMessage,
+								response: finalResponse, // Use finalResponse instead of data.assistantMessage
 								updatedState,
 								metadata,
 							});

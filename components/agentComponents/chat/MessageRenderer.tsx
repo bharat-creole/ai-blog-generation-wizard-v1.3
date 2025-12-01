@@ -90,6 +90,24 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({
 					: 'bg-gray-100 text-gray-800 max-w-[75%]'
 		}`;
 
+	// Log when message is being rendered
+	React.useEffect(() => {
+		if (isAssistant && message.content) {
+			// Check if this is a pre-message (contains "Generating" or emoji indicators)
+			if (message.content.includes('🔍') || 
+				message.content.includes('📝') || 
+				message.content.includes('📋') || 
+				message.content.includes('✍️') ||
+				message.content.includes('Generating')) {
+				console.log(`🎨 [UI RENDER] Pre-message being displayed: "${message.content}"`, {
+					timestamp: new Date().toISOString(),
+					hasMetadata,
+					role: message.role
+				});
+			}
+		}
+	}, [message.content, isAssistant, hasMetadata]);
+
 	return (
 		<div className={messageClasses}>
 			{/* Render message content */}

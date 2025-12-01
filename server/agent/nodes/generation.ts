@@ -27,10 +27,15 @@ export const proposalNode = async (state: AgentState): Promise<Partial<AgentStat
         console.log(`   Files: ${state.data.referenceFiles?.length || 0}`);
     }
 
+    // Get apiKey from state or environment variable
+    const apiKeyForSection = state.apiKey || process.env.GEMINI_API_KEY;
+    if (!apiKeyForSection) {
+        throw new Error('API Key is required. Please provide apiKey in state or set GEMINI_API_KEY in your .env.local file.');
+    }
     const sectionMd = await agentService.generateSectionContent(
         state.data,
         section,
-        state.apiKey,
+        apiKeyForSection,
         {
             targetKeyword: state.data.primaryKeyword,
             interlinks: state.data.interlinks as Interlink[],
@@ -70,10 +75,15 @@ export const finalBlogGenerationNode = async (state: AgentState): Promise<Partia
     // However, `geminiService.generateBlogPost` might do a final polish pass.
     // Let's stick to the original logic for now but be aware of the redundancy.
 
+    // Get apiKey from state or environment variable
+    const apiKeyForBlog = state.apiKey || process.env.GEMINI_API_KEY;
+    if (!apiKeyForBlog) {
+        throw new Error('API Key is required. Please provide apiKey in state or set GEMINI_API_KEY in your .env.local file.');
+    }
     const fullBlog = await geminiService.generateBlogPost(
         state.data,
         state.outline,
-        state.apiKey
+        apiKeyForBlog
     );
 
     return {

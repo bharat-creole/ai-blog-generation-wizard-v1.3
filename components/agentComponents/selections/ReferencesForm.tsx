@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AgentState } from '../../../../server/agent/state';
 import { ReferenceFile, ChatMessage, BlogData } from '../../../types';
 import { fileToBase64 } from '../utils/agentHelpers';
@@ -37,6 +37,21 @@ const ReferencesForm: React.FC<ReferencesFormProps> = ({
 	sendUserMessage,
 }) => {
 	const [currentReferenceUrl, setCurrentReferenceUrl] = useState('');
+
+	// Use data.referenceUrls and data.referenceFiles as source of truth
+	// If they're empty but currentUrls/currentFiles are provided, sync them on mount
+	useEffect(() => {
+		if ((!data.referenceUrls || data.referenceUrls.length === 0) && currentUrls.length > 0) {
+			updateData({ referenceUrls: currentUrls });
+		}
+		if ((!data.referenceFiles || data.referenceFiles.length === 0) && currentFiles.length > 0) {
+			updateData({ referenceFiles: currentFiles });
+		}
+	}, []); // Only run on mount
+
+	// Use data.referenceUrls and data.referenceFiles for display (source of truth)
+	const displayUrls = data.referenceUrls || [];
+	const displayFiles = data.referenceFiles || [];
 
 	const handleContinue = async () => {
 		if (!agent) return;
@@ -104,9 +119,10 @@ const ReferencesForm: React.FC<ReferencesFormProps> = ({
 	const handleAddUrl = () => {
 		if (currentReferenceUrl.trim()) {
 			const url = currentReferenceUrl.trim();
-			if (!data.referenceUrls.includes(url)) {
+			const currentUrls = data.referenceUrls || [];
+			if (!currentUrls.includes(url)) {
 				updateData({
-					referenceUrls: [...(data.referenceUrls || []), url],
+					referenceUrls: [...currentUrls, url],
 				});
 				setCurrentReferenceUrl('');
 			}
@@ -141,9 +157,9 @@ const ReferencesForm: React.FC<ReferencesFormProps> = ({
 					<div className='font-semibold mb-2 text-gray-800 flex items-center gap-2 text-sm'>
 						🔗 Reference URLs
 					</div>
-					{currentUrls.length > 0 && (
+					{displayUrls.length > 0 && (
 						<div className='space-y-2 mb-3 max-h-32 overflow-y-auto'>
-							{currentUrls.map((url, idx) => (
+							{displayUrls.map((url, idx) => (
 								<div
 									key={idx}
 									className='flex items-center justify-between text-xs bg-gray-50 border rounded p-2'
@@ -152,8 +168,9 @@ const ReferencesForm: React.FC<ReferencesFormProps> = ({
 									<button
 										className='px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600 transition-colors ml-2'
 										onClick={() => {
+											const currentUrls = data.referenceUrls || [];
 											updateData({
-												referenceUrls: data.referenceUrls.filter((_, i) => i !== idx),
+												referenceUrls: currentUrls.filter((_, i) => i !== idx),
 											});
 										}}
 									>
@@ -190,9 +207,9 @@ const ReferencesForm: React.FC<ReferencesFormProps> = ({
 					<div className='font-semibold mb-2 text-gray-800 flex items-center gap-2 text-sm'>
 						📄 Upload Files (PDF/DOCX)
 					</div>
-					{currentFiles.length > 0 && (
+					{displayFiles.length > 0 && (
 						<div className='space-y-2 mb-3 max-h-32 overflow-y-auto'>
-							{currentFiles.map((file, idx) => (
+							{displayFiles.map((file, idx) => (
 								<div
 									key={idx}
 									className='flex items-center justify-between text-xs bg-gray-50 border rounded p-2'
@@ -201,8 +218,9 @@ const ReferencesForm: React.FC<ReferencesFormProps> = ({
 									<button
 										className='px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600 transition-colors ml-2'
 										onClick={() => {
+											const currentFiles = data.referenceFiles || [];
 											updateData({
-												referenceFiles: data.referenceFiles.filter((_, i) => i !== idx),
+												referenceFiles: currentFiles.filter((_, i) => i !== idx),
 											});
 										}}
 									>
@@ -234,7 +252,7 @@ const ReferencesForm: React.FC<ReferencesFormProps> = ({
 						}`}
 					onClick={handleContinue}
 				>
-					Continue
+					Continue (skip)
 				</button>
 			</div>
 		</div>

@@ -14,6 +14,18 @@ export interface AgentAPIClient {
 // @ts-ignore
 const API_BASE = import.meta.env.VITE_AGENT_API_BASE || 'http://localhost:3001';
 
+// Get API key from environment variable (for client-side)
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+const getEnvApiKey = (): string | undefined => {
+    try {
+        // @ts-ignore
+        return import.meta.env?.VITE_GEMINI_API_KEY || import.meta.env?.GEMINI_API_KEY || undefined;
+    } catch (e) {
+        return undefined;
+    }
+};
+
 /**
  * Send a user message to the backend conversation handler
  * This is the PRIMARY method for interacting with the agent
@@ -161,17 +173,48 @@ export async function streamMessage(
     message: string,
     threadId: string,
     currentState: any,
-    callbacks: {
+    apiKey?: string,
+    callbacks?: {
         onIntent?: (data: { assistantMessage: string, shouldRunAgent: boolean, stateUpdates: any }) => void;
         onProgress?: (chunk: any) => void;
         onComplete?: (data: { assistantMessage: string, state: any, executed: boolean }) => void;
         onError?: (error: Error) => void;
     }
 ): Promise<void> {
+    // Handle backward compatibility: if apiKey is an object, it's actually callbacks
+    let actualApiKey: string | undefined = apiKey;
+    let actualCallbacks = callbacks;
+    
+    if (!callbacks && typeof apiKey === 'object' && apiKey !== null) {
+        actualCallbacks = apiKey as any;
+        actualApiKey = undefined;
+    }
+    
+    // Ensure apiKey is always passed if provided
+    const requestBody: any = { 
+        message, 
+        threadId, 
+        currentState, 
+        stream: true 
+    };
+    
+    // Get apiKey from parameter, state, or environment variable (in that order)
+    const envApiKey = getEnvApiKey();
+    const finalApiKey = actualApiKey || currentState?.apiKey || envApiKey;
+    
+    // Always include apiKey in request - use environment variable as last resort
+    if (finalApiKey) {
+        requestBody.apiKey = finalApiKey;
+    } else {
+        // Log debug info but don't throw - let server handle the error
+        console.warn('API Key not found in client. Server will check environment variable.');
+        // Still send request - server will check for GEMINI_API_KEY in env
+    }
+    
     const response = await fetch(`${API_BASE}/api/agent/message`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message, threadId, currentState, stream: true }),
+        body: JSON.stringify(requestBody),
     });
 
     if (!response.ok) {
@@ -211,14 +254,14 @@ export async function streamMessage(
                         const data = JSON.parse(dataStr);
 
                         if (currentEvent === 'intent') {
-                            callbacks.onIntent?.(data);
+                            actualCallbacks?.onIntent?.(data);
                         } else if (currentEvent === 'progress') {
-                            callbacks.onProgress?.(data);
+                            actualCallbacks?.onProgress?.(data);
                         } else if (currentEvent === 'done') {
-                            callbacks.onComplete?.(data);
+                            actualCallbacks?.onComplete?.(data);
                             return;
                         } else if (currentEvent === 'error') {
-                            callbacks.onError?.(new Error(data.error));
+                            actualCallbacks?.onError?.(new Error(data.error));
                             return;
                         }
                     } catch (e) {

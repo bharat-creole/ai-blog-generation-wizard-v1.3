@@ -16,7 +16,12 @@ export const titleGenerationNode = async (state: AgentState): Promise<Partial<Ag
     }
 
     // Generate title options using Gemini
-    const titles = await geminiService.generateTitles(state.data, state.apiKey);
+    // Get apiKey from state or environment variable
+    const apiKey = state.apiKey || process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+        throw new Error('API Key is required. Please provide apiKey in state or set GEMINI_API_KEY in your .env.local file.');
+    }
+    const titles = await geminiService.generateTitles(state.data, apiKey);
 
     // ✨ Case 2: Auto-select if automation enabled
     if (automationEngine.shouldAutoFill(state as any, 'title') && titles.length > 0) {
@@ -65,7 +70,12 @@ export const discoveryNode = async (state: AgentState): Promise<Partial<AgentSta
     // We assume feedback comes in via state updates before this node runs
 
     console.log('📝 [OUTLINE GENERATION] Creating initial outline...');
-    const outline = await geminiService.generateOutline(input, state.apiKey);
+    // Get apiKey from state or environment variable
+    const apiKeyForOutline = state.apiKey || process.env.GEMINI_API_KEY;
+    if (!apiKeyForOutline) {
+        throw new Error('API Key is required. Please provide apiKey in state or set GEMINI_API_KEY in your .env.local file.');
+    }
+    const outline = await geminiService.generateOutline(input, apiKeyForOutline);
 
     console.log(`✅ [OUTLINE GENERATION] Complete! Outline has ${outline.length} sections`);
 

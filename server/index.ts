@@ -54,7 +54,9 @@ function simulateIdeas(seed: string) {
 }
 
 const app = express();
-app.use(express.json());
+// Increase body size limit to handle large state objects (e.g., base64 encoded files)
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use(cors());
 
 app.post('/api/getKeywords', async (req, res) => {
@@ -194,19 +196,7 @@ app.post('/api/getKeywords', async (req, res) => {
 app.post('/api/getKeywordsGoogleAds', async (req, res) => {
 	const { seed, location } = req.body || {};
 
-	console.log(`\n${'═'.repeat(70)}`);
-	console.log(`🚀 [SERVER] Google Ads REST API Request Received`);
-	console.log(`${'═'.repeat(70)}`);
-	console.log(`   📋 Seed Keyword: "${seed}"`);
-	console.log(`   📍 Location: ${location}`);
-	console.log(`   ⏰ Timestamp: ${new Date().toISOString()}`);
-	console.log(`${'─'.repeat(70)}`);
-
 	if (!seed || typeof seed !== 'string') {
-		console.error(
-			`   ❌ Validation Error: Missing or invalid seed keyword`
-		);
-		console.log(`${'═'.repeat(70)}\n`);
 		return res
 			.status(400)
 			.json({ error: 'Missing required field: seed' });
@@ -220,22 +210,7 @@ app.post('/api/getKeywordsGoogleAds', async (req, res) => {
 		process.env.REFRESH_TOKEN
 	);
 
-	console.log(`   🔐 Credential Check:`);
-	console.log(`      - Customer ID: ${customerId ? '✓ Set' : '✗ Missing'}`);
-	console.log(
-		`      - Developer Token: ${developerToken ? '✓ Set' : '✗ Missing'}`
-	);
-	console.log(
-		`      - OAuth Credentials: ${hasOAuthCreds ? '✓ Set' : '✗ Missing'
-		}`
-	);
-
 	if (!customerId || !developerToken || !hasOAuthCreds) {
-		console.error(
-			`\n   ❌ ERROR: Missing required environment variables`
-		);
-		console.error(`   🔄 Falling back to simulated data\n`);
-		console.log(`${'═'.repeat(70)}\n`);
 		return res.status(503).json({
 			error: 'Google Ads REST API credentials not configured',
 			rows: simulateIdeas(seed),
@@ -253,21 +228,9 @@ app.post('/api/getKeywordsGoogleAds', async (req, res) => {
 		pageSize: 20,
 	};
 
-	console.log(`\n   📡 Making API Call to Google Ads...`);
-	console.log(`      Endpoint: ${url}`);
-	console.log(`      Network: GOOGLE_SEARCH_AND_PARTNERS`);
-	console.log(`      Page Size: 20`);
-
 	try {
-		// Automatically get valid token (will refresh if expired)
-		console.log(`   🔑 Getting OAuth2 access token...`);
-		const startTokenTime = Date.now();
 		const accessToken = await tokenManager.getValidToken();
-		const tokenDuration = Date.now() - startTokenTime;
-		console.log(`   ✅ Access token obtained (${tokenDuration}ms)`);
 
-		console.log(`   📤 Sending request to Google Ads API...`);
-		const startApiTime = Date.now();
 		const response = await fetch(url, {
 			method: 'POST',
 			headers: {
@@ -277,13 +240,6 @@ app.post('/api/getKeywordsGoogleAds', async (req, res) => {
 			},
 			body: JSON.stringify(body),
 		});
-		const apiDuration = Date.now() - startApiTime;
-
-		console.log(`\n   📥 API Response Received:`);
-		console.log(
-			`      Status: ${response.status} ${response.statusText}`
-		);
-		console.log(`      Duration: ${apiDuration}ms`);
 
 		const data: any = await response.json();
 
@@ -291,34 +247,12 @@ app.post('/api/getKeywordsGoogleAds', async (req, res) => {
 			const errorMessage =
 				data.error?.message ||
 				`API returned ${response.status}`;
-			const errorCode = data.error?.code || response.status;
-			console.error(`\n   ❌ ${'═'.repeat(66)}`);
-			console.error(`   ❌ API ERROR`);
-			console.error(`   ❌ ${'═'.repeat(66)}`);
-			console.error(`      Error Code: ${errorCode}`);
-			console.error(`      Error Message: ${errorMessage}`);
-			if (data.error?.details) {
-				console.error(
-					`      Details: ${JSON.stringify(
-						data.error.details,
-						null,
-						2
-					)}`
-				);
-			}
-			console.error(`   ❌ ${'═'.repeat(66)}\n`);
-			console.log(`${'═'.repeat(70)}\n`);
 			throw new Error(
 				`Google Ads REST API failed: ${errorMessage}`
 			);
 		}
 
 		if (data.results && data.results.length > 0) {
-			console.log(`\n   ✅ ${'═'.repeat(66)}`);
-			console.log(`   ✅ SUCCESS: Keywords Retrieved`);
-			console.log(`   ✅ ${'═'.repeat(66)}`);
-			console.log(`      Total Results: ${data.results.length}`);
-
 			// Transform Google Ads response to match expected format
 			const rows = data.results
 				.map((result: any) => {
@@ -348,53 +282,11 @@ app.post('/api/getKeywordsGoogleAds', async (req, res) => {
 				})
 				.filter((kw: any) => kw.text.trim() !== '');
 
-			console.log(`      Valid Keywords: ${rows.length}`);
-			console.log(`\n   📊 Top 5 Results:`);
-			rows.slice(0, 5).forEach((kw: any, idx: number) => {
-				console.log(`      ${idx + 1}. "${kw.text}"`);
-				console.log(
-					`         Volume: ${kw.volume.toLocaleString()} searches/month`
-				);
-				console.log(
-					`         Difficulty: ${(
-						kw.difficulty * 100
-					).toFixed(1)}%`
-				);
-			});
-			console.log(`   ✅ ${'═'.repeat(66)}\n`);
-			console.log(`${'═'.repeat(70)}\n`);
-
 			return res.json({ rows });
 		} else {
-			console.warn(
-				`\n   ⚠️  WARNING: No results returned from Google Ads API`
-			);
-			console.warn(`   🔄 Falling back to simulated data\n`);
-			console.log(`${'═'.repeat(70)}\n`);
 			return res.json({ rows: simulateIdeas(seed) });
 		}
 	} catch (error: any) {
-		const errorMessage =
-			error instanceof Error ? error.message : String(error);
-		const errorStack = error instanceof Error ? error.stack : '';
-
-		console.error(`\n   ❌ ${'═'.repeat(66)}`);
-		console.error(`   ❌ EXCEPTION CAUGHT`);
-		console.error(`   ❌ ${'═'.repeat(66)}`);
-		console.error(`      Error: ${errorMessage}`);
-		if (errorStack) {
-			console.error(`      Stack Trace:`);
-			errorStack
-				.split('\n')
-				.slice(0, 5)
-				.forEach((line: string) => {
-					console.error(`      ${line}`);
-				});
-		}
-		console.error(`   ❌ ${'═'.repeat(66)}`);
-		console.error(`   🔄 Returning simulated data as fallback\n`);
-		console.log(`${'═'.repeat(70)}\n`);
-
 		// Return simulated data as fallback
 		return res.json({ rows: simulateIdeas(seed) });
 	}
@@ -410,25 +302,39 @@ import { processMessage } from './agent/conversationHandler.js';
 
 // NEW: Main conversation endpoint - handles user messages with intent classification
 app.post('/api/agent/message', async (req, res) => {
-	const { message, threadId, currentState, stream = false } = req.body || {};
+	const {
+		message,
+		threadId,
+		currentState,
+		apiKey, // Extract apiKey from request body, not from state
+		stream = false,
+	} = req.body || {};
 
 	console.log(`\n${'═'.repeat(70)}`);
-	console.log(`💬 [AGENT] Message Request Received ${stream ? '(Streaming)' : ''}`);
+	console.log(
+		`💬 [AGENT] Message Request Received ${stream ? '(Streaming)' : ''}`
+	);
 	console.log(`${'═'.repeat(70)}`);
 	console.log(`   Thread ID: ${threadId}`);
 	console.log(`   Message: "${message}"`);
 
 	if (!threadId || !message) {
 		return res.status(400).json({
-			error: 'threadId and message are required'
+			error: 'threadId and message are required',
 		});
 	}
 
-	if (!currentState?.apiKey) {
+	// Get apiKey from request body, state, or environment variable (in that order)
+	const apiKeyToUse = apiKey || currentState?.apiKey || process.env.GEMINI_API_KEY;
+	if (!apiKeyToUse) {
 		return res.status(400).json({
-			error: 'API key is required in currentState'
+			error: 'apiKey is required. Please provide apiKey in request, state, or set GEMINI_API_KEY in your .env.local file.',
 		});
 	}
+
+	// Remove apiKey from state to prevent storing it
+	const sanitizedState = { ...currentState };
+	delete sanitizedState.apiKey;
 
 	// Setup streaming if requested
 	if (stream) {
@@ -442,23 +348,36 @@ app.post('/api/agent/message', async (req, res) => {
 		// Process message through conversation handler
 		const response = await processMessage(
 			message,
-			currentState,
-			currentState.apiKey
+			sanitizedState,
+			apiKeyToUse
 		);
 
-		console.log(`   📤 Response: "${response.assistantMessage.substring(0, 50)}..."`);
+		console.log(
+			`   📤 Response: "${response.assistantMessage.substring(
+				0,
+				50
+			)}..."`
+		);
 		console.log(`   Should execute: ${response.shouldRunAgent}`);
 
-		// Merge state updates
-		let updatedState = { ...currentState, ...response.stateUpdates };
+		// Merge state updates (without apiKey)
+		// But ensure apiKey is available for graph execution (from request or env)
+		let updatedState = { 
+			...sanitizedState, 
+			...response.stateUpdates,
+			apiKey: apiKeyToUse // Ensure apiKey is available for nodes during execution
+		};
 
 		// Emit intent event
 		if (stream) {
-			res.write(`event: intent\ndata: ${JSON.stringify({
-				assistantMessage: response.assistantMessage,
-				shouldRunAgent: response.shouldRunAgent,
-				stateUpdates: response.stateUpdates
-			})}\n\n`);
+			res.write(
+				`event: intent\ndata: ${JSON.stringify({
+					assistantMessage: response.assistantMessage,
+					assistantMessages: response.assistantMessages, // Include separate messages if available
+					shouldRunAgent: response.shouldRunAgent,
+					stateUpdates: response.stateUpdates,
+				})}\n\n`
+			);
 		}
 
 		// Only execute graph if conversation handler says to
@@ -468,17 +387,27 @@ app.post('/api/agent/message', async (req, res) => {
 
 			if (stream) {
 				// Stream graph execution
-				const streamIterator = await graph.stream(updatedState, config);
+				const streamIterator = await graph.stream(
+					updatedState,
+					config
+				);
 				for await (const chunk of streamIterator) {
 					// Send each state update as progress event
-					res.write(`event: progress\ndata: ${JSON.stringify(chunk)}\n\n`);
+					res.write(
+						`event: progress\ndata: ${JSON.stringify(
+							chunk
+						)}\n\n`
+					);
 
 					// Update local state tracker
 					// Note: chunk is a partial state update, usually keyed by node name
 					// e.g. { research: { ... } }
 					const nodeName = Object.keys(chunk)[0];
 					if (nodeName && chunk[nodeName]) {
-						updatedState = { ...updatedState, ...chunk[nodeName] };
+						updatedState = {
+							...updatedState,
+							...chunk[nodeName],
+						};
 					}
 				}
 				// Get final state after stream completes to ensure we have everything
@@ -490,48 +419,66 @@ app.post('/api/agent/message', async (req, res) => {
 				updatedState = result;
 			}
 		} else {
-			console.log(`   ⏸️  Skipping graph execution (conversation only)`);
+			console.log(
+				`   ⏸️  Skipping graph execution (conversation only)`
+			);
 		}
 
 		console.log(`${'═'.repeat(70)}\n`);
 
 		// Serialize state for transport (convert Sets to Arrays)
+		// Remove apiKey and other unnecessary fields before sending
 		const serializedState = {
 			...updatedState,
-			userProvidedFields: Array.from(updatedState.userProvidedFields || []),
-			autoFillFields: Array.from(updatedState.autoFillFields || [])
+			userProvidedFields: Array.from(
+				updatedState.userProvidedFields || []
+			),
+			autoFillFields: Array.from(updatedState.autoFillFields || []),
 		};
+		// Ensure apiKey is not in serialized state
+		delete serializedState.apiKey;
 
-		if (serializedState.keywordCandidates && serializedState.keywordCandidates.length > 0) {
-			console.log('🔍 [SERVER] Serialized keywordCandidates (first item):', serializedState.keywordCandidates[0]);
+		if (
+			serializedState.keywordCandidates &&
+			serializedState.keywordCandidates.length > 0
+		) {
+			console.log(
+				'🔍 [SERVER] Serialized keywordCandidates (first item):',
+				serializedState.keywordCandidates[0]
+			);
 		} else {
-			console.log('🔍 [SERVER] No keywordCandidates in serialized state');
+			console.log(
+				'🔍 [SERVER] No keywordCandidates in serialized state'
+			);
 		}
 
 		if (stream) {
-			res.write(`event: done\ndata: ${JSON.stringify({
-				assistantMessage: response.assistantMessage,
-				state: serializedState,
-				executed: response.shouldRunAgent
-			})}\n\n`);
+			res.write(
+				`event: done\ndata: ${JSON.stringify({
+					assistantMessage: response.assistantMessage,
+					state: serializedState,
+					executed: response.shouldRunAgent,
+				})}\n\n`
+			);
 			res.end();
 		} else {
 			return res.json({
 				assistantMessage: response.assistantMessage,
 				state: serializedState,
-				executed: response.shouldRunAgent
+				executed: response.shouldRunAgent,
 			});
 		}
-
 	} catch (error: any) {
 		console.error(`   ❌ Message processing failed:`, error);
 		console.log(`${'═'.repeat(70)}\n`);
 
 		// Check if it's a rate limit error
-		const isRateLimit = error?.status === 429 || 
-			error?.error?.code === 429 || 
+		const isRateLimit =
+			error?.status === 429 ||
+			error?.error?.code === 429 ||
 			error?.error?.status === 'RESOURCE_EXHAUSTED' ||
-			(error?.message && /quota|rate limit|429/i.test(error.message));
+			(error?.message &&
+				/quota|rate limit|429/i.test(error.message));
 
 		let errorMessage = error.message || 'Message processing failed';
 		let statusCode = 500;
@@ -541,7 +488,10 @@ app.post('/api/agent/message', async (req, res) => {
 			let retryDelay: number | null = null;
 			if (error?.error?.details) {
 				for (const detail of error.error.details) {
-					if (detail['@type'] === 'type.googleapis.com/google.rpc.RetryInfo') {
+					if (
+						detail['@type'] ===
+						'type.googleapis.com/google.rpc.RetryInfo'
+					) {
 						const delay = detail.retryDelay;
 						if (delay) {
 							retryDelay = parseFloat(delay) * 1000; // Convert to milliseconds
@@ -549,29 +499,32 @@ app.post('/api/agent/message', async (req, res) => {
 					}
 				}
 			}
-			
+
 			// Create user-friendly error message
 			if (retryDelay) {
 				const seconds = Math.ceil(retryDelay / 1000);
 				errorMessage = `Rate limit exceeded. Please wait ${seconds} seconds before trying again. The system will automatically retry.`;
 			} else {
-				errorMessage = 'Rate limit exceeded. Please wait a moment and try again.';
+				errorMessage =
+					'Rate limit exceeded. Please wait a moment and try again.';
 			}
 			statusCode = 429;
 		}
 
 		if (stream) {
-			res.write(`event: error\ndata: ${JSON.stringify({ 
-				error: errorMessage,
-				isRateLimit,
-				retryDelay: isRateLimit ? retryDelay : undefined
-			})}\n\n`);
+			res.write(
+				`event: error\ndata: ${JSON.stringify({
+					error: errorMessage,
+					isRateLimit,
+					retryDelay: isRateLimit ? retryDelay : undefined,
+				})}\n\n`
+			);
 			res.end();
 		} else {
 			return res.status(statusCode).json({
 				error: errorMessage,
 				isRateLimit,
-				retryDelay: isRateLimit ? retryDelay : undefined
+				retryDelay: isRateLimit ? retryDelay : undefined,
 			});
 		}
 	}
@@ -603,7 +556,7 @@ app.post('/api/agent/invoke', async (req, res) => {
 		console.error(`   ❌ Agent execution failed:`, error);
 		console.log(`${'═'.repeat(70)}\\n`);
 		return res.status(500).json({
-			error: error.message || 'Agent execution failed'
+			error: error.message || 'Agent execution failed',
 		});
 	}
 });
@@ -643,7 +596,11 @@ app.post('/api/agent/stream', async (req, res) => {
 		console.log(`${'═'.repeat(70)}\\n`);
 	} catch (error: any) {
 		console.error(`   ❌ Stream failed:`, error);
-		res.write(`event: error\\ndata: ${JSON.stringify({ error: error.message })}\\n\\n`);
+		res.write(
+			`event: error\\ndata: ${JSON.stringify({
+				error: error.message,
+			})}\\n\\n`
+		);
 		res.end();
 		console.log(`${'═'.repeat(70)}\\n`);
 	}

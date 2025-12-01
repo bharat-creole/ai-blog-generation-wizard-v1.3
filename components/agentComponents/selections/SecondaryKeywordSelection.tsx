@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useMemo } from 'react';
 import { AgentState } from '../../../../server/agent/state';
 import { KeywordCandidate, ChatMessage } from '../../../types';
 
@@ -35,6 +35,35 @@ const SecondaryKeywordSelection: React.FC<SecondaryKeywordSelectionProps> = ({
 	setTraceItems,
 	sendUserMessage,
 }) => {
+	// Create a stable key from candidates to detect actual changes
+	const candidatesKey = useMemo(() => {
+		return candidates.map(c => c.text).sort().join('|');
+	}, [candidates]);
+
+	// Track previous candidates to detect when they change
+	const prevCandidatesRef = useRef<string>('');
+
+	// Reset selections whenever component loads with new candidates
+	// This ensures a fresh start every time the component is shown
+	useEffect(() => {
+		const isCompleted = completedSelections.has('secondaryKeywords');
+		
+		// Reset if:
+		// 1. Candidates changed (different set of keywords)
+		// 2. Component is shown with candidates and selection is not completed
+		const shouldReset = 
+			candidatesKey !== prevCandidatesRef.current &&
+			candidates.length > 0 &&
+			!isCompleted;
+		
+		if (shouldReset) {
+			setSelectedSecondaries([]);
+		}
+		
+		// Always update ref to track current candidates
+		prevCandidatesRef.current = candidatesKey;
+	}, [candidatesKey, candidates.length, completedSelections, setSelectedSecondaries]);
+
 	const handleConfirm = async () => {
 		if (!agent) return;
 

@@ -116,7 +116,7 @@ const AgentMode: React.FC<Props> = ({
 	const { analyzeUserIntent } = useIntentAnalysis();
 
 	// Use agent execution hook with setters for real-time updates
-	const { sendUserMessage } = useAgentExecutionV3(
+	const { sendUserMessage: sendUserMessageBase } = useAgentExecutionV3(
 		setMessages,
 		setIsStreaming,
 		setIsThinking,
@@ -126,6 +126,28 @@ const AgentMode: React.FC<Props> = ({
 			setOutline,
 			updateData,
 		}
+	);
+
+	// Wrapper function that includes apiKey for selection components
+	// This ensures apiKey is always passed when selection components call sendUserMessage
+	// Falls back to environment variable if apiKey is not provided
+	const sendUserMessage = useCallback(
+		async (
+			message: string,
+			agentState: AgentState
+		): Promise<{ response: string; updatedState: AgentState; metadata?: any }> => {
+			// Get apiKey from props, state, or environment variable
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore
+			const envApiKey = import.meta.env?.VITE_GEMINI_API_KEY || import.meta.env?.GEMINI_API_KEY;
+			const apiKeyToUse = apiKey || agentState?.apiKey || envApiKey;
+			
+			if (!apiKeyToUse) {
+				throw new Error('API Key is required. Please set your Gemini API Key in Settings or set VITE_GEMINI_API_KEY in your .env.local file.');
+			}
+			return sendUserMessageBase(message, agentState, apiKeyToUse);
+		},
+		[sendUserMessageBase, apiKey]
 	);
 
 	// Set streaming to true on mount for initial assistant message
@@ -154,6 +176,10 @@ const AgentMode: React.FC<Props> = ({
 			await_secondary_selection: 'secondaryKeywords',
 			await_title_selection: 'title',
 			awaiting_approval: 'outline',
+			await_references: 'references',
+			await_references_selection: 'references',
+			await_interlinking: 'interlinking',
+			await_interlinking_selection: 'interlinking',
 		};
 
 		const selectionKey = haltToSelectionMap[agent.halt.reason];
@@ -181,17 +207,22 @@ const AgentMode: React.FC<Props> = ({
 			return;
 		}
 		setError(null);
-		const userMsg = createUserMessage(input.trim());
+		
+		// ✨ Capture input value and clear input immediately
+		const inputValue = input.trim();
+		setInput(''); // Clear input box immediately after capturing value
+		
+		const userMsg = createUserMessage(inputValue);
 
 		// Use extracted intent analysis
-		const intent = analyzeUserIntent(input.trim());
+		const intent = analyzeUserIntent(inputValue);
 
 		let messageSentToBackend = false; // Flag to prevent duplicate backend calls
 
 		// Handle general blog generation requests (generate blog, create blog, write blog, etc.)
 		if (intent.wantsBlogGeneration && !agent) {
 			// Try to extract topic from current message
-			let topicFound = extractTopicFromText(input.trim());
+			let topicFound = extractTopicFromText(inputValue);
 
 			// If no topic in current message, check previous messages
 			if (!topicFound) {
@@ -218,7 +249,6 @@ const AgentMode: React.FC<Props> = ({
 						content: "I'd be happy to help you create a blog post! 📝\n\n**Please tell me what topic you'd like to write about:**\n\nFor example:\n- 'AI in healthcare'\n- 'Benefits of remote work'\n- 'Best practices for web development'\n\nWhat's your blog topic?",
 					},
 				]);
-				setInput('');
 				return;
 			} else {
 				// Topic found - use it and start guided generation
@@ -256,7 +286,7 @@ const AgentMode: React.FC<Props> = ({
 			!intent.wantsBlogGeneration &&
 			!intent.isIrrelevant
 		) {
-			const providedText = input.trim();
+			const providedText = inputValue;
 
 			// Validate if the input is a valid topic (not just any text)
 			const isValidTopic = validateTopic(providedText, intent);
@@ -271,7 +301,6 @@ const AgentMode: React.FC<Props> = ({
 						content: "I need a clear blog topic to proceed. Please provide a specific topic.\n\n**Examples:**\n- 'The impact of AI on modern education'\n- 'Best practices for remote team management'\n- 'How to build a successful e-commerce business'\n\nWhat would you like to write about?",
 					},
 				]);
-				setInput('');
 				return;
 			}
 
@@ -296,8 +325,7 @@ const AgentMode: React.FC<Props> = ({
 		// Handle "generate blog automatically" with data analysis
 		if (intent.wantsFullAutomation && !agent) {
 			// Try to extract topic from the user's message
-			const extractedTopic = input
-				.trim()
+			const extractedTopic = inputValue
 				.replace(
 					/^(generate|create|write|make).*(blog|article|post|content).*(about|on|for|regarding|concerning)\s+/i,
 					''
@@ -311,7 +339,7 @@ const AgentMode: React.FC<Props> = ({
 			// Check if user provided topic in the same message
 			const topicInMessage =
 				extractedTopic.length > 10 &&
-				extractedTopic !== input.trim() &&
+				extractedTopic !== inputValue &&
 				!/^(generate|create|write|make|automatically|auto)/i.test(
 					extractedTopic
 				);
@@ -351,7 +379,6 @@ const AgentMode: React.FC<Props> = ({
 						content: '🚀 **Full Automation Mode Activated!**\n\nI\'ll handle everything for you and create an SEO-optimized blog post.\n\n**To get started, please provide your blog topic:**\n\nFor example:\n- "AI in healthcare"\n- "Benefits of remote work"\n- "Best practices for web development"\n\n💡 *Tip: Be specific about your topic for better results!*',
 					},
 				]);
-				setInput('');
 				return;
 			} else {
 				// Has a valid topic - save it if extracted from message
@@ -398,7 +425,6 @@ const AgentMode: React.FC<Props> = ({
 					},
 				]);
 				messageSentToBackend = true; // Mark that user message was already added
-				setInput('');
 				setIsThinking(true);
 
 				// Continue to backend execution below...
@@ -435,7 +461,6 @@ const AgentMode: React.FC<Props> = ({
 				},
 			]);
 			messageSentToBackend = true; // Mark that user message was already added
-			setInput('');
 			setIsThinking(true);
 
 			// Continue to backend execution below...
@@ -471,7 +496,6 @@ const AgentMode: React.FC<Props> = ({
 				},
 			]);
 			messageSentToBackend = true; // Mark that user message was already added
-			setInput('');
 			setIsThinking(true);
 
 			// Continue to backend execution below...
@@ -479,7 +503,6 @@ const AgentMode: React.FC<Props> = ({
 			// Only add user message if not already handled by a specific flow
 			// Normal message flow
 			setMessages((prev) => [...prev, userMsg]);
-			setInput('');
 		}
 
 		// V3: Send message to backend instead of using local handlers
@@ -503,27 +526,40 @@ const AgentMode: React.FC<Props> = ({
 				);
 			}
 
-			// Ensure apiKey is set
+			// Don't store apiKey in state - it will be passed separately
 			const currentState: AgentState = {
 				...stateToUse,
-				apiKey,
+				// apiKey is not stored in state for security
 			};
 
-			// Send message to backend
+			// Send message to backend (apiKey will be passed separately in the hook)
 			const result = await sendUserMessage(
-				input.trim(),
-				currentState
+				inputValue,
+				currentState,
+				apiKey // Pass apiKey separately
 			);
 
-			// Display assistant response
-			setMessages((prev) => [
-				...prev,
-				{
-					role: 'assistant',
-					content: result.response,
-					...result.metadata, // ✨ Attach UI metadata (options, forms, etc.)
-				},
-			]);
+			// Display assistant response (only if not already added as separate messages)
+			if (result.response && result.response.trim()) {
+				setMessages((prev) => [
+					...prev,
+					{
+						role: 'assistant',
+						content: result.response,
+						...result.metadata, // ✨ Attach UI metadata (options, forms, etc.)
+					},
+				]);
+			} else if (result.metadata) {
+				// If no response but has metadata (like keyword selection UI), add empty message with metadata
+				setMessages((prev) => [
+					...prev,
+					{
+						role: 'assistant',
+						content: '',
+						...result.metadata,
+					},
+				]);
+			}
 
 			// Update local state with backend response
 			setAgent(result.updatedState);

@@ -10,6 +10,7 @@ import * as automationEngine from '../../services/automationEngine';
 
 export interface ConversationResponse {
 	assistantMessage: string;
+	assistantMessages?: string[]; // Optional array of separate messages for different steps
 	stateUpdates: Partial<AgentState>;
 	shouldRunAgent: boolean;
 }
@@ -188,6 +189,8 @@ const handlePartialInfo = (
 	currentState: AgentState
 ): ConversationResponse => {
 	const extractedData = intent.extractedData || {};
+	
+	// ✨ STEP 1: Update ALL provided fields in state first
 	const updatedData = {
 		...currentState.data,
 		...(extractedData.topic && { topic: extractedData.topic }),
@@ -198,6 +201,9 @@ const handlePartialInfo = (
 			secondaryKeywords: extractedData.secondaryKeywords,
 		}),
 		...(extractedData.title && { title: extractedData.title }),
+		...(extractedData.targetLocation && {
+			targetLocation: extractedData.targetLocation,
+		}),
 	};
 
 	const capturedItems: string[] = [];
@@ -212,7 +218,8 @@ const handlePartialInfo = (
 	if (extractedData.title)
 		capturedItems.push(`title: "${extractedData.title}"`);
 
-	let assistantMessage =
+	// Create base capture message
+	const baseMessage =
 		capturedItems.length > 0
 			? `Got it! I've captured: ${capturedItems.join(', ')}.`
 			: `Got it! Ready to proceed.`;
@@ -225,9 +232,21 @@ const handlePartialInfo = (
 			extractedData.primaryKeyword !==
 			currentState.data.primaryKeyword);
 
+	// Helper to safely convert to Set
+	const toSet = (value: Set<string> | string[] | undefined): Set<string> => {
+		if (!value) return new Set();
+		if (value instanceof Set) return value;
+		if (Array.isArray(value)) return new Set(value);
+		return new Set();
+	};
+
 	const stateUpdates: Partial<AgentState> = {
 		data: updatedData as BlogData,
-		userProvidedFields: new Set(Object.keys(extractedData)),
+		// Merge with existing userProvidedFields instead of replacing
+		userProvidedFields: new Set([
+			...toSet(currentState.userProvidedFields),
+			...Object.keys(extractedData).filter(key => extractedData[key as keyof typeof extractedData] != null)
+		]),
 	};
 
 	if (criticalFieldsUpdated) {
@@ -241,67 +260,117 @@ const handlePartialInfo = (
 		stateUpdates.halt = null;
 	}
 
-	let shouldRunAgent = true; // Default to true, then override if specific conditions require a halt
+	// ✨ STEP 2: After updating state, determine what's still missing
+	// Check the UPDATED state (not just extracted data) to find the first missing step
+	const determineNextStep = (): {
+		step: AgentState['currentStep'];
+		message: string;
+		shouldRunAgent: boolean;
+	} => {
+		// Check in order: topic → primary_keyword → secondary_keywords → title → outline
+		
+		// 1. Check if topic is missing
+		if (!updatedData.topic?.trim()) {
+			return {
+				step: 'topic',
+				message: 'Please provide a topic for your blog.',
+				shouldRunAgent: false,
+			};
+		}
 
-	// ✨ FIX: Determine correct currentStep based on what was provided or confirmed
-	if (extractedData.topic) {
-		stateUpdates.currentStep = 'topic';
-		assistantMessage += ` Let me research keywords for you.`;
-	} else if (extractedData.primaryKeyword) {
-		stateUpdates.currentStep = 'primary_keyword'; // Graph will move to secondary research
-		assistantMessage += ` Moving on to secondary keyword research.`;
-	} else if (extractedData.secondaryKeywords) {
-		stateUpdates.currentStep = 'secondary_keywords'; // Will trigger title generation
-		assistantMessage += ` Generating titles now.`;
-		stateUpdates.halt = null; // Clear halt so graph can proceed
-	} else if (extractedData.title) {
-		stateUpdates.currentStep = 'title';
-		stateUpdates.halt = null; // Clear halt to allow graph to run
+		// 2. Check if primary keyword is missing
+		if (!updatedData.primaryKeyword?.trim()) {
+			return {
+				step: 'primary_keyword',
+				message: 'Let me research keywords for you.',
+				shouldRunAgent: true,
+			};
+		}
 
-		// After title is set, determine next step based on automation level
+		// 3. Check if secondary keywords are missing
+		if (
+			!updatedData.secondaryKeywords ||
+			updatedData.secondaryKeywords.length === 0
+		) {
+			return {
+				step: 'secondary_keywords',
+				message: 'Moving on to secondary keyword research.',
+				shouldRunAgent: true,
+			};
+		}
+
+		// 4. Check if title is missing
+		if (!updatedData.title?.trim()) {
+			return {
+				step: 'title',
+				message: 'Generating titles now.',
+				shouldRunAgent: true,
+			};
+		}
+
+		// 5. Title is set, check optional steps or proceed to outline
 		if (currentState.preferences?.automationLevel === 'full') {
 			// Full automation - skip optional steps and go straight to outline
-			assistantMessage += ` Generating outline now.`;
-			shouldRunAgent = true;
+			return {
+				step: 'outline',
+				message: 'Generating outline now.',
+				shouldRunAgent: true,
+			};
 		} else {
-			// Guided mode - prompt for optional steps
-			// First check references
+			// Guided mode - check optional steps
 			if (
-				!currentState.data.referenceUrls ||
-				currentState.data.referenceUrls.length === 0
+				!updatedData.referenceUrls ||
+				updatedData.referenceUrls.length === 0
 			) {
-				stateUpdates.currentStep = 'references';
-				stateUpdates.halt = {
-					reason: 'await_references_selection',
+				return {
+					step: 'references',
+					message: 'Please add any reference links for research (optional).',
+					shouldRunAgent: false,
 				};
-				assistantMessage += ` Please add any reference links for research (optional).`;
-				shouldRunAgent = false;
 			} else if (
-				!currentState.data.interlinks ||
-				currentState.data.interlinks.length === 0
+				!updatedData.interlinks ||
+				updatedData.interlinks.length === 0
 			) {
-				// References already provided, check interlinking
-				stateUpdates.currentStep = 'interlinking';
-				stateUpdates.halt = {
-					reason: 'await_interlinking_selection',
+				return {
+					step: 'interlinking',
+					message: 'Please add any internal links to your existing content (optional).',
+					shouldRunAgent: false,
 				};
-				assistantMessage += ` Please add any internal links to your existing content (optional).`;
-				shouldRunAgent = false;
 			} else {
 				// Both optional steps have data, proceed to outline
-				stateUpdates.currentStep = 'outline';
-				stateUpdates.halt = null;
-				assistantMessage += ` Generating outline now.`;
-				shouldRunAgent = true;
+				return {
+					step: 'outline',
+					message: 'Generating outline now.',
+					shouldRunAgent: true,
+				};
 			}
 		}
+	};
+
+	const nextStep = determineNextStep();
+	stateUpdates.currentStep = nextStep.step;
+	
+	// Set halt reason if needed
+	if (nextStep.step === 'references') {
+		stateUpdates.halt = { reason: 'await_references_selection' };
+	} else if (nextStep.step === 'interlinking') {
+		stateUpdates.halt = { reason: 'await_interlinking_selection' };
+	} else {
+		stateUpdates.halt = null; // Clear halt to allow graph to proceed
 	}
-	// If none of the above, don't change currentStep
+
+	// Create assistant messages
+	const assistantMessages: string[] = [baseMessage];
+	if (nextStep.message && nextStep.message !== baseMessage) {
+		assistantMessages.push(nextStep.message);
+	}
+	const assistantMessage = assistantMessages.join(' ');
 
 	return {
 		assistantMessage: assistantMessage,
+		assistantMessages: assistantMessages.length > 1 ? assistantMessages : undefined,
 		stateUpdates,
-		shouldRunAgent,
+		shouldRunAgent: nextStep.shouldRunAgent,
 	};
 };
 
@@ -599,6 +668,48 @@ const handleApproval = (currentState: AgentState): ConversationResponse => {
 		};
 	}
 
+	// Handle references step approval
+	if (currentStep === 'references' || currentState.halt?.reason === 'await_references_selection') {
+		// Check if we should move to interlinking or outline
+		if (
+			!currentState.data.interlinks ||
+			currentState.data.interlinks.length === 0
+		) {
+			// Move to interlinking step
+			return {
+				assistantMessage: 'Great! Please add any internal links to your existing content (optional).',
+				stateUpdates: {
+					currentStep: 'interlinking',
+					halt: { reason: 'await_interlinking_selection' },
+				},
+				shouldRunAgent: false,
+			};
+		} else {
+			// Both optional steps have data, proceed to outline
+			return {
+				assistantMessage: 'Great! Generating outline now...',
+				stateUpdates: {
+					currentStep: 'outline',
+					halt: null,
+				},
+				shouldRunAgent: true,
+			};
+		}
+	}
+
+	// Handle interlinking step approval
+	if (currentStep === 'interlinking' || currentState.halt?.reason === 'await_interlinking_selection') {
+		// Move to outline generation
+		return {
+			assistantMessage: 'Great! Generating outline now...',
+			stateUpdates: {
+				currentStep: 'outline',
+				halt: null,
+			},
+			shouldRunAgent: true,
+		};
+	}
+
 	// Default approval
 	return {
 		assistantMessage: 'Great! Proceeding...',
@@ -672,3 +783,4 @@ const extractTopicFromMessage = (message: string): string => {
 
 	return '';
 };
+

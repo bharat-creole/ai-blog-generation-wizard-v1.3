@@ -77,13 +77,23 @@ export const AgentStateAnnotation = Annotation.Root({
 
     // User provided fields tracking
     userProvidedFields: Annotation<Set<string>>({
-        reducer: (x, y) => new Set([...x, ...y]),
+        reducer: (x, y) => {
+            // Handle cases where x or y might be undefined or not Sets
+            const xSet = x instanceof Set ? x : new Set();
+            const ySet = y instanceof Set ? y : new Set();
+            return new Set([...xSet, ...ySet]);
+        },
         default: () => new Set(),
     }),
 
     // Auto-filled fields tracking
     autoFillFields: Annotation<Set<string>>({
-        reducer: (x, y) => new Set([...x, ...y]),
+        reducer: (x, y) => {
+            // Handle cases where x or y might be undefined or not Sets
+            const xSet = x instanceof Set ? x : new Set();
+            const ySet = y instanceof Set ? y : new Set();
+            return new Set([...xSet, ...ySet]);
+        },
         default: () => new Set(),
     }),
 
