@@ -59,6 +59,26 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use(cors());
 
+app.get('/', (req, res) => {
+	const { token, userId } = req.query;
+	const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3002';
+	
+	if (token) {
+		// Redirect to frontend with token preserved
+		const redirectUrl = new URL(frontendUrl);
+		redirectUrl.searchParams.set('token', token as string);
+		if (userId) {
+			redirectUrl.searchParams.set('userId', userId as string);
+		}
+		console.log(`🔄 [Redirect] Redirecting to frontend: ${redirectUrl.toString()}`);
+		return res.redirect(redirectUrl.toString());
+	}
+	
+	// No token, just redirect to frontend
+	console.log(`🔄 [Redirect] Redirecting to frontend: ${frontendUrl}`);
+	res.redirect(frontendUrl);
+});
+
 app.post('/api/getKeywords', async (req, res) => {
 	const { seed, location } = req.body || {};
 	if (!seed || typeof seed !== 'string') {
@@ -299,9 +319,12 @@ app.post('/api/getKeywordsGoogleAds', async (req, res) => {
 import { graph, checkpointer } from './agent/graph.js';
 import { HumanMessage, AIMessage } from '@langchain/core/messages';
 import { processMessage } from './agent/conversationHandler.js';
+import { saveBlogIfComplete } from './hooks/blogCompletionHook.js';
+import { authenticateToken, optionalAuth } from './middleware/auth.js';
 
 // NEW: Main conversation endpoint - handles user messages with intent classification
-app.post('/api/agent/message', async (req, res) => {
+// ✨ Added optionalAuth middleware to extract userId from JWT token
+app.post('/api/agent/message', optionalAuth, async (req, res) => {
 	const {
 		message,
 		threadId,
@@ -309,13 +332,14 @@ app.post('/api/agent/message', async (req, res) => {
 		apiKey, // Extract apiKey from request body, not from state
 		stream = false,
 	} = req.body || {};
-
+	const userId = req.userId; // ✨ Extracted from JWT token by optionalAuth middleware
 	console.log(`\n${'═'.repeat(70)}`);
 	console.log(
 		`💬 [AGENT] Message Request Received ${stream ? '(Streaming)' : ''}`
 	);
 	console.log(`${'═'.repeat(70)}`);
 	console.log(`   Thread ID: ${threadId}`);
+	console.log(`   User ID: ${userId || 'Not authenticated'}`); // ✨ Log userId
 	console.log(`   Message: "${message}"`);
 
 	if (!threadId || !message) {
@@ -468,6 +492,7 @@ app.post('/api/agent/message', async (req, res) => {
 				executed: response.shouldRunAgent,
 			});
 		}
+		await saveBlogIfComplete(updatedState, threadId, userId);
 	} catch (error: any) {
 		console.error(`   ❌ Message processing failed:`, error);
 		console.log(`${'═'.repeat(70)}\n`);

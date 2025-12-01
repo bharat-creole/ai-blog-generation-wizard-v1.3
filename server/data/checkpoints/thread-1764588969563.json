@@ -1,0 +1,4212 @@
+{
+  "checkpoint": {
+    "v": 4,
+    "id": "1f0ceaa7-4a07-63c0-8014-ca98c6683fd1",
+    "ts": "2025-12-01T11:39:54.492Z",
+    "channel_values": {
+      "messages": [
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        }
+      ],
+      "apiKey": "AIzaSyCXtEUadPIwJrxvskOFbKHxSEzCJe2vjUs",
+      "data": {
+        "apiKey": "AIzaSyCXtEUadPIwJrxvskOFbKHxSEzCJe2vjUs",
+        "title": "Your Path to Happy: Mastering the Art of Everyday Joy",
+        "topic": "living life happy",
+        "targetLocation": "United States",
+        "primaryKeyword": "happy",
+        "secondaryKeywords": [
+          "happy days"
+        ],
+        "suggestedTitles": [],
+        "referenceUrls": [],
+        "referenceFiles": [],
+        "interlinks": [],
+        "brandVoice": "Default",
+        "blogGuideline": "Default",
+        "llmModel": "gemini-2.5-flash",
+        "language": "English",
+        "outline": [],
+        "blogContent": ""
+      },
+      "outline": [
+        {
+          "id": "1",
+          "name": "Introduction: Understanding the Essence of Everyday Joy",
+          "items": [
+            {
+              "id": "11",
+              "name": "Defining Everyday Joy: Beyond Fleeting Happiness"
+            },
+            {
+              "id": "12",
+              "name": "The Multidimensional Nature of True Contentment"
+            },
+            {
+              "id": "13",
+              "name": "Discovering Joy in Life's Ordinary Moments"
+            },
+            {
+              "id": "14",
+              "name": "Why Cultivating Daily Joy is Essential"
+            }
+          ]
+        },
+        {
+          "id": "2",
+          "name": "The Science of Smiles: How Joy Works in Your Brain",
+          "items": [
+            {
+              "id": "21",
+              "name": "The Brain Chemistry of Joy: Neurotransmitters at Play"
+            },
+            {
+              "id": "22",
+              "name": "The Facial Feedback Hypothesis: Smiling to Feel Happier"
+            },
+            {
+              "id": "23",
+              "name": "Beyond Brain Chemistry: Psychological and Social Benefits of Smiling"
+            }
+          ]
+        },
+        {
+          "id": "3",
+          "name": "Cultivating Joyful Habits: Daily Practices for a Happier You",
+          "items": [
+            {
+              "id": "31",
+              "name": "Embrace Gratitude and Mindfulness"
+            },
+            {
+              "id": "32",
+              "name": "Move Your Body, Uplift Your Spirit"
+            },
+            {
+              "id": "33",
+              "name": "Nurturing Connections and Self-Care"
+            },
+            {
+              "id": "34",
+              "name": "Mindful Consumption and Engaging Hobbies"
+            }
+          ]
+        },
+        {
+          "id": "4",
+          "name": "Finding Bliss in the Mundane: Savoring Simple Moments",
+          "items": [
+            {
+              "id": "41",
+              "name": "Cultivating Mindfulness in Daily Routines"
+            },
+            {
+              "id": "42",
+              "name": "The Power of Gratitude: Shifting Your Perspective"
+            },
+            {
+              "id": "43",
+              "name": "Engaging Your Senses for Deeper Appreciation"
+            },
+            {
+              "id": "44",
+              "name": "Embracing Imperfection: Letting Go of Expectations"
+            }
+          ]
+        },
+        {
+          "id": "5",
+          "name": "Nurturing Your Connections: The Role of Relationships in Happiness",
+          "items": [
+            {
+              "id": "51",
+              "name": "The Indispensable Link: Relationships and Overall Well-being"
+            },
+            {
+              "id": "52",
+              "name": "Diverse Bonds: The Impact of Family, Friends, and Romantic Partners"
+            },
+            {
+              "id": "53",
+              "name": "Emotional Pillars: Support, Belonging, and Reducing Loneliness"
+            },
+            {
+              "id": "54",
+              "name": "Strategies for Connection: Nurturing and Maintaining Healthy Relationships"
+            }
+          ]
+        },
+        {
+          "id": "6",
+          "name": "Navigating Challenges with Grace: Building Resilience for Lasting Joy",
+          "items": [
+            {
+              "id": "61",
+              "name": "Cultivating a Resilient Mindset: Embracing Positivity and Growth"
+            },
+            {
+              "id": "62",
+              "name": "The Foundation of Well-being: Prioritizing Self-Care and Self-Compassion"
+            },
+            {
+              "id": "63",
+              "name": "Mastering Practical Coping Strategies for Adversity"
+            },
+            {
+              "id": "64",
+              "name": "Leveraging Support Systems for Strength and Perspective"
+            }
+          ]
+        },
+        {
+          "id": "7",
+          "name": "Your Personalized Joy Map: Tailoring Happiness to Your Life",
+          "items": [
+            {
+              "id": "71",
+              "name": "Defining Your Unique Joy Triggers"
+            },
+            {
+              "id": "72",
+              "name": "Crafting Your Personal Joy Toolkit"
+            },
+            {
+              "id": "73",
+              "name": "Integrating Joyful Habits into Everyday Life"
+            },
+            {
+              "id": "74",
+              "name": "Navigating Challenges on Your Joy Journey"
+            }
+          ]
+        },
+        {
+          "id": "8",
+          "name": "Conclusion: Embracing Your Continuous Path to Happy",
+          "items": [
+            {
+              "id": "81",
+              "name": "Building a Foundation for Lasting Joy"
+            },
+            {
+              "id": "82",
+              "name": "Integrating Happiness into Daily Life"
+            },
+            {
+              "id": "83",
+              "name": "The Ongoing Journey of Self-Discovery"
+            },
+            {
+              "id": "84",
+              "name": "Cultivating Resilience for a Joyful Life"
+            }
+          ]
+        }
+      ],
+      "outlineApproved": true,
+      "draft": "# Your Path to Happy: Mastering the Art of Everyday Joy\n\n\n\n## Introduction: Understanding the Essence of Everyday Joy\n\nIn our relentless pursuit of a good life, we often find ourselves chasing moments of intense pleasure, believing them to be the key to ultimate fulfillment. Yet, true well-being often lies not in these grand, sporadic events, but in a deeper, more consistent feeling: everyday joy. This isn't about maintaining a perpetually cheerful demeanor, but rather about cultivating an internal state of peace and contentment that anchors you through life's ups and downs, leading to a truly *happy* existence.\n\n### Defining Everyday Joy: Beyond Fleeting Happiness\n\nIt's common to use \"happiness\" and \"joy\" interchangeably, but there's a crucial distinction. Happiness is often a fleeting emotion, typically sparked by external factors or events, such as a pleasant meal, a laugh with friends, or an achievement. It can feel like a sudden surge of pleasure, intense but temporary. Joy, on the other hand, is a more profound and enduring state that originates from within. It's characterized by a sense of contentment and satisfaction with life as a whole, independent of external circumstances. While being *happy* in the moment is wonderful, constantly chasing external happiness can leave us feeling unfulfilled once the moment fades. Joy is cultivated through inner work, aligning with values, and meaningful connections, allowing it to sustain us even through difficulties.\n\n### The Multidimensional Nature of True Contentment\n\nTrue contentment is not a passive state of complacency, but an active acknowledgment and appreciation of what one possesses, both materially and spiritually. It’s a state of inner peace and acceptance of one's current life situation. This deep satisfaction plays a pivotal role in our overall evaluation of happiness, providing a stable foundation for well-being that isn't dependent on continuous external achievements or societal benchmarks. Rooted in our values, personal growth, meaningful connections, and a clear sense of purpose, contentment allows us to step off the \"hedonic treadmill\"—the cycle where desires increase with each new achievement, often leaving happiness levels unchanged in the long run.\n\n### Discovering Joy in Life's Ordinary Moments\n\nMany believe joy is reserved for monumental occasions, but it frequently hides in the small, everyday moments we often overlook. Learning to appreciate these simple pieces of daily life can profoundly shift our perspective, bringing calm, gratitude, and a deeper sense of contentment. Moments like savoring a morning coffee, taking a mindful walk, enjoying a laugh with a friend, or creating something are \"micro-joys\" that, when intentionally cultivated and savored, build resilience and reduce stress. Practicing mindfulness and engaging in simple daily rituals can transform ordinary activities into meaningful sources of joy, reminding us that peace and pleasure are always accessible.\n\n### Why Cultivating Daily Joy is Essential\n\nNourishing everyday joy is not just a pleasant indulgence; it is vital for our overall well-being. It uplifts our energy, enhances cognitive functioning, improves performance, and deepens our sense of fulfillment. Cultivating joy helps to reduce stress and anxiety, strengthens relationships, boosts self-esteem, and fosters resilience against life's challenges. These consistent \"deposits\" of positive emotions compound over time, leading to lasting mental health gains that grand achievements often cannot sustain. By choosing to focus on and embrace daily joy, we build a foundation for a more peaceful, fulfilling, and truly *happy* life.\n\n**Sources**\n Joy vs. Happiness: Understanding the Difference - Embark Behavioral Health\n The Difference Between Joy and Happiness: Embracing Lasting Fulfillment Over Fleeting Emotions | by Dr Adenike F Sheyindemi | Medium\n The Art of Choosing Joy in a World of Fleeting Happiness - The Soulsome Life\n Happiness vs Joy the Mindset Shift that Changes Everything - YouTube\n Why 'Micro-Joys' Are The Key To Life-Long Happiness, By A Psychologist - Forbes\n Contentment - Wikipedia\n The Quiet Power of Contentment | Psychology Today\n The Fine Art of Contentment: Finding Happiness in Simplicity | by Simple Scripts | Medium\n The Value of Contentment | Psychology Today\n What If You Pursued Contentment Rather Than Happiness? - Center for Practical Wisdom\n How to Find Joy in Ordinary Moments | Life's Many Lessons\n 20 Ways to Find Joy in the Moment\n Finding Joy in Everyday Moments - Durham - Lepage Associates\n The Magic of Everyday Moments: Finding Joy in the Ordinary - Joyce Reid - One Day At a Time\n The Joy of Little Things: Finding Happiness in Everyday Moments\n Cultivate Joy to Improve Well-being | IE Insights\n Nine Ways to Cultivate Everyday Joy | Vibrant Soulful Wellness\n The Power of Gratitude: Cultivating Joy and Abundance in Everyday Life | by Inspire Growth\n Cultivating Everyday Joy - Leading Lady Coaching\n Why 'Micro-Joys' Are The Key To Life-Long Happiness, By A Psychologist - Forbes\n\n\n## The Science of Smiles: How Joy Works in Your Brain\n\nThe experience of joy, that profound feeling of being truly **happy**, isn't just a fleeting emotion; it's a complex and intricate dance orchestrated within your brain. Understanding this neurological and biochemical ballet can offer remarkable insights into cultivating a more joyful existence. Our brain is a powerhouse, constantly processing information and influencing our moods through an elaborate network of regions and chemical messengers. Key areas like the prefrontal cortex, particularly its left side, are highly active when we experience positive emotions. The nucleus accumbens, a crucial part of the brain's reward system, lights up with pleasure, while the amygdala helps process the intensity of these emotional states.\n\n### The Brain Chemistry of Joy: Neurotransmitters at Play\n\nWhen you feel genuinely **happy**, your brain orchestrates a symphony of \"feel-good\" chemicals known as neurotransmitters. These powerful messengers play a pivotal role in regulating your mood, motivation, and overall sense of well-being:\n\n*   **Dopamine:** Often dubbed the \"feel-good\" neurotransmitter, dopamine is central to your brain's reward system. It's associated with pleasure, motivation, and reinforcing behaviors that bring satisfaction. When you achieve a goal or engage in an enjoyable activity, dopamine is released, encouraging you to repeat that behavior.\n*   **Serotonin:** Frequently referred to as the \"happiness hormone,\" serotonin is vital for mood regulation, emotional well-being, and even social behavior. Higher levels of serotonin are strongly linked to positive emotional states and a sense of contentment.\n*   **Endorphins:** These are your body's natural painkillers and mood elevators. Released during physical activity or laughter, endorphins can induce feelings of euphoria and effectively reduce stress.\n*   **Oxytocin:** Known as the \"love hormone,\" oxytocin is crucial for social bonding, trust, and empathy. It's released during positive social interactions, such as hugging or cuddling, strengthening your connections with others.\n\nTogether, this quartet of neurotransmitters creates the rich tapestry of emotions we associate with being **happy**, reducing stress and fostering an elevated mood.\n\n### The Facial Feedback Hypothesis: Smiling to Feel Happier\n\nThe concept that your facial expressions might not just reflect but also *influence* your emotions is known as the facial feedback hypothesis [1 - Facial Feedback]. This intriguing theory suggests that consciously altering your facial muscles, even without an initial feeling of joy, can actually trigger a corresponding emotional response and make you feel **happy** [2 - Facial Feedback].\n\nFirst proposed by Charles Darwin, this idea gained significant attention in the 1980s [1 - Facial Feedback]. While earlier studies, such as one involving participants holding a pen in their mouths to simulate a smile, showed promising results, many subsequent attempts struggled to replicate these findings [1 - Facial Feedback, 3 - Facial Feedback, 4 - Facial Feedback]. However, more recent and extensive research has provided stronger evidence. A meta-analysis of 137 studies confirmed a small but significant effect of facial feedback on emotion [5 - Facial Feedback]. Furthermore, a large international collaboration involving nearly 4,000 participants found that *posed* smiles—particularly when mimicking smiling photographs or actively moving facial muscles—could genuinely increase feelings of happiness [4 - Facial Feedback, 5 - Facial Feedback]. This effect is subtle and won't cure profound sadness, but it suggests that the simple act of smiling can initiate feelings of happiness, rather than merely amplifying existing ones [2 - Facial Feedback, 4 - Facial Feedback, 5 - Facial Feedback].\n\n### Beyond Brain Chemistry: Psychological and Social Benefits of Smiling\n\nThe power of a smile extends far beyond individual brain chemistry, creating a positive ripple effect on your psychological state and social interactions.\n\n*   **Stress Reduction and Mood Enhancement:** Smiling is a potent natural stress reducer. It triggers the release of neuropeptides that help combat stress by lowering cortisol levels in your body. This relaxation response can mitigate stress and even reduce your heart rate, providing an instant mood boost [1 - Social Benefits, 2 - Social Benefits, 5 - Social Benefits]. The release of endorphins, dopamine, and serotonin further contributes to an elevated and **happy** state [1 - Social Benefits, 3 - Social Benefits, 4 - Social Benefits, 5 - Social Benefits].\n*   **Enhanced Social Connections:** A smile is often considered a universal language, signaling warmth, friendliness, and approachability across cultures [1 - Social Benefits]. When you smile, it's frequently met with a return smile, a phenomenon called \"social mirroring,\" which fosters an immediate sense of connection and belonging [1 - Social Benefits]. People who smile often are perceived as more attractive, trustworthy, and competent, making them more approachable in both personal and professional settings [1 - Social Benefits, 4 - Social Benefits]. This non-verbal cue can strengthen social bonds and promote a more harmonious community [3 - Social Benefits].\n*   **Immune System Boost:** The positive physiological changes associated with smiling, particularly the reduction of stress, can actually bolster your immune system, helping your body fight off illness more effectively [1 - Social Benefits].\n\nBy understanding the profound impact of your internal chemistry and external expressions, you gain powerful tools to consciously steer your path towards being more **happy** in everyday life.\n\n**Sources**\n The Science of Happiness: How Your Brain Creates Joy - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFOpSXHKlP5DGOi6wO8XWmxYCNCqpGWl14sONMH-Mfxl72Oly8CidSgopYzDByPo9vD5vH1IAlDGtFIasSSojZvygIbD8G_hq34EO-cprTGo-yvorJz3fE9UvRYuYvHvb7pw9vPWZEW5whP4xsJklmh3afDPwGL6XcvtJvA32W3hpxdiGo0kAv2aejYsRQ7Ik9eidFu7g==\n The Neurochemistry of Happiness: How Our Brains Make Us Happy - Dr Rao's Hospitals - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEBUhZbKPHnkLj6WZdWdRcVhx0u-3Ldh_OdjtBg29VjqLDD_zIwVIMetkk2cCn_qWMqVN_49GE0V5t_Ic-tPKqN5E-0im1sppMuqLe2OdYnjVq9bGq_7uP0nS7lDJUCwlybGVyqWewju30zE3cnnay_7MsllsXZEGOl2gwXTRwhX4G_eX8fzH40TMAOlKyWGzWmeXo=\n The Neurology of Joy: Understanding the Brain's Happiness Circuit | The Therapy Space - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQG-6AkEfImlCxpf_JdCd3gKJwaCMBe8-jrJFqIA1N5SadjDCL8QvUUYbLTZNzqzgNHP5k32o5RJhh5IaCT-EPzsf5tZYVlbC-WdYnv2Ii75SpXg-S1j3KHK6RUPfWwZETw2KfARfvREdTJh_T-a5SBu9v1EzQ_qowweusUBAt3TwsCUfAUratXIKLHWDGVoJWLlmPAY6f0=\n What is the neurochemistry of happiness? - Science | HowStuffWorks - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFtXzBk3QBjVLIqvi53yRfbxGOai810VFWjWD_kbsJ4L1W4rt3L5cmF4Qv7fbRuZsTOzsusNWysjNA-uAM9z1cCU1Ta9YQ0DcBJiJL8COZ2Q4EpoG39jD-83GDC136-wxIypLaqriyFInL92M7HFrh5KaTn9XgFl8ZWEEHYVZw6gg==\n Brain Chemistry & Your Mood: 4 Hormones That Promote Happiness - Houston Methodist - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGoS2SV2u92IrKp_ZWZwJUHkV_biWY-BkAxcA00TIiQ9lNU5lZ5dRBktgcqOcTApm8w7BZK8-AW14hpB5M_q5LTKcYd3vfMc96OlQCE_VZ3J0k45rKAzHlNfRp539Mgr73V9dQHb9klFqhNOtcLhgB4QaoNKE9ExEDAlTBA7xbQw8CQp0arTs-cASXI1a7KixK4vqzdqhRQMB_eek_jQvPjXylXW6UvG9H4r_DuNtw==\n\n[1 - Facial Feedback] What Is The Facial-Feedback Hypothesis & Does It Work? | BetterHelp - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGVAFYevLffSJ9d46UwXKe4liguTiIBJwIKxGYHLSeG5v1V48DSczIA8JiNeDoMtIshs6K6BP690Ou2pIHk3_3ZCRSwZ8gUtZGloZIXNSxjnxWp_OZvlLii3Z2IgN9UaF-Cj0svrtAUE4-EV3TbPx1iqAOJfyHGUlZ-D3PIr2ubLYwZLu1oKPuGEiTkd40fDZK8uKttdt2gBv8=\n[2 - Facial Feedback] Smile Your Way to Happiness: Unpacking the Facial Feedback Hypothesis - GoodBulb - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQG_Ythpt-G0uSvW8mYtqmG5EOs8b3iey5MQQ4Fw1s-5TDogQmyKFQB-sthFQZ3khL7K3zrsaDp7tJYTT3q65XcqRAUwgMb7tu3zdmLFCxvShRCXGCcj3Bc7PcdttL8peLyMlP_GyOWqfoMg0ZuF_aClTMObugZ0K5-oLO-ODP1h-ULFxO53Ti7J1AT1kJ-oTazQ3jPta-QL5rZId2DTA==\n[3 - Facial Feedback] You can smile yourself a little happier, scientists suggest | Psychology | The Guardian - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHu9tSg6tSDBn8cZ-FAkgXSH2PMMQG2mVh-PkFh3g4AvIYz1QAQh0q7fIzKCxUbbociMfLXz1_kqRnn7kR1sMKtKV1eM_tg8kgsjXBkdTqWvS_28wcHf6Cl6E2AMLiruCcn1sESIMkX6QQAKt_UiJfZpnBoMQfIxT_Dc4kFBfcLg83Ez-5UOjsSVarj8-l5Sz88BhhdiG_kpv1r_E1pT6gI6QoiBc0=\n[4 - Facial Feedback] Posing smiles can brighten our mood - Stanford Report - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGjwkaf8b2WAXBVrE0iArXmmb6OmdsIQJ0xPxFw_jGg-614ONcLidBaT5TYSo-2kXNc8BdyrBS81-78pdl7DN5pT8g-dvmnHABQ7i-fQCBTpiXJObHesbZruOrZp3-CLVFAbJ8BBgVuT61N6LCmC5aFzxerDCIP45J_nNBz0UDjj4wwdp0=\n[5 - Facial Feedback] Adopting a smile can make you feel happier, large global study finds | BPS - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFtC7PSDrhQBh4F1DUIVXhZUF5WaHA2Jps5SeoRbmhO5yt0cTmvnDYEz1zMpW2BbP6qTkTsn51U1UYSQoePRNeOKolVmXUras1GAgxHoQoTkz8PZ1CWm2FS5ufD2b6KueFS5xuysr_cOZtV1cXCbUyd4rm0Q0jYfUjGnck4-99qrWZQQULNz5fvYakf7v8qJ_Xr6SjRDztRMctkaVabmKMMivOw=\n\n[1 - Social Benefits] The Psychology of Smiling: More Than Just a Facial Expression - Wellspring Dental - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQG6tnmF6nxC1eGX6I_CHrL3UP1PAPnE_s642sL3oAb9Cop6yGybzOV_wO1lQju_1hdoNmef4V3H7KfP0vSlxhBeAk61t1gZO6sVfzIao3X7KdfUErNr122RY4cIzpvZXrC9_LMCEoT-5En2J81cox4nXb7oSfK-NJTY4Y7jLkJvshaMMx0AueQ8sXKFZqebIgyavA==\n[2 - Social Benefits] The Psychology of Smiling: Anxiety and Depression Resources | Dental Associates of Florida - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHopxJrqNc3QWkDGhV5ITiEt1uZi1rnzHlkrD2UT3lQXLhw_bvGssTYMy8bGz6vMvBLeBSkaLCv1EEOuaZRhFdnpwTkG5G3IJ-1kmbiy_1i9iqnInFXEYLQJExPbsaph3bxQKVkaub5Ds9ky0hjQJNioagZblEjO9aaDeEDemSfpOpnQ_yJz05f59BX8qSn5Zs=\n[3 - Social Benefits] The Psychology of a Smile: How It Affects Social Interactions - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEzypksB-ThkioYWpzZobHY29s1VazYrF3dc-dkpdkxtiN7TE5ajlmO7Ny3HuB-D1JJk5Twrj9omKc7d-xqv40-CZTbB_21PmRc09WuCEx_l3Ogg2WegtSrzb08VGak1l8PRm87HaqvwgIs8aRu4ArjnaYfDRsTU28tsX42CZTt8BTvZz9XLUCYt309YgxHUOnNEz0=\n[4 - Social Benefits] The Psychology of Smiling: How It Impacts Mood and Success - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQEhVQ-1276w3DKp9_UcYYjX8H1eayhhPoA-w40g0NLyLIAqjnFvCveqw_rjHDUBXkR_hddtClL-Kqfu6qPgcMSSVWV6fZR5lKnJUsB6Y4G5cF74122n7euTUmFFM0e1jd0Vxux_FhGwt9GmBohmCYZ3ShHS4czsLvt6K00PN3xMzNA0rNNzTVbrteZge5NhIQUCHMVFNXz64IWlrzXJgKw==\n[5 - Social Benefits] The Psychology of Smiling: How a Healthy Smile Affects Mental Wellbeing | Austin Dental Works - https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFYaPUavbybt3g3KxV8lgmGj6XMxSmdqiy5D7wbDJWQYdTZVcCiLoRwed15Hf7M5ZJqt-5qJICWuTzeH5sHUdMmXzGmvo8ur4JUKNoPlKoIfukXOhbvebCCL3ztnV77y77XSki57jo56Y0e5ERYQ6jNfnirzsrVM8iq1BtCg8uCfiZ3mVqHIhcR3CLr6xABXcExGwTE4XgSVhPh-ENPWKjUjrZ7zg==\n\n\n## Cultivating Joyful Habits: Daily Practices for a Happier You\n\nWhile fleeting moments of delight are wonderful, true, lasting happiness often stems from the deliberate cultivation of daily habits that nurture your mind, body, and spirit. It's about proactively weaving practices into your routine that uplift your mood and foster a deeper sense of contentment. By intentionally integrating these actions, you embark on a powerful journey towards a consistently happier you, transforming everyday existence into a canvas for joy.\n\n### Embrace Gratitude and Mindfulness\n\nOne of the most profound shifts you can make on your path to happy is to regularly practice gratitude. Taking time each day to acknowledge the good, no matter how small, can rewire your brain to focus on positivity. Consider keeping a gratitude journal, where you jot down three things you're thankful for each morning, or simply pause to express thanks for a warm cup of coffee or a sunny sky. Coupled with gratitude, mindfulness helps anchor you in the present moment, preventing your thoughts from drifting into past regrets or future anxieties. Simple mindfulness exercises, like focusing on your breath for a few minutes, can significantly reduce stress and enhance your overall sense of well-being, making you feel more happy and connected to your immediate experience.\n\n### Move Your Body, Uplift Your Spirit\n\nThe connection between physical activity and mental health is undeniable. Regular movement is a powerful antidepressant and a fantastic way to boost your mood, leaving you feeling more energetic and happy. Whether it's a brisk walk in nature, a high-energy dance session in your living room, or a calming yoga practice, moving your body releases endorphins – your brain's natural feel-good chemicals. Spending time outdoors further amplifies these benefits; fresh air and natural light have been shown to reduce stress and improve mental clarity, contributing significantly to a happier disposition. Find an activity you genuinely enjoy, and make it a non-negotiable part of your daily rhythm.\n\n### Nurturing Connections and Self-Care\n\nHumans are inherently social creatures, and strong, meaningful connections are vital for a happy life. Prioritize spending quality time with loved ones – family, friends, or even supportive colleagues. Engaging in open communication, offering a listening ear, and sharing laughter can significantly reduce feelings of loneliness and foster a sense of belonging. Equally important is practicing self-care, which isn't selfish but essential for replenishing your reserves. This might involve ensuring you get adequate sleep, preparing nutritious meals, setting healthy boundaries, or indulging in a relaxing bath. Nurturing your relationships and dedicating time to personal well-being creates a solid foundation for a happier, more resilient you.\n\n### Mindful Consumption and Engaging Hobbies\n\nIn an age of constant information and endless choices, mindful consumption is key to protecting your peace and cultivating a happy mindset. Be intentional about the media you consume, seeking out uplifting content and limiting exposure to negativity. Similarly, consider the impact of your purchases, prioritizing experiences over accumulating material possessions that often provide only fleeting joy. Beyond consumption, actively engaging in hobbies and passions that genuinely excite you can bring immense satisfaction. Learning a new skill, delving into a creative project, or dedicating time to a beloved craft provides a sense of accomplishment, purpose, and a healthy outlet for self-expression, all contributing to a richer and happier daily life.\n\n## Finding Bliss in the Mundane: Savoring Simple Moments\n\nLife's grand gestures often capture our attention, yet true and lasting happiness frequently blossoms in the quiet corners of our everyday existence. Savoring the simple, often overlooked moments can transform our perspective and infuse our lives with profound joy. It's about recognizing that the path to feeling truly **happy** isn't always paved with extraordinary events, but rather by finding beauty and contentment in the ordinary.\n\n### Cultivating Mindfulness in Daily Routines\n\nMindfulness is the practice of being present and fully engaged in the current moment, and it's a powerful tool for unlocking everyday bliss. Instead of rushing through tasks, try to bring a heightened awareness to them.\n\n*   **Mindful Morning Coffee:** Feel the warmth of the mug, notice the aroma, taste each sip.\n*   **Conscious Commute:** Observe the scenery, listen to the sounds, or simply focus on your breathing rather than letting your mind race.\n*   **Engaged Eating:** Pay attention to the textures, flavors, and smells of your food.\n*   **Purposeful Chores:** Even tasks like washing dishes can become meditative when you focus on the sensation of the water, the suds, and the task at hand.\n\nBy deliberately slowing down and tuning into your routines, you create opportunities to experience a deeper sense of presence and appreciation, fostering a more **happy** state of being.\n\n### The Power of Gratitude: Shifting Your Perspective\n\nGratitude is a transformative emotion that can profoundly shift your perspective from what's lacking to what's abundant. Actively practicing gratitude trains your brain to notice the good, making it easier to find joy in the mundane.\n\n*   **Gratitude Journaling:** Dedicate a few minutes each day to write down three to five things you're grateful for, no matter how small.\n*   **Daily Acknowledgment:** Before you go to sleep, mentally list a few positive moments or things that made you feel **happy** throughout your day.\n*   **Expressing Thanks:** Make an effort to thank others, whether it's for a significant favor or a simple act of kindness.\n\nThis conscious effort to acknowledge the positive aspects of your life can significantly enhance your overall sense of well-being and contentment.\n\n### Engaging Your Senses for Deeper Appreciation\n\nOur senses are gateways to the present moment, yet we often move through life without fully engaging them. Deliberately activating your senses can deepen your appreciation for simple experiences and make you feel more **happy**.\n\n*   **Sight:** Notice the intricate patterns of a leaf, the play of light and shadow, or the vibrant colors around you.\n*   **Sound:** Listen intently to the birds singing, the gentle hum of everyday life, or your favorite piece of music.\n*   **Smell:** Savor the scent of fresh rain, blooming flowers, a home-cooked meal, or your morning coffee.\n*   **Touch:** Feel the texture of your clothes, the warmth of a blanket, or the smoothness of a stone.\n*   **Taste:** Truly taste your food, savoring each flavor and texture.\n\nBy consciously inviting sensory experiences into your awareness, you can transform ordinary moments into rich, immersive experiences that bring genuine delight.\n\n### Embracing Imperfection: Letting Go of Expectations\n\nOften, our pursuit of an idealized, flawless life prevents us from finding joy in the reality of our present circumstances. Embracing imperfection means acknowledging that life is messy, unpredictable, and rarely goes exactly as planned, and that's perfectly okay.\n\n*   **Release the Need for Perfection:** Understand that mistakes are opportunities for growth, and not every moment needs to be Instagram-perfect to be valuable or **happy**.\n*   **Practice Self-Compassion:** Treat yourself with the same kindness and understanding you would offer a friend when things don't go as planned.\n*   **Find Beauty in the Flaws:** Just as a wabi-sabi aesthetic celebrates the beauty of imperfection, you can find charm and character in the \"flaws\" of daily life.\n\nBy letting go of rigid expectations and embracing the authentic, imperfect flow of life, you open yourself up to a more forgiving, joyful, and ultimately, a more **happy** existence.\n\n## Nurturing Your Connections: The Role of Relationships in Happiness\n\nHuman beings are inherently social creatures, and at the core of a truly **happy** and fulfilling life lies the richness of our connections with others. Our relationships, whether with family, friends, or romantic partners, serve as foundational pillars that support our emotional, mental, and even physical well-being. These bonds are not merely accessories to a good life; they are essential ingredients that foster resilience, provide comfort, and multiply our joys.\n\n### The Indispensable Link: Relationships and Overall Well-being\n\nDecades of research consistently highlight the profound and indispensable link between strong social connections and overall well-being. Individuals with robust social networks tend to live longer, experience fewer health problems, and report higher levels of life satisfaction. These connections provide a buffer against stress, helping us navigate life's challenges with greater ease and a more optimistic outlook. The emotional security derived from knowing we are loved and supported is a powerful antidote to anxiety and despair, paving the way for a consistently more **happy** existence.\n\n### Diverse Bonds: The Impact of Family, Friends, and Romantic Partners\n\nOur intricate web of relationships is composed of diverse bonds, each contributing uniquely to our happiness.\n\n*   **Family** often provides our first lessons in connection, offering unconditional love, a sense of belonging, and a shared history that anchors our identity.\n*   **Friends** bring camaraderie, shared laughter, diverse perspectives, and a unique form of support based on mutual interests and chosen affinity. They are our confidantes and companions in adventure.\n*   **Romantic partners** typically offer deep intimacy, profound emotional support, and a shared vision for the future, fostering a sense of partnership and shared journey.\n\nEach of these relationship types enriches our lives in distinct ways, weaving together a tapestry of support that helps us feel whole and truly **happy**.\n\n### Emotional Pillars: Support, Belonging, and Reducing Loneliness\n\nHealthy relationships act as critical emotional pillars in our lives, providing essential psychological benefits:\n\n*   **Support:** Knowing there are people we can lean on during difficult times—who will listen, empathize, and offer practical help—is invaluable. This emotional safety net empowers us to face adversity with greater courage.\n*   **Belonging:** Feeling accepted and valued as part of a group or community satisfies a fundamental human need. It counters feelings of isolation and fosters a sense of purpose and identity.\n*   **Reducing Loneliness:** In an increasingly digital world, genuine connection is crucial to combat the pervasive issue of loneliness. Meaningful interactions keep us engaged, understood, and connected to the human experience, making us feel more **happy** and less isolated.\n\n### Strategies for Connection: Nurturing and Maintaining Healthy Relationships\n\nCultivating and sustaining healthy relationships is an ongoing art, requiring conscious effort and genuine investment. Here are some key strategies:\n\n*   **Prioritize Quality Time:** Make an effort to spend meaningful time with loved ones, free from distractions.\n*   **Practice Active Listening:** Truly hear and understand what others are communicating, both verbally and non-verbally.\n*   **Communicate Openly and Honestly:** Share your thoughts, feelings, and needs, and encourage others to do the same.\n*   **Show Appreciation:** Regularly express gratitude and acknowledge the positive impact others have on your life. Small gestures of kindness go a long way.\n*   **Set Healthy Boundaries:** Respect your own needs and limits, and communicate them clearly to others to foster mutual respect.\n*   **Cultivate Empathy:** Try to understand situations from another person's perspective, fostering deeper connection and compassion.\n\nBy actively nurturing these connections, we build a robust network of support and love that is fundamental to our sustained well-being and our capacity to live a truly **happy** and fulfilling life.\n\n## Navigating Challenges with Grace: Building Resilience for Lasting Joy\n\nLife, in its beautiful complexity, inevitably presents us with hurdles. The true art of a **happy** and fulfilling existence isn't about avoiding these challenges, but rather learning to navigate them with grace, transforming adversity into opportunities for growth. Building resilience isn't just about bouncing back; it's about developing the inner fortitude to adapt, persevere, and emerge stronger, ultimately paving the way for lasting joy.\n\n### Cultivating a Resilient Mindset: Embracing Positivity and Growth\n\nA resilient mindset is the bedrock upon which lasting happiness is built. It’s an approach that views setbacks not as insurmountable obstacles, but as temporary detours or valuable learning experiences. This involves actively practicing positive reframing, where you consciously seek the silver lining or the lesson within a difficult situation. Embracing a growth mindset means believing in your capacity to develop new skills and overcome challenges, rather than being limited by perceived innate abilities. By focusing on what you can control and maintaining an optimistic outlook, even in the face of adversity, you empower yourself to navigate life's storms with greater ease and maintain your path to being truly **happy**.\n\n### The Foundation of Well-being: Prioritizing Self-Care and Self-Compassion\n\nTrue resilience is inextricably linked to well-being, and at its core lies the unwavering commitment to self-care and self-compassion. This isn't about indulgence; it's about recognizing your inherent worth and meeting your own needs with the same kindness you would offer a dear friend. Prioritizing self-care involves consistent practices that nourish your mind, body, and spirit – whether it's through sufficient sleep, nutritious food, regular exercise, mindfulness, or engaging in hobbies that bring you joy. Self-compassion means acknowledging your struggles and imperfections without harsh self-criticism, understanding that it's okay to not be okay sometimes. By building this strong foundation, you create an internal reservoir of strength that is essential for maintaining a **happy** and balanced life when faced with difficulties.\n\n### Mastering Practical Coping Strategies for Adversity\n\nWhile mindset and self-care lay the groundwork, practical coping strategies are the tools you employ in the thick of a challenge. These are active steps you can take to manage stress, problem-solve, and maintain emotional equilibrium. Effective strategies include mindfulness and meditation for present-moment awareness, journaling to process thoughts and feelings, setting realistic goals to break down overwhelming situations, and developing effective time management techniques. Learning to identify and challenge negative thought patterns, and replacing them with more constructive ones, is also a powerful coping mechanism. By proactively building and practicing these strategies, you equip yourself with the ability to respond to adversity thoughtfully, rather than react impulsively, safeguarding your capacity to be **happy**.\n\n### Leveraging Support Systems for Strength and Perspective\n\nNo one is an island, and seeking support is a sign of strength, not weakness. Leveraging your support systems—friends, family, mentors, therapists, or community groups—provides invaluable strength and perspective during challenging times. Sharing your experiences can alleviate feelings of isolation, offer new insights, and reinforce the understanding that you are not alone. A strong support network can provide encouragement, practical assistance, and a safe space to express emotions without judgment. Nurturing these relationships is an investment in your resilience, creating a vital external resource that complements your internal strength and helps you maintain a **happy** and connected life, even when the path ahead seems uncertain.\n\n## Your Personalized Joy Map: Tailoring Happiness to Your Life\n\nTrue and lasting happiness isn't a destination found on a universal map; it's a deeply personal journey, unique to each individual. What brings immense joy to one person might not resonate with another, and that's perfectly **happy**. To truly master the art of everyday joy, you must first become an expert cartographer of your own emotional landscape, meticulously charting the elements that fuel your spirit and contribute to your well-being. This personalized approach ensures that the pursuit of happiness is authentic, sustainable, and deeply fulfilling, transforming abstract ideas into concrete actions that enhance your daily existence.\n\n### Defining Your Unique Joy Triggers\n\nThe first step in creating your personalized joy map is to identify what genuinely sparks happiness within you. This requires a bit of introspection and self-awareness. Consider these questions:\n\n*   **When do you feel most alive and energized?** Is it during a creative pursuit, a quiet moment in nature, or while connecting with loved ones?\n*   **What activities make you lose track of time?** These are often flow states, indicating deep engagement and enjoyment.\n*   **What thoughts or memories consistently bring a smile to your face?**\n*   **Are there specific sensory experiences (e.g., a certain scent, a type of music, the taste of a favorite food) that evoke positive emotions?**\n\nKeep a \"joy journal\" for a week or two, noting down moments, big or small, that made you feel good, content, or genuinely **happy**. You might be surprised by the patterns that emerge, revealing your unique blueprint for joy.\n\n### Crafting Your Personal Joy Toolkit\n\nOnce you understand your triggers, you can begin to assemble your \"joy toolkit\" – a collection of actionable strategies, resources, and habits designed to cultivate happiness. This toolkit is entirely yours and can include:\n\n*   **Mindfulness Practices:** Meditation, deep breathing exercises, or simply taking a few moments each day to be present and appreciate your surroundings.\n*   **Creative Outlets:** Painting, writing, playing an instrument, gardening, or any activity that allows for self-expression.\n*   **Physical Activity:** Exercise, dancing, yoga, or walks in nature – movement is a powerful mood booster.\n*   **Social Connection:** Scheduling quality time with friends and family, joining clubs, or volunteering.\n*   **Learning and Growth:** Reading, taking a class, or developing a new skill keeps your mind engaged and fosters a sense of accomplishment.\n*   **Self-Care Rituals:** Bubble baths, reading a good book, enjoying a favorite warm beverage, or anything that helps you relax and recharge.\n\nThe goal is to have a diverse set of tools you can reach for, depending on your needs and circumstances, ensuring you're always equipped to foster a **happy** state.\n\n### Integrating Joyful Habits into Everyday Life\n\nIdentifying your joy triggers and crafting your toolkit are crucial, but the real magic happens when you integrate these elements into your daily routine. Happiness isn't just about grand gestures; it's often found in the consistent application of small, joyful habits.\n\n*   **Morning Rituals:** Start your day with something that brings you joy, whether it's five minutes of meditation, listening to uplifting music, or enjoying your coffee in silence.\n*   **Micro-Moments of Joy:** Sprinkle small, deliberate moments of happiness throughout your day. This could be a quick stretch, looking out the window, savoring a healthy snack, or sending a kind text.\n*   **Schedule Joy:** Just as you schedule appointments, intentionally block out time for activities that bring you joy. Treat these commitments with the same importance as work obligations.\n*   **Review and Adjust:** Regularly reflect on what's working and what isn't. Your life changes, and so too might your joy triggers and toolkit. Be flexible and willing to adapt your map.\n\nConsistency is key. Even when life gets busy, making a conscious effort to embed these **happy** habits will build resilience and foster a more positive outlook.\n\n### Navigating Challenges on Your Joy Journey\n\nThe path to a happier life isn't always a smooth, sunlit meadow. There will be bumps, detours, and even moments when you feel lost. It's essential to acknowledge that challenges are an inevitable part of life, and true joy isn't the absence of problems, but the ability to navigate them with grace and resilience.\n\n*   **Practice Self-Compassion:** When setbacks occur, treat yourself with the same kindness and understanding you would offer a friend. Avoid harsh self-criticism.\n*   **Embrace Imperfection:** The pursuit of happiness is not about achieving a constant state of euphoria. It's about finding contentment and meaning amidst life's ups and downs.\n*   **Seek Support:** Don't hesitate to lean on your support network – friends, family, or professionals – when you're struggling. Sharing your burdens can lighten their weight.\n*   **Learn from Setbacks:** View challenges not as failures, but as opportunities for growth and learning. What can this experience teach you about yourself or your approach to happiness?\n\nBy developing strategies to navigate these challenges, you strengthen your personalized joy map, making it more robust and capable of guiding you toward a truly **happy** and fulfilling life, no matter what obstacles appear on the horizon.\n\n## Conclusion: Embracing Your Continuous Path to Happy\n\nAs we draw to a close on our exploration of mastering everyday joy, it's clear that the path to being truly **happy** isn't a destination but a dynamic, ongoing journey. It's about consistently nurturing your inner world, adapting to life's inevitable changes, and finding satisfaction in the present moment. Embracing this continuous path means understanding that joy is cultivated through intentional effort, self-compassion, and an open heart.\n\n### Building a Foundation for Lasting Joy\n\nCreating a bedrock for sustained happiness involves several key pillars. Prioritizing self-care, from adequate sleep and nutritious food to engaging in hobbies that ignite your spirit, forms the essential groundwork. Equally vital are the relationships you cultivate; surrounding yourself with supportive, positive individuals significantly enhances your emotional well-being. Furthermore, identifying and living in alignment with your core values provides a profound sense of purpose and direction, leading to a deeper, more meaningful kind of **happy**.\n\n### Integrating Happiness into Daily Life\n\nTrue contentment often lies in the small, consistent actions we weave into our daily routines. Practicing mindfulness, whether through meditation or simply savoring a cup of coffee, helps anchor you in the present and appreciate its subtle beauties. Expressing gratitude regularly, acknowledging both big and small blessings, shifts your perspective towards positivity. Even simple acts of kindness, for yourself or others, can create a ripple effect of good feelings, making each day a little brighter and more **happy**.\n\n### The Ongoing Journey of Self-Discovery\n\nThe journey towards a **happy** life is inherently one of self-discovery. It involves a willingness to understand your own emotions, strengths, and areas for growth. This continuous exploration invites you to embrace new experiences, learn from challenges, and adapt your strategies as you evolve. Regularly reflecting on your experiences, celebrating personal milestones, and giving yourself permission to change and grow are all crucial aspects of this enriching process.\n\n### Cultivating Resilience for a Joyful Life\n\nLife inevitably presents hurdles, but cultivating resilience allows you to navigate these challenges without losing your sense of joy. Resilience isn't about avoiding difficulty; it's about developing the inner strength to bounce back, learn from setbacks, and maintain an optimistic outlook. By fostering a growth mindset, practicing self-compassion during tough times, and seeking support when needed, you build the capacity to weather storms and emerge with an even deeper appreciation for the moments that make you **happy**. Your continuous path to joy is fortified by your ability to stand strong and find light even in the shadows.",
+      "progress": {
+        "sectionIndex": 8
+      },
+      "preferences": {
+        "automationLevel": "guided",
+        "skipOptionalSteps": false,
+        "autoSelectBestOptions": false
+      },
+      "policy": {
+        "referencesUsage": "both",
+        "grounding": true
+      },
+      "userProvidedFields": {},
+      "autoFillFields": {},
+      "trace": [
+        {
+          "step": "KeywordResearch.primaryCandidates",
+          "info": {
+            "count": 74
+          },
+          "at": 1764588989895
+        },
+        {
+          "step": "KeywordResearch.primaryCandidates",
+          "info": {
+            "count": 74
+          },
+          "at": 1764588989895
+        },
+        {
+          "step": "KeywordResearch.secondaryCandidates",
+          "info": {
+            "count": 19
+          },
+          "at": 1764589006469
+        },
+        {
+          "step": "KeywordResearch.primaryCandidates",
+          "info": {
+            "count": 74
+          },
+          "at": 1764588989895
+        },
+        {
+          "step": "KeywordResearch.secondaryCandidates",
+          "info": {
+            "count": 19
+          },
+          "at": 1764589006469
+        },
+        {
+          "step": "TitleGeneration.generated",
+          "info": {
+            "count": 5
+          },
+          "at": 1764589057432
+        },
+        {
+          "step": "KeywordResearch.primaryCandidates",
+          "info": {
+            "count": 74
+          },
+          "at": 1764588989895
+        },
+        {
+          "step": "KeywordResearch.secondaryCandidates",
+          "info": {
+            "count": 19
+          },
+          "at": 1764589006469
+        },
+        {
+          "step": "TitleGeneration.generated",
+          "info": {
+            "count": 5
+          },
+          "at": 1764589057432
+        },
+        {
+          "step": "DiscoveryNode.generatedOutline",
+          "info": {
+            "h2Count": 8
+          },
+          "at": 1764589096979
+        },
+        {
+          "step": "KeywordResearch.primaryCandidates",
+          "info": {
+            "count": 74
+          },
+          "at": 1764588989895
+        },
+        {
+          "step": "KeywordResearch.secondaryCandidates",
+          "info": {
+            "count": 19
+          },
+          "at": 1764589006469
+        },
+        {
+          "step": "TitleGeneration.generated",
+          "info": {
+            "count": 5
+          },
+          "at": 1764589057432
+        },
+        {
+          "step": "DiscoveryNode.generatedOutline",
+          "info": {
+            "h2Count": 8
+          },
+          "at": 1764589096979
+        },
+        {
+          "step": "ProposalNode.generatedSection",
+          "info": {
+            "sectionIndex": 0,
+            "section": "Introduction: Understanding the Essence of Everyday Joy"
+          },
+          "at": 1764589123854
+        },
+        {
+          "step": "ProposalNode.generatedSection",
+          "info": {
+            "sectionIndex": 1,
+            "section": "The Science of Smiles: How Joy Works in Your Brain"
+          },
+          "at": 1764589151129
+        },
+        {
+          "step": "ProposalNode.generatedSection",
+          "info": {
+            "sectionIndex": 2,
+            "section": "Cultivating Joyful Habits: Daily Practices for a Happier You"
+          },
+          "at": 1764589158800
+        },
+        {
+          "step": "ProposalNode.generatedSection",
+          "info": {
+            "sectionIndex": 3,
+            "section": "Finding Bliss in the Mundane: Savoring Simple Moments"
+          },
+          "at": 1764589165833
+        },
+        {
+          "step": "ProposalNode.generatedSection",
+          "info": {
+            "sectionIndex": 4,
+            "section": "Nurturing Your Connections: The Role of Relationships in Happiness"
+          },
+          "at": 1764589173554
+        },
+        {
+          "step": "ProposalNode.generatedSection",
+          "info": {
+            "sectionIndex": 5,
+            "section": "Navigating Challenges with Grace: Building Resilience for Lasting Joy"
+          },
+          "at": 1764589179757
+        },
+        {
+          "step": "ProposalNode.generatedSection",
+          "info": {
+            "sectionIndex": 6,
+            "section": "Your Personalized Joy Map: Tailoring Happiness to Your Life"
+          },
+          "at": 1764589189391
+        },
+        {
+          "step": "ProposalNode.generatedSection",
+          "info": {
+            "sectionIndex": 7,
+            "section": "Conclusion: Embracing Your Continuous Path to Happy"
+          },
+          "at": 1764589194490
+        }
+      ],
+      "halt": null,
+      "keywordCandidates": [
+        {
+          "text": "happy days",
+          "volume": 550000,
+          "difficulty": 0.02,
+          "source": "seed",
+          "score": 0.41285569151841933
+        },
+        {
+          "text": "happy trails",
+          "volume": 110000,
+          "difficulty": 0,
+          "source": "seed",
+          "score": 0.3446859020093077
+        },
+        {
+          "text": "happy music",
+          "volume": 135000,
+          "difficulty": 0.02,
+          "source": "seed",
+          "score": 0.3385253363745498
+        },
+        {
+          "text": "happy ever after",
+          "volume": 165000,
+          "difficulty": 0.01,
+          "source": "seed",
+          "score": 0.324217763995819
+        },
+        {
+          "text": "after ever happy",
+          "volume": 135000,
+          "difficulty": 0.01,
+          "source": "seed",
+          "score": 0.31884448531071996
+        },
+        {
+          "text": "happy home",
+          "volume": 165000,
+          "difficulty": 0.08,
+          "source": "seed",
+          "score": 0.3119837214426275
+        },
+        {
+          "text": "happy go lucky",
+          "volume": 60500,
+          "difficulty": 0.02,
+          "source": "seed",
+          "score": 0.3001816943065539
+        },
+        {
+          "text": "after ever happy netflix",
+          "volume": 260,
+          "difficulty": 0,
+          "source": "seed",
+          "score": 0.30003044857921557
+        },
+        {
+          "text": "after ever happy online",
+          "volume": 260,
+          "difficulty": 0,
+          "source": "seed",
+          "score": 0.30003044857921557
+        },
+        {
+          "text": "after ever happy watch online",
+          "volume": 140,
+          "difficulty": 0,
+          "source": "seed",
+          "score": 0.30000895546447515
+        },
+        {
+          "text": "happy valley season 3",
+          "volume": 8100,
+          "difficulty": 0.01,
+          "source": "seed",
+          "score": 0.2961155164727512
+        },
+        {
+          "text": "happy holiday",
+          "volume": 246000,
+          "difficulty": 0.14,
+          "source": "seed",
+          "score": 0.29457668027537354
+        },
+        {
+          "text": "pop culture happy hour",
+          "volume": 4400,
+          "difficulty": 0.02,
+          "source": "seed",
+          "score": 0.2901336631654188
+        },
+        {
+          "text": "watch after ever happy",
+          "volume": 2400,
+          "difficulty": 0.02,
+          "source": "seed",
+          "score": 0.2897754445864122
+        },
+        {
+          "text": "after ever happy where to watch",
+          "volume": 90,
+          "difficulty": 0.05,
+          "source": "seed",
+          "score": 0.2734042553191489
+        },
+        {
+          "text": "play upbeat music",
+          "volume": 1900,
+          "difficulty": 0.04,
+          "source": "seed",
+          "score": 0.22904759206932013
+        },
+        {
+          "text": "upbeat music",
+          "volume": 110000,
+          "difficulty": 0.11,
+          "source": "seed",
+          "score": 0.21117526371143536
+        },
+        {
+          "text": "mr happy",
+          "volume": 40500,
+          "difficulty": 0.28,
+          "source": "seed",
+          "score": 0.18330163617606238
+        },
+        {
+          "text": "merry christmas and happy new year",
+          "volume": 135000,
+          "difficulty": 0.47,
+          "source": "seed",
+          "score": 0.07416363424689021
+        }
+      ],
+      "titleCandidates": [
+        "Cultivate Your Happy: A Blueprint for a Joyful Life",
+        "The Happy Handbook: Secrets to Living Your Best Life",
+        "Boost Your Happy: 5 Daily Habits for Lasting Joy",
+        "Beyond the Smile: How to Truly Live a Happy Life",
+        "Your Path to Happy: Mastering the Art of Everyday Joy"
+      ],
+      "currentStep": "generation",
+      "toolOutputs": [
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "primary",
+            "candidates": [
+              {
+                "text": "happy",
+                "volume": 3350000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.9172297297297297
+              },
+              {
+                "text": "happiness",
+                "volume": 1830000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.4966793002931917
+              },
+              {
+                "text": "living life",
+                "volume": 2501,
+                "difficulty": -0.2,
+                "source": "seed",
+                "score": 0.35314885328822687
+              },
+              {
+                "text": "living life vs alternatives",
+                "volume": 2625,
+                "difficulty": -0.48,
+                "source": "seed",
+                "score": 0.3504683596070436
+              },
+              {
+                "text": "happy days",
+                "volume": 550000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3390465062299904
+              },
+              {
+                "text": "life happy",
+                "volume": 3600,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3161835275345316
+              },
+              {
+                "text": "living a happy life",
+                "volume": 1600,
+                "difficulty": 0.03,
+                "source": "seed",
+                "score": 0.3141361283208348
+              },
+              {
+                "text": "happy living",
+                "volume": 22200,
+                "difficulty": 0.06,
+                "source": "seed",
+                "score": 0.3127581240056949
+              },
+              {
+                "text": "living life happy",
+                "volume": 880,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.3106287943336338
+              },
+              {
+                "text": "happy life",
+                "volume": 74000,
+                "difficulty": 0.13,
+                "source": "seed",
+                "score": 0.3102114393161157
+              },
+              {
+                "text": "living",
+                "volume": 450000,
+                "difficulty": 0.55,
+                "source": "seed",
+                "score": 0.30660897797758657
+              },
+              {
+                "text": "living life for beginners",
+                "volume": 5610,
+                "difficulty": -0.21,
+                "source": "seed",
+                "score": 0.30539487996051295
+              },
+              {
+                "text": "3 steps to a happy life",
+                "volume": 40,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.26723510288009733
+              },
+              {
+                "text": "happy music",
+                "volume": 135000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.26471792614467665
+              },
+              {
+                "text": "happy holiday",
+                "volume": 246000,
+                "difficulty": 0.14,
+                "source": "seed",
+                "score": 0.26432831223457465
+              },
+              {
+                "text": "5 ways to live a happy life",
+                "volume": 10,
+                "difficulty": 0.03,
+                "source": "seed",
+                "score": 0.26385135135135135
+              },
+              {
+                "text": "happy trails",
+                "volume": 110000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.26361867921671084
+              },
+              {
+                "text": "happy home",
+                "volume": 165000,
+                "difficulty": 0.08,
+                "source": "seed",
+                "score": 0.2599559413771546
+              },
+              {
+                "text": "living life benefits",
+                "volume": 6435,
+                "difficulty": 0.07,
+                "source": "seed",
+                "score": 0.258245344298325
+              },
+              {
+                "text": "ways to live a happy life",
+                "volume": 110,
+                "difficulty": 0.11,
+                "source": "seed",
+                "score": 0.2503557483390632
+              },
+              {
+                "text": "slow living",
+                "volume": 60500,
+                "difficulty": 0.03,
+                "source": "seed",
+                "score": 0.24968541354258178
+              },
+              {
+                "text": "happy ever after",
+                "volume": 165000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.24678026570147887
+              },
+              {
+                "text": "slow life",
+                "volume": 27100,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.24539249532249513
+              },
+              {
+                "text": "not happy with my life",
+                "volume": 720,
+                "difficulty": 0.15,
+                "source": "seed",
+                "score": 0.24370824563978127
+              },
+              {
+                "text": "after ever happy",
+                "volume": 135000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.24140711533386583
+              },
+              {
+                "text": "happier life",
+                "volume": 74000,
+                "difficulty": 0.13,
+                "source": "seed",
+                "score": 0.23521143931611577
+              },
+              {
+                "text": "ways to be happy in life",
+                "volume": 170,
+                "difficulty": 0.21,
+                "source": "seed",
+                "score": 0.23347460274790655
+              },
+              {
+                "text": "living life tutorial",
+                "volume": 1832,
+                "difficulty": 0.22,
+                "source": "seed",
+                "score": 0.23208308608908312
+              },
+              {
+                "text": "not happy with life",
+                "volume": 880,
+                "difficulty": 0.23,
+                "source": "seed",
+                "score": 0.23022338892822836
+              },
+              {
+                "text": "happy go lucky",
+                "volume": 60500,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.22637460273177096
+              },
+              {
+                "text": "happy mind happy life",
+                "volume": 1900,
+                "difficulty": 0.27,
+                "source": "seed",
+                "score": 0.22364931928397042
+              },
+              {
+                "text": "i am not happy with my life",
+                "volume": 720,
+                "difficulty": 0.27,
+                "source": "seed",
+                "score": 0.22343797536951096
+              },
+              {
+                "text": "after ever happy netflix",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.21896369517198236
+              },
+              {
+                "text": "after ever happy online",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.21896369517198236
+              },
+              {
+                "text": "after ever happy watch online",
+                "volume": 140,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2189422025705119
+              },
+              {
+                "text": "happy valley season 3",
+                "volume": 8100,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.2186786892788627
+              },
+              {
+                "text": "pop culture happy hour",
+                "volume": 4400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.21632681154433459
+              },
+              {
+                "text": "watch after ever happy",
+                "volume": 2400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.21596860151982702
+              },
+              {
+                "text": "happy money happy life",
+                "volume": 30,
+                "difficulty": 0.33,
+                "source": "seed",
+                "score": 0.21317925777592073
+              },
+              {
+                "text": "7 happiness of life",
+                "volume": 30,
+                "difficulty": 0.04,
+                "source": "seed",
+                "score": 0.21216574426240722
+              },
+              {
+                "text": "after ever happy where to watch",
+                "volume": 90,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.21048730137395327
+              },
+              {
+                "text": "10 steps to a more fulfilling life",
+                "volume": 20,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.2104747640230955
+              },
+              {
+                "text": "happiness in life",
+                "volume": 74000,
+                "difficulty": 0.13,
+                "source": "seed",
+                "score": 0.21021143931611574
+              },
+              {
+                "text": "mr happy",
+                "volume": 40500,
+                "difficulty": 0.28,
+                "source": "seed",
+                "score": 0.20387358356777668
+              },
+              {
+                "text": "10 ways to live a happy life",
+                "volume": 20,
+                "difficulty": 0.46,
+                "source": "seed",
+                "score": 0.19121800726633875
+              },
+              {
+                "text": "i don t feel happy",
+                "volume": 590,
+                "difficulty": 0.24,
+                "source": "seed",
+                "score": 0.17848225928548558
+              },
+              {
+                "text": "live in",
+                "volume": 49500,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.17609363678616868
+              },
+              {
+                "text": "plan a happy life",
+                "volume": 40,
+                "difficulty": 0.55,
+                "source": "seed",
+                "score": 0.1760188866638811
+              },
+              {
+                "text": "live and let live",
+                "volume": 22200,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.17289325914083004
+              },
+              {
+                "text": "assisted",
+                "volume": 40500,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.17279250248669561
+              },
+              {
+                "text": "finding happiness in everyday life",
+                "volume": 70,
+                "difficulty": 0.28,
+                "source": "seed",
+                "score": 0.17163236792235684
+              },
+              {
+                "text": "upbeat music",
+                "volume": 110000,
+                "difficulty": 0.11,
+                "source": "seed",
+                "score": 0.17003759813562977
+              },
+              {
+                "text": "revocable",
+                "volume": 14800,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.16818950367177377
+              },
+              {
+                "text": "merry christmas and happy new year",
+                "volume": 135000,
+                "difficulty": 0.47,
+                "source": "seed",
+                "score": 0.16370441263116314
+              },
+              {
+                "text": "play upbeat music",
+                "volume": 1900,
+                "difficulty": 0.04,
+                "source": "seed",
+                "score": 0.16250067063532178
+              },
+              {
+                "text": "a short guide to a happy life",
+                "volume": 590,
+                "difficulty": 0.64,
+                "source": "seed",
+                "score": 0.16091469171791797
+              },
+              {
+                "text": "living life guide",
+                "volume": 7674,
+                "difficulty": 0.71,
+                "source": "seed",
+                "score": 0.15035914730039934
+              },
+              {
+                "text": "ways to find happiness",
+                "volume": 110,
+                "difficulty": 0.12,
+                "source": "seed",
+                "score": 0.14866655914987403
+              },
+              {
+                "text": "liven",
+                "volume": 110000,
+                "difficulty": 0.25,
+                "source": "seed",
+                "score": 0.14638894948698114
+              },
+              {
+                "text": "finding happiness in life",
+                "volume": 260,
+                "difficulty": 0.46,
+                "source": "seed",
+                "score": 0.14126099246927967
+              },
+              {
+                "text": "ways to be happier",
+                "volume": 210,
+                "difficulty": 0.19,
+                "source": "seed",
+                "score": 0.1368601453267751
+              },
+              {
+                "text": "living life checklist",
+                "volume": 4349,
+                "difficulty": 0.79,
+                "source": "seed",
+                "score": 0.13625010962114206
+              },
+              {
+                "text": "healthy brain happy life",
+                "volume": 590,
+                "difficulty": 0.79,
+                "source": "seed",
+                "score": 0.13557685388008014
+              },
+              {
+                "text": "living life best practices",
+                "volume": 5553,
+                "difficulty": 0.8,
+                "source": "seed",
+                "score": 0.1347765628667064
+              },
+              {
+                "text": "finding happiness in yourself",
+                "volume": 1600,
+                "difficulty": 0.4,
+                "source": "seed",
+                "score": 0.10163612832083484
+              },
+              {
+                "text": "arthur brooks happiness",
+                "volume": 3600,
+                "difficulty": 0.41,
+                "source": "seed",
+                "score": 0.1003051491561532
+              },
+              {
+                "text": "tina turner happiness becomes you",
+                "volume": 90,
+                "difficulty": 0.69,
+                "source": "seed",
+                "score": 0.052379193265845184
+              },
+              {
+                "text": "reclining",
+                "volume": 246000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.04405804196430437
+              },
+              {
+                "text": "happiness becomes you",
+                "volume": 260,
+                "difficulty": 0.74,
+                "source": "seed",
+                "score": 0.043963695171982356
+              },
+              {
+                "text": "ikigai hector garcia",
+                "volume": 1600,
+                "difficulty": 0.77,
+                "source": "seed",
+                "score": 0.03913612832083484
+              },
+              {
+                "text": "arthur brooks from strength to strength",
+                "volume": 320,
+                "difficulty": 0.79,
+                "source": "seed",
+                "score": 0.03552849552677164
+              },
+              {
+                "text": "arthur brooks strength to strength",
+                "volume": 320,
+                "difficulty": 0.85,
+                "source": "seed",
+                "score": 0.025393360391636498
+              },
+              {
+                "text": "live up",
+                "volume": 27100,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.004851954781954573
+              },
+              {
+                "text": "simple gratitude journal",
+                "volume": 210,
+                "difficulty": 0.99,
+                "source": "seed",
+                "score": 0.0017250101916399534
+              }
+            ]
+          },
+          "timestamp": 1764588989895
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "primary",
+            "candidates": [
+              {
+                "text": "happy",
+                "volume": 3350000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.9172297297297297
+              },
+              {
+                "text": "happiness",
+                "volume": 1830000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.4966793002931917
+              },
+              {
+                "text": "living life",
+                "volume": 2501,
+                "difficulty": -0.2,
+                "source": "seed",
+                "score": 0.35314885328822687
+              },
+              {
+                "text": "living life vs alternatives",
+                "volume": 2625,
+                "difficulty": -0.48,
+                "source": "seed",
+                "score": 0.3504683596070436
+              },
+              {
+                "text": "happy days",
+                "volume": 550000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3390465062299904
+              },
+              {
+                "text": "life happy",
+                "volume": 3600,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3161835275345316
+              },
+              {
+                "text": "living a happy life",
+                "volume": 1600,
+                "difficulty": 0.03,
+                "source": "seed",
+                "score": 0.3141361283208348
+              },
+              {
+                "text": "happy living",
+                "volume": 22200,
+                "difficulty": 0.06,
+                "source": "seed",
+                "score": 0.3127581240056949
+              },
+              {
+                "text": "living life happy",
+                "volume": 880,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.3106287943336338
+              },
+              {
+                "text": "happy life",
+                "volume": 74000,
+                "difficulty": 0.13,
+                "source": "seed",
+                "score": 0.3102114393161157
+              },
+              {
+                "text": "living",
+                "volume": 450000,
+                "difficulty": 0.55,
+                "source": "seed",
+                "score": 0.30660897797758657
+              },
+              {
+                "text": "living life for beginners",
+                "volume": 5610,
+                "difficulty": -0.21,
+                "source": "seed",
+                "score": 0.30539487996051295
+              },
+              {
+                "text": "3 steps to a happy life",
+                "volume": 40,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.26723510288009733
+              },
+              {
+                "text": "happy music",
+                "volume": 135000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.26471792614467665
+              },
+              {
+                "text": "happy holiday",
+                "volume": 246000,
+                "difficulty": 0.14,
+                "source": "seed",
+                "score": 0.26432831223457465
+              },
+              {
+                "text": "5 ways to live a happy life",
+                "volume": 10,
+                "difficulty": 0.03,
+                "source": "seed",
+                "score": 0.26385135135135135
+              },
+              {
+                "text": "happy trails",
+                "volume": 110000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.26361867921671084
+              },
+              {
+                "text": "happy home",
+                "volume": 165000,
+                "difficulty": 0.08,
+                "source": "seed",
+                "score": 0.2599559413771546
+              },
+              {
+                "text": "living life benefits",
+                "volume": 6435,
+                "difficulty": 0.07,
+                "source": "seed",
+                "score": 0.258245344298325
+              },
+              {
+                "text": "ways to live a happy life",
+                "volume": 110,
+                "difficulty": 0.11,
+                "source": "seed",
+                "score": 0.2503557483390632
+              },
+              {
+                "text": "slow living",
+                "volume": 60500,
+                "difficulty": 0.03,
+                "source": "seed",
+                "score": 0.24968541354258178
+              },
+              {
+                "text": "happy ever after",
+                "volume": 165000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.24678026570147887
+              },
+              {
+                "text": "slow life",
+                "volume": 27100,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.24539249532249513
+              },
+              {
+                "text": "not happy with my life",
+                "volume": 720,
+                "difficulty": 0.15,
+                "source": "seed",
+                "score": 0.24370824563978127
+              },
+              {
+                "text": "after ever happy",
+                "volume": 135000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.24140711533386583
+              },
+              {
+                "text": "happier life",
+                "volume": 74000,
+                "difficulty": 0.13,
+                "source": "seed",
+                "score": 0.23521143931611577
+              },
+              {
+                "text": "ways to be happy in life",
+                "volume": 170,
+                "difficulty": 0.21,
+                "source": "seed",
+                "score": 0.23347460274790655
+              },
+              {
+                "text": "living life tutorial",
+                "volume": 1832,
+                "difficulty": 0.22,
+                "source": "seed",
+                "score": 0.23208308608908312
+              },
+              {
+                "text": "not happy with life",
+                "volume": 880,
+                "difficulty": 0.23,
+                "source": "seed",
+                "score": 0.23022338892822836
+              },
+              {
+                "text": "happy go lucky",
+                "volume": 60500,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.22637460273177096
+              },
+              {
+                "text": "happy mind happy life",
+                "volume": 1900,
+                "difficulty": 0.27,
+                "source": "seed",
+                "score": 0.22364931928397042
+              },
+              {
+                "text": "i am not happy with my life",
+                "volume": 720,
+                "difficulty": 0.27,
+                "source": "seed",
+                "score": 0.22343797536951096
+              },
+              {
+                "text": "after ever happy netflix",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.21896369517198236
+              },
+              {
+                "text": "after ever happy online",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.21896369517198236
+              },
+              {
+                "text": "after ever happy watch online",
+                "volume": 140,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2189422025705119
+              },
+              {
+                "text": "happy valley season 3",
+                "volume": 8100,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.2186786892788627
+              },
+              {
+                "text": "pop culture happy hour",
+                "volume": 4400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.21632681154433459
+              },
+              {
+                "text": "watch after ever happy",
+                "volume": 2400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.21596860151982702
+              },
+              {
+                "text": "happy money happy life",
+                "volume": 30,
+                "difficulty": 0.33,
+                "source": "seed",
+                "score": 0.21317925777592073
+              },
+              {
+                "text": "7 happiness of life",
+                "volume": 30,
+                "difficulty": 0.04,
+                "source": "seed",
+                "score": 0.21216574426240722
+              },
+              {
+                "text": "after ever happy where to watch",
+                "volume": 90,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.21048730137395327
+              },
+              {
+                "text": "10 steps to a more fulfilling life",
+                "volume": 20,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.2104747640230955
+              },
+              {
+                "text": "happiness in life",
+                "volume": 74000,
+                "difficulty": 0.13,
+                "source": "seed",
+                "score": 0.21021143931611574
+              },
+              {
+                "text": "mr happy",
+                "volume": 40500,
+                "difficulty": 0.28,
+                "source": "seed",
+                "score": 0.20387358356777668
+              },
+              {
+                "text": "10 ways to live a happy life",
+                "volume": 20,
+                "difficulty": 0.46,
+                "source": "seed",
+                "score": 0.19121800726633875
+              },
+              {
+                "text": "i don t feel happy",
+                "volume": 590,
+                "difficulty": 0.24,
+                "source": "seed",
+                "score": 0.17848225928548558
+              },
+              {
+                "text": "live in",
+                "volume": 49500,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.17609363678616868
+              },
+              {
+                "text": "plan a happy life",
+                "volume": 40,
+                "difficulty": 0.55,
+                "source": "seed",
+                "score": 0.1760188866638811
+              },
+              {
+                "text": "live and let live",
+                "volume": 22200,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.17289325914083004
+              },
+              {
+                "text": "assisted",
+                "volume": 40500,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.17279250248669561
+              },
+              {
+                "text": "finding happiness in everyday life",
+                "volume": 70,
+                "difficulty": 0.28,
+                "source": "seed",
+                "score": 0.17163236792235684
+              },
+              {
+                "text": "upbeat music",
+                "volume": 110000,
+                "difficulty": 0.11,
+                "source": "seed",
+                "score": 0.17003759813562977
+              },
+              {
+                "text": "revocable",
+                "volume": 14800,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.16818950367177377
+              },
+              {
+                "text": "merry christmas and happy new year",
+                "volume": 135000,
+                "difficulty": 0.47,
+                "source": "seed",
+                "score": 0.16370441263116314
+              },
+              {
+                "text": "play upbeat music",
+                "volume": 1900,
+                "difficulty": 0.04,
+                "source": "seed",
+                "score": 0.16250067063532178
+              },
+              {
+                "text": "a short guide to a happy life",
+                "volume": 590,
+                "difficulty": 0.64,
+                "source": "seed",
+                "score": 0.16091469171791797
+              },
+              {
+                "text": "living life guide",
+                "volume": 7674,
+                "difficulty": 0.71,
+                "source": "seed",
+                "score": 0.15035914730039934
+              },
+              {
+                "text": "ways to find happiness",
+                "volume": 110,
+                "difficulty": 0.12,
+                "source": "seed",
+                "score": 0.14866655914987403
+              },
+              {
+                "text": "liven",
+                "volume": 110000,
+                "difficulty": 0.25,
+                "source": "seed",
+                "score": 0.14638894948698114
+              },
+              {
+                "text": "finding happiness in life",
+                "volume": 260,
+                "difficulty": 0.46,
+                "source": "seed",
+                "score": 0.14126099246927967
+              },
+              {
+                "text": "ways to be happier",
+                "volume": 210,
+                "difficulty": 0.19,
+                "source": "seed",
+                "score": 0.1368601453267751
+              },
+              {
+                "text": "living life checklist",
+                "volume": 4349,
+                "difficulty": 0.79,
+                "source": "seed",
+                "score": 0.13625010962114206
+              },
+              {
+                "text": "healthy brain happy life",
+                "volume": 590,
+                "difficulty": 0.79,
+                "source": "seed",
+                "score": 0.13557685388008014
+              },
+              {
+                "text": "living life best practices",
+                "volume": 5553,
+                "difficulty": 0.8,
+                "source": "seed",
+                "score": 0.1347765628667064
+              },
+              {
+                "text": "finding happiness in yourself",
+                "volume": 1600,
+                "difficulty": 0.4,
+                "source": "seed",
+                "score": 0.10163612832083484
+              },
+              {
+                "text": "arthur brooks happiness",
+                "volume": 3600,
+                "difficulty": 0.41,
+                "source": "seed",
+                "score": 0.1003051491561532
+              },
+              {
+                "text": "tina turner happiness becomes you",
+                "volume": 90,
+                "difficulty": 0.69,
+                "source": "seed",
+                "score": 0.052379193265845184
+              },
+              {
+                "text": "reclining",
+                "volume": 246000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.04405804196430437
+              },
+              {
+                "text": "happiness becomes you",
+                "volume": 260,
+                "difficulty": 0.74,
+                "source": "seed",
+                "score": 0.043963695171982356
+              },
+              {
+                "text": "ikigai hector garcia",
+                "volume": 1600,
+                "difficulty": 0.77,
+                "source": "seed",
+                "score": 0.03913612832083484
+              },
+              {
+                "text": "arthur brooks from strength to strength",
+                "volume": 320,
+                "difficulty": 0.79,
+                "source": "seed",
+                "score": 0.03552849552677164
+              },
+              {
+                "text": "arthur brooks strength to strength",
+                "volume": 320,
+                "difficulty": 0.85,
+                "source": "seed",
+                "score": 0.025393360391636498
+              },
+              {
+                "text": "live up",
+                "volume": 27100,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.004851954781954573
+              },
+              {
+                "text": "simple gratitude journal",
+                "volume": 210,
+                "difficulty": 0.99,
+                "source": "seed",
+                "score": 0.0017250101916399534
+              }
+            ]
+          },
+          "timestamp": 1764588989895
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "secondary",
+            "candidates": [
+              {
+                "text": "happy days",
+                "volume": 550000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.41285569151841933
+              },
+              {
+                "text": "happy trails",
+                "volume": 110000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3446859020093077
+              },
+              {
+                "text": "happy music",
+                "volume": 135000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3385253363745498
+              },
+              {
+                "text": "happy ever after",
+                "volume": 165000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.324217763995819
+              },
+              {
+                "text": "after ever happy",
+                "volume": 135000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.31884448531071996
+              },
+              {
+                "text": "happy home",
+                "volume": 165000,
+                "difficulty": 0.08,
+                "source": "seed",
+                "score": 0.3119837214426275
+              },
+              {
+                "text": "happy go lucky",
+                "volume": 60500,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3001816943065539
+              },
+              {
+                "text": "after ever happy netflix",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.30003044857921557
+              },
+              {
+                "text": "after ever happy online",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.30003044857921557
+              },
+              {
+                "text": "after ever happy watch online",
+                "volume": 140,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.30000895546447515
+              },
+              {
+                "text": "happy valley season 3",
+                "volume": 8100,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.2961155164727512
+              },
+              {
+                "text": "happy holiday",
+                "volume": 246000,
+                "difficulty": 0.14,
+                "source": "seed",
+                "score": 0.29457668027537354
+              },
+              {
+                "text": "pop culture happy hour",
+                "volume": 4400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.2901336631654188
+              },
+              {
+                "text": "watch after ever happy",
+                "volume": 2400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.2897754445864122
+              },
+              {
+                "text": "after ever happy where to watch",
+                "volume": 90,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.2734042553191489
+              },
+              {
+                "text": "play upbeat music",
+                "volume": 1900,
+                "difficulty": 0.04,
+                "source": "seed",
+                "score": 0.22904759206932013
+              },
+              {
+                "text": "upbeat music",
+                "volume": 110000,
+                "difficulty": 0.11,
+                "source": "seed",
+                "score": 0.21117526371143536
+              },
+              {
+                "text": "mr happy",
+                "volume": 40500,
+                "difficulty": 0.28,
+                "source": "seed",
+                "score": 0.18330163617606238
+              },
+              {
+                "text": "merry christmas and happy new year",
+                "volume": 135000,
+                "difficulty": 0.47,
+                "source": "seed",
+                "score": 0.07416363424689021
+              }
+            ]
+          },
+          "timestamp": 1764589006469
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "primary",
+            "candidates": [
+              {
+                "text": "happy",
+                "volume": 3350000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.9172297297297297
+              },
+              {
+                "text": "happiness",
+                "volume": 1830000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.4966793002931917
+              },
+              {
+                "text": "living life",
+                "volume": 2501,
+                "difficulty": -0.2,
+                "source": "seed",
+                "score": 0.35314885328822687
+              },
+              {
+                "text": "living life vs alternatives",
+                "volume": 2625,
+                "difficulty": -0.48,
+                "source": "seed",
+                "score": 0.3504683596070436
+              },
+              {
+                "text": "happy days",
+                "volume": 550000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3390465062299904
+              },
+              {
+                "text": "life happy",
+                "volume": 3600,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3161835275345316
+              },
+              {
+                "text": "living a happy life",
+                "volume": 1600,
+                "difficulty": 0.03,
+                "source": "seed",
+                "score": 0.3141361283208348
+              },
+              {
+                "text": "happy living",
+                "volume": 22200,
+                "difficulty": 0.06,
+                "source": "seed",
+                "score": 0.3127581240056949
+              },
+              {
+                "text": "living life happy",
+                "volume": 880,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.3106287943336338
+              },
+              {
+                "text": "happy life",
+                "volume": 74000,
+                "difficulty": 0.13,
+                "source": "seed",
+                "score": 0.3102114393161157
+              },
+              {
+                "text": "living",
+                "volume": 450000,
+                "difficulty": 0.55,
+                "source": "seed",
+                "score": 0.30660897797758657
+              },
+              {
+                "text": "living life for beginners",
+                "volume": 5610,
+                "difficulty": -0.21,
+                "source": "seed",
+                "score": 0.30539487996051295
+              },
+              {
+                "text": "3 steps to a happy life",
+                "volume": 40,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.26723510288009733
+              },
+              {
+                "text": "happy music",
+                "volume": 135000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.26471792614467665
+              },
+              {
+                "text": "happy holiday",
+                "volume": 246000,
+                "difficulty": 0.14,
+                "source": "seed",
+                "score": 0.26432831223457465
+              },
+              {
+                "text": "5 ways to live a happy life",
+                "volume": 10,
+                "difficulty": 0.03,
+                "source": "seed",
+                "score": 0.26385135135135135
+              },
+              {
+                "text": "happy trails",
+                "volume": 110000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.26361867921671084
+              },
+              {
+                "text": "happy home",
+                "volume": 165000,
+                "difficulty": 0.08,
+                "source": "seed",
+                "score": 0.2599559413771546
+              },
+              {
+                "text": "living life benefits",
+                "volume": 6435,
+                "difficulty": 0.07,
+                "source": "seed",
+                "score": 0.258245344298325
+              },
+              {
+                "text": "ways to live a happy life",
+                "volume": 110,
+                "difficulty": 0.11,
+                "source": "seed",
+                "score": 0.2503557483390632
+              },
+              {
+                "text": "slow living",
+                "volume": 60500,
+                "difficulty": 0.03,
+                "source": "seed",
+                "score": 0.24968541354258178
+              },
+              {
+                "text": "happy ever after",
+                "volume": 165000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.24678026570147887
+              },
+              {
+                "text": "slow life",
+                "volume": 27100,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.24539249532249513
+              },
+              {
+                "text": "not happy with my life",
+                "volume": 720,
+                "difficulty": 0.15,
+                "source": "seed",
+                "score": 0.24370824563978127
+              },
+              {
+                "text": "after ever happy",
+                "volume": 135000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.24140711533386583
+              },
+              {
+                "text": "happier life",
+                "volume": 74000,
+                "difficulty": 0.13,
+                "source": "seed",
+                "score": 0.23521143931611577
+              },
+              {
+                "text": "ways to be happy in life",
+                "volume": 170,
+                "difficulty": 0.21,
+                "source": "seed",
+                "score": 0.23347460274790655
+              },
+              {
+                "text": "living life tutorial",
+                "volume": 1832,
+                "difficulty": 0.22,
+                "source": "seed",
+                "score": 0.23208308608908312
+              },
+              {
+                "text": "not happy with life",
+                "volume": 880,
+                "difficulty": 0.23,
+                "source": "seed",
+                "score": 0.23022338892822836
+              },
+              {
+                "text": "happy go lucky",
+                "volume": 60500,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.22637460273177096
+              },
+              {
+                "text": "happy mind happy life",
+                "volume": 1900,
+                "difficulty": 0.27,
+                "source": "seed",
+                "score": 0.22364931928397042
+              },
+              {
+                "text": "i am not happy with my life",
+                "volume": 720,
+                "difficulty": 0.27,
+                "source": "seed",
+                "score": 0.22343797536951096
+              },
+              {
+                "text": "after ever happy netflix",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.21896369517198236
+              },
+              {
+                "text": "after ever happy online",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.21896369517198236
+              },
+              {
+                "text": "after ever happy watch online",
+                "volume": 140,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2189422025705119
+              },
+              {
+                "text": "happy valley season 3",
+                "volume": 8100,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.2186786892788627
+              },
+              {
+                "text": "pop culture happy hour",
+                "volume": 4400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.21632681154433459
+              },
+              {
+                "text": "watch after ever happy",
+                "volume": 2400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.21596860151982702
+              },
+              {
+                "text": "happy money happy life",
+                "volume": 30,
+                "difficulty": 0.33,
+                "source": "seed",
+                "score": 0.21317925777592073
+              },
+              {
+                "text": "7 happiness of life",
+                "volume": 30,
+                "difficulty": 0.04,
+                "source": "seed",
+                "score": 0.21216574426240722
+              },
+              {
+                "text": "after ever happy where to watch",
+                "volume": 90,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.21048730137395327
+              },
+              {
+                "text": "10 steps to a more fulfilling life",
+                "volume": 20,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.2104747640230955
+              },
+              {
+                "text": "happiness in life",
+                "volume": 74000,
+                "difficulty": 0.13,
+                "source": "seed",
+                "score": 0.21021143931611574
+              },
+              {
+                "text": "mr happy",
+                "volume": 40500,
+                "difficulty": 0.28,
+                "source": "seed",
+                "score": 0.20387358356777668
+              },
+              {
+                "text": "10 ways to live a happy life",
+                "volume": 20,
+                "difficulty": 0.46,
+                "source": "seed",
+                "score": 0.19121800726633875
+              },
+              {
+                "text": "i don t feel happy",
+                "volume": 590,
+                "difficulty": 0.24,
+                "source": "seed",
+                "score": 0.17848225928548558
+              },
+              {
+                "text": "live in",
+                "volume": 49500,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.17609363678616868
+              },
+              {
+                "text": "plan a happy life",
+                "volume": 40,
+                "difficulty": 0.55,
+                "source": "seed",
+                "score": 0.1760188866638811
+              },
+              {
+                "text": "live and let live",
+                "volume": 22200,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.17289325914083004
+              },
+              {
+                "text": "assisted",
+                "volume": 40500,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.17279250248669561
+              },
+              {
+                "text": "finding happiness in everyday life",
+                "volume": 70,
+                "difficulty": 0.28,
+                "source": "seed",
+                "score": 0.17163236792235684
+              },
+              {
+                "text": "upbeat music",
+                "volume": 110000,
+                "difficulty": 0.11,
+                "source": "seed",
+                "score": 0.17003759813562977
+              },
+              {
+                "text": "revocable",
+                "volume": 14800,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.16818950367177377
+              },
+              {
+                "text": "merry christmas and happy new year",
+                "volume": 135000,
+                "difficulty": 0.47,
+                "source": "seed",
+                "score": 0.16370441263116314
+              },
+              {
+                "text": "play upbeat music",
+                "volume": 1900,
+                "difficulty": 0.04,
+                "source": "seed",
+                "score": 0.16250067063532178
+              },
+              {
+                "text": "a short guide to a happy life",
+                "volume": 590,
+                "difficulty": 0.64,
+                "source": "seed",
+                "score": 0.16091469171791797
+              },
+              {
+                "text": "living life guide",
+                "volume": 7674,
+                "difficulty": 0.71,
+                "source": "seed",
+                "score": 0.15035914730039934
+              },
+              {
+                "text": "ways to find happiness",
+                "volume": 110,
+                "difficulty": 0.12,
+                "source": "seed",
+                "score": 0.14866655914987403
+              },
+              {
+                "text": "liven",
+                "volume": 110000,
+                "difficulty": 0.25,
+                "source": "seed",
+                "score": 0.14638894948698114
+              },
+              {
+                "text": "finding happiness in life",
+                "volume": 260,
+                "difficulty": 0.46,
+                "source": "seed",
+                "score": 0.14126099246927967
+              },
+              {
+                "text": "ways to be happier",
+                "volume": 210,
+                "difficulty": 0.19,
+                "source": "seed",
+                "score": 0.1368601453267751
+              },
+              {
+                "text": "living life checklist",
+                "volume": 4349,
+                "difficulty": 0.79,
+                "source": "seed",
+                "score": 0.13625010962114206
+              },
+              {
+                "text": "healthy brain happy life",
+                "volume": 590,
+                "difficulty": 0.79,
+                "source": "seed",
+                "score": 0.13557685388008014
+              },
+              {
+                "text": "living life best practices",
+                "volume": 5553,
+                "difficulty": 0.8,
+                "source": "seed",
+                "score": 0.1347765628667064
+              },
+              {
+                "text": "finding happiness in yourself",
+                "volume": 1600,
+                "difficulty": 0.4,
+                "source": "seed",
+                "score": 0.10163612832083484
+              },
+              {
+                "text": "arthur brooks happiness",
+                "volume": 3600,
+                "difficulty": 0.41,
+                "source": "seed",
+                "score": 0.1003051491561532
+              },
+              {
+                "text": "tina turner happiness becomes you",
+                "volume": 90,
+                "difficulty": 0.69,
+                "source": "seed",
+                "score": 0.052379193265845184
+              },
+              {
+                "text": "reclining",
+                "volume": 246000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.04405804196430437
+              },
+              {
+                "text": "happiness becomes you",
+                "volume": 260,
+                "difficulty": 0.74,
+                "source": "seed",
+                "score": 0.043963695171982356
+              },
+              {
+                "text": "ikigai hector garcia",
+                "volume": 1600,
+                "difficulty": 0.77,
+                "source": "seed",
+                "score": 0.03913612832083484
+              },
+              {
+                "text": "arthur brooks from strength to strength",
+                "volume": 320,
+                "difficulty": 0.79,
+                "source": "seed",
+                "score": 0.03552849552677164
+              },
+              {
+                "text": "arthur brooks strength to strength",
+                "volume": 320,
+                "difficulty": 0.85,
+                "source": "seed",
+                "score": 0.025393360391636498
+              },
+              {
+                "text": "live up",
+                "volume": 27100,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.004851954781954573
+              },
+              {
+                "text": "simple gratitude journal",
+                "volume": 210,
+                "difficulty": 0.99,
+                "source": "seed",
+                "score": 0.0017250101916399534
+              }
+            ]
+          },
+          "timestamp": 1764588989895
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "secondary",
+            "candidates": [
+              {
+                "text": "happy days",
+                "volume": 550000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.41285569151841933
+              },
+              {
+                "text": "happy trails",
+                "volume": 110000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3446859020093077
+              },
+              {
+                "text": "happy music",
+                "volume": 135000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3385253363745498
+              },
+              {
+                "text": "happy ever after",
+                "volume": 165000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.324217763995819
+              },
+              {
+                "text": "after ever happy",
+                "volume": 135000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.31884448531071996
+              },
+              {
+                "text": "happy home",
+                "volume": 165000,
+                "difficulty": 0.08,
+                "source": "seed",
+                "score": 0.3119837214426275
+              },
+              {
+                "text": "happy go lucky",
+                "volume": 60500,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3001816943065539
+              },
+              {
+                "text": "after ever happy netflix",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.30003044857921557
+              },
+              {
+                "text": "after ever happy online",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.30003044857921557
+              },
+              {
+                "text": "after ever happy watch online",
+                "volume": 140,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.30000895546447515
+              },
+              {
+                "text": "happy valley season 3",
+                "volume": 8100,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.2961155164727512
+              },
+              {
+                "text": "happy holiday",
+                "volume": 246000,
+                "difficulty": 0.14,
+                "source": "seed",
+                "score": 0.29457668027537354
+              },
+              {
+                "text": "pop culture happy hour",
+                "volume": 4400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.2901336631654188
+              },
+              {
+                "text": "watch after ever happy",
+                "volume": 2400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.2897754445864122
+              },
+              {
+                "text": "after ever happy where to watch",
+                "volume": 90,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.2734042553191489
+              },
+              {
+                "text": "play upbeat music",
+                "volume": 1900,
+                "difficulty": 0.04,
+                "source": "seed",
+                "score": 0.22904759206932013
+              },
+              {
+                "text": "upbeat music",
+                "volume": 110000,
+                "difficulty": 0.11,
+                "source": "seed",
+                "score": 0.21117526371143536
+              },
+              {
+                "text": "mr happy",
+                "volume": 40500,
+                "difficulty": 0.28,
+                "source": "seed",
+                "score": 0.18330163617606238
+              },
+              {
+                "text": "merry christmas and happy new year",
+                "volume": 135000,
+                "difficulty": 0.47,
+                "source": "seed",
+                "score": 0.07416363424689021
+              }
+            ]
+          },
+          "timestamp": 1764589006469
+        },
+        {
+          "type": "title_options",
+          "data": {
+            "titles": [
+              "Cultivate Your Happy: A Blueprint for a Joyful Life",
+              "The Happy Handbook: Secrets to Living Your Best Life",
+              "Boost Your Happy: 5 Daily Habits for Lasting Joy",
+              "Beyond the Smile: How to Truly Live a Happy Life",
+              "Your Path to Happy: Mastering the Art of Everyday Joy"
+            ]
+          },
+          "timestamp": 1764589057432
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "primary",
+            "candidates": [
+              {
+                "text": "happy",
+                "volume": 3350000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.9172297297297297
+              },
+              {
+                "text": "happiness",
+                "volume": 1830000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.4966793002931917
+              },
+              {
+                "text": "living life",
+                "volume": 2501,
+                "difficulty": -0.2,
+                "source": "seed",
+                "score": 0.35314885328822687
+              },
+              {
+                "text": "living life vs alternatives",
+                "volume": 2625,
+                "difficulty": -0.48,
+                "source": "seed",
+                "score": 0.3504683596070436
+              },
+              {
+                "text": "happy days",
+                "volume": 550000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3390465062299904
+              },
+              {
+                "text": "life happy",
+                "volume": 3600,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3161835275345316
+              },
+              {
+                "text": "living a happy life",
+                "volume": 1600,
+                "difficulty": 0.03,
+                "source": "seed",
+                "score": 0.3141361283208348
+              },
+              {
+                "text": "happy living",
+                "volume": 22200,
+                "difficulty": 0.06,
+                "source": "seed",
+                "score": 0.3127581240056949
+              },
+              {
+                "text": "living life happy",
+                "volume": 880,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.3106287943336338
+              },
+              {
+                "text": "happy life",
+                "volume": 74000,
+                "difficulty": 0.13,
+                "source": "seed",
+                "score": 0.3102114393161157
+              },
+              {
+                "text": "living",
+                "volume": 450000,
+                "difficulty": 0.55,
+                "source": "seed",
+                "score": 0.30660897797758657
+              },
+              {
+                "text": "living life for beginners",
+                "volume": 5610,
+                "difficulty": -0.21,
+                "source": "seed",
+                "score": 0.30539487996051295
+              },
+              {
+                "text": "3 steps to a happy life",
+                "volume": 40,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.26723510288009733
+              },
+              {
+                "text": "happy music",
+                "volume": 135000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.26471792614467665
+              },
+              {
+                "text": "happy holiday",
+                "volume": 246000,
+                "difficulty": 0.14,
+                "source": "seed",
+                "score": 0.26432831223457465
+              },
+              {
+                "text": "5 ways to live a happy life",
+                "volume": 10,
+                "difficulty": 0.03,
+                "source": "seed",
+                "score": 0.26385135135135135
+              },
+              {
+                "text": "happy trails",
+                "volume": 110000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.26361867921671084
+              },
+              {
+                "text": "happy home",
+                "volume": 165000,
+                "difficulty": 0.08,
+                "source": "seed",
+                "score": 0.2599559413771546
+              },
+              {
+                "text": "living life benefits",
+                "volume": 6435,
+                "difficulty": 0.07,
+                "source": "seed",
+                "score": 0.258245344298325
+              },
+              {
+                "text": "ways to live a happy life",
+                "volume": 110,
+                "difficulty": 0.11,
+                "source": "seed",
+                "score": 0.2503557483390632
+              },
+              {
+                "text": "slow living",
+                "volume": 60500,
+                "difficulty": 0.03,
+                "source": "seed",
+                "score": 0.24968541354258178
+              },
+              {
+                "text": "happy ever after",
+                "volume": 165000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.24678026570147887
+              },
+              {
+                "text": "slow life",
+                "volume": 27100,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.24539249532249513
+              },
+              {
+                "text": "not happy with my life",
+                "volume": 720,
+                "difficulty": 0.15,
+                "source": "seed",
+                "score": 0.24370824563978127
+              },
+              {
+                "text": "after ever happy",
+                "volume": 135000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.24140711533386583
+              },
+              {
+                "text": "happier life",
+                "volume": 74000,
+                "difficulty": 0.13,
+                "source": "seed",
+                "score": 0.23521143931611577
+              },
+              {
+                "text": "ways to be happy in life",
+                "volume": 170,
+                "difficulty": 0.21,
+                "source": "seed",
+                "score": 0.23347460274790655
+              },
+              {
+                "text": "living life tutorial",
+                "volume": 1832,
+                "difficulty": 0.22,
+                "source": "seed",
+                "score": 0.23208308608908312
+              },
+              {
+                "text": "not happy with life",
+                "volume": 880,
+                "difficulty": 0.23,
+                "source": "seed",
+                "score": 0.23022338892822836
+              },
+              {
+                "text": "happy go lucky",
+                "volume": 60500,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.22637460273177096
+              },
+              {
+                "text": "happy mind happy life",
+                "volume": 1900,
+                "difficulty": 0.27,
+                "source": "seed",
+                "score": 0.22364931928397042
+              },
+              {
+                "text": "i am not happy with my life",
+                "volume": 720,
+                "difficulty": 0.27,
+                "source": "seed",
+                "score": 0.22343797536951096
+              },
+              {
+                "text": "after ever happy netflix",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.21896369517198236
+              },
+              {
+                "text": "after ever happy online",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.21896369517198236
+              },
+              {
+                "text": "after ever happy watch online",
+                "volume": 140,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2189422025705119
+              },
+              {
+                "text": "happy valley season 3",
+                "volume": 8100,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.2186786892788627
+              },
+              {
+                "text": "pop culture happy hour",
+                "volume": 4400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.21632681154433459
+              },
+              {
+                "text": "watch after ever happy",
+                "volume": 2400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.21596860151982702
+              },
+              {
+                "text": "happy money happy life",
+                "volume": 30,
+                "difficulty": 0.33,
+                "source": "seed",
+                "score": 0.21317925777592073
+              },
+              {
+                "text": "7 happiness of life",
+                "volume": 30,
+                "difficulty": 0.04,
+                "source": "seed",
+                "score": 0.21216574426240722
+              },
+              {
+                "text": "after ever happy where to watch",
+                "volume": 90,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.21048730137395327
+              },
+              {
+                "text": "10 steps to a more fulfilling life",
+                "volume": 20,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.2104747640230955
+              },
+              {
+                "text": "happiness in life",
+                "volume": 74000,
+                "difficulty": 0.13,
+                "source": "seed",
+                "score": 0.21021143931611574
+              },
+              {
+                "text": "mr happy",
+                "volume": 40500,
+                "difficulty": 0.28,
+                "source": "seed",
+                "score": 0.20387358356777668
+              },
+              {
+                "text": "10 ways to live a happy life",
+                "volume": 20,
+                "difficulty": 0.46,
+                "source": "seed",
+                "score": 0.19121800726633875
+              },
+              {
+                "text": "i don t feel happy",
+                "volume": 590,
+                "difficulty": 0.24,
+                "source": "seed",
+                "score": 0.17848225928548558
+              },
+              {
+                "text": "live in",
+                "volume": 49500,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.17609363678616868
+              },
+              {
+                "text": "plan a happy life",
+                "volume": 40,
+                "difficulty": 0.55,
+                "source": "seed",
+                "score": 0.1760188866638811
+              },
+              {
+                "text": "live and let live",
+                "volume": 22200,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.17289325914083004
+              },
+              {
+                "text": "assisted",
+                "volume": 40500,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.17279250248669561
+              },
+              {
+                "text": "finding happiness in everyday life",
+                "volume": 70,
+                "difficulty": 0.28,
+                "source": "seed",
+                "score": 0.17163236792235684
+              },
+              {
+                "text": "upbeat music",
+                "volume": 110000,
+                "difficulty": 0.11,
+                "source": "seed",
+                "score": 0.17003759813562977
+              },
+              {
+                "text": "revocable",
+                "volume": 14800,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.16818950367177377
+              },
+              {
+                "text": "merry christmas and happy new year",
+                "volume": 135000,
+                "difficulty": 0.47,
+                "source": "seed",
+                "score": 0.16370441263116314
+              },
+              {
+                "text": "play upbeat music",
+                "volume": 1900,
+                "difficulty": 0.04,
+                "source": "seed",
+                "score": 0.16250067063532178
+              },
+              {
+                "text": "a short guide to a happy life",
+                "volume": 590,
+                "difficulty": 0.64,
+                "source": "seed",
+                "score": 0.16091469171791797
+              },
+              {
+                "text": "living life guide",
+                "volume": 7674,
+                "difficulty": 0.71,
+                "source": "seed",
+                "score": 0.15035914730039934
+              },
+              {
+                "text": "ways to find happiness",
+                "volume": 110,
+                "difficulty": 0.12,
+                "source": "seed",
+                "score": 0.14866655914987403
+              },
+              {
+                "text": "liven",
+                "volume": 110000,
+                "difficulty": 0.25,
+                "source": "seed",
+                "score": 0.14638894948698114
+              },
+              {
+                "text": "finding happiness in life",
+                "volume": 260,
+                "difficulty": 0.46,
+                "source": "seed",
+                "score": 0.14126099246927967
+              },
+              {
+                "text": "ways to be happier",
+                "volume": 210,
+                "difficulty": 0.19,
+                "source": "seed",
+                "score": 0.1368601453267751
+              },
+              {
+                "text": "living life checklist",
+                "volume": 4349,
+                "difficulty": 0.79,
+                "source": "seed",
+                "score": 0.13625010962114206
+              },
+              {
+                "text": "healthy brain happy life",
+                "volume": 590,
+                "difficulty": 0.79,
+                "source": "seed",
+                "score": 0.13557685388008014
+              },
+              {
+                "text": "living life best practices",
+                "volume": 5553,
+                "difficulty": 0.8,
+                "source": "seed",
+                "score": 0.1347765628667064
+              },
+              {
+                "text": "finding happiness in yourself",
+                "volume": 1600,
+                "difficulty": 0.4,
+                "source": "seed",
+                "score": 0.10163612832083484
+              },
+              {
+                "text": "arthur brooks happiness",
+                "volume": 3600,
+                "difficulty": 0.41,
+                "source": "seed",
+                "score": 0.1003051491561532
+              },
+              {
+                "text": "tina turner happiness becomes you",
+                "volume": 90,
+                "difficulty": 0.69,
+                "source": "seed",
+                "score": 0.052379193265845184
+              },
+              {
+                "text": "reclining",
+                "volume": 246000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.04405804196430437
+              },
+              {
+                "text": "happiness becomes you",
+                "volume": 260,
+                "difficulty": 0.74,
+                "source": "seed",
+                "score": 0.043963695171982356
+              },
+              {
+                "text": "ikigai hector garcia",
+                "volume": 1600,
+                "difficulty": 0.77,
+                "source": "seed",
+                "score": 0.03913612832083484
+              },
+              {
+                "text": "arthur brooks from strength to strength",
+                "volume": 320,
+                "difficulty": 0.79,
+                "source": "seed",
+                "score": 0.03552849552677164
+              },
+              {
+                "text": "arthur brooks strength to strength",
+                "volume": 320,
+                "difficulty": 0.85,
+                "source": "seed",
+                "score": 0.025393360391636498
+              },
+              {
+                "text": "live up",
+                "volume": 27100,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.004851954781954573
+              },
+              {
+                "text": "simple gratitude journal",
+                "volume": 210,
+                "difficulty": 0.99,
+                "source": "seed",
+                "score": 0.0017250101916399534
+              }
+            ]
+          },
+          "timestamp": 1764588989895
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "secondary",
+            "candidates": [
+              {
+                "text": "happy days",
+                "volume": 550000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.41285569151841933
+              },
+              {
+                "text": "happy trails",
+                "volume": 110000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3446859020093077
+              },
+              {
+                "text": "happy music",
+                "volume": 135000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3385253363745498
+              },
+              {
+                "text": "happy ever after",
+                "volume": 165000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.324217763995819
+              },
+              {
+                "text": "after ever happy",
+                "volume": 135000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.31884448531071996
+              },
+              {
+                "text": "happy home",
+                "volume": 165000,
+                "difficulty": 0.08,
+                "source": "seed",
+                "score": 0.3119837214426275
+              },
+              {
+                "text": "happy go lucky",
+                "volume": 60500,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3001816943065539
+              },
+              {
+                "text": "after ever happy netflix",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.30003044857921557
+              },
+              {
+                "text": "after ever happy online",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.30003044857921557
+              },
+              {
+                "text": "after ever happy watch online",
+                "volume": 140,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.30000895546447515
+              },
+              {
+                "text": "happy valley season 3",
+                "volume": 8100,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.2961155164727512
+              },
+              {
+                "text": "happy holiday",
+                "volume": 246000,
+                "difficulty": 0.14,
+                "source": "seed",
+                "score": 0.29457668027537354
+              },
+              {
+                "text": "pop culture happy hour",
+                "volume": 4400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.2901336631654188
+              },
+              {
+                "text": "watch after ever happy",
+                "volume": 2400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.2897754445864122
+              },
+              {
+                "text": "after ever happy where to watch",
+                "volume": 90,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.2734042553191489
+              },
+              {
+                "text": "play upbeat music",
+                "volume": 1900,
+                "difficulty": 0.04,
+                "source": "seed",
+                "score": 0.22904759206932013
+              },
+              {
+                "text": "upbeat music",
+                "volume": 110000,
+                "difficulty": 0.11,
+                "source": "seed",
+                "score": 0.21117526371143536
+              },
+              {
+                "text": "mr happy",
+                "volume": 40500,
+                "difficulty": 0.28,
+                "source": "seed",
+                "score": 0.18330163617606238
+              },
+              {
+                "text": "merry christmas and happy new year",
+                "volume": 135000,
+                "difficulty": 0.47,
+                "source": "seed",
+                "score": 0.07416363424689021
+              }
+            ]
+          },
+          "timestamp": 1764589006469
+        },
+        {
+          "type": "title_options",
+          "data": {
+            "titles": [
+              "Cultivate Your Happy: A Blueprint for a Joyful Life",
+              "The Happy Handbook: Secrets to Living Your Best Life",
+              "Boost Your Happy: 5 Daily Habits for Lasting Joy",
+              "Beyond the Smile: How to Truly Live a Happy Life",
+              "Your Path to Happy: Mastering the Art of Everyday Joy"
+            ]
+          },
+          "timestamp": 1764589057432
+        },
+        {
+          "type": "outline_generated",
+          "data": {
+            "outline": [
+              {
+                "id": "1",
+                "name": "Introduction: Understanding the Essence of Everyday Joy",
+                "items": [
+                  {
+                    "id": "11",
+                    "name": "Defining Everyday Joy: Beyond Fleeting Happiness"
+                  },
+                  {
+                    "id": "12",
+                    "name": "The Multidimensional Nature of True Contentment"
+                  },
+                  {
+                    "id": "13",
+                    "name": "Discovering Joy in Life's Ordinary Moments"
+                  },
+                  {
+                    "id": "14",
+                    "name": "Why Cultivating Daily Joy is Essential"
+                  }
+                ]
+              },
+              {
+                "id": "2",
+                "name": "The Science of Smiles: How Joy Works in Your Brain",
+                "items": [
+                  {
+                    "id": "21",
+                    "name": "The Brain Chemistry of Joy: Neurotransmitters at Play"
+                  },
+                  {
+                    "id": "22",
+                    "name": "The Facial Feedback Hypothesis: Smiling to Feel Happier"
+                  },
+                  {
+                    "id": "23",
+                    "name": "Beyond Brain Chemistry: Psychological and Social Benefits of Smiling"
+                  }
+                ]
+              },
+              {
+                "id": "3",
+                "name": "Cultivating Joyful Habits: Daily Practices for a Happier You",
+                "items": [
+                  {
+                    "id": "31",
+                    "name": "Embrace Gratitude and Mindfulness"
+                  },
+                  {
+                    "id": "32",
+                    "name": "Move Your Body, Uplift Your Spirit"
+                  },
+                  {
+                    "id": "33",
+                    "name": "Nurturing Connections and Self-Care"
+                  },
+                  {
+                    "id": "34",
+                    "name": "Mindful Consumption and Engaging Hobbies"
+                  }
+                ]
+              },
+              {
+                "id": "4",
+                "name": "Finding Bliss in the Mundane: Savoring Simple Moments",
+                "items": [
+                  {
+                    "id": "41",
+                    "name": "Cultivating Mindfulness in Daily Routines"
+                  },
+                  {
+                    "id": "42",
+                    "name": "The Power of Gratitude: Shifting Your Perspective"
+                  },
+                  {
+                    "id": "43",
+                    "name": "Engaging Your Senses for Deeper Appreciation"
+                  },
+                  {
+                    "id": "44",
+                    "name": "Embracing Imperfection: Letting Go of Expectations"
+                  }
+                ]
+              },
+              {
+                "id": "5",
+                "name": "Nurturing Your Connections: The Role of Relationships in Happiness",
+                "items": [
+                  {
+                    "id": "51",
+                    "name": "The Indispensable Link: Relationships and Overall Well-being"
+                  },
+                  {
+                    "id": "52",
+                    "name": "Diverse Bonds: The Impact of Family, Friends, and Romantic Partners"
+                  },
+                  {
+                    "id": "53",
+                    "name": "Emotional Pillars: Support, Belonging, and Reducing Loneliness"
+                  },
+                  {
+                    "id": "54",
+                    "name": "Strategies for Connection: Nurturing and Maintaining Healthy Relationships"
+                  }
+                ]
+              },
+              {
+                "id": "6",
+                "name": "Navigating Challenges with Grace: Building Resilience for Lasting Joy",
+                "items": [
+                  {
+                    "id": "61",
+                    "name": "Cultivating a Resilient Mindset: Embracing Positivity and Growth"
+                  },
+                  {
+                    "id": "62",
+                    "name": "The Foundation of Well-being: Prioritizing Self-Care and Self-Compassion"
+                  },
+                  {
+                    "id": "63",
+                    "name": "Mastering Practical Coping Strategies for Adversity"
+                  },
+                  {
+                    "id": "64",
+                    "name": "Leveraging Support Systems for Strength and Perspective"
+                  }
+                ]
+              },
+              {
+                "id": "7",
+                "name": "Your Personalized Joy Map: Tailoring Happiness to Your Life",
+                "items": [
+                  {
+                    "id": "71",
+                    "name": "Defining Your Unique Joy Triggers"
+                  },
+                  {
+                    "id": "72",
+                    "name": "Crafting Your Personal Joy Toolkit"
+                  },
+                  {
+                    "id": "73",
+                    "name": "Integrating Joyful Habits into Everyday Life"
+                  },
+                  {
+                    "id": "74",
+                    "name": "Navigating Challenges on Your Joy Journey"
+                  }
+                ]
+              },
+              {
+                "id": "8",
+                "name": "Conclusion: Embracing Your Continuous Path to Happy",
+                "items": [
+                  {
+                    "id": "81",
+                    "name": "Building a Foundation for Lasting Joy"
+                  },
+                  {
+                    "id": "82",
+                    "name": "Integrating Happiness into Daily Life"
+                  },
+                  {
+                    "id": "83",
+                    "name": "The Ongoing Journey of Self-Discovery"
+                  },
+                  {
+                    "id": "84",
+                    "name": "Cultivating Resilience for a Joyful Life"
+                  }
+                ]
+              }
+            ],
+            "sectionCount": 8
+          },
+          "timestamp": 1764589096978
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "primary",
+            "candidates": [
+              {
+                "text": "happy",
+                "volume": 3350000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.9172297297297297
+              },
+              {
+                "text": "happiness",
+                "volume": 1830000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.4966793002931917
+              },
+              {
+                "text": "living life",
+                "volume": 2501,
+                "difficulty": -0.2,
+                "source": "seed",
+                "score": 0.35314885328822687
+              },
+              {
+                "text": "living life vs alternatives",
+                "volume": 2625,
+                "difficulty": -0.48,
+                "source": "seed",
+                "score": 0.3504683596070436
+              },
+              {
+                "text": "happy days",
+                "volume": 550000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3390465062299904
+              },
+              {
+                "text": "life happy",
+                "volume": 3600,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3161835275345316
+              },
+              {
+                "text": "living a happy life",
+                "volume": 1600,
+                "difficulty": 0.03,
+                "source": "seed",
+                "score": 0.3141361283208348
+              },
+              {
+                "text": "happy living",
+                "volume": 22200,
+                "difficulty": 0.06,
+                "source": "seed",
+                "score": 0.3127581240056949
+              },
+              {
+                "text": "living life happy",
+                "volume": 880,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.3106287943336338
+              },
+              {
+                "text": "happy life",
+                "volume": 74000,
+                "difficulty": 0.13,
+                "source": "seed",
+                "score": 0.3102114393161157
+              },
+              {
+                "text": "living",
+                "volume": 450000,
+                "difficulty": 0.55,
+                "source": "seed",
+                "score": 0.30660897797758657
+              },
+              {
+                "text": "living life for beginners",
+                "volume": 5610,
+                "difficulty": -0.21,
+                "source": "seed",
+                "score": 0.30539487996051295
+              },
+              {
+                "text": "3 steps to a happy life",
+                "volume": 40,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.26723510288009733
+              },
+              {
+                "text": "happy music",
+                "volume": 135000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.26471792614467665
+              },
+              {
+                "text": "happy holiday",
+                "volume": 246000,
+                "difficulty": 0.14,
+                "source": "seed",
+                "score": 0.26432831223457465
+              },
+              {
+                "text": "5 ways to live a happy life",
+                "volume": 10,
+                "difficulty": 0.03,
+                "source": "seed",
+                "score": 0.26385135135135135
+              },
+              {
+                "text": "happy trails",
+                "volume": 110000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.26361867921671084
+              },
+              {
+                "text": "happy home",
+                "volume": 165000,
+                "difficulty": 0.08,
+                "source": "seed",
+                "score": 0.2599559413771546
+              },
+              {
+                "text": "living life benefits",
+                "volume": 6435,
+                "difficulty": 0.07,
+                "source": "seed",
+                "score": 0.258245344298325
+              },
+              {
+                "text": "ways to live a happy life",
+                "volume": 110,
+                "difficulty": 0.11,
+                "source": "seed",
+                "score": 0.2503557483390632
+              },
+              {
+                "text": "slow living",
+                "volume": 60500,
+                "difficulty": 0.03,
+                "source": "seed",
+                "score": 0.24968541354258178
+              },
+              {
+                "text": "happy ever after",
+                "volume": 165000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.24678026570147887
+              },
+              {
+                "text": "slow life",
+                "volume": 27100,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.24539249532249513
+              },
+              {
+                "text": "not happy with my life",
+                "volume": 720,
+                "difficulty": 0.15,
+                "source": "seed",
+                "score": 0.24370824563978127
+              },
+              {
+                "text": "after ever happy",
+                "volume": 135000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.24140711533386583
+              },
+              {
+                "text": "happier life",
+                "volume": 74000,
+                "difficulty": 0.13,
+                "source": "seed",
+                "score": 0.23521143931611577
+              },
+              {
+                "text": "ways to be happy in life",
+                "volume": 170,
+                "difficulty": 0.21,
+                "source": "seed",
+                "score": 0.23347460274790655
+              },
+              {
+                "text": "living life tutorial",
+                "volume": 1832,
+                "difficulty": 0.22,
+                "source": "seed",
+                "score": 0.23208308608908312
+              },
+              {
+                "text": "not happy with life",
+                "volume": 880,
+                "difficulty": 0.23,
+                "source": "seed",
+                "score": 0.23022338892822836
+              },
+              {
+                "text": "happy go lucky",
+                "volume": 60500,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.22637460273177096
+              },
+              {
+                "text": "happy mind happy life",
+                "volume": 1900,
+                "difficulty": 0.27,
+                "source": "seed",
+                "score": 0.22364931928397042
+              },
+              {
+                "text": "i am not happy with my life",
+                "volume": 720,
+                "difficulty": 0.27,
+                "source": "seed",
+                "score": 0.22343797536951096
+              },
+              {
+                "text": "after ever happy netflix",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.21896369517198236
+              },
+              {
+                "text": "after ever happy online",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.21896369517198236
+              },
+              {
+                "text": "after ever happy watch online",
+                "volume": 140,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2189422025705119
+              },
+              {
+                "text": "happy valley season 3",
+                "volume": 8100,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.2186786892788627
+              },
+              {
+                "text": "pop culture happy hour",
+                "volume": 4400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.21632681154433459
+              },
+              {
+                "text": "watch after ever happy",
+                "volume": 2400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.21596860151982702
+              },
+              {
+                "text": "happy money happy life",
+                "volume": 30,
+                "difficulty": 0.33,
+                "source": "seed",
+                "score": 0.21317925777592073
+              },
+              {
+                "text": "7 happiness of life",
+                "volume": 30,
+                "difficulty": 0.04,
+                "source": "seed",
+                "score": 0.21216574426240722
+              },
+              {
+                "text": "after ever happy where to watch",
+                "volume": 90,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.21048730137395327
+              },
+              {
+                "text": "10 steps to a more fulfilling life",
+                "volume": 20,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.2104747640230955
+              },
+              {
+                "text": "happiness in life",
+                "volume": 74000,
+                "difficulty": 0.13,
+                "source": "seed",
+                "score": 0.21021143931611574
+              },
+              {
+                "text": "mr happy",
+                "volume": 40500,
+                "difficulty": 0.28,
+                "source": "seed",
+                "score": 0.20387358356777668
+              },
+              {
+                "text": "10 ways to live a happy life",
+                "volume": 20,
+                "difficulty": 0.46,
+                "source": "seed",
+                "score": 0.19121800726633875
+              },
+              {
+                "text": "i don t feel happy",
+                "volume": 590,
+                "difficulty": 0.24,
+                "source": "seed",
+                "score": 0.17848225928548558
+              },
+              {
+                "text": "live in",
+                "volume": 49500,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.17609363678616868
+              },
+              {
+                "text": "plan a happy life",
+                "volume": 40,
+                "difficulty": 0.55,
+                "source": "seed",
+                "score": 0.1760188866638811
+              },
+              {
+                "text": "live and let live",
+                "volume": 22200,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.17289325914083004
+              },
+              {
+                "text": "assisted",
+                "volume": 40500,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.17279250248669561
+              },
+              {
+                "text": "finding happiness in everyday life",
+                "volume": 70,
+                "difficulty": 0.28,
+                "source": "seed",
+                "score": 0.17163236792235684
+              },
+              {
+                "text": "upbeat music",
+                "volume": 110000,
+                "difficulty": 0.11,
+                "source": "seed",
+                "score": 0.17003759813562977
+              },
+              {
+                "text": "revocable",
+                "volume": 14800,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.16818950367177377
+              },
+              {
+                "text": "merry christmas and happy new year",
+                "volume": 135000,
+                "difficulty": 0.47,
+                "source": "seed",
+                "score": 0.16370441263116314
+              },
+              {
+                "text": "play upbeat music",
+                "volume": 1900,
+                "difficulty": 0.04,
+                "source": "seed",
+                "score": 0.16250067063532178
+              },
+              {
+                "text": "a short guide to a happy life",
+                "volume": 590,
+                "difficulty": 0.64,
+                "source": "seed",
+                "score": 0.16091469171791797
+              },
+              {
+                "text": "living life guide",
+                "volume": 7674,
+                "difficulty": 0.71,
+                "source": "seed",
+                "score": 0.15035914730039934
+              },
+              {
+                "text": "ways to find happiness",
+                "volume": 110,
+                "difficulty": 0.12,
+                "source": "seed",
+                "score": 0.14866655914987403
+              },
+              {
+                "text": "liven",
+                "volume": 110000,
+                "difficulty": 0.25,
+                "source": "seed",
+                "score": 0.14638894948698114
+              },
+              {
+                "text": "finding happiness in life",
+                "volume": 260,
+                "difficulty": 0.46,
+                "source": "seed",
+                "score": 0.14126099246927967
+              },
+              {
+                "text": "ways to be happier",
+                "volume": 210,
+                "difficulty": 0.19,
+                "source": "seed",
+                "score": 0.1368601453267751
+              },
+              {
+                "text": "living life checklist",
+                "volume": 4349,
+                "difficulty": 0.79,
+                "source": "seed",
+                "score": 0.13625010962114206
+              },
+              {
+                "text": "healthy brain happy life",
+                "volume": 590,
+                "difficulty": 0.79,
+                "source": "seed",
+                "score": 0.13557685388008014
+              },
+              {
+                "text": "living life best practices",
+                "volume": 5553,
+                "difficulty": 0.8,
+                "source": "seed",
+                "score": 0.1347765628667064
+              },
+              {
+                "text": "finding happiness in yourself",
+                "volume": 1600,
+                "difficulty": 0.4,
+                "source": "seed",
+                "score": 0.10163612832083484
+              },
+              {
+                "text": "arthur brooks happiness",
+                "volume": 3600,
+                "difficulty": 0.41,
+                "source": "seed",
+                "score": 0.1003051491561532
+              },
+              {
+                "text": "tina turner happiness becomes you",
+                "volume": 90,
+                "difficulty": 0.69,
+                "source": "seed",
+                "score": 0.052379193265845184
+              },
+              {
+                "text": "reclining",
+                "volume": 246000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.04405804196430437
+              },
+              {
+                "text": "happiness becomes you",
+                "volume": 260,
+                "difficulty": 0.74,
+                "source": "seed",
+                "score": 0.043963695171982356
+              },
+              {
+                "text": "ikigai hector garcia",
+                "volume": 1600,
+                "difficulty": 0.77,
+                "source": "seed",
+                "score": 0.03913612832083484
+              },
+              {
+                "text": "arthur brooks from strength to strength",
+                "volume": 320,
+                "difficulty": 0.79,
+                "source": "seed",
+                "score": 0.03552849552677164
+              },
+              {
+                "text": "arthur brooks strength to strength",
+                "volume": 320,
+                "difficulty": 0.85,
+                "source": "seed",
+                "score": 0.025393360391636498
+              },
+              {
+                "text": "live up",
+                "volume": 27100,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.004851954781954573
+              },
+              {
+                "text": "simple gratitude journal",
+                "volume": 210,
+                "difficulty": 0.99,
+                "source": "seed",
+                "score": 0.0017250101916399534
+              }
+            ]
+          },
+          "timestamp": 1764588989895
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "secondary",
+            "candidates": [
+              {
+                "text": "happy days",
+                "volume": 550000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.41285569151841933
+              },
+              {
+                "text": "happy trails",
+                "volume": 110000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3446859020093077
+              },
+              {
+                "text": "happy music",
+                "volume": 135000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3385253363745498
+              },
+              {
+                "text": "happy ever after",
+                "volume": 165000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.324217763995819
+              },
+              {
+                "text": "after ever happy",
+                "volume": 135000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.31884448531071996
+              },
+              {
+                "text": "happy home",
+                "volume": 165000,
+                "difficulty": 0.08,
+                "source": "seed",
+                "score": 0.3119837214426275
+              },
+              {
+                "text": "happy go lucky",
+                "volume": 60500,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3001816943065539
+              },
+              {
+                "text": "after ever happy netflix",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.30003044857921557
+              },
+              {
+                "text": "after ever happy online",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.30003044857921557
+              },
+              {
+                "text": "after ever happy watch online",
+                "volume": 140,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.30000895546447515
+              },
+              {
+                "text": "happy valley season 3",
+                "volume": 8100,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.2961155164727512
+              },
+              {
+                "text": "happy holiday",
+                "volume": 246000,
+                "difficulty": 0.14,
+                "source": "seed",
+                "score": 0.29457668027537354
+              },
+              {
+                "text": "pop culture happy hour",
+                "volume": 4400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.2901336631654188
+              },
+              {
+                "text": "watch after ever happy",
+                "volume": 2400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.2897754445864122
+              },
+              {
+                "text": "after ever happy where to watch",
+                "volume": 90,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.2734042553191489
+              },
+              {
+                "text": "play upbeat music",
+                "volume": 1900,
+                "difficulty": 0.04,
+                "source": "seed",
+                "score": 0.22904759206932013
+              },
+              {
+                "text": "upbeat music",
+                "volume": 110000,
+                "difficulty": 0.11,
+                "source": "seed",
+                "score": 0.21117526371143536
+              },
+              {
+                "text": "mr happy",
+                "volume": 40500,
+                "difficulty": 0.28,
+                "source": "seed",
+                "score": 0.18330163617606238
+              },
+              {
+                "text": "merry christmas and happy new year",
+                "volume": 135000,
+                "difficulty": 0.47,
+                "source": "seed",
+                "score": 0.07416363424689021
+              }
+            ]
+          },
+          "timestamp": 1764589006469
+        },
+        {
+          "type": "title_options",
+          "data": {
+            "titles": [
+              "Cultivate Your Happy: A Blueprint for a Joyful Life",
+              "The Happy Handbook: Secrets to Living Your Best Life",
+              "Boost Your Happy: 5 Daily Habits for Lasting Joy",
+              "Beyond the Smile: How to Truly Live a Happy Life",
+              "Your Path to Happy: Mastering the Art of Everyday Joy"
+            ]
+          },
+          "timestamp": 1764589057432
+        },
+        {
+          "type": "outline_generated",
+          "data": {
+            "outline": [
+              {
+                "id": "1",
+                "name": "Introduction: Understanding the Essence of Everyday Joy",
+                "items": [
+                  {
+                    "id": "11",
+                    "name": "Defining Everyday Joy: Beyond Fleeting Happiness"
+                  },
+                  {
+                    "id": "12",
+                    "name": "The Multidimensional Nature of True Contentment"
+                  },
+                  {
+                    "id": "13",
+                    "name": "Discovering Joy in Life's Ordinary Moments"
+                  },
+                  {
+                    "id": "14",
+                    "name": "Why Cultivating Daily Joy is Essential"
+                  }
+                ]
+              },
+              {
+                "id": "2",
+                "name": "The Science of Smiles: How Joy Works in Your Brain",
+                "items": [
+                  {
+                    "id": "21",
+                    "name": "The Brain Chemistry of Joy: Neurotransmitters at Play"
+                  },
+                  {
+                    "id": "22",
+                    "name": "The Facial Feedback Hypothesis: Smiling to Feel Happier"
+                  },
+                  {
+                    "id": "23",
+                    "name": "Beyond Brain Chemistry: Psychological and Social Benefits of Smiling"
+                  }
+                ]
+              },
+              {
+                "id": "3",
+                "name": "Cultivating Joyful Habits: Daily Practices for a Happier You",
+                "items": [
+                  {
+                    "id": "31",
+                    "name": "Embrace Gratitude and Mindfulness"
+                  },
+                  {
+                    "id": "32",
+                    "name": "Move Your Body, Uplift Your Spirit"
+                  },
+                  {
+                    "id": "33",
+                    "name": "Nurturing Connections and Self-Care"
+                  },
+                  {
+                    "id": "34",
+                    "name": "Mindful Consumption and Engaging Hobbies"
+                  }
+                ]
+              },
+              {
+                "id": "4",
+                "name": "Finding Bliss in the Mundane: Savoring Simple Moments",
+                "items": [
+                  {
+                    "id": "41",
+                    "name": "Cultivating Mindfulness in Daily Routines"
+                  },
+                  {
+                    "id": "42",
+                    "name": "The Power of Gratitude: Shifting Your Perspective"
+                  },
+                  {
+                    "id": "43",
+                    "name": "Engaging Your Senses for Deeper Appreciation"
+                  },
+                  {
+                    "id": "44",
+                    "name": "Embracing Imperfection: Letting Go of Expectations"
+                  }
+                ]
+              },
+              {
+                "id": "5",
+                "name": "Nurturing Your Connections: The Role of Relationships in Happiness",
+                "items": [
+                  {
+                    "id": "51",
+                    "name": "The Indispensable Link: Relationships and Overall Well-being"
+                  },
+                  {
+                    "id": "52",
+                    "name": "Diverse Bonds: The Impact of Family, Friends, and Romantic Partners"
+                  },
+                  {
+                    "id": "53",
+                    "name": "Emotional Pillars: Support, Belonging, and Reducing Loneliness"
+                  },
+                  {
+                    "id": "54",
+                    "name": "Strategies for Connection: Nurturing and Maintaining Healthy Relationships"
+                  }
+                ]
+              },
+              {
+                "id": "6",
+                "name": "Navigating Challenges with Grace: Building Resilience for Lasting Joy",
+                "items": [
+                  {
+                    "id": "61",
+                    "name": "Cultivating a Resilient Mindset: Embracing Positivity and Growth"
+                  },
+                  {
+                    "id": "62",
+                    "name": "The Foundation of Well-being: Prioritizing Self-Care and Self-Compassion"
+                  },
+                  {
+                    "id": "63",
+                    "name": "Mastering Practical Coping Strategies for Adversity"
+                  },
+                  {
+                    "id": "64",
+                    "name": "Leveraging Support Systems for Strength and Perspective"
+                  }
+                ]
+              },
+              {
+                "id": "7",
+                "name": "Your Personalized Joy Map: Tailoring Happiness to Your Life",
+                "items": [
+                  {
+                    "id": "71",
+                    "name": "Defining Your Unique Joy Triggers"
+                  },
+                  {
+                    "id": "72",
+                    "name": "Crafting Your Personal Joy Toolkit"
+                  },
+                  {
+                    "id": "73",
+                    "name": "Integrating Joyful Habits into Everyday Life"
+                  },
+                  {
+                    "id": "74",
+                    "name": "Navigating Challenges on Your Joy Journey"
+                  }
+                ]
+              },
+              {
+                "id": "8",
+                "name": "Conclusion: Embracing Your Continuous Path to Happy",
+                "items": [
+                  {
+                    "id": "81",
+                    "name": "Building a Foundation for Lasting Joy"
+                  },
+                  {
+                    "id": "82",
+                    "name": "Integrating Happiness into Daily Life"
+                  },
+                  {
+                    "id": "83",
+                    "name": "The Ongoing Journey of Self-Discovery"
+                  },
+                  {
+                    "id": "84",
+                    "name": "Cultivating Resilience for a Joyful Life"
+                  }
+                ]
+              }
+            ],
+            "sectionCount": 8
+          },
+          "timestamp": 1764589096978
+        }
+      ],
+      "__pregel_tasks": [
+        [],
+        []
+      ]
+    },
+    "channel_versions": {
+      "__start__": 14,
+      "messages": 14,
+      "data": 14,
+      "outline": 14,
+      "outlineApproved": 14,
+      "draft": 22,
+      "progress": 22,
+      "preferences": 14,
+      "trace": 22,
+      "halt": 14,
+      "userProvidedFields": 14,
+      "autoFillFields": 14,
+      "toolOutputs": 14,
+      "currentStep": 22,
+      "apiKey": 14,
+      "branch:to:research_primary": 3,
+      "keywordCandidates": 6,
+      "branch:to:research_secondary": 6,
+      "branch:to:title_generation": 9,
+      "titleCandidates": 9,
+      "branch:to:discovery": 12,
+      "branch:to:proposal": 22
+    },
+    "versions_seen": {
+      "__input__": {},
+      "__start__": {
+        "__start__": 13
+      },
+      "research_primary": {
+        "branch:to:research_primary": 2
+      },
+      "research_secondary": {
+        "branch:to:research_secondary": 5
+      },
+      "title_generation": {
+        "branch:to:title_generation": 8
+      },
+      "discovery": {
+        "branch:to:discovery": 11
+      },
+      "proposal": {
+        "branch:to:proposal": 21
+      }
+    }
+  },
+  "metadata": {
+    "source": "loop",
+    "step": 20,
+    "parents": {}
+  },
+  "parentCheckpointId": "1f0ceaa7-1964-6100-8013-4b76210b277a",
+  "updatedAt": 1764589194492
+}

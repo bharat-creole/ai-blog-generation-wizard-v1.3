@@ -31,6 +31,75 @@ const App: React.FC = () => {
 	const [showTrace, setShowTrace] = useState(false);
 	const [showSettings, setShowSettings] = useState(false);
 
+	useEffect(() => {
+		try {
+			console.log('🔍 [Auth] Checking URL for token...');
+			console.log('   Full URL:', window.location.href);
+			console.log('   Search:', window.location.search);
+			console.log('   Hash:', window.location.hash);
+			
+			const urlParams = new URLSearchParams(window.location.search);
+			const hashParams = new URLSearchParams(window.location.hash.substring(1));
+			
+			// Check query parameters first, then hash
+			const token = urlParams.get('token') || hashParams.get('token');
+			const userId = urlParams.get('userId') || hashParams.get('userId');
+			
+			console.log('   Token found:', token ? 'Yes' : 'No');
+			console.log('   UserId found:', userId ? 'Yes' : 'No');
+			
+			if (token) {
+				// Store token in localStorage
+				localStorage.setItem('accessToken', token);
+				console.log('✅ [Auth] Token stored in localStorage as "accessToken"');
+				console.log('   Token length:', token.length);
+				
+				// Verify it was stored
+				const stored = localStorage.getItem('accessToken');
+				if (stored === token) {
+					console.log('✅ [Auth] Token verification: SUCCESS');
+				} else {
+					console.error('❌ [Auth] Token verification: FAILED');
+				}
+				
+				// Also store userId if provided
+				if (userId) {
+					localStorage.setItem('userId', userId);
+					console.log('✅ [Auth] UserId stored:', userId);
+				}
+				
+				// Clean up URL by removing token and userId from query/hash
+				const newUrl = new URL(window.location.href);
+				newUrl.searchParams.delete('token');
+				newUrl.searchParams.delete('userId');
+				
+				// Remove from hash if present
+				if (window.location.hash.includes('token') || window.location.hash.includes('userId')) {
+					const hashParams = new URLSearchParams(window.location.hash.substring(1));
+					hashParams.delete('token');
+					hashParams.delete('userId');
+					const newHash = hashParams.toString();
+					newUrl.hash = newHash ? `#${newHash}` : '';
+				}
+				
+				// Update URL without reload (clean URL)
+				window.history.replaceState({}, '', newUrl.toString());
+				console.log('✅ [Auth] URL cleaned, new URL:', newUrl.toString());
+			} else {
+				// Check if token already exists in localStorage
+				const existingToken = localStorage.getItem('accessToken') || 
+				                      localStorage.getItem('token') ||
+				                      localStorage.getItem('authToken');
+				if (existingToken) {
+					console.log('ℹ️  [Auth] No token in URL, but found existing token in localStorage');
+				} else {
+					console.warn('⚠️  [Auth] No token found in URL or localStorage');
+				}
+			}
+		} catch (e) {
+			console.error('❌ [Auth] Failed to extract token from URL:', e);
+		}
+	}, []);
 	// Load state from localStorage on initial render
 	useEffect(() => {
 		try {

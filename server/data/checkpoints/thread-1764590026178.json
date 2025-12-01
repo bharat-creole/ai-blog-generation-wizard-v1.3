@@ -1,0 +1,3964 @@
+{
+  "checkpoint": {
+    "v": 4,
+    "id": "1f0ceae5-05a4-6551-801a-4df6987fb472",
+    "ts": "2025-12-01T12:07:31.621Z",
+    "channel_values": {
+      "messages": [
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "lc": 1,
+          "type": "constructor",
+          "id": [
+            "langchain_core",
+            "messages",
+            "AIMessage"
+          ],
+          "kwargs": {
+            "content": "I couldn't find any secondary keywords. I'll proceed with just the primary keyword for now.",
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "additional_kwargs": {},
+            "response_metadata": {}
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "lc": 1,
+          "type": "constructor",
+          "id": [
+            "langchain_core",
+            "messages",
+            "AIMessage"
+          ],
+          "kwargs": {
+            "content": "I couldn't find any secondary keywords. I'll proceed with just the primary keyword for now.",
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "additional_kwargs": {},
+            "response_metadata": {}
+          }
+        },
+        {
+          "lc": 1,
+          "type": "constructor",
+          "id": [
+            "langchain_core",
+            "messages",
+            "AIMessage"
+          ],
+          "kwargs": {
+            "content": "I couldn't find any secondary keywords. I'll proceed with just the primary keyword for now.",
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "additional_kwargs": {},
+            "response_metadata": {}
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "lc": 1,
+          "type": "constructor",
+          "id": [
+            "langchain_core",
+            "messages",
+            "AIMessage"
+          ],
+          "kwargs": {
+            "content": "I couldn't find any secondary keywords. I'll proceed with just the primary keyword for now.",
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "additional_kwargs": {},
+            "response_metadata": {}
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "lc": 1,
+          "type": "constructor",
+          "id": [
+            "langchain_core",
+            "messages",
+            "AIMessage"
+          ],
+          "kwargs": {
+            "content": "I couldn't find any secondary keywords. I'll proceed with just the primary keyword for now.",
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "additional_kwargs": {},
+            "response_metadata": {}
+          }
+        },
+        {
+          "lc": 1,
+          "type": "constructor",
+          "id": [
+            "langchain_core",
+            "messages",
+            "AIMessage"
+          ],
+          "kwargs": {
+            "content": "I couldn't find any secondary keywords. I'll proceed with just the primary keyword for now.",
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "additional_kwargs": {},
+            "response_metadata": {}
+          }
+        },
+        {
+          "lc": 1,
+          "type": "constructor",
+          "id": [
+            "langchain_core",
+            "messages",
+            "AIMessage"
+          ],
+          "kwargs": {
+            "content": "I couldn't find any secondary keywords. I'll proceed with just the primary keyword for now.",
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "additional_kwargs": {},
+            "response_metadata": {}
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "lc": 1,
+          "type": "constructor",
+          "id": [
+            "langchain_core",
+            "messages",
+            "AIMessage"
+          ],
+          "kwargs": {
+            "content": "I couldn't find any secondary keywords. I'll proceed with just the primary keyword for now.",
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "additional_kwargs": {},
+            "response_metadata": {}
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "lc": 1,
+          "type": "constructor",
+          "id": [
+            "langchain_core",
+            "messages",
+            "AIMessage"
+          ],
+          "kwargs": {
+            "content": "I couldn't find any secondary keywords. I'll proceed with just the primary keyword for now.",
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "additional_kwargs": {},
+            "response_metadata": {}
+          }
+        },
+        {
+          "lc": 1,
+          "type": "constructor",
+          "id": [
+            "langchain_core",
+            "messages",
+            "AIMessage"
+          ],
+          "kwargs": {
+            "content": "I couldn't find any secondary keywords. I'll proceed with just the primary keyword for now.",
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "additional_kwargs": {},
+            "response_metadata": {}
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "lc": 1,
+          "type": "constructor",
+          "id": [
+            "langchain_core",
+            "messages",
+            "AIMessage"
+          ],
+          "kwargs": {
+            "content": "I couldn't find any secondary keywords. I'll proceed with just the primary keyword for now.",
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "additional_kwargs": {},
+            "response_metadata": {}
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "lc": 1,
+          "type": "constructor",
+          "id": [
+            "langchain_core",
+            "messages",
+            "AIMessage"
+          ],
+          "kwargs": {
+            "content": "I couldn't find any secondary keywords. I'll proceed with just the primary keyword for now.",
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "additional_kwargs": {},
+            "response_metadata": {}
+          }
+        },
+        {
+          "lc": 1,
+          "type": "constructor",
+          "id": [
+            "langchain_core",
+            "messages",
+            "AIMessage"
+          ],
+          "kwargs": {
+            "content": "I couldn't find any secondary keywords. I'll proceed with just the primary keyword for now.",
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "additional_kwargs": {},
+            "response_metadata": {}
+          }
+        },
+        {
+          "lc": 1,
+          "type": "constructor",
+          "id": [
+            "langchain_core",
+            "messages",
+            "AIMessage"
+          ],
+          "kwargs": {
+            "content": "I couldn't find any secondary keywords. I'll proceed with just the primary keyword for now.",
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "additional_kwargs": {},
+            "response_metadata": {}
+          }
+        },
+        {
+          "lc": 1,
+          "type": "constructor",
+          "id": [
+            "langchain_core",
+            "messages",
+            "AIMessage"
+          ],
+          "kwargs": {
+            "content": "I couldn't find any secondary keywords. I'll proceed with just the primary keyword for now.",
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "additional_kwargs": {},
+            "response_metadata": {}
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        }
+      ],
+      "apiKey": "AIzaSyCXtEUadPIwJrxvskOFbKHxSEzCJe2vjUs",
+      "data": {
+        "apiKey": "AIzaSyCXtEUadPIwJrxvskOFbKHxSEzCJe2vjUs",
+        "title": "SEO vs Sales: The Ultimate Showdown for Business Growth",
+        "topic": "SEO vs Sales",
+        "targetLocation": "United States",
+        "primaryKeyword": "seo vs sales",
+        "secondaryKeywords": [
+          "seo vs sales tutorial",
+          "seo vs sales guide"
+        ],
+        "suggestedTitles": [],
+        "referenceUrls": [],
+        "referenceFiles": [],
+        "interlinks": [],
+        "brandVoice": "Default",
+        "blogGuideline": "Default",
+        "llmModel": "gemini-2.5-flash",
+        "language": "English",
+        "outline": [],
+        "blogContent": ""
+      },
+      "outline": [
+        {
+          "id": "1",
+          "name": "Introduction: Understanding SEO and Sales in Business Growth",
+          "items": [
+            {
+              "id": "11",
+              "name": "What is Search Engine Optimization (SEO)?"
+            },
+            {
+              "id": "12",
+              "name": "The Role of Sales in Business Expansion"
+            },
+            {
+              "id": "13",
+              "name": "Bridging the Gap: How SEO and Sales Intersect"
+            },
+            {
+              "id": "14",
+              "name": "The Symbiotic Relationship for Sustainable Growth"
+            }
+          ]
+        },
+        {
+          "id": "2",
+          "name": "SEO's Power: Driving Organic Traffic and Brand Authority",
+          "items": [
+            {
+              "id": "21",
+              "name": "Boosting Online Visibility and Search Rankings"
+            },
+            {
+              "id": "22",
+              "name": "Sustainable Growth and Long-Term ROI"
+            },
+            {
+              "id": "23",
+              "name": "Establishing Brand Authority and Credibility"
+            },
+            {
+              "id": "24",
+              "name": "Key Pillars of Organic Traffic Generation"
+            }
+          ]
+        },
+        {
+          "id": "3",
+          "name": "Sales' Impact: Direct Conversions and Relationship Building",
+          "items": [
+            {
+              "id": "31",
+              "name": "Direct Sales Strategies for Immediate Conversions"
+            },
+            {
+              "id": "32",
+              "name": "Building Long-Term Customer Relationships"
+            },
+            {
+              "id": "33",
+              "name": "The Sales Funnel: Guiding Prospects to Purchase"
+            },
+            {
+              "id": "34",
+              "name": "Measuring the Impact of Sales on Business Growth"
+            }
+          ]
+        },
+        {
+          "id": "4",
+          "name": "Key Differences: Approach, Timeline, and Investment",
+          "items": [
+            {
+              "id": "41",
+              "name": "Strategic Approaches: Organic Visibility vs. Direct Sales"
+            },
+            {
+              "id": "42",
+              "name": "Understanding the Investment: Sustained Growth vs. Immediate Spending"
+            },
+            {
+              "id": "43",
+              "name": "Time to Impact: Long-term SEO vs. Short-term Sales Cycles"
+            },
+            {
+              "id": "44",
+              "name": "Measuring Success: Brand Equity vs. Conversion Rates"
+            }
+          ]
+        },
+        {
+          "id": "5",
+          "name": "The Synergy: How SEO and Sales Can Collaborate for Success",
+          "items": [
+            {
+              "id": "51",
+              "name": "Bridging the Information Gap: Sales Insights for SEO Strategy"
+            },
+            {
+              "id": "52",
+              "name": "Content Unification: Creating Sales-Driven SEO Assets"
+            },
+            {
+              "id": "53",
+              "name": "Aligning Goals: Shared KPIs for SEO and Sales Success"
+            },
+            {
+              "id": "54",
+              "name": "Breaking Down Silos: Fostering Cross-Team Communication"
+            }
+          ]
+        },
+        {
+          "id": "6",
+          "name": "Measuring Success: KPIs and ROI for Each Discipline",
+          "items": [
+            {
+              "id": "61",
+              "name": "SEO Performance Metrics: Tracking Organic Growth and Conversions"
+            },
+            {
+              "id": "62",
+              "name": "Calculating the Return on Investment for SEO Initiatives"
+            },
+            {
+              "id": "63",
+              "name": "Core Sales KPIs: Driving Revenue and Customer Acquisition"
+            },
+            {
+              "id": "64",
+              "name": "Measuring Sales Effectiveness: ROI and Profitability Analysis"
+            }
+          ]
+        },
+        {
+          "id": "7",
+          "name": "When to Prioritize: Strategic Considerations for Businesses",
+          "items": [
+            {
+              "id": "71",
+              "name": "Aligning Priorities with Business Goals"
+            },
+            {
+              "id": "72",
+              "name": "Balancing Short-Term Wins with Long-Term Growth"
+            },
+            {
+              "id": "73",
+              "name": "Evaluating Budget, Resources, and Market Landscape"
+            },
+            {
+              "id": "74",
+              "name": "Identifying Key Metrics for Success and ROI"
+            }
+          ]
+        },
+        {
+          "id": "8",
+          "name": "Conclusion: Achieving Holistic Business Growth Through Integration",
+          "items": [
+            {
+              "id": "81",
+              "name": "Forging a Unified Strategy: SEO and Sales Alignment"
+            },
+            {
+              "id": "82",
+              "name": "Optimizing the Customer Journey: From Search to Conversion"
+            },
+            {
+              "id": "83",
+              "name": "Measuring Success: Integrated Analytics for Growth"
+            },
+            {
+              "id": "84",
+              "name": "The Future of Business Growth: A Collaborative Approach"
+            }
+          ]
+        }
+      ],
+      "outlineApproved": true,
+      "draft": "# SEO vs Sales: The Ultimate Showdown for Business Growth\n\n\n\n## Introduction: Understanding SEO and Sales in Business Growth\n\nIn the dynamic landscape of modern business, achieving sustainable growth requires a multifaceted approach. At the heart of this endeavor often lie two critical functions: Search Engine Optimization (SEO) and Sales. While seemingly distinct, the interplay between these two forces is paramount to attracting, engaging, and converting customers in today's digital-first world. This section delves into the core definitions of SEO and Sales, explores their individual contributions to business expansion, and highlights their essential intersection for holistic growth, moving beyond the traditional \"seo vs sales\" debate to embrace their symbiotic potential.\n\n### What is Search Engine Optimization (SEO)?\n\nSearch Engine Optimization (SEO) is the strategic process of enhancing a website's visibility and ranking in organic (unpaid) search engine results pages (SERPs) on platforms like Google and Bing. The fundamental goal of SEO is to ensure that when potential customers search for products, services, or information related to your business, your website appears prominently. This digital marketing practice involves a combination of techniques, including:\n\n*   **Keyword Research:** Identifying the most relevant and valuable search terms your target audience uses.\n*   **On-Page SEO:** Optimizing website content, titles, meta descriptions, and images to align with search engine algorithms and user intent.\n*   **Technical SEO:** Improving website architecture, speed, mobile-friendliness, and crawlability for search engines.\n*   **Off-Page SEO:** Building authority and credibility through external signals like backlinks from other reputable websites.\n\nBy effectively implementing SEO strategies, businesses can attract high-quality, targeted traffic to their websites, significantly increasing brand awareness and the likelihood of conversions.\n\n### The Role of Sales in Business Expansion\n\nSales, at its core, is the process of generating revenue by converting leads into paying customers. It's the engine that directly fuels a company's financial health and expansion. Sales teams are instrumental in business growth through several key functions:\n\n*   **Revenue Generation:** The most direct impact of sales is creating income, which is crucial for covering operational costs and investing in future growth initiatives.\n*   **Customer Acquisition and Retention:** Effective sales strategies focus on attracting new clients and nurturing existing relationships, leading to repeat business and customer loyalty.\n*   **Market Penetration:** Sales professionals play a vital role in identifying new market opportunities and expanding a company's reach into different geographical areas or customer segments.\n*   **Market Insights and Feedback:** Sales teams are on the front lines, gathering invaluable information about customer needs, market trends, and competitor activities, which can inform product development and marketing strategies.\n\nUltimately, a robust sales function is indispensable for translating interest into actual transactions and sustaining a business's upward trajectory.\n\n### Bridging the Gap: How SEO and Sales Intersect\n\nWhile often perceived as separate departments, the \"seo vs sales\" paradigm is outdated. In reality, SEO and sales are deeply interlinked, especially in the era of inbound marketing. SEO acts as a powerful lead generation mechanism, drawing potential customers into the sales funnel long before a direct sales interaction occurs.\n\n*   **Increased Visibility Leads to Qualified Leads:** A strong SEO presence ensures that when potential customers are researching solutions, they find your business. This organic traffic is often highly qualified, as users are actively seeking information related to your offerings.\n*   **Enhanced Credibility and Trust:** Websites that rank well in search results are often viewed as more authoritative and trustworthy. This builds a foundation of confidence even before a sales conversation begins, making the sales process smoother.\n*   **Content as a Sales Tool:** SEO-optimized content, such as blog posts, product pages, and case studies, can answer prospective customers' questions at various stages of their buying journey, effectively pre-selling your products or services.\n*   **Improved User Experience (UX):** SEO emphasizes a positive user experience, with fast-loading pages and easy navigation. A seamless online experience directly contributes to higher engagement and conversion rates, easing the path for sales.\n\n### The Symbiotic Relationship for Sustainable Growth\n\nThe most successful businesses understand that SEO and sales are not in opposition but rather form a symbiotic relationship. When aligned, their combined power propels sustainable business growth far more effectively than either could achieve alone.\n\nSEO lays the groundwork by building brand awareness, establishing authority, and consistently driving qualified organic traffic. This reduces reliance on costly paid advertising and provides a steady stream of potential customers who are already familiar with and trusting of your brand. Sales teams then capitalize on this pre-qualified interest, leveraging the insights gained from SEO to tailor their pitches and close deals more efficiently.\n\nThis integrated approach ensures:\n\n*   **Consistent Lead Flow:** SEO provides a continuous stream of inbound leads, keeping the sales pipeline full.\n*   **Higher Conversion Rates:** Leads generated through SEO are often more informed and closer to a purchase decision, leading to higher conversion rates for the sales team.\n*   **Reduced Customer Acquisition Costs:** Organic traffic is inherently more cost-effective than paid advertising over the long term, optimizing marketing spend.\n*   **Data-Driven Strategies:** The analytics from SEO efforts provide valuable data that sales teams can use to understand customer behavior and refine their approach, creating a continuous feedback loop for improvement.\n\nBy fostering collaboration and understanding between SEO and sales teams, businesses can unlock their full potential, ensuring not just short-term gains but also enduring success and sustainable expansion.\n\n## SEO's Power: Driving Organic Traffic and Brand Authority\n\nIn the ongoing \"seo vs sales\" debate, it's crucial to recognize that while sales efforts deliver immediate conversions, Search Engine Optimization (SEO) lays the groundwork for sustained business growth by consistently attracting organic traffic and cultivating undeniable brand authority. Unlike the temporary boosts offered by paid advertising, SEO is an investment that yields compounding value, building a strong, lasting online presence that fuels your sales pipeline passively.\n\n### Boosting Online Visibility and Search Rankings\n\nOne of SEO's primary strengths is its ability to elevate your online visibility and improve search engine rankings. A well-optimized website appears higher on Search Engine Results Pages (SERPs), making it easier for potential customers to discover your brand. Studies indicate that a significant majority of users tend to click on the top search results, underscoring the importance of ranking highly for relevant keywords. To achieve this, effective SEO strategies focus on meticulous keyword research, comprehensive on-page optimization—including optimized titles, meta descriptions, headings, and high-quality content—and robust technical SEO, all of which enhance your website's discoverability and ranking potential.\n\n### Sustainable Growth and Long-Term ROI\n\nWhile sales can generate quick revenue, SEO offers sustainable growth and an impressive long-term return on investment (ROI). Unlike paid campaigns that cease delivering traffic the moment your budget runs out, SEO provides a continuous stream of organic visitors without additional ongoing costs once your content ranks well. This makes SEO a highly cost-effective marketing strategy; some reports suggest that for every dollar invested, businesses can see significant returns, sometimes upwards of 500% to 1,389%. Viewing SEO as an appreciating asset, rather than a mere expense, is key to understanding its long-term value, as it continues to drive leads and build brand equity over months and even years.\n\n### Establishing Brand Authority and Credibility\n\nBeyond traffic, SEO is instrumental in establishing brand authority and credibility—factors that significantly impact customer trust and purchasing decisions. Brand authority signifies the level of trust and influence your brand commands within its industry, positioning you as a go-to resource for information or solutions. SEO contributes to this by improving your visibility in search results and signaling to both users and search engines that your website is an expert and reliable source. This is further reinforced by creating valuable, high-quality content that aligns with Google's E-E-A-T (Experience, Expertise, Authoritativeness, Trustworthiness) guidelines, earning quality backlinks from reputable sources, and providing an exceptional user experience.\n\n### Key Pillars of Organic Traffic Generation\n\nGenerating organic traffic relies on a multifaceted approach built upon several key pillars. Content marketing serves as a foundational element, creating valuable, relevant, and engaging material that attracts and educates your target audience. Strategic keyword research ensures that this content aligns with user intent, addressing the specific queries people are searching for. Complementing this, a strong technical SEO foundation ensures your website is easily crawlable, fast, and mobile-friendly, optimizing it for both users and search engine algorithms. Finally, building high-quality backlinks from authoritative sites acts as a \"vote of confidence,\" further boosting your website's visibility and organic traffic potential. The synergy between these pillars—content, technical SEO, and off-page SEO (like link building)—is what truly unlocks the power of organic traffic and solidifies your brand's position in the digital landscape.\n\n### Sources\n Why SEO Is The Key To Building Brand Authority | StarRose Blog. (2023, January 15).\n Unlocking the Power of SEO: Drive Organic Traffic and Skyrocket Your Business.\n The Importance of SEO in Driving Organic Traffic - BrainyDX Technologies.\n The Power of SEO: 5 Proven Strategies to Drive Organic Traffic to Your Website by SEO Bigshot (2024, September 13).\n Building Brand Authority: The Secret to Stronger SEO - HMB Strategies (2024, July 5).\n Search Engine Optimization — Boost Your Online Visibility | by Bidemi Bello - Medium (2024, June 28).\n SEO and Search Rankings: Best Practices for Improving Visibility - Datawyze (2023, February 9).\n SEO & SERP visibility: Boost your website's search engine presence - SEO Monitor (2024, October 16).\n 14 Quick SEO Tweaks to Increase Search Visibility - seoClarity (2023, August 17).\n What Is SEO - Search Engine Optimization? (2024, September 23).\n Why Long-Term SEO Strategies Drive Sustainable Growth - Eziom International (2024, December 4).\n The ROI of SEO: Understanding Investment & Long-Term Value - DO Communication (2025, May 24).\n Unlocking Sustainable Growth through SEO Optimization - Moon Create.\n SEO ROI: Best Way To Boost Your Long-Term Revenue (2023, April 26).\n How to Build a Sustainable SEO Strategy for Long-Term Growth - 101 Keys (2025, September 3).\n Building Brand Authority: How Agencies Use SEO and Social Proof to Establish Credibility.\n How SEO Builds Brand Authority and Increase Online Trust? - InfinitySoftHint (2025, March 15).\n How Corporates Can Use SEO to Build Brand Authority and Credibility? - Daiki Media (2024, November 7).\n SEO brand building: How SEO builds your authority - BusinessCloud (2024, July 3).\n How to Do Branding of a Website Through SEO: Building Authority and Trust (2025, November 13).\n The three pillars on which you can build your organic traffic | YourStory (2017, December 20).\n 10 Easy Ways to Generate and Increase Organic Traffic - SEOBoost.\n Growing Organic Traffic With Content Pillars | Blog - Lform Design (2023, February 7).\n How to Drive More Organic Traffic with Pillar Pages - Hivehouse Digital (2021, March 31).\n The 4 Traffic Pillars EXPLAINED: Organic, DMs, Affiliates & Paid Ads - YouTube (2025, June 6).\n\n## Sales' Impact: Direct Conversions and Relationship Building\n\nWhile the digital landscape often highlights the power of SEO in attracting organic traffic, the direct influence of sales on immediate conversions and the cultivation of lasting customer relationships remains an undeniable force in business growth. The \"seo vs sales\" discussion isn't about which is superior, but how these two powerful engines work in concert, with sales providing the direct human touch that often closes deals and builds loyalty.\n\n### Direct Sales Strategies for Immediate Conversions\n\nDirect sales strategies are designed to secure immediate conversions through direct interaction with potential customers. This can manifest in various forms, from face-to-face meetings and telemarketing to live demonstrations and direct response campaigns. The effectiveness of these strategies often lies in the salesperson's ability to understand customer needs instantly, address objections in real-time, and clearly articulate the value proposition. Unlike the often longer sales cycle associated with SEO-driven leads, direct sales can rapidly move prospects through the funnel, resulting in quicker revenue generation.\n\n### Building Long-Term Customer Relationships\n\nBeyond the immediate transaction, a core strength of effective sales lies in its capacity to build and nurture long-term customer relationships. A skilled sales professional acts as a trusted advisor, understanding customer challenges and providing tailored solutions. This personalized approach fosters trust and rapport, leading to repeat business, increased customer lifetime value, and valuable word-of-mouth referrals. In the context of \"seo vs sales,\" while SEO brings in the initial interest, it's often the sales team that transforms that interest into a loyal customer base through ongoing engagement and support.\n\n### The Sales Funnel: Guiding Prospects to Purchase\n\nThe sales funnel is a foundational concept in understanding how sales drive conversions. It represents the journey a prospect takes from initial awareness to becoming a customer. While SEO often plays a crucial role at the top of the funnel (awareness and interest), sales teams excel at guiding prospects through the middle and bottom. This involves qualifying leads, presenting solutions, overcoming objections, and ultimately closing the sale. Each stage requires specific strategies and communication techniques to move prospects closer to a purchasing decision, highlighting the direct impact of sales efforts on conversion rates.\n\n### Measuring the Impact of Sales on Business Growth\n\nMeasuring the impact of sales on business growth involves tracking key performance indicators (KPIs) such as conversion rates, average deal size, sales cycle length, customer acquisition cost, and customer retention rates. These metrics provide clear insights into the efficiency and effectiveness of sales strategies. By continuously analyzing these numbers, businesses can optimize their sales processes, identify areas for improvement, and ensure their sales efforts directly contribute to revenue targets and overall expansion. This direct, measurable contribution is a critical component when considering the overall impact in the ongoing \"seo vs sales\" dialogue.\n\n## Key Differences: Approach, Timeline, and Investment\n\nWhen weighing the merits of **SEO vs sales** in your business strategy, it's crucial to understand their fundamental differences across various dimensions. While both aim for business growth, their methodologies, expected timelines, and investment models diverge significantly. Recognizing these distinctions empowers businesses to allocate resources effectively and build a holistic growth strategy.\n\n### Strategic Approaches: Organic Visibility vs. Direct Sales\n\nThe strategic approaches of SEO and direct sales represent two distinct paths to reaching your audience. SEO (Search Engine Optimization) is an inbound marketing strategy centered on achieving organic visibility. It focuses on optimizing your online content and technical infrastructure to rank higher in search engine results. The goal is to capture high-intent buyers who are actively searching for solutions to their problems, bringing them to your website naturally. This approach cultivates brand discovery and builds long-term authority, positioning your business as a trusted resource in your industry.\n\nIn contrast, direct sales, often supported by paid advertising or outbound efforts, takes a more immediate and proactive stance. It involves direct outreach to potential customers or placing advertisements that offer immediate visibility and quick wins. While effective for rapid lead generation and filling urgent needs, this approach typically requires continuous spending to maintain results. The fundamental difference in strategic approach between **SEO vs sales** lies in attracting demand versus actively pursuing it.\n\n### Understanding the Investment: Sustained Growth vs. Immediate Spending\n\nThe financial commitment for SEO and direct sales also varies considerably, particularly in terms of long-term return. Investing in SEO is akin to building a valuable asset that appreciates over time. It requires an initial and ongoing investment in content creation, technical optimization, and link building. However, this upfront effort yields compounding, long-term value and an impressive return on investment (ROI). For instance, SEO has been shown to deliver an average ROI of 748% over three years, significantly outperforming paid search in the long run. Your well-ranked content continues to attract traffic without additional per-click costs, contributing to business equity.\n\nConversely, direct sales efforts, particularly those reliant on paid advertising, often necessitate continuous spending to sustain visibility and generate leads. While they can deliver immediate results, the traffic and conversions typically cease the moment the advertising budget is depleted. This contrast highlights that the investment in **seo vs sales** is a choice between sustained, organic growth and immediate, but often temporary, spending.\n\n### Time to Impact: Long-term SEO vs. Short-term Sales Cycles\n\nOne of the most significant distinctions between **SEO vs sales** is the timeline for seeing results. SEO is a marathon, not a sprint. It typically takes 3 to 6 months to begin showing meaningful results in terms of increased traffic, leads, and sales. This long-term commitment is necessary because search engines need time to crawl, index, and rank content, and building domain authority is a gradual process. Regular algorithm updates and ongoing competition also necessitate a sustained effort to maintain rankings.\n\nDirect sales cycles, on the other hand, are often designed for immediate impact. Paid advertising can put your offerings in front of potential customers almost instantly, leading to quicker lead generation and sales conversions. While the results are faster, they are also more transient. The choice between **SEO vs sales** regarding time to impact hinges on whether a business prioritizes rapid acquisition or sustainable, gradual growth.\n\n### Measuring Success: Brand Equity vs. Conversion Rates\n\nMeasuring success for **SEO vs sales** involves focusing on different key performance indicators (KPIs). For SEO, success is often measured by metrics that reflect long-term brand equity and organic reach. This includes improvements in search engine rankings, increased organic traffic, lower bounce rates, and higher engagement metrics. SEO leads also tend to have a higher close rate, with approximately 14.6% of leads converting into customers, and a lower customer acquisition cost compared to traditional marketing or even paid search. The emphasis is on building brand authority and establishing a continuous funnel of high-intent visitors.\n\nFor direct sales, success is more immediately tied to conversion rates and the volume of sales generated within a specific timeframe. KPIs would include the number of leads generated, lead-to-customer conversion rates, customer acquisition cost, and overall revenue directly attributed to sales efforts. While both ultimately aim for revenue, the measurement of **SEO vs sales** reflects their differing approaches: one focused on building a durable online presence and the other on immediate transactional outcomes.\n\n## The Synergy: How SEO and Sales Can Collaborate for Success\n\nThe ongoing debate of \"SEO vs sales\" often paints these critical business functions as competing forces, vying for resources and recognition. However, the most successful organizations recognize that true business growth stems not from a rivalry, but from a powerful synergy between SEO and sales. When these two departments work hand-in-hand, they create an unstoppable engine for attracting, nurturing, and converting leads into loyal customers. This collaborative approach transcends traditional departmental silos, fostering an environment where shared goals and integrated strategies drive superior results and demonstrate how \"seo vs sales\" can become \"SEO *and* Sales\" for exponential impact.\n\n### Bridging the Information Gap: Sales Insights for SEO Strategy\n\nSales teams are on the front lines, directly engaging with potential customers daily. They hear firsthand about customer pain points, common objections, frequently asked questions, and the specific language buyers use. This invaluable qualitative data is a goldmine for SEO strategy. Instead of SEO teams guessing what content will resonate, sales insights can directly inform keyword research, topic clustering, and content creation. By sharing common objections or specific product benefits that close deals, sales provides a clear roadmap for SEO to develop highly relevant, intent-driven content that addresses buyer needs proactively. This crucial link transforms generic content into highly effective, sales-aligned assets, fundamentally altering the \"seo vs sales\" dynamic by making SEO a direct enabler of sales.\n\n### Content Unification: Creating Sales-Driven SEO Assets\n\nThe goal of SEO extends beyond mere traffic generation; it's about attracting *qualified* traffic that converts. This is where content unification comes into play. By collaborating, SEO and sales can ensure that all content, from blog posts and landing pages to case studies and FAQs, is designed to support the sales funnel at every stage.\n\nConsider these collaborative content opportunities:\n*   **Top-of-Funnel Content:** SEO can create educational blog posts targeting awareness-stage keywords, informed by sales' understanding of initial customer questions.\n*   **Middle-of-Funnel Content:** Develop comparison guides, whitepapers, or webinars that address specific solutions or overcome common objections, again, using direct input from sales.\n*   **Bottom-of-Funnel Content:** Craft compelling product pages, testimonials, and case studies that resonate with buyers close to making a purchase, incorporating the language and success stories sales teams use daily.\n\nThis unified approach ensures that every piece of SEO content serves a dual purpose: ranking highly in search engines and actively moving prospects closer to a purchasing decision, proving that the \"seo vs sales\" battle is easily won when content serves both.\n\n### Aligning Goals: Shared KPIs for SEO and Sales Success\n\nFor SEO and sales to truly collaborate, their objectives must align. Moving beyond isolated Key Performance Indicators (KPIs) like organic traffic for SEO and closed deals for sales, teams should adopt shared metrics that reflect their joint contribution to business growth.\n\nExamples of shared KPIs include:\n*   **Marketing Qualified Leads (MQLs) from Organic Search:** Tracking how many quality leads are generated directly from SEO efforts.\n*   **Sales Qualified Leads (SQLs) from Organic Search:** Measuring the number of MQLs that sales accepts as legitimate prospects.\n*   **Conversion Rate from Organic Traffic:** Analyzing how effectively organic visitors are converting into leads or customers.\n*   **Revenue Attributed to SEO-Influenced Sales:** Utilizing CRM data to understand the monetary value brought in through SEO-initiated or SEO-supported sales cycles.\n*   **Lead-to-Customer Ratio:** A holistic view of how efficiently leads are moved through the entire funnel, regardless of their origin.\n\nBy focusing on these unified KPIs, both teams understand their collective impact, shifting the perspective from \"seo vs sales\" to a shared pursuit of revenue, fostering accountability and mutual success.\n\n### Breaking Down Silos: Fostering Cross-Team Communication\n\nThe most significant barrier to effective SEO and sales collaboration is often a lack of communication. Breaking down these departmental silos requires intentional effort and structured opportunities for interaction.\n\nStrategies to foster cross-team communication include:\n*   **Regular Joint Meetings:** Scheduled sessions where SEO and sales teams can discuss current campaigns, review performance data, and share market insights.\n*   **Shared Reporting Dashboards:** Centralized platforms where both teams can access relevant KPIs and track progress, ensuring transparency.\n*   **Collaborative Content Planning Sessions:** Workshops where SEO specialists and sales representatives brainstorm content ideas, outline topics, and define messaging.\n*   **Sales Enablement Training for SEO:** Giving SEO professionals a deeper understanding of the sales process, common tools, and challenges.\n*   **\"Ride-Alongs\" or Shadowing Opportunities:** Allowing SEO team members to observe sales calls or presentations to gain firsthand customer insights.\n\nBy facilitating continuous dialogue and understanding each other's roles and challenges, organizations can move past the antiquated notion of \"seo vs sales\" and cultivate a truly integrated growth strategy where both departments thrive together.\n\n## Measuring Success: KPIs and ROI for Each Discipline\n\nUnderstanding how to measure the effectiveness of both SEO and sales is paramount for any business aiming for sustainable growth. While both disciplines ultimately contribute to the bottom line, their key performance indicators (KPIs) and methods for calculating return on investment (ROI) differ significantly, highlighting the nuanced \"seo vs sales\" dynamic. By dissecting the metrics relevant to each, businesses can better allocate resources, optimize strategies, and foster a truly integrated growth engine.\n\n### SEO Performance Metrics: Tracking Organic Growth and Conversions\n\nSEO success isn't just about ranking #1; it's about driving qualified organic traffic that converts into business value. Key SEO performance metrics provide insights into a website's visibility, user engagement, and conversion efficiency.\n\n*   **Organic Traffic:** The volume of visitors arriving at your site via unpaid search results. A consistent increase signifies improved visibility and keyword performance.\n*   **Keyword Rankings:** The position of your target keywords in search engine results. Higher rankings typically correlate with more organic traffic.\n*   **Click-Through Rate (CTR):** The percentage of users who click on your listing in search results. A higher CTR indicates compelling titles and meta descriptions.\n*   **Bounce Rate:** The percentage of visitors who leave your site after viewing only one page. A low bounce rate suggests relevant content and a good user experience.\n*   **Time on Page/Session Duration:** The average amount of time users spend on a specific page or during a session. Longer durations often indicate engaging and valuable content.\n*   **Conversion Rate:** The percentage of organic visitors who complete a desired action, such as filling out a form, making a purchase, or downloading a resource. This is a critical metric linking SEO efforts directly to business objectives.\n\nThese metrics collectively paint a picture of how well SEO initiatives are driving organic growth and moving users through the conversion funnel.\n\n### Calculating the Return on Investment for SEO Initiatives\n\nCalculating SEO ROI can be more intricate than other marketing channels due to its long-term nature and the multi-touch attribution often involved in a customer's journey. However, it's crucial for justifying investment and demonstrating SEO's value.\n\nThe basic formula for SEO ROI is:\n\n**(Value of Organic Conversions - Cost of SEO Investment) / Cost of SEO Investment**\n\nTo apply this, you need to:\n\n1.  **Attribute Value to Conversions:** Assign a monetary value to each conversion (e.g., average sale value, lead value).\n2.  **Track Organic Conversions:** Use analytics tools to identify conversions specifically originating from organic search.\n3.  **Sum SEO Costs:** Include all expenses related to SEO, such as agency fees, tools, content creation, and employee salaries.\n\nWhile direct revenue is ideal, consider other valuable conversions like lead generation, brand awareness, or reductions in paid ad spend through improved organic visibility. A strong SEO ROI demonstrates that the initial investment yields significant returns over time, making it a compelling argument in any \"seo vs sales\" budget discussion.\n\n### Core Sales KPIs: Driving Revenue and Customer Acquisition\n\nSales KPIs are more directly tied to immediate revenue generation and customer acquisition efforts. These metrics provide real-time insights into the health and effectiveness of the sales pipeline.\n\n*   **Sales Revenue:** The total income generated from sales over a specific period. This is the ultimate measure of a sales team's direct contribution.\n*   **Conversion Rate (Sales Funnel):** The percentage of leads that progress through each stage of the sales funnel, from prospect to closed deal.\n*   **Average Deal Size:** The typical revenue generated from a single sale. Increasing this can significantly boost overall revenue without needing more leads.\n*   **Sales Cycle Length:** The average time it takes for a lead to become a customer. A shorter cycle can improve cash flow and efficiency.\n*   **Customer Acquisition Cost (CAC):** The cost associated with acquiring a new customer. This includes sales and marketing expenses divided by the number of new customers.\n*   **Number of New Customers:** A straightforward measure of growth and market penetration.\n*   **Revenue per Sales Representative:** Indicates the productivity and effectiveness of individual sales team members.\n\nThese KPIs are essential for sales managers to monitor team performance, identify bottlenecks, and forecast future revenue, highlighting the direct impact of sales efforts.\n\n### Measuring Sales Effectiveness: ROI and Profitability Analysis\n\nMeasuring sales effectiveness goes beyond just total revenue; it delves into the profitability and sustainability of sales activities. Sales ROI offers a clear picture of the returns generated by sales and related marketing investments.\n\nA common calculation for Sales ROI is:\n\n**(Sales Growth - Cost of Sales & Marketing) / Cost of Sales & Marketing**\n\nHere, \"Sales Growth\" refers to the increase in sales revenue attributable to specific sales and marketing efforts, and \"Cost of Sales & Marketing\" encompasses all expenses related to generating and closing deals.\n\nBeyond ROI, other critical profitability analyses include:\n\n*   **Customer Lifetime Value (CLTV):** The predicted total revenue a customer will generate throughout their relationship with your company. A high CLTV indicates strong customer retention and satisfaction.\n*   **Gross Profit Margin:** The percentage of revenue left after deducting the cost of goods sold. This helps understand the profitability of each sale.\n*   **Sales Pipeline Value:** The total potential revenue from all active opportunities in the sales pipeline. This is crucial for forecasting future revenue.\n\nUltimately, both SEO and sales contribute uniquely to business success, and understanding their distinct KPIs and ROI calculations is vital. While SEO builds long-term organic authority and lead generation, sales converts immediate opportunities into revenue. A holistic view, recognizing the complementary nature of \"seo vs sales\" strategies, is key to sustained business growth and profitability.\n\n## When to Prioritize: Strategic Considerations for Businesses\n\nUnderstanding when to lean into **SEO vs sales** isn't about choosing one over the other permanently; it's about strategic prioritization that aligns with your unique business context. This dynamic approach ensures resources are allocated most effectively to drive growth, whether you're a budding startup or an established enterprise.\n\n### Aligning Priorities with Business Goals\n\nThe decision to prioritize SEO or sales efforts fundamentally depends on your overarching business goals. Are you aiming for rapid market penetration, building long-term brand authority, or maximizing immediate revenue? If your goal is sustainable, organic growth and establishing a strong digital presence, a heavier emphasis on SEO might be appropriate. SEO builds an asset that continually attracts traffic and leads over time. Conversely, if the objective is quick revenue generation, clearing inventory, or meeting immediate targets, a strong sales push with targeted outreach and conversions could be the immediate priority. The \"seo vs sales\" dilemma often resolves when you clearly define your current strategic intent.\n\n### Balancing Short-Term Wins with Long-Term Growth\n\nEvery business needs both short-term wins and long-term viability. Sales cycles, especially those driven by direct outreach, can often deliver immediate results, offering quick revenue injections. This is crucial for maintaining cash flow and validating product-market fit. However, these efforts can be resource-intensive and may not always build enduring brand equity. SEO, on the other hand, is a long-game strategy. While it may take months to see significant results, the compounding effect of improved rankings, increased organic traffic, and enhanced domain authority leads to sustainable, cost-effective lead generation and brand visibility. A balanced strategy often involves leveraging sales for immediate impact while simultaneously investing in SEO for future stability and scale, ensuring you don't compromise long-term growth for short-term gains, or vice versa.\n\n### Evaluating Budget, Resources, and Market Landscape\n\nThe allocation of resources between **seo vs sales** is also heavily influenced by your budget, available talent, and the competitive market landscape. Developing a robust SEO strategy requires investment in content creation, technical optimization, and ongoing analysis. Sales efforts demand a dedicated team, CRM systems, and potentially advertising spend. Small businesses with limited capital might find organic SEO a more cost-effective long-term play, especially if direct sales channels are expensive. Furthermore, analyze your market: is it highly saturated with aggressive direct sales, or is there an opportunity to capture underserved organic search queries? Understanding where your target audience spends their time and how competitors are acquiring customers will guide your investment decisions.\n\n### Identifying Key Metrics for Success and ROI\n\nTo effectively prioritize, you must define and track key performance indicators (KPIs) for both SEO and sales. For SEO, metrics like organic traffic, keyword rankings, conversion rates from organic search, and lead quality are critical. For sales, focus on metrics such as lead-to-customer conversion rates, average deal size, sales cycle length, and customer acquisition cost (CAC). By continuously monitoring these metrics, you can assess the return on investment (ROI) for each channel. This data-driven approach allows for agile adjustments to your strategy, enabling you to shift resources as market conditions change or as specific initiatives prove more fruitful, ultimately optimizing your overall business growth trajectory.\n\n## Conclusion: Achieving Holistic Business Growth Through Integration\n\nThe debate of \"seo vs sales\" often positions two critical business functions as rivals, yet the most successful companies understand that true growth stems not from competition, but from collaboration. While SEO builds the digital foundation, attracting qualified prospects, sales converts those prospects into loyal customers. Separately, they are powerful; together, they unlock a synergistic potential that drives holistic business growth. Integrating SEO and sales strategies transforms the entire customer journey, creating a seamless experience that maximizes lead generation, conversion rates, and ultimately, revenue.\n\n### Forging a Unified Strategy: SEO and Sales Alignment\n\nMoving beyond the traditional \"seo vs sales\" mindset requires a deliberate effort to align objectives, strategies, and communication between marketing and sales teams. This unification begins with shared goals, such as target audience identification, lead qualification criteria, and a clear understanding of the sales funnel stages. When SEO specialists understand the pain points and conversion tactics of the sales team, they can optimize content for specific buyer intent, providing sales with better-qualified leads. Conversely, sales teams armed with insights into keyword performance and content engagement can tailor their pitches more effectively. Regular cross-functional meetings, shared CRM data, and integrated content calendars are foundational elements for building this cohesive strategy.\n\n### Optimizing the Customer Journey: From Search to Conversion\n\nAn integrated approach meticulously optimizes every touchpoint of the customer journey, from the moment a potential customer types a query into a search engine to the final closing of a deal. SEO's role is to ensure visibility and attract relevant traffic through highly targeted content that addresses user intent at various stages of awareness, consideration, and decision. This content, from informative blog posts to detailed product pages, serves as a digital salesperson, nurturing leads with valuable information. Sales teams then pick up warmed-up leads, leveraging insights gleaned from their digital interactions to personalize outreach and guide them through the final stages of conversion. This seamless hand-off ensures that prospects feel understood and supported, reducing friction and accelerating the sales cycle.\n\n### Measuring Success: Integrated Analytics for Growth\n\nTo truly understand the impact of SEO and sales integration, businesses must move beyond isolated metrics. A holistic approach demands integrated analytics that track the entire customer journey, offering a comprehensive view of performance. This means combining data from SEO tools (traffic, rankings, conversions), website analytics (user behavior, bounce rates), and CRM systems (lead quality, conversion rates, sales velocity). By analyzing these combined datasets, organizations can identify which SEO efforts are generating the highest quality leads, which content pieces contribute most to conversions, and where bottlenecks exist in the sales pipeline. Such insights allow for continuous optimization, proving the tangible ROI of moving past the \"seo vs sales\" dichotomy towards a unified growth engine.\n\n### The Future of Business Growth: A Collaborative Approach\n\nIn an increasingly competitive digital landscape, the future of business growth hinges on collaboration rather than division. The idea of \"seo vs sales\" is becoming obsolete as companies realize the exponential benefits of a combined force. A collaborative approach fosters innovation, improves efficiency, and enhances the overall customer experience. By breaking down silos and encouraging a shared vision, businesses can create a powerful ecosystem where SEO continuously fuels the top of the funnel with qualified prospects, and sales effectively converts them into long-term customers. This integration isn't just a best practice; it's a strategic imperative for sustained success in the modern market.",
+      "progress": {
+        "sectionIndex": 8
+      },
+      "preferences": {
+        "automationLevel": "guided",
+        "skipOptionalSteps": false,
+        "autoSelectBestOptions": false
+      },
+      "policy": {
+        "referencesUsage": "both",
+        "grounding": true
+      },
+      "userProvidedFields": {},
+      "autoFillFields": {},
+      "trace": [
+        {
+          "step": "KeywordResearch.primaryCandidates",
+          "info": {
+            "count": 52
+          },
+          "at": 1764590043910
+        },
+        {
+          "step": "KeywordResearch.primaryCandidates",
+          "info": {
+            "count": 52
+          },
+          "at": 1764590043910
+        },
+        {
+          "step": "KeywordResearch.noSecondaryKeywordsFound",
+          "info": {},
+          "at": 1764590058798
+        },
+        {
+          "step": "KeywordResearch.noSecondaryKeywordsFound",
+          "info": {},
+          "at": 1764590059223
+        },
+        {
+          "step": "KeywordResearch.noSecondaryKeywordsFound",
+          "info": {},
+          "at": 1764590059610
+        },
+        {
+          "step": "KeywordResearch.noSecondaryKeywordsFound",
+          "info": {},
+          "at": 1764590060094
+        },
+        {
+          "step": "KeywordResearch.secondaryCandidates",
+          "info": {
+            "count": 7
+          },
+          "at": 1764590060418
+        },
+        {
+          "step": "KeywordResearch.primaryCandidates",
+          "info": {
+            "count": 52
+          },
+          "at": 1764590043910
+        },
+        {
+          "step": "KeywordResearch.noSecondaryKeywordsFound",
+          "info": {},
+          "at": 1764590058798
+        },
+        {
+          "step": "KeywordResearch.noSecondaryKeywordsFound",
+          "info": {},
+          "at": 1764590059223
+        },
+        {
+          "step": "KeywordResearch.noSecondaryKeywordsFound",
+          "info": {},
+          "at": 1764590059610
+        },
+        {
+          "step": "KeywordResearch.noSecondaryKeywordsFound",
+          "info": {},
+          "at": 1764590060094
+        },
+        {
+          "step": "KeywordResearch.secondaryCandidates",
+          "info": {
+            "count": 7
+          },
+          "at": 1764590060418
+        },
+        {
+          "step": "TitleGeneration.generated",
+          "info": {
+            "count": 5
+          },
+          "at": 1764590074682
+        },
+        {
+          "step": "KeywordResearch.primaryCandidates",
+          "info": {
+            "count": 52
+          },
+          "at": 1764590043910
+        },
+        {
+          "step": "KeywordResearch.noSecondaryKeywordsFound",
+          "info": {},
+          "at": 1764590058798
+        },
+        {
+          "step": "KeywordResearch.noSecondaryKeywordsFound",
+          "info": {},
+          "at": 1764590059223
+        },
+        {
+          "step": "KeywordResearch.noSecondaryKeywordsFound",
+          "info": {},
+          "at": 1764590059610
+        },
+        {
+          "step": "KeywordResearch.noSecondaryKeywordsFound",
+          "info": {},
+          "at": 1764590060094
+        },
+        {
+          "step": "KeywordResearch.secondaryCandidates",
+          "info": {
+            "count": 7
+          },
+          "at": 1764590060418
+        },
+        {
+          "step": "TitleGeneration.generated",
+          "info": {
+            "count": 5
+          },
+          "at": 1764590074682
+        },
+        {
+          "step": "KeywordResearch.primaryCandidates",
+          "info": {
+            "count": 52
+          },
+          "at": 1764590043910
+        },
+        {
+          "step": "KeywordResearch.noSecondaryKeywordsFound",
+          "info": {},
+          "at": 1764590058798
+        },
+        {
+          "step": "KeywordResearch.noSecondaryKeywordsFound",
+          "info": {},
+          "at": 1764590059223
+        },
+        {
+          "step": "KeywordResearch.noSecondaryKeywordsFound",
+          "info": {},
+          "at": 1764590059610
+        },
+        {
+          "step": "KeywordResearch.noSecondaryKeywordsFound",
+          "info": {},
+          "at": 1764590060094
+        },
+        {
+          "step": "KeywordResearch.secondaryCandidates",
+          "info": {
+            "count": 7
+          },
+          "at": 1764590060418
+        },
+        {
+          "step": "TitleGeneration.generated",
+          "info": {
+            "count": 5
+          },
+          "at": 1764590074682
+        },
+        {
+          "step": "DiscoveryNode.generatedOutline",
+          "info": {
+            "h2Count": 8
+          },
+          "at": 1764590764820
+        },
+        {
+          "step": "KeywordResearch.primaryCandidates",
+          "info": {
+            "count": 52
+          },
+          "at": 1764590043910
+        },
+        {
+          "step": "KeywordResearch.noSecondaryKeywordsFound",
+          "info": {},
+          "at": 1764590058798
+        },
+        {
+          "step": "KeywordResearch.noSecondaryKeywordsFound",
+          "info": {},
+          "at": 1764590059223
+        },
+        {
+          "step": "KeywordResearch.noSecondaryKeywordsFound",
+          "info": {},
+          "at": 1764590059610
+        },
+        {
+          "step": "KeywordResearch.noSecondaryKeywordsFound",
+          "info": {},
+          "at": 1764590060094
+        },
+        {
+          "step": "KeywordResearch.secondaryCandidates",
+          "info": {
+            "count": 7
+          },
+          "at": 1764590060418
+        },
+        {
+          "step": "TitleGeneration.generated",
+          "info": {
+            "count": 5
+          },
+          "at": 1764590074682
+        },
+        {
+          "step": "DiscoveryNode.generatedOutline",
+          "info": {
+            "h2Count": 8
+          },
+          "at": 1764590764820
+        },
+        {
+          "step": "ProposalNode.generatedSection",
+          "info": {
+            "sectionIndex": 0,
+            "section": "Introduction: Understanding SEO and Sales in Business Growth"
+          },
+          "at": 1764590783541
+        },
+        {
+          "step": "ProposalNode.generatedSection",
+          "info": {
+            "sectionIndex": 1,
+            "section": "SEO's Power: Driving Organic Traffic and Brand Authority"
+          },
+          "at": 1764590800923
+        },
+        {
+          "step": "ProposalNode.generatedSection",
+          "info": {
+            "sectionIndex": 2,
+            "section": "Sales' Impact: Direct Conversions and Relationship Building"
+          },
+          "at": 1764590805868
+        },
+        {
+          "step": "ProposalNode.generatedSection",
+          "info": {
+            "sectionIndex": 3,
+            "section": "Key Differences: Approach, Timeline, and Investment"
+          },
+          "at": 1764590816692
+        },
+        {
+          "step": "ProposalNode.generatedSection",
+          "info": {
+            "sectionIndex": 4,
+            "section": "The Synergy: How SEO and Sales Can Collaborate for Success"
+          },
+          "at": 1764590828128
+        },
+        {
+          "step": "ProposalNode.generatedSection",
+          "info": {
+            "sectionIndex": 5,
+            "section": "Measuring Success: KPIs and ROI for Each Discipline"
+          },
+          "at": 1764590838344
+        },
+        {
+          "step": "ProposalNode.generatedSection",
+          "info": {
+            "sectionIndex": 6,
+            "section": "When to Prioritize: Strategic Considerations for Businesses"
+          },
+          "at": 1764590844471
+        },
+        {
+          "step": "ProposalNode.generatedSection",
+          "info": {
+            "sectionIndex": 7,
+            "section": "Conclusion: Achieving Holistic Business Growth Through Integration"
+          },
+          "at": 1764590851620
+        }
+      ],
+      "halt": null,
+      "keywordCandidates": [
+        {
+          "text": "seo vs sales tutorial",
+          "volume": 7753,
+          "difficulty": 0.35,
+          "source": "seed",
+          "score": 0.75
+        },
+        {
+          "text": "seo vs sales checklist",
+          "volume": 5868,
+          "difficulty": -0.07,
+          "source": "seed",
+          "score": 0.6802849856392988
+        },
+        {
+          "text": "seo vs sales vs alternatives",
+          "volume": 6144,
+          "difficulty": 0.17,
+          "source": "seed",
+          "score": 0.6516873823908091
+        },
+        {
+          "text": "seo vs sales benefits",
+          "volume": 3252,
+          "difficulty": -0.8,
+          "source": "seed",
+          "score": 0.6155182232346241
+        },
+        {
+          "text": "seo vs sales guide",
+          "volume": 3889,
+          "difficulty": 0.05,
+          "source": "seed",
+          "score": 0.48514905417450727
+        },
+        {
+          "text": "seo vs sales best practices",
+          "volume": 2394,
+          "difficulty": -0.22,
+          "source": "seed",
+          "score": 0.4161396949588987
+        },
+        {
+          "text": "seo vs sales for beginners",
+          "volume": 729,
+          "difficulty": -0.78,
+          "source": "seed",
+          "score": 0.39565217391304347
+        }
+      ],
+      "titleCandidates": [
+        "SEO vs Sales: The Ultimate Showdown for Business Growth",
+        "Is It SEO vs Sales, or SEO & Sales? Unpacking the Digital Marketing Debate",
+        "Bridging the Divide: How SEO and Sales Teams Can Collaborate for Success",
+        "Beyond the Battle: Mastering SEO vs Sales for Peak Performance",
+        "SEO vs Sales: What Drives Revenue More for US Businesses?"
+      ],
+      "currentStep": "generation",
+      "toolOutputs": [
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "primary",
+            "candidates": [
+              {
+                "text": "toyota corolla",
+                "volume": 3350000,
+                "difficulty": 0.69,
+                "source": "seed",
+                "score": 0.6401554404145078
+              },
+              {
+                "text": "sales",
+                "volume": 1220000,
+                "difficulty": 0.52,
+                "source": "seed",
+                "score": 0.4306005930889272
+              },
+              {
+                "text": "mazda cx 5",
+                "volume": 2240000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.4011507578813419
+              },
+              {
+                "text": "seo vs sales benefits",
+                "volume": 3252,
+                "difficulty": -0.8,
+                "source": "seed",
+                "score": 0.3836126007146899
+              },
+              {
+                "text": "seo vs sales for beginners",
+                "volume": 729,
+                "difficulty": -0.78,
+                "source": "seed",
+                "score": 0.38056994818652845
+              },
+              {
+                "text": "seo sales vs alternatives",
+                "volume": 3955,
+                "difficulty": -0.46,
+                "source": "seed",
+                "score": 0.33969708779082963
+              },
+              {
+                "text": "seo sales tutorial",
+                "volume": 7254,
+                "difficulty": -0.72,
+                "source": "seed",
+                "score": 0.3239668385465671
+              },
+              {
+                "text": "seo sales",
+                "volume": 1959,
+                "difficulty": -0.31,
+                "source": "seed",
+                "score": 0.3199094656284673
+              },
+              {
+                "text": "black friday deals",
+                "volume": 1220000,
+                "difficulty": 0.26,
+                "source": "seed",
+                "score": 0.3142793495656111
+              },
+              {
+                "text": "seo vs sales",
+                "volume": 5796,
+                "difficulty": -0.25,
+                "source": "seed",
+                "score": 0.31282481836434833
+              },
+              {
+                "text": "seo vs sales best practices",
+                "volume": 2394,
+                "difficulty": -0.22,
+                "source": "seed",
+                "score": 0.3083293619460795
+              },
+              {
+                "text": "seo for beginners",
+                "volume": 3696,
+                "difficulty": -0.93,
+                "source": "seed",
+                "score": 0.3005315186498793
+              },
+              {
+                "text": "houses for sale",
+                "volume": 1220000,
+                "difficulty": 0.43,
+                "source": "seed",
+                "score": 0.29225862417701004
+              },
+              {
+                "text": "seo vs sales checklist",
+                "volume": 5868,
+                "difficulty": -0.07,
+                "source": "seed",
+                "score": 0.28952165451740103
+              },
+              {
+                "text": "volvo xc60",
+                "volume": 1500000,
+                "difficulty": 0.88,
+                "source": "seed",
+                "score": 0.2841286379196804
+              },
+              {
+                "text": "seo vs sales guide",
+                "volume": 3889,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.2736230881565762
+              },
+              {
+                "text": "search engine optimization vs alternatives",
+                "volume": 6017,
+                "difficulty": -0.66,
+                "source": "seed",
+                "score": 0.2659732173594661
+              },
+              {
+                "text": "seo vs sales vs alternatives",
+                "volume": 6144,
+                "difficulty": 0.17,
+                "source": "seed",
+                "score": 0.2584830152111842
+              },
+              {
+                "text": "seo sales guide",
+                "volume": 6876,
+                "difficulty": -0.19,
+                "source": "seed",
+                "score": 0.2552462725772373
+              },
+              {
+                "text": "seo guide",
+                "volume": 6000,
+                "difficulty": -0.27,
+                "source": "seed",
+                "score": 0.24045203720559694
+              },
+              {
+                "text": "houses for sale near me",
+                "volume": 1000000,
+                "difficulty": 0.56,
+                "source": "seed",
+                "score": 0.23600768443767273
+              },
+              {
+                "text": "seo vs sales tutorial",
+                "volume": 7753,
+                "difficulty": 0.35,
+                "source": "seed",
+                "score": 0.2354551948643598
+              },
+              {
+                "text": "kia sorento",
+                "volume": 1220000,
+                "difficulty": 0.96,
+                "source": "seed",
+                "score": 0.22360577443607738
+              },
+              {
+                "text": "seo tutorial",
+                "volume": 2994,
+                "difficulty": -0.08,
+                "source": "seed",
+                "score": 0.2153021329969937
+              },
+              {
+                "text": "seo sales checklist",
+                "volume": 4767,
+                "difficulty": 0.16,
+                "source": "seed",
+                "score": 0.20953167145244506
+              },
+              {
+                "text": "search engine optimization checklist",
+                "volume": 5717,
+                "difficulty": -0.59,
+                "source": "seed",
+                "score": 0.2068521168081023
+              },
+              {
+                "text": "seo sales benefits",
+                "volume": 4057,
+                "difficulty": 0.29,
+                "source": "seed",
+                "score": 0.1925651013565317
+              },
+              {
+                "text": "seo",
+                "volume": 1115,
+                "difficulty": 0.75,
+                "source": "seed",
+                "score": 0.1824525690652073
+              },
+              {
+                "text": "cyber monday deals",
+                "volume": 301000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.1820299282573908
+              },
+              {
+                "text": "car dealerships near me",
+                "volume": 1000000,
+                "difficulty": 0.98,
+                "source": "seed",
+                "score": 0.18160353935995255
+              },
+              {
+                "text": "seo checklist",
+                "volume": 2723,
+                "difficulty": 0.3,
+                "source": "seed",
+                "score": 0.1660307871915018
+              },
+              {
+                "text": "hyundai palisade",
+                "volume": 823000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.14730447312265862
+              },
+              {
+                "text": "seo vs alternatives",
+                "volume": 7959,
+                "difficulty": 0.67,
+                "source": "seed",
+                "score": 0.14404132121532912
+              },
+              {
+                "text": "seo sales best practices",
+                "volume": 1655,
+                "difficulty": 0.69,
+                "source": "seed",
+                "score": 0.14032132725973467
+              },
+              {
+                "text": "seo sales for beginners",
+                "volume": 5612,
+                "difficulty": 0.71,
+                "source": "seed",
+                "score": 0.13843952436123896
+              },
+              {
+                "text": "black friday 2022",
+                "volume": 8100,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.12955880842265663
+              },
+              {
+                "text": "subaru outback",
+                "volume": 673000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.12043295391743455
+              },
+              {
+                "text": "search engine optimization for beginners",
+                "volume": 7194,
+                "difficulty": 0.09,
+                "source": "seed",
+                "score": 0.11903381014613894
+              },
+              {
+                "text": "search engine optimization benefits",
+                "volume": 2747,
+                "difficulty": 0.09,
+                "source": "seed",
+                "score": 0.11823715917343473
+              },
+              {
+                "text": "search engine optimization tutorial",
+                "volume": 5944,
+                "difficulty": 0.24,
+                "source": "seed",
+                "score": 0.09937982900595725
+              },
+              {
+                "text": "seo best practices",
+                "volume": 819,
+                "difficulty": 0.62,
+                "source": "seed",
+                "score": 0.09923892083898428
+              },
+              {
+                "text": "kia telluride",
+                "volume": 550000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.09839830816915084
+              },
+              {
+                "text": "subaru crosstrek",
+                "volume": 550000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.09839830816915084
+              },
+              {
+                "text": "ford dealership near me",
+                "volume": 550000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.09839830816915084
+              },
+              {
+                "text": "sell my car",
+                "volume": 368000,
+                "difficulty": 0.77,
+                "source": "seed",
+                "score": 0.09558694431413528
+              },
+              {
+                "text": "seo benefits",
+                "volume": 7597,
+                "difficulty": 0.92,
+                "source": "seed",
+                "score": 0.08659305159319466
+              },
+              {
+                "text": "toyota dealer near me",
+                "volume": 450000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.0804839620323348
+              },
+              {
+                "text": "search engine optimization",
+                "volume": 4677,
+                "difficulty": 0.42,
+                "source": "seed",
+                "score": 0.07583679206423796
+              },
+              {
+                "text": "buy here pay here",
+                "volume": 246000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.04393869591323007
+              },
+              {
+                "text": "sell my car online",
+                "volume": 74000,
+                "difficulty": 0.88,
+                "source": "seed",
+                "score": 0.028670062008683682
+              },
+              {
+                "text": "search engine optimization guide",
+                "volume": 5530,
+                "difficulty": 0.97,
+                "source": "seed",
+                "score": 0.00474607812072288
+              },
+              {
+                "text": "search engine optimization best practices",
+                "volume": 7761,
+                "difficulty": 0.98,
+                "source": "seed",
+                "score": 0.0038504103954704466
+              }
+            ]
+          },
+          "timestamp": 1764590043910
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "primary",
+            "candidates": [
+              {
+                "text": "toyota corolla",
+                "volume": 3350000,
+                "difficulty": 0.69,
+                "source": "seed",
+                "score": 0.6401554404145078
+              },
+              {
+                "text": "sales",
+                "volume": 1220000,
+                "difficulty": 0.52,
+                "source": "seed",
+                "score": 0.4306005930889272
+              },
+              {
+                "text": "mazda cx 5",
+                "volume": 2240000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.4011507578813419
+              },
+              {
+                "text": "seo vs sales benefits",
+                "volume": 3252,
+                "difficulty": -0.8,
+                "source": "seed",
+                "score": 0.3836126007146899
+              },
+              {
+                "text": "seo vs sales for beginners",
+                "volume": 729,
+                "difficulty": -0.78,
+                "source": "seed",
+                "score": 0.38056994818652845
+              },
+              {
+                "text": "seo sales vs alternatives",
+                "volume": 3955,
+                "difficulty": -0.46,
+                "source": "seed",
+                "score": 0.33969708779082963
+              },
+              {
+                "text": "seo sales tutorial",
+                "volume": 7254,
+                "difficulty": -0.72,
+                "source": "seed",
+                "score": 0.3239668385465671
+              },
+              {
+                "text": "seo sales",
+                "volume": 1959,
+                "difficulty": -0.31,
+                "source": "seed",
+                "score": 0.3199094656284673
+              },
+              {
+                "text": "black friday deals",
+                "volume": 1220000,
+                "difficulty": 0.26,
+                "source": "seed",
+                "score": 0.3142793495656111
+              },
+              {
+                "text": "seo vs sales",
+                "volume": 5796,
+                "difficulty": -0.25,
+                "source": "seed",
+                "score": 0.31282481836434833
+              },
+              {
+                "text": "seo vs sales best practices",
+                "volume": 2394,
+                "difficulty": -0.22,
+                "source": "seed",
+                "score": 0.3083293619460795
+              },
+              {
+                "text": "seo for beginners",
+                "volume": 3696,
+                "difficulty": -0.93,
+                "source": "seed",
+                "score": 0.3005315186498793
+              },
+              {
+                "text": "houses for sale",
+                "volume": 1220000,
+                "difficulty": 0.43,
+                "source": "seed",
+                "score": 0.29225862417701004
+              },
+              {
+                "text": "seo vs sales checklist",
+                "volume": 5868,
+                "difficulty": -0.07,
+                "source": "seed",
+                "score": 0.28952165451740103
+              },
+              {
+                "text": "volvo xc60",
+                "volume": 1500000,
+                "difficulty": 0.88,
+                "source": "seed",
+                "score": 0.2841286379196804
+              },
+              {
+                "text": "seo vs sales guide",
+                "volume": 3889,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.2736230881565762
+              },
+              {
+                "text": "search engine optimization vs alternatives",
+                "volume": 6017,
+                "difficulty": -0.66,
+                "source": "seed",
+                "score": 0.2659732173594661
+              },
+              {
+                "text": "seo vs sales vs alternatives",
+                "volume": 6144,
+                "difficulty": 0.17,
+                "source": "seed",
+                "score": 0.2584830152111842
+              },
+              {
+                "text": "seo sales guide",
+                "volume": 6876,
+                "difficulty": -0.19,
+                "source": "seed",
+                "score": 0.2552462725772373
+              },
+              {
+                "text": "seo guide",
+                "volume": 6000,
+                "difficulty": -0.27,
+                "source": "seed",
+                "score": 0.24045203720559694
+              },
+              {
+                "text": "houses for sale near me",
+                "volume": 1000000,
+                "difficulty": 0.56,
+                "source": "seed",
+                "score": 0.23600768443767273
+              },
+              {
+                "text": "seo vs sales tutorial",
+                "volume": 7753,
+                "difficulty": 0.35,
+                "source": "seed",
+                "score": 0.2354551948643598
+              },
+              {
+                "text": "kia sorento",
+                "volume": 1220000,
+                "difficulty": 0.96,
+                "source": "seed",
+                "score": 0.22360577443607738
+              },
+              {
+                "text": "seo tutorial",
+                "volume": 2994,
+                "difficulty": -0.08,
+                "source": "seed",
+                "score": 0.2153021329969937
+              },
+              {
+                "text": "seo sales checklist",
+                "volume": 4767,
+                "difficulty": 0.16,
+                "source": "seed",
+                "score": 0.20953167145244506
+              },
+              {
+                "text": "search engine optimization checklist",
+                "volume": 5717,
+                "difficulty": -0.59,
+                "source": "seed",
+                "score": 0.2068521168081023
+              },
+              {
+                "text": "seo sales benefits",
+                "volume": 4057,
+                "difficulty": 0.29,
+                "source": "seed",
+                "score": 0.1925651013565317
+              },
+              {
+                "text": "seo",
+                "volume": 1115,
+                "difficulty": 0.75,
+                "source": "seed",
+                "score": 0.1824525690652073
+              },
+              {
+                "text": "cyber monday deals",
+                "volume": 301000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.1820299282573908
+              },
+              {
+                "text": "car dealerships near me",
+                "volume": 1000000,
+                "difficulty": 0.98,
+                "source": "seed",
+                "score": 0.18160353935995255
+              },
+              {
+                "text": "seo checklist",
+                "volume": 2723,
+                "difficulty": 0.3,
+                "source": "seed",
+                "score": 0.1660307871915018
+              },
+              {
+                "text": "hyundai palisade",
+                "volume": 823000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.14730447312265862
+              },
+              {
+                "text": "seo vs alternatives",
+                "volume": 7959,
+                "difficulty": 0.67,
+                "source": "seed",
+                "score": 0.14404132121532912
+              },
+              {
+                "text": "seo sales best practices",
+                "volume": 1655,
+                "difficulty": 0.69,
+                "source": "seed",
+                "score": 0.14032132725973467
+              },
+              {
+                "text": "seo sales for beginners",
+                "volume": 5612,
+                "difficulty": 0.71,
+                "source": "seed",
+                "score": 0.13843952436123896
+              },
+              {
+                "text": "black friday 2022",
+                "volume": 8100,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.12955880842265663
+              },
+              {
+                "text": "subaru outback",
+                "volume": 673000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.12043295391743455
+              },
+              {
+                "text": "search engine optimization for beginners",
+                "volume": 7194,
+                "difficulty": 0.09,
+                "source": "seed",
+                "score": 0.11903381014613894
+              },
+              {
+                "text": "search engine optimization benefits",
+                "volume": 2747,
+                "difficulty": 0.09,
+                "source": "seed",
+                "score": 0.11823715917343473
+              },
+              {
+                "text": "search engine optimization tutorial",
+                "volume": 5944,
+                "difficulty": 0.24,
+                "source": "seed",
+                "score": 0.09937982900595725
+              },
+              {
+                "text": "seo best practices",
+                "volume": 819,
+                "difficulty": 0.62,
+                "source": "seed",
+                "score": 0.09923892083898428
+              },
+              {
+                "text": "kia telluride",
+                "volume": 550000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.09839830816915084
+              },
+              {
+                "text": "subaru crosstrek",
+                "volume": 550000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.09839830816915084
+              },
+              {
+                "text": "ford dealership near me",
+                "volume": 550000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.09839830816915084
+              },
+              {
+                "text": "sell my car",
+                "volume": 368000,
+                "difficulty": 0.77,
+                "source": "seed",
+                "score": 0.09558694431413528
+              },
+              {
+                "text": "seo benefits",
+                "volume": 7597,
+                "difficulty": 0.92,
+                "source": "seed",
+                "score": 0.08659305159319466
+              },
+              {
+                "text": "toyota dealer near me",
+                "volume": 450000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.0804839620323348
+              },
+              {
+                "text": "search engine optimization",
+                "volume": 4677,
+                "difficulty": 0.42,
+                "source": "seed",
+                "score": 0.07583679206423796
+              },
+              {
+                "text": "buy here pay here",
+                "volume": 246000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.04393869591323007
+              },
+              {
+                "text": "sell my car online",
+                "volume": 74000,
+                "difficulty": 0.88,
+                "source": "seed",
+                "score": 0.028670062008683682
+              },
+              {
+                "text": "search engine optimization guide",
+                "volume": 5530,
+                "difficulty": 0.97,
+                "source": "seed",
+                "score": 0.00474607812072288
+              },
+              {
+                "text": "search engine optimization best practices",
+                "volume": 7761,
+                "difficulty": 0.98,
+                "source": "seed",
+                "score": 0.0038504103954704466
+              }
+            ]
+          },
+          "timestamp": 1764590043910
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "secondary",
+            "candidates": [
+              {
+                "text": "seo vs sales tutorial",
+                "volume": 7753,
+                "difficulty": 0.35,
+                "source": "seed",
+                "score": 0.75
+              },
+              {
+                "text": "seo vs sales checklist",
+                "volume": 5868,
+                "difficulty": -0.07,
+                "source": "seed",
+                "score": 0.6802849856392988
+              },
+              {
+                "text": "seo vs sales vs alternatives",
+                "volume": 6144,
+                "difficulty": 0.17,
+                "source": "seed",
+                "score": 0.6516873823908091
+              },
+              {
+                "text": "seo vs sales benefits",
+                "volume": 3252,
+                "difficulty": -0.8,
+                "source": "seed",
+                "score": 0.6155182232346241
+              },
+              {
+                "text": "seo vs sales guide",
+                "volume": 3889,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.48514905417450727
+              },
+              {
+                "text": "seo vs sales best practices",
+                "volume": 2394,
+                "difficulty": -0.22,
+                "source": "seed",
+                "score": 0.4161396949588987
+              },
+              {
+                "text": "seo vs sales for beginners",
+                "volume": 729,
+                "difficulty": -0.78,
+                "source": "seed",
+                "score": 0.39565217391304347
+              }
+            ]
+          },
+          "timestamp": 1764590060418
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "primary",
+            "candidates": [
+              {
+                "text": "toyota corolla",
+                "volume": 3350000,
+                "difficulty": 0.69,
+                "source": "seed",
+                "score": 0.6401554404145078
+              },
+              {
+                "text": "sales",
+                "volume": 1220000,
+                "difficulty": 0.52,
+                "source": "seed",
+                "score": 0.4306005930889272
+              },
+              {
+                "text": "mazda cx 5",
+                "volume": 2240000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.4011507578813419
+              },
+              {
+                "text": "seo vs sales benefits",
+                "volume": 3252,
+                "difficulty": -0.8,
+                "source": "seed",
+                "score": 0.3836126007146899
+              },
+              {
+                "text": "seo vs sales for beginners",
+                "volume": 729,
+                "difficulty": -0.78,
+                "source": "seed",
+                "score": 0.38056994818652845
+              },
+              {
+                "text": "seo sales vs alternatives",
+                "volume": 3955,
+                "difficulty": -0.46,
+                "source": "seed",
+                "score": 0.33969708779082963
+              },
+              {
+                "text": "seo sales tutorial",
+                "volume": 7254,
+                "difficulty": -0.72,
+                "source": "seed",
+                "score": 0.3239668385465671
+              },
+              {
+                "text": "seo sales",
+                "volume": 1959,
+                "difficulty": -0.31,
+                "source": "seed",
+                "score": 0.3199094656284673
+              },
+              {
+                "text": "black friday deals",
+                "volume": 1220000,
+                "difficulty": 0.26,
+                "source": "seed",
+                "score": 0.3142793495656111
+              },
+              {
+                "text": "seo vs sales",
+                "volume": 5796,
+                "difficulty": -0.25,
+                "source": "seed",
+                "score": 0.31282481836434833
+              },
+              {
+                "text": "seo vs sales best practices",
+                "volume": 2394,
+                "difficulty": -0.22,
+                "source": "seed",
+                "score": 0.3083293619460795
+              },
+              {
+                "text": "seo for beginners",
+                "volume": 3696,
+                "difficulty": -0.93,
+                "source": "seed",
+                "score": 0.3005315186498793
+              },
+              {
+                "text": "houses for sale",
+                "volume": 1220000,
+                "difficulty": 0.43,
+                "source": "seed",
+                "score": 0.29225862417701004
+              },
+              {
+                "text": "seo vs sales checklist",
+                "volume": 5868,
+                "difficulty": -0.07,
+                "source": "seed",
+                "score": 0.28952165451740103
+              },
+              {
+                "text": "volvo xc60",
+                "volume": 1500000,
+                "difficulty": 0.88,
+                "source": "seed",
+                "score": 0.2841286379196804
+              },
+              {
+                "text": "seo vs sales guide",
+                "volume": 3889,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.2736230881565762
+              },
+              {
+                "text": "search engine optimization vs alternatives",
+                "volume": 6017,
+                "difficulty": -0.66,
+                "source": "seed",
+                "score": 0.2659732173594661
+              },
+              {
+                "text": "seo vs sales vs alternatives",
+                "volume": 6144,
+                "difficulty": 0.17,
+                "source": "seed",
+                "score": 0.2584830152111842
+              },
+              {
+                "text": "seo sales guide",
+                "volume": 6876,
+                "difficulty": -0.19,
+                "source": "seed",
+                "score": 0.2552462725772373
+              },
+              {
+                "text": "seo guide",
+                "volume": 6000,
+                "difficulty": -0.27,
+                "source": "seed",
+                "score": 0.24045203720559694
+              },
+              {
+                "text": "houses for sale near me",
+                "volume": 1000000,
+                "difficulty": 0.56,
+                "source": "seed",
+                "score": 0.23600768443767273
+              },
+              {
+                "text": "seo vs sales tutorial",
+                "volume": 7753,
+                "difficulty": 0.35,
+                "source": "seed",
+                "score": 0.2354551948643598
+              },
+              {
+                "text": "kia sorento",
+                "volume": 1220000,
+                "difficulty": 0.96,
+                "source": "seed",
+                "score": 0.22360577443607738
+              },
+              {
+                "text": "seo tutorial",
+                "volume": 2994,
+                "difficulty": -0.08,
+                "source": "seed",
+                "score": 0.2153021329969937
+              },
+              {
+                "text": "seo sales checklist",
+                "volume": 4767,
+                "difficulty": 0.16,
+                "source": "seed",
+                "score": 0.20953167145244506
+              },
+              {
+                "text": "search engine optimization checklist",
+                "volume": 5717,
+                "difficulty": -0.59,
+                "source": "seed",
+                "score": 0.2068521168081023
+              },
+              {
+                "text": "seo sales benefits",
+                "volume": 4057,
+                "difficulty": 0.29,
+                "source": "seed",
+                "score": 0.1925651013565317
+              },
+              {
+                "text": "seo",
+                "volume": 1115,
+                "difficulty": 0.75,
+                "source": "seed",
+                "score": 0.1824525690652073
+              },
+              {
+                "text": "cyber monday deals",
+                "volume": 301000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.1820299282573908
+              },
+              {
+                "text": "car dealerships near me",
+                "volume": 1000000,
+                "difficulty": 0.98,
+                "source": "seed",
+                "score": 0.18160353935995255
+              },
+              {
+                "text": "seo checklist",
+                "volume": 2723,
+                "difficulty": 0.3,
+                "source": "seed",
+                "score": 0.1660307871915018
+              },
+              {
+                "text": "hyundai palisade",
+                "volume": 823000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.14730447312265862
+              },
+              {
+                "text": "seo vs alternatives",
+                "volume": 7959,
+                "difficulty": 0.67,
+                "source": "seed",
+                "score": 0.14404132121532912
+              },
+              {
+                "text": "seo sales best practices",
+                "volume": 1655,
+                "difficulty": 0.69,
+                "source": "seed",
+                "score": 0.14032132725973467
+              },
+              {
+                "text": "seo sales for beginners",
+                "volume": 5612,
+                "difficulty": 0.71,
+                "source": "seed",
+                "score": 0.13843952436123896
+              },
+              {
+                "text": "black friday 2022",
+                "volume": 8100,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.12955880842265663
+              },
+              {
+                "text": "subaru outback",
+                "volume": 673000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.12043295391743455
+              },
+              {
+                "text": "search engine optimization for beginners",
+                "volume": 7194,
+                "difficulty": 0.09,
+                "source": "seed",
+                "score": 0.11903381014613894
+              },
+              {
+                "text": "search engine optimization benefits",
+                "volume": 2747,
+                "difficulty": 0.09,
+                "source": "seed",
+                "score": 0.11823715917343473
+              },
+              {
+                "text": "search engine optimization tutorial",
+                "volume": 5944,
+                "difficulty": 0.24,
+                "source": "seed",
+                "score": 0.09937982900595725
+              },
+              {
+                "text": "seo best practices",
+                "volume": 819,
+                "difficulty": 0.62,
+                "source": "seed",
+                "score": 0.09923892083898428
+              },
+              {
+                "text": "kia telluride",
+                "volume": 550000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.09839830816915084
+              },
+              {
+                "text": "subaru crosstrek",
+                "volume": 550000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.09839830816915084
+              },
+              {
+                "text": "ford dealership near me",
+                "volume": 550000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.09839830816915084
+              },
+              {
+                "text": "sell my car",
+                "volume": 368000,
+                "difficulty": 0.77,
+                "source": "seed",
+                "score": 0.09558694431413528
+              },
+              {
+                "text": "seo benefits",
+                "volume": 7597,
+                "difficulty": 0.92,
+                "source": "seed",
+                "score": 0.08659305159319466
+              },
+              {
+                "text": "toyota dealer near me",
+                "volume": 450000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.0804839620323348
+              },
+              {
+                "text": "search engine optimization",
+                "volume": 4677,
+                "difficulty": 0.42,
+                "source": "seed",
+                "score": 0.07583679206423796
+              },
+              {
+                "text": "buy here pay here",
+                "volume": 246000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.04393869591323007
+              },
+              {
+                "text": "sell my car online",
+                "volume": 74000,
+                "difficulty": 0.88,
+                "source": "seed",
+                "score": 0.028670062008683682
+              },
+              {
+                "text": "search engine optimization guide",
+                "volume": 5530,
+                "difficulty": 0.97,
+                "source": "seed",
+                "score": 0.00474607812072288
+              },
+              {
+                "text": "search engine optimization best practices",
+                "volume": 7761,
+                "difficulty": 0.98,
+                "source": "seed",
+                "score": 0.0038504103954704466
+              }
+            ]
+          },
+          "timestamp": 1764590043910
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "secondary",
+            "candidates": [
+              {
+                "text": "seo vs sales tutorial",
+                "volume": 7753,
+                "difficulty": 0.35,
+                "source": "seed",
+                "score": 0.75
+              },
+              {
+                "text": "seo vs sales checklist",
+                "volume": 5868,
+                "difficulty": -0.07,
+                "source": "seed",
+                "score": 0.6802849856392988
+              },
+              {
+                "text": "seo vs sales vs alternatives",
+                "volume": 6144,
+                "difficulty": 0.17,
+                "source": "seed",
+                "score": 0.6516873823908091
+              },
+              {
+                "text": "seo vs sales benefits",
+                "volume": 3252,
+                "difficulty": -0.8,
+                "source": "seed",
+                "score": 0.6155182232346241
+              },
+              {
+                "text": "seo vs sales guide",
+                "volume": 3889,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.48514905417450727
+              },
+              {
+                "text": "seo vs sales best practices",
+                "volume": 2394,
+                "difficulty": -0.22,
+                "source": "seed",
+                "score": 0.4161396949588987
+              },
+              {
+                "text": "seo vs sales for beginners",
+                "volume": 729,
+                "difficulty": -0.78,
+                "source": "seed",
+                "score": 0.39565217391304347
+              }
+            ]
+          },
+          "timestamp": 1764590060418
+        },
+        {
+          "type": "title_options",
+          "data": {
+            "titles": [
+              "SEO vs Sales: The Ultimate Showdown for Business Growth",
+              "Is It SEO vs Sales, or SEO & Sales? Unpacking the Digital Marketing Debate",
+              "Bridging the Divide: How SEO and Sales Teams Can Collaborate for Success",
+              "Beyond the Battle: Mastering SEO vs Sales for Peak Performance",
+              "SEO vs Sales: What Drives Revenue More for US Businesses?"
+            ]
+          },
+          "timestamp": 1764590074682
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "primary",
+            "candidates": [
+              {
+                "text": "toyota corolla",
+                "volume": 3350000,
+                "difficulty": 0.69,
+                "source": "seed",
+                "score": 0.6401554404145078
+              },
+              {
+                "text": "sales",
+                "volume": 1220000,
+                "difficulty": 0.52,
+                "source": "seed",
+                "score": 0.4306005930889272
+              },
+              {
+                "text": "mazda cx 5",
+                "volume": 2240000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.4011507578813419
+              },
+              {
+                "text": "seo vs sales benefits",
+                "volume": 3252,
+                "difficulty": -0.8,
+                "source": "seed",
+                "score": 0.3836126007146899
+              },
+              {
+                "text": "seo vs sales for beginners",
+                "volume": 729,
+                "difficulty": -0.78,
+                "source": "seed",
+                "score": 0.38056994818652845
+              },
+              {
+                "text": "seo sales vs alternatives",
+                "volume": 3955,
+                "difficulty": -0.46,
+                "source": "seed",
+                "score": 0.33969708779082963
+              },
+              {
+                "text": "seo sales tutorial",
+                "volume": 7254,
+                "difficulty": -0.72,
+                "source": "seed",
+                "score": 0.3239668385465671
+              },
+              {
+                "text": "seo sales",
+                "volume": 1959,
+                "difficulty": -0.31,
+                "source": "seed",
+                "score": 0.3199094656284673
+              },
+              {
+                "text": "black friday deals",
+                "volume": 1220000,
+                "difficulty": 0.26,
+                "source": "seed",
+                "score": 0.3142793495656111
+              },
+              {
+                "text": "seo vs sales",
+                "volume": 5796,
+                "difficulty": -0.25,
+                "source": "seed",
+                "score": 0.31282481836434833
+              },
+              {
+                "text": "seo vs sales best practices",
+                "volume": 2394,
+                "difficulty": -0.22,
+                "source": "seed",
+                "score": 0.3083293619460795
+              },
+              {
+                "text": "seo for beginners",
+                "volume": 3696,
+                "difficulty": -0.93,
+                "source": "seed",
+                "score": 0.3005315186498793
+              },
+              {
+                "text": "houses for sale",
+                "volume": 1220000,
+                "difficulty": 0.43,
+                "source": "seed",
+                "score": 0.29225862417701004
+              },
+              {
+                "text": "seo vs sales checklist",
+                "volume": 5868,
+                "difficulty": -0.07,
+                "source": "seed",
+                "score": 0.28952165451740103
+              },
+              {
+                "text": "volvo xc60",
+                "volume": 1500000,
+                "difficulty": 0.88,
+                "source": "seed",
+                "score": 0.2841286379196804
+              },
+              {
+                "text": "seo vs sales guide",
+                "volume": 3889,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.2736230881565762
+              },
+              {
+                "text": "search engine optimization vs alternatives",
+                "volume": 6017,
+                "difficulty": -0.66,
+                "source": "seed",
+                "score": 0.2659732173594661
+              },
+              {
+                "text": "seo vs sales vs alternatives",
+                "volume": 6144,
+                "difficulty": 0.17,
+                "source": "seed",
+                "score": 0.2584830152111842
+              },
+              {
+                "text": "seo sales guide",
+                "volume": 6876,
+                "difficulty": -0.19,
+                "source": "seed",
+                "score": 0.2552462725772373
+              },
+              {
+                "text": "seo guide",
+                "volume": 6000,
+                "difficulty": -0.27,
+                "source": "seed",
+                "score": 0.24045203720559694
+              },
+              {
+                "text": "houses for sale near me",
+                "volume": 1000000,
+                "difficulty": 0.56,
+                "source": "seed",
+                "score": 0.23600768443767273
+              },
+              {
+                "text": "seo vs sales tutorial",
+                "volume": 7753,
+                "difficulty": 0.35,
+                "source": "seed",
+                "score": 0.2354551948643598
+              },
+              {
+                "text": "kia sorento",
+                "volume": 1220000,
+                "difficulty": 0.96,
+                "source": "seed",
+                "score": 0.22360577443607738
+              },
+              {
+                "text": "seo tutorial",
+                "volume": 2994,
+                "difficulty": -0.08,
+                "source": "seed",
+                "score": 0.2153021329969937
+              },
+              {
+                "text": "seo sales checklist",
+                "volume": 4767,
+                "difficulty": 0.16,
+                "source": "seed",
+                "score": 0.20953167145244506
+              },
+              {
+                "text": "search engine optimization checklist",
+                "volume": 5717,
+                "difficulty": -0.59,
+                "source": "seed",
+                "score": 0.2068521168081023
+              },
+              {
+                "text": "seo sales benefits",
+                "volume": 4057,
+                "difficulty": 0.29,
+                "source": "seed",
+                "score": 0.1925651013565317
+              },
+              {
+                "text": "seo",
+                "volume": 1115,
+                "difficulty": 0.75,
+                "source": "seed",
+                "score": 0.1824525690652073
+              },
+              {
+                "text": "cyber monday deals",
+                "volume": 301000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.1820299282573908
+              },
+              {
+                "text": "car dealerships near me",
+                "volume": 1000000,
+                "difficulty": 0.98,
+                "source": "seed",
+                "score": 0.18160353935995255
+              },
+              {
+                "text": "seo checklist",
+                "volume": 2723,
+                "difficulty": 0.3,
+                "source": "seed",
+                "score": 0.1660307871915018
+              },
+              {
+                "text": "hyundai palisade",
+                "volume": 823000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.14730447312265862
+              },
+              {
+                "text": "seo vs alternatives",
+                "volume": 7959,
+                "difficulty": 0.67,
+                "source": "seed",
+                "score": 0.14404132121532912
+              },
+              {
+                "text": "seo sales best practices",
+                "volume": 1655,
+                "difficulty": 0.69,
+                "source": "seed",
+                "score": 0.14032132725973467
+              },
+              {
+                "text": "seo sales for beginners",
+                "volume": 5612,
+                "difficulty": 0.71,
+                "source": "seed",
+                "score": 0.13843952436123896
+              },
+              {
+                "text": "black friday 2022",
+                "volume": 8100,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.12955880842265663
+              },
+              {
+                "text": "subaru outback",
+                "volume": 673000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.12043295391743455
+              },
+              {
+                "text": "search engine optimization for beginners",
+                "volume": 7194,
+                "difficulty": 0.09,
+                "source": "seed",
+                "score": 0.11903381014613894
+              },
+              {
+                "text": "search engine optimization benefits",
+                "volume": 2747,
+                "difficulty": 0.09,
+                "source": "seed",
+                "score": 0.11823715917343473
+              },
+              {
+                "text": "search engine optimization tutorial",
+                "volume": 5944,
+                "difficulty": 0.24,
+                "source": "seed",
+                "score": 0.09937982900595725
+              },
+              {
+                "text": "seo best practices",
+                "volume": 819,
+                "difficulty": 0.62,
+                "source": "seed",
+                "score": 0.09923892083898428
+              },
+              {
+                "text": "kia telluride",
+                "volume": 550000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.09839830816915084
+              },
+              {
+                "text": "subaru crosstrek",
+                "volume": 550000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.09839830816915084
+              },
+              {
+                "text": "ford dealership near me",
+                "volume": 550000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.09839830816915084
+              },
+              {
+                "text": "sell my car",
+                "volume": 368000,
+                "difficulty": 0.77,
+                "source": "seed",
+                "score": 0.09558694431413528
+              },
+              {
+                "text": "seo benefits",
+                "volume": 7597,
+                "difficulty": 0.92,
+                "source": "seed",
+                "score": 0.08659305159319466
+              },
+              {
+                "text": "toyota dealer near me",
+                "volume": 450000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.0804839620323348
+              },
+              {
+                "text": "search engine optimization",
+                "volume": 4677,
+                "difficulty": 0.42,
+                "source": "seed",
+                "score": 0.07583679206423796
+              },
+              {
+                "text": "buy here pay here",
+                "volume": 246000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.04393869591323007
+              },
+              {
+                "text": "sell my car online",
+                "volume": 74000,
+                "difficulty": 0.88,
+                "source": "seed",
+                "score": 0.028670062008683682
+              },
+              {
+                "text": "search engine optimization guide",
+                "volume": 5530,
+                "difficulty": 0.97,
+                "source": "seed",
+                "score": 0.00474607812072288
+              },
+              {
+                "text": "search engine optimization best practices",
+                "volume": 7761,
+                "difficulty": 0.98,
+                "source": "seed",
+                "score": 0.0038504103954704466
+              }
+            ]
+          },
+          "timestamp": 1764590043910
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "secondary",
+            "candidates": [
+              {
+                "text": "seo vs sales tutorial",
+                "volume": 7753,
+                "difficulty": 0.35,
+                "source": "seed",
+                "score": 0.75
+              },
+              {
+                "text": "seo vs sales checklist",
+                "volume": 5868,
+                "difficulty": -0.07,
+                "source": "seed",
+                "score": 0.6802849856392988
+              },
+              {
+                "text": "seo vs sales vs alternatives",
+                "volume": 6144,
+                "difficulty": 0.17,
+                "source": "seed",
+                "score": 0.6516873823908091
+              },
+              {
+                "text": "seo vs sales benefits",
+                "volume": 3252,
+                "difficulty": -0.8,
+                "source": "seed",
+                "score": 0.6155182232346241
+              },
+              {
+                "text": "seo vs sales guide",
+                "volume": 3889,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.48514905417450727
+              },
+              {
+                "text": "seo vs sales best practices",
+                "volume": 2394,
+                "difficulty": -0.22,
+                "source": "seed",
+                "score": 0.4161396949588987
+              },
+              {
+                "text": "seo vs sales for beginners",
+                "volume": 729,
+                "difficulty": -0.78,
+                "source": "seed",
+                "score": 0.39565217391304347
+              }
+            ]
+          },
+          "timestamp": 1764590060418
+        },
+        {
+          "type": "title_options",
+          "data": {
+            "titles": [
+              "SEO vs Sales: The Ultimate Showdown for Business Growth",
+              "Is It SEO vs Sales, or SEO & Sales? Unpacking the Digital Marketing Debate",
+              "Bridging the Divide: How SEO and Sales Teams Can Collaborate for Success",
+              "Beyond the Battle: Mastering SEO vs Sales for Peak Performance",
+              "SEO vs Sales: What Drives Revenue More for US Businesses?"
+            ]
+          },
+          "timestamp": 1764590074682
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "primary",
+            "candidates": [
+              {
+                "text": "toyota corolla",
+                "volume": 3350000,
+                "difficulty": 0.69,
+                "source": "seed",
+                "score": 0.6401554404145078
+              },
+              {
+                "text": "sales",
+                "volume": 1220000,
+                "difficulty": 0.52,
+                "source": "seed",
+                "score": 0.4306005930889272
+              },
+              {
+                "text": "mazda cx 5",
+                "volume": 2240000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.4011507578813419
+              },
+              {
+                "text": "seo vs sales benefits",
+                "volume": 3252,
+                "difficulty": -0.8,
+                "source": "seed",
+                "score": 0.3836126007146899
+              },
+              {
+                "text": "seo vs sales for beginners",
+                "volume": 729,
+                "difficulty": -0.78,
+                "source": "seed",
+                "score": 0.38056994818652845
+              },
+              {
+                "text": "seo sales vs alternatives",
+                "volume": 3955,
+                "difficulty": -0.46,
+                "source": "seed",
+                "score": 0.33969708779082963
+              },
+              {
+                "text": "seo sales tutorial",
+                "volume": 7254,
+                "difficulty": -0.72,
+                "source": "seed",
+                "score": 0.3239668385465671
+              },
+              {
+                "text": "seo sales",
+                "volume": 1959,
+                "difficulty": -0.31,
+                "source": "seed",
+                "score": 0.3199094656284673
+              },
+              {
+                "text": "black friday deals",
+                "volume": 1220000,
+                "difficulty": 0.26,
+                "source": "seed",
+                "score": 0.3142793495656111
+              },
+              {
+                "text": "seo vs sales",
+                "volume": 5796,
+                "difficulty": -0.25,
+                "source": "seed",
+                "score": 0.31282481836434833
+              },
+              {
+                "text": "seo vs sales best practices",
+                "volume": 2394,
+                "difficulty": -0.22,
+                "source": "seed",
+                "score": 0.3083293619460795
+              },
+              {
+                "text": "seo for beginners",
+                "volume": 3696,
+                "difficulty": -0.93,
+                "source": "seed",
+                "score": 0.3005315186498793
+              },
+              {
+                "text": "houses for sale",
+                "volume": 1220000,
+                "difficulty": 0.43,
+                "source": "seed",
+                "score": 0.29225862417701004
+              },
+              {
+                "text": "seo vs sales checklist",
+                "volume": 5868,
+                "difficulty": -0.07,
+                "source": "seed",
+                "score": 0.28952165451740103
+              },
+              {
+                "text": "volvo xc60",
+                "volume": 1500000,
+                "difficulty": 0.88,
+                "source": "seed",
+                "score": 0.2841286379196804
+              },
+              {
+                "text": "seo vs sales guide",
+                "volume": 3889,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.2736230881565762
+              },
+              {
+                "text": "search engine optimization vs alternatives",
+                "volume": 6017,
+                "difficulty": -0.66,
+                "source": "seed",
+                "score": 0.2659732173594661
+              },
+              {
+                "text": "seo vs sales vs alternatives",
+                "volume": 6144,
+                "difficulty": 0.17,
+                "source": "seed",
+                "score": 0.2584830152111842
+              },
+              {
+                "text": "seo sales guide",
+                "volume": 6876,
+                "difficulty": -0.19,
+                "source": "seed",
+                "score": 0.2552462725772373
+              },
+              {
+                "text": "seo guide",
+                "volume": 6000,
+                "difficulty": -0.27,
+                "source": "seed",
+                "score": 0.24045203720559694
+              },
+              {
+                "text": "houses for sale near me",
+                "volume": 1000000,
+                "difficulty": 0.56,
+                "source": "seed",
+                "score": 0.23600768443767273
+              },
+              {
+                "text": "seo vs sales tutorial",
+                "volume": 7753,
+                "difficulty": 0.35,
+                "source": "seed",
+                "score": 0.2354551948643598
+              },
+              {
+                "text": "kia sorento",
+                "volume": 1220000,
+                "difficulty": 0.96,
+                "source": "seed",
+                "score": 0.22360577443607738
+              },
+              {
+                "text": "seo tutorial",
+                "volume": 2994,
+                "difficulty": -0.08,
+                "source": "seed",
+                "score": 0.2153021329969937
+              },
+              {
+                "text": "seo sales checklist",
+                "volume": 4767,
+                "difficulty": 0.16,
+                "source": "seed",
+                "score": 0.20953167145244506
+              },
+              {
+                "text": "search engine optimization checklist",
+                "volume": 5717,
+                "difficulty": -0.59,
+                "source": "seed",
+                "score": 0.2068521168081023
+              },
+              {
+                "text": "seo sales benefits",
+                "volume": 4057,
+                "difficulty": 0.29,
+                "source": "seed",
+                "score": 0.1925651013565317
+              },
+              {
+                "text": "seo",
+                "volume": 1115,
+                "difficulty": 0.75,
+                "source": "seed",
+                "score": 0.1824525690652073
+              },
+              {
+                "text": "cyber monday deals",
+                "volume": 301000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.1820299282573908
+              },
+              {
+                "text": "car dealerships near me",
+                "volume": 1000000,
+                "difficulty": 0.98,
+                "source": "seed",
+                "score": 0.18160353935995255
+              },
+              {
+                "text": "seo checklist",
+                "volume": 2723,
+                "difficulty": 0.3,
+                "source": "seed",
+                "score": 0.1660307871915018
+              },
+              {
+                "text": "hyundai palisade",
+                "volume": 823000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.14730447312265862
+              },
+              {
+                "text": "seo vs alternatives",
+                "volume": 7959,
+                "difficulty": 0.67,
+                "source": "seed",
+                "score": 0.14404132121532912
+              },
+              {
+                "text": "seo sales best practices",
+                "volume": 1655,
+                "difficulty": 0.69,
+                "source": "seed",
+                "score": 0.14032132725973467
+              },
+              {
+                "text": "seo sales for beginners",
+                "volume": 5612,
+                "difficulty": 0.71,
+                "source": "seed",
+                "score": 0.13843952436123896
+              },
+              {
+                "text": "black friday 2022",
+                "volume": 8100,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.12955880842265663
+              },
+              {
+                "text": "subaru outback",
+                "volume": 673000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.12043295391743455
+              },
+              {
+                "text": "search engine optimization for beginners",
+                "volume": 7194,
+                "difficulty": 0.09,
+                "source": "seed",
+                "score": 0.11903381014613894
+              },
+              {
+                "text": "search engine optimization benefits",
+                "volume": 2747,
+                "difficulty": 0.09,
+                "source": "seed",
+                "score": 0.11823715917343473
+              },
+              {
+                "text": "search engine optimization tutorial",
+                "volume": 5944,
+                "difficulty": 0.24,
+                "source": "seed",
+                "score": 0.09937982900595725
+              },
+              {
+                "text": "seo best practices",
+                "volume": 819,
+                "difficulty": 0.62,
+                "source": "seed",
+                "score": 0.09923892083898428
+              },
+              {
+                "text": "kia telluride",
+                "volume": 550000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.09839830816915084
+              },
+              {
+                "text": "subaru crosstrek",
+                "volume": 550000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.09839830816915084
+              },
+              {
+                "text": "ford dealership near me",
+                "volume": 550000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.09839830816915084
+              },
+              {
+                "text": "sell my car",
+                "volume": 368000,
+                "difficulty": 0.77,
+                "source": "seed",
+                "score": 0.09558694431413528
+              },
+              {
+                "text": "seo benefits",
+                "volume": 7597,
+                "difficulty": 0.92,
+                "source": "seed",
+                "score": 0.08659305159319466
+              },
+              {
+                "text": "toyota dealer near me",
+                "volume": 450000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.0804839620323348
+              },
+              {
+                "text": "search engine optimization",
+                "volume": 4677,
+                "difficulty": 0.42,
+                "source": "seed",
+                "score": 0.07583679206423796
+              },
+              {
+                "text": "buy here pay here",
+                "volume": 246000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.04393869591323007
+              },
+              {
+                "text": "sell my car online",
+                "volume": 74000,
+                "difficulty": 0.88,
+                "source": "seed",
+                "score": 0.028670062008683682
+              },
+              {
+                "text": "search engine optimization guide",
+                "volume": 5530,
+                "difficulty": 0.97,
+                "source": "seed",
+                "score": 0.00474607812072288
+              },
+              {
+                "text": "search engine optimization best practices",
+                "volume": 7761,
+                "difficulty": 0.98,
+                "source": "seed",
+                "score": 0.0038504103954704466
+              }
+            ]
+          },
+          "timestamp": 1764590043910
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "secondary",
+            "candidates": [
+              {
+                "text": "seo vs sales tutorial",
+                "volume": 7753,
+                "difficulty": 0.35,
+                "source": "seed",
+                "score": 0.75
+              },
+              {
+                "text": "seo vs sales checklist",
+                "volume": 5868,
+                "difficulty": -0.07,
+                "source": "seed",
+                "score": 0.6802849856392988
+              },
+              {
+                "text": "seo vs sales vs alternatives",
+                "volume": 6144,
+                "difficulty": 0.17,
+                "source": "seed",
+                "score": 0.6516873823908091
+              },
+              {
+                "text": "seo vs sales benefits",
+                "volume": 3252,
+                "difficulty": -0.8,
+                "source": "seed",
+                "score": 0.6155182232346241
+              },
+              {
+                "text": "seo vs sales guide",
+                "volume": 3889,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.48514905417450727
+              },
+              {
+                "text": "seo vs sales best practices",
+                "volume": 2394,
+                "difficulty": -0.22,
+                "source": "seed",
+                "score": 0.4161396949588987
+              },
+              {
+                "text": "seo vs sales for beginners",
+                "volume": 729,
+                "difficulty": -0.78,
+                "source": "seed",
+                "score": 0.39565217391304347
+              }
+            ]
+          },
+          "timestamp": 1764590060418
+        },
+        {
+          "type": "title_options",
+          "data": {
+            "titles": [
+              "SEO vs Sales: The Ultimate Showdown for Business Growth",
+              "Is It SEO vs Sales, or SEO & Sales? Unpacking the Digital Marketing Debate",
+              "Bridging the Divide: How SEO and Sales Teams Can Collaborate for Success",
+              "Beyond the Battle: Mastering SEO vs Sales for Peak Performance",
+              "SEO vs Sales: What Drives Revenue More for US Businesses?"
+            ]
+          },
+          "timestamp": 1764590074682
+        },
+        {
+          "type": "outline_generated",
+          "data": {
+            "outline": [
+              {
+                "id": "1",
+                "name": "Introduction: Understanding SEO and Sales in Business Growth",
+                "items": [
+                  {
+                    "id": "11",
+                    "name": "What is Search Engine Optimization (SEO)?"
+                  },
+                  {
+                    "id": "12",
+                    "name": "The Role of Sales in Business Expansion"
+                  },
+                  {
+                    "id": "13",
+                    "name": "Bridging the Gap: How SEO and Sales Intersect"
+                  },
+                  {
+                    "id": "14",
+                    "name": "The Symbiotic Relationship for Sustainable Growth"
+                  }
+                ]
+              },
+              {
+                "id": "2",
+                "name": "SEO's Power: Driving Organic Traffic and Brand Authority",
+                "items": [
+                  {
+                    "id": "21",
+                    "name": "Boosting Online Visibility and Search Rankings"
+                  },
+                  {
+                    "id": "22",
+                    "name": "Sustainable Growth and Long-Term ROI"
+                  },
+                  {
+                    "id": "23",
+                    "name": "Establishing Brand Authority and Credibility"
+                  },
+                  {
+                    "id": "24",
+                    "name": "Key Pillars of Organic Traffic Generation"
+                  }
+                ]
+              },
+              {
+                "id": "3",
+                "name": "Sales' Impact: Direct Conversions and Relationship Building",
+                "items": [
+                  {
+                    "id": "31",
+                    "name": "Direct Sales Strategies for Immediate Conversions"
+                  },
+                  {
+                    "id": "32",
+                    "name": "Building Long-Term Customer Relationships"
+                  },
+                  {
+                    "id": "33",
+                    "name": "The Sales Funnel: Guiding Prospects to Purchase"
+                  },
+                  {
+                    "id": "34",
+                    "name": "Measuring the Impact of Sales on Business Growth"
+                  }
+                ]
+              },
+              {
+                "id": "4",
+                "name": "Key Differences: Approach, Timeline, and Investment",
+                "items": [
+                  {
+                    "id": "41",
+                    "name": "Strategic Approaches: Organic Visibility vs. Direct Sales"
+                  },
+                  {
+                    "id": "42",
+                    "name": "Understanding the Investment: Sustained Growth vs. Immediate Spending"
+                  },
+                  {
+                    "id": "43",
+                    "name": "Time to Impact: Long-term SEO vs. Short-term Sales Cycles"
+                  },
+                  {
+                    "id": "44",
+                    "name": "Measuring Success: Brand Equity vs. Conversion Rates"
+                  }
+                ]
+              },
+              {
+                "id": "5",
+                "name": "The Synergy: How SEO and Sales Can Collaborate for Success",
+                "items": [
+                  {
+                    "id": "51",
+                    "name": "Bridging the Information Gap: Sales Insights for SEO Strategy"
+                  },
+                  {
+                    "id": "52",
+                    "name": "Content Unification: Creating Sales-Driven SEO Assets"
+                  },
+                  {
+                    "id": "53",
+                    "name": "Aligning Goals: Shared KPIs for SEO and Sales Success"
+                  },
+                  {
+                    "id": "54",
+                    "name": "Breaking Down Silos: Fostering Cross-Team Communication"
+                  }
+                ]
+              },
+              {
+                "id": "6",
+                "name": "Measuring Success: KPIs and ROI for Each Discipline",
+                "items": [
+                  {
+                    "id": "61",
+                    "name": "SEO Performance Metrics: Tracking Organic Growth and Conversions"
+                  },
+                  {
+                    "id": "62",
+                    "name": "Calculating the Return on Investment for SEO Initiatives"
+                  },
+                  {
+                    "id": "63",
+                    "name": "Core Sales KPIs: Driving Revenue and Customer Acquisition"
+                  },
+                  {
+                    "id": "64",
+                    "name": "Measuring Sales Effectiveness: ROI and Profitability Analysis"
+                  }
+                ]
+              },
+              {
+                "id": "7",
+                "name": "When to Prioritize: Strategic Considerations for Businesses",
+                "items": [
+                  {
+                    "id": "71",
+                    "name": "Aligning Priorities with Business Goals"
+                  },
+                  {
+                    "id": "72",
+                    "name": "Balancing Short-Term Wins with Long-Term Growth"
+                  },
+                  {
+                    "id": "73",
+                    "name": "Evaluating Budget, Resources, and Market Landscape"
+                  },
+                  {
+                    "id": "74",
+                    "name": "Identifying Key Metrics for Success and ROI"
+                  }
+                ]
+              },
+              {
+                "id": "8",
+                "name": "Conclusion: Achieving Holistic Business Growth Through Integration",
+                "items": [
+                  {
+                    "id": "81",
+                    "name": "Forging a Unified Strategy: SEO and Sales Alignment"
+                  },
+                  {
+                    "id": "82",
+                    "name": "Optimizing the Customer Journey: From Search to Conversion"
+                  },
+                  {
+                    "id": "83",
+                    "name": "Measuring Success: Integrated Analytics for Growth"
+                  },
+                  {
+                    "id": "84",
+                    "name": "The Future of Business Growth: A Collaborative Approach"
+                  }
+                ]
+              }
+            ],
+            "sectionCount": 8
+          },
+          "timestamp": 1764590764820
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "primary",
+            "candidates": [
+              {
+                "text": "toyota corolla",
+                "volume": 3350000,
+                "difficulty": 0.69,
+                "source": "seed",
+                "score": 0.6401554404145078
+              },
+              {
+                "text": "sales",
+                "volume": 1220000,
+                "difficulty": 0.52,
+                "source": "seed",
+                "score": 0.4306005930889272
+              },
+              {
+                "text": "mazda cx 5",
+                "volume": 2240000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.4011507578813419
+              },
+              {
+                "text": "seo vs sales benefits",
+                "volume": 3252,
+                "difficulty": -0.8,
+                "source": "seed",
+                "score": 0.3836126007146899
+              },
+              {
+                "text": "seo vs sales for beginners",
+                "volume": 729,
+                "difficulty": -0.78,
+                "source": "seed",
+                "score": 0.38056994818652845
+              },
+              {
+                "text": "seo sales vs alternatives",
+                "volume": 3955,
+                "difficulty": -0.46,
+                "source": "seed",
+                "score": 0.33969708779082963
+              },
+              {
+                "text": "seo sales tutorial",
+                "volume": 7254,
+                "difficulty": -0.72,
+                "source": "seed",
+                "score": 0.3239668385465671
+              },
+              {
+                "text": "seo sales",
+                "volume": 1959,
+                "difficulty": -0.31,
+                "source": "seed",
+                "score": 0.3199094656284673
+              },
+              {
+                "text": "black friday deals",
+                "volume": 1220000,
+                "difficulty": 0.26,
+                "source": "seed",
+                "score": 0.3142793495656111
+              },
+              {
+                "text": "seo vs sales",
+                "volume": 5796,
+                "difficulty": -0.25,
+                "source": "seed",
+                "score": 0.31282481836434833
+              },
+              {
+                "text": "seo vs sales best practices",
+                "volume": 2394,
+                "difficulty": -0.22,
+                "source": "seed",
+                "score": 0.3083293619460795
+              },
+              {
+                "text": "seo for beginners",
+                "volume": 3696,
+                "difficulty": -0.93,
+                "source": "seed",
+                "score": 0.3005315186498793
+              },
+              {
+                "text": "houses for sale",
+                "volume": 1220000,
+                "difficulty": 0.43,
+                "source": "seed",
+                "score": 0.29225862417701004
+              },
+              {
+                "text": "seo vs sales checklist",
+                "volume": 5868,
+                "difficulty": -0.07,
+                "source": "seed",
+                "score": 0.28952165451740103
+              },
+              {
+                "text": "volvo xc60",
+                "volume": 1500000,
+                "difficulty": 0.88,
+                "source": "seed",
+                "score": 0.2841286379196804
+              },
+              {
+                "text": "seo vs sales guide",
+                "volume": 3889,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.2736230881565762
+              },
+              {
+                "text": "search engine optimization vs alternatives",
+                "volume": 6017,
+                "difficulty": -0.66,
+                "source": "seed",
+                "score": 0.2659732173594661
+              },
+              {
+                "text": "seo vs sales vs alternatives",
+                "volume": 6144,
+                "difficulty": 0.17,
+                "source": "seed",
+                "score": 0.2584830152111842
+              },
+              {
+                "text": "seo sales guide",
+                "volume": 6876,
+                "difficulty": -0.19,
+                "source": "seed",
+                "score": 0.2552462725772373
+              },
+              {
+                "text": "seo guide",
+                "volume": 6000,
+                "difficulty": -0.27,
+                "source": "seed",
+                "score": 0.24045203720559694
+              },
+              {
+                "text": "houses for sale near me",
+                "volume": 1000000,
+                "difficulty": 0.56,
+                "source": "seed",
+                "score": 0.23600768443767273
+              },
+              {
+                "text": "seo vs sales tutorial",
+                "volume": 7753,
+                "difficulty": 0.35,
+                "source": "seed",
+                "score": 0.2354551948643598
+              },
+              {
+                "text": "kia sorento",
+                "volume": 1220000,
+                "difficulty": 0.96,
+                "source": "seed",
+                "score": 0.22360577443607738
+              },
+              {
+                "text": "seo tutorial",
+                "volume": 2994,
+                "difficulty": -0.08,
+                "source": "seed",
+                "score": 0.2153021329969937
+              },
+              {
+                "text": "seo sales checklist",
+                "volume": 4767,
+                "difficulty": 0.16,
+                "source": "seed",
+                "score": 0.20953167145244506
+              },
+              {
+                "text": "search engine optimization checklist",
+                "volume": 5717,
+                "difficulty": -0.59,
+                "source": "seed",
+                "score": 0.2068521168081023
+              },
+              {
+                "text": "seo sales benefits",
+                "volume": 4057,
+                "difficulty": 0.29,
+                "source": "seed",
+                "score": 0.1925651013565317
+              },
+              {
+                "text": "seo",
+                "volume": 1115,
+                "difficulty": 0.75,
+                "source": "seed",
+                "score": 0.1824525690652073
+              },
+              {
+                "text": "cyber monday deals",
+                "volume": 301000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.1820299282573908
+              },
+              {
+                "text": "car dealerships near me",
+                "volume": 1000000,
+                "difficulty": 0.98,
+                "source": "seed",
+                "score": 0.18160353935995255
+              },
+              {
+                "text": "seo checklist",
+                "volume": 2723,
+                "difficulty": 0.3,
+                "source": "seed",
+                "score": 0.1660307871915018
+              },
+              {
+                "text": "hyundai palisade",
+                "volume": 823000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.14730447312265862
+              },
+              {
+                "text": "seo vs alternatives",
+                "volume": 7959,
+                "difficulty": 0.67,
+                "source": "seed",
+                "score": 0.14404132121532912
+              },
+              {
+                "text": "seo sales best practices",
+                "volume": 1655,
+                "difficulty": 0.69,
+                "source": "seed",
+                "score": 0.14032132725973467
+              },
+              {
+                "text": "seo sales for beginners",
+                "volume": 5612,
+                "difficulty": 0.71,
+                "source": "seed",
+                "score": 0.13843952436123896
+              },
+              {
+                "text": "black friday 2022",
+                "volume": 8100,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.12955880842265663
+              },
+              {
+                "text": "subaru outback",
+                "volume": 673000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.12043295391743455
+              },
+              {
+                "text": "search engine optimization for beginners",
+                "volume": 7194,
+                "difficulty": 0.09,
+                "source": "seed",
+                "score": 0.11903381014613894
+              },
+              {
+                "text": "search engine optimization benefits",
+                "volume": 2747,
+                "difficulty": 0.09,
+                "source": "seed",
+                "score": 0.11823715917343473
+              },
+              {
+                "text": "search engine optimization tutorial",
+                "volume": 5944,
+                "difficulty": 0.24,
+                "source": "seed",
+                "score": 0.09937982900595725
+              },
+              {
+                "text": "seo best practices",
+                "volume": 819,
+                "difficulty": 0.62,
+                "source": "seed",
+                "score": 0.09923892083898428
+              },
+              {
+                "text": "kia telluride",
+                "volume": 550000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.09839830816915084
+              },
+              {
+                "text": "subaru crosstrek",
+                "volume": 550000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.09839830816915084
+              },
+              {
+                "text": "ford dealership near me",
+                "volume": 550000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.09839830816915084
+              },
+              {
+                "text": "sell my car",
+                "volume": 368000,
+                "difficulty": 0.77,
+                "source": "seed",
+                "score": 0.09558694431413528
+              },
+              {
+                "text": "seo benefits",
+                "volume": 7597,
+                "difficulty": 0.92,
+                "source": "seed",
+                "score": 0.08659305159319466
+              },
+              {
+                "text": "toyota dealer near me",
+                "volume": 450000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.0804839620323348
+              },
+              {
+                "text": "search engine optimization",
+                "volume": 4677,
+                "difficulty": 0.42,
+                "source": "seed",
+                "score": 0.07583679206423796
+              },
+              {
+                "text": "buy here pay here",
+                "volume": 246000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.04393869591323007
+              },
+              {
+                "text": "sell my car online",
+                "volume": 74000,
+                "difficulty": 0.88,
+                "source": "seed",
+                "score": 0.028670062008683682
+              },
+              {
+                "text": "search engine optimization guide",
+                "volume": 5530,
+                "difficulty": 0.97,
+                "source": "seed",
+                "score": 0.00474607812072288
+              },
+              {
+                "text": "search engine optimization best practices",
+                "volume": 7761,
+                "difficulty": 0.98,
+                "source": "seed",
+                "score": 0.0038504103954704466
+              }
+            ]
+          },
+          "timestamp": 1764590043910
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "secondary",
+            "candidates": [
+              {
+                "text": "seo vs sales tutorial",
+                "volume": 7753,
+                "difficulty": 0.35,
+                "source": "seed",
+                "score": 0.75
+              },
+              {
+                "text": "seo vs sales checklist",
+                "volume": 5868,
+                "difficulty": -0.07,
+                "source": "seed",
+                "score": 0.6802849856392988
+              },
+              {
+                "text": "seo vs sales vs alternatives",
+                "volume": 6144,
+                "difficulty": 0.17,
+                "source": "seed",
+                "score": 0.6516873823908091
+              },
+              {
+                "text": "seo vs sales benefits",
+                "volume": 3252,
+                "difficulty": -0.8,
+                "source": "seed",
+                "score": 0.6155182232346241
+              },
+              {
+                "text": "seo vs sales guide",
+                "volume": 3889,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.48514905417450727
+              },
+              {
+                "text": "seo vs sales best practices",
+                "volume": 2394,
+                "difficulty": -0.22,
+                "source": "seed",
+                "score": 0.4161396949588987
+              },
+              {
+                "text": "seo vs sales for beginners",
+                "volume": 729,
+                "difficulty": -0.78,
+                "source": "seed",
+                "score": 0.39565217391304347
+              }
+            ]
+          },
+          "timestamp": 1764590060418
+        },
+        {
+          "type": "title_options",
+          "data": {
+            "titles": [
+              "SEO vs Sales: The Ultimate Showdown for Business Growth",
+              "Is It SEO vs Sales, or SEO & Sales? Unpacking the Digital Marketing Debate",
+              "Bridging the Divide: How SEO and Sales Teams Can Collaborate for Success",
+              "Beyond the Battle: Mastering SEO vs Sales for Peak Performance",
+              "SEO vs Sales: What Drives Revenue More for US Businesses?"
+            ]
+          },
+          "timestamp": 1764590074682
+        },
+        {
+          "type": "outline_generated",
+          "data": {
+            "outline": [
+              {
+                "id": "1",
+                "name": "Introduction: Understanding SEO and Sales in Business Growth",
+                "items": [
+                  {
+                    "id": "11",
+                    "name": "What is Search Engine Optimization (SEO)?"
+                  },
+                  {
+                    "id": "12",
+                    "name": "The Role of Sales in Business Expansion"
+                  },
+                  {
+                    "id": "13",
+                    "name": "Bridging the Gap: How SEO and Sales Intersect"
+                  },
+                  {
+                    "id": "14",
+                    "name": "The Symbiotic Relationship for Sustainable Growth"
+                  }
+                ]
+              },
+              {
+                "id": "2",
+                "name": "SEO's Power: Driving Organic Traffic and Brand Authority",
+                "items": [
+                  {
+                    "id": "21",
+                    "name": "Boosting Online Visibility and Search Rankings"
+                  },
+                  {
+                    "id": "22",
+                    "name": "Sustainable Growth and Long-Term ROI"
+                  },
+                  {
+                    "id": "23",
+                    "name": "Establishing Brand Authority and Credibility"
+                  },
+                  {
+                    "id": "24",
+                    "name": "Key Pillars of Organic Traffic Generation"
+                  }
+                ]
+              },
+              {
+                "id": "3",
+                "name": "Sales' Impact: Direct Conversions and Relationship Building",
+                "items": [
+                  {
+                    "id": "31",
+                    "name": "Direct Sales Strategies for Immediate Conversions"
+                  },
+                  {
+                    "id": "32",
+                    "name": "Building Long-Term Customer Relationships"
+                  },
+                  {
+                    "id": "33",
+                    "name": "The Sales Funnel: Guiding Prospects to Purchase"
+                  },
+                  {
+                    "id": "34",
+                    "name": "Measuring the Impact of Sales on Business Growth"
+                  }
+                ]
+              },
+              {
+                "id": "4",
+                "name": "Key Differences: Approach, Timeline, and Investment",
+                "items": [
+                  {
+                    "id": "41",
+                    "name": "Strategic Approaches: Organic Visibility vs. Direct Sales"
+                  },
+                  {
+                    "id": "42",
+                    "name": "Understanding the Investment: Sustained Growth vs. Immediate Spending"
+                  },
+                  {
+                    "id": "43",
+                    "name": "Time to Impact: Long-term SEO vs. Short-term Sales Cycles"
+                  },
+                  {
+                    "id": "44",
+                    "name": "Measuring Success: Brand Equity vs. Conversion Rates"
+                  }
+                ]
+              },
+              {
+                "id": "5",
+                "name": "The Synergy: How SEO and Sales Can Collaborate for Success",
+                "items": [
+                  {
+                    "id": "51",
+                    "name": "Bridging the Information Gap: Sales Insights for SEO Strategy"
+                  },
+                  {
+                    "id": "52",
+                    "name": "Content Unification: Creating Sales-Driven SEO Assets"
+                  },
+                  {
+                    "id": "53",
+                    "name": "Aligning Goals: Shared KPIs for SEO and Sales Success"
+                  },
+                  {
+                    "id": "54",
+                    "name": "Breaking Down Silos: Fostering Cross-Team Communication"
+                  }
+                ]
+              },
+              {
+                "id": "6",
+                "name": "Measuring Success: KPIs and ROI for Each Discipline",
+                "items": [
+                  {
+                    "id": "61",
+                    "name": "SEO Performance Metrics: Tracking Organic Growth and Conversions"
+                  },
+                  {
+                    "id": "62",
+                    "name": "Calculating the Return on Investment for SEO Initiatives"
+                  },
+                  {
+                    "id": "63",
+                    "name": "Core Sales KPIs: Driving Revenue and Customer Acquisition"
+                  },
+                  {
+                    "id": "64",
+                    "name": "Measuring Sales Effectiveness: ROI and Profitability Analysis"
+                  }
+                ]
+              },
+              {
+                "id": "7",
+                "name": "When to Prioritize: Strategic Considerations for Businesses",
+                "items": [
+                  {
+                    "id": "71",
+                    "name": "Aligning Priorities with Business Goals"
+                  },
+                  {
+                    "id": "72",
+                    "name": "Balancing Short-Term Wins with Long-Term Growth"
+                  },
+                  {
+                    "id": "73",
+                    "name": "Evaluating Budget, Resources, and Market Landscape"
+                  },
+                  {
+                    "id": "74",
+                    "name": "Identifying Key Metrics for Success and ROI"
+                  }
+                ]
+              },
+              {
+                "id": "8",
+                "name": "Conclusion: Achieving Holistic Business Growth Through Integration",
+                "items": [
+                  {
+                    "id": "81",
+                    "name": "Forging a Unified Strategy: SEO and Sales Alignment"
+                  },
+                  {
+                    "id": "82",
+                    "name": "Optimizing the Customer Journey: From Search to Conversion"
+                  },
+                  {
+                    "id": "83",
+                    "name": "Measuring Success: Integrated Analytics for Growth"
+                  },
+                  {
+                    "id": "84",
+                    "name": "The Future of Business Growth: A Collaborative Approach"
+                  }
+                ]
+              }
+            ],
+            "sectionCount": 8
+          },
+          "timestamp": 1764590764820
+        }
+      ],
+      "__pregel_tasks": [
+        [],
+        []
+      ]
+    },
+    "channel_versions": {
+      "__start__": 20,
+      "messages": 20,
+      "data": 20,
+      "outline": 20,
+      "outlineApproved": 20,
+      "draft": 28,
+      "progress": 28,
+      "preferences": 20,
+      "trace": 28,
+      "halt": 20,
+      "userProvidedFields": 20,
+      "autoFillFields": 20,
+      "toolOutputs": 20,
+      "currentStep": 28,
+      "apiKey": 20,
+      "branch:to:research_primary": 3,
+      "keywordCandidates": 10,
+      "branch:to:research_secondary": 10,
+      "branch:to:title_generation": 13,
+      "titleCandidates": 13,
+      "branch:to:discovery": 18,
+      "branch:to:proposal": 28
+    },
+    "versions_seen": {
+      "__input__": {},
+      "__start__": {
+        "__start__": 19
+      },
+      "research_primary": {
+        "branch:to:research_primary": 2
+      },
+      "research_secondary": {
+        "branch:to:research_secondary": 9
+      },
+      "title_generation": {
+        "branch:to:title_generation": 12
+      },
+      "discovery": {
+        "branch:to:discovery": 17
+      },
+      "proposal": {
+        "branch:to:proposal": 27
+      }
+    }
+  },
+  "metadata": {
+    "source": "loop",
+    "step": 26,
+    "parents": {}
+  },
+  "parentCheckpointId": "1f0ceae4-c179-6290-8019-9e073a235682",
+  "updatedAt": 1764590851622
+}
