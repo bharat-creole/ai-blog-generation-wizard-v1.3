@@ -5,42 +5,129 @@ import * as geminiService from './geminiService';
 export const autoFillPrimaryKeyword = async (
 	s: AgentState
 ): Promise<string> => {
-	const seeds = [
-		...(s.data.primaryKeyword ? [s.data.primaryKeyword] : []),
-		...keywordTool.extractSeedsFromTitle(
-			s.data.title || s.data.topic || ''
-		),
-	];
+	const topicSource = s.data.title || s.data.topic || s.data.primaryKeyword || '';
+	
+	if (!topicSource || topicSource.trim().length === 0) {
+		console.log('⚠️ [AUTO-FILL PRIMARY KEYWORD] No topic provided');
+		return '';
+	}
+
 	const location = s.data.targetLocation || 'United States';
 
 	// 📊 LOG: Auto-fill primary keyword research
 	console.log('🤖 [AUTO-FILL PRIMARY KEYWORD] Starting...');
-	console.log(`   Seeds: [${seeds.join(', ')}]`);
+	console.log(`   Topic: "${topicSource}"`);
 	console.log(`   Location: ${location}`);
 
 	try {
-		const batches = await Promise.all(
-			seeds.map(async (k, idx) => {
-				console.log(`   📡 Fetching keywords for seed ${idx + 1}/${seeds.length}: "${k}"`);
+		// ✨ NEW FLOW: Step 1 - Search web through Gemini to get top 10 titles
+		console.log('   🔍 Step 1: Searching web for titles...');
+		const apiKey = s.apiKey || process.env.GEMINI_API_KEY;
+		if (!apiKey) {
+			throw new Error('API Key is required for web search.');
+		}
+
+		const webTitles = await geminiService.searchWebForTitles(
+			topicSource,
+			apiKey
+		);
+		console.log(`   ✅ Found ${webTitles.length} titles from web search`);
+		console.log(`   📋 Web-searched titles:`);
+		webTitles.forEach((title, idx) => {
+			console.log(`      ${idx + 1}. ${title}`);
+		});
+
+		// ✨ NEW FLOW: Step 2 - Extract relevant keywords from those titles
+		console.log('   🔍 Step 2: Extracting keywords from titles...');
+		const extractedKeywords = keywordTool.extractKeywordsFromTitles(
+			webTitles,
+			50 // Extract 50 keywords to ensure we get 20+ after all filtering
+		);
+		console.log(`   ✅ Extracted ${extractedKeywords.length} keywords from titles`);
+		console.log(`   📝 Extracted keywords: [${extractedKeywords.join(', ')}]`);
+
+		// ✨ NEW FLOW: Step 2.5 - Filter meaningful keywords using LLM
+		console.log('   🔍 Step 2.5: Filtering meaningful keywords with LLM...');
+		const meaningfulKeywords = await geminiService.filterMeaningfulKeywords(
+			extractedKeywords,
+			topicSource,
+			apiKey
+		);
+		console.log(`   ✅ Filtered to ${meaningfulKeywords.length} meaningful keywords`);
+		console.log(`   📝 Meaningful keywords: [${meaningfulKeywords.join(', ')}]`);
+
+		// Combine with any user-provided primary keyword
+		const keywordsToResearch = [
+			...(s.data.primaryKeyword ? [s.data.primaryKeyword] : []),
+			...meaningfulKeywords,
+		];
+
+		// ✨ NEW FLOW: Step 3 - Fetch volumes ONLY for keywords extracted from titles
+		console.log('   🔍 Step 3: Fetching volumes for extracted keywords only...');
+		const keywordVolumes = await Promise.all(
+			keywordsToResearch.map(async (k, idx) => {
 				try {
-					const results = await keywordTool.getKeywordIdeas(k, location);
-					console.log(`   ✅ Got ${results.length} keywords for "${k}"`);
-					return results;
+					console.log(`   📡 Fetching volume for keyword ${idx + 1}/${keywordsToResearch.length}: "${k}"`);
+					const result = await keywordTool.getKeywordVolume(k, location);
+					if (result) {
+						console.log(`   ✅ Found volume for "${k}": ${result.volume}`);
+						return result;
+					} else {
+						console.log(`   ⚠️  No volume found for "${k}"`);
+						return null;
+					}
 				} catch (err) {
-					console.error(`   ❌ Failed to fetch keywords for "${k}":`, err);
-					return [];
+					console.error(`   ❌ Failed to fetch volume for "${k}":`, err);
+					return null;
 				}
 			})
 		);
 
-		const merged = keywordTool.dedupeMerge(batches.flat());
-		const ranked = keywordTool.scoreIdeas(
-			merged,
-			s.data.title || s.data.topic || ''
+		// Filter out null results (keywords without volumes)
+		const ranked = keywordVolumes
+			.filter((kw): kw is NonNullable<typeof kw> => kw !== null)
+			.map((kw) => ({
+				...kw,
+				score: 0, // Will be scored below
+			}));
+
+		// Score the keywords based on relevance to topic
+		const scoredRanked = keywordTool.scoreIdeas(
+			ranked,
+			s.data.title || s.data.topic || '',
+			true // Prioritize relevance/intent over volume
 		);
 
-		// Auto-select the top-ranked keyword
-		const selected = ranked.length > 0 ? ranked[0].text : s.data.topic || '';
+		// ✨ Filter: Keep only short keywords (2-3 words max) and prioritize relevance/intent
+		const filteredRanked = scoredRanked
+			.filter((kw) => {
+				const wordCount = kw.text.split(' ').length;
+				return wordCount <= 3 && kw.text.length <= 40; // Max 3 words, max 40 chars
+			})
+			.sort((a, b) => {
+				// First sort by score (descending) - score prioritizes relevance/intent
+				if (b.score !== a.score) {
+					return b.score - a.score;
+				}
+				// Then by volume (descending) - as secondary factor
+				if (b.volume !== a.volume) {
+					return b.volume - a.volume;
+				}
+				// Then prefer 2-word keywords over 3-word, then 1-word
+				const aWords = a.text.split(' ').length;
+				const bWords = b.text.split(' ').length;
+				if (aWords !== bWords) {
+					if (aWords === 2) return -1;
+					if (bWords === 2) return 1;
+					if (aWords === 3) return -1;
+					if (bWords === 3) return 1;
+					return aWords - bWords;
+				}
+				return 0;
+			});
+
+		// Auto-select the top-ranked short keyword
+		const selected = filteredRanked.length > 0 ? filteredRanked[0].text : s.data.topic || '';
 		console.log(`✅ [AUTO-FILL PRIMARY KEYWORD] Selected: "${selected}"`);
 		return selected;
 	} catch (err) {

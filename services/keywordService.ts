@@ -232,6 +232,108 @@ export function generateIntentVariations(baseKeyword: string): string[] {
 	return variations;
 }
 
+/**
+ * Extract relevant keywords from multiple titles
+ * This function extracts short, focused keywords (2-3 words max) from titles
+ */
+export function extractKeywordsFromTitles(
+	titles: string[],
+	maxKeywords: number = 40
+): string[] {
+	if (!titles || titles.length === 0) {
+		return [];
+	}
+
+	const keywordFrequency = new Map<string, number>();
+
+	titles.forEach((title) => {
+		if (!title || !title.trim()) return;
+
+		// Extract meaningful tokens (lowercase, filter stop words)
+		const tokens = title
+			.toLowerCase()
+			.replace(/[^a-z0-9\s]/g, ' ')
+			.split(/\s+/)
+			.filter(Boolean)
+			.filter((t) => t.length >= 3)
+			.filter((t) => !STOP_WORDS.has(t));
+
+		// Extract 1-word keywords (important single terms)
+		tokens.forEach((token) => {
+			if (token.length >= 4) {
+				// Only meaningful single words (4+ chars)
+				const normalized = token.trim();
+				keywordFrequency.set(
+					normalized,
+					(keywordFrequency.get(normalized) || 0) + 1
+				);
+			}
+		});
+
+		// Extract 2-word phrases (most valuable for keyword research)
+		for (let i = 0; i < tokens.length - 1; i++) {
+			const phrase = `${tokens[i]} ${tokens[i + 1]}`;
+			if (phrase.length >= 6 && phrase.length <= 40) {
+				// Reasonable length
+				const normalized = phrase.trim();
+				keywordFrequency.set(
+					normalized,
+					(keywordFrequency.get(normalized) || 0) + 1
+				);
+			}
+		}
+
+		// Extract 3-word phrases (but limit to shorter ones)
+		for (let i = 0; i < tokens.length - 2; i++) {
+			const phrase = `${tokens[i]} ${tokens[i + 1]} ${
+				tokens[i + 2]
+			}`;
+			if (phrase.length >= 10 && phrase.length <= 35) {
+				// Keep 3-word phrases short
+				const normalized = phrase.trim();
+				keywordFrequency.set(
+					normalized,
+					(keywordFrequency.get(normalized) || 0) + 1
+				);
+			}
+		}
+	});
+
+	// Filter out keywords longer than 3 words or too long
+	const filteredKeywords = Array.from(keywordFrequency.entries()).filter(
+		([keyword]) => {
+			const wordCount = keyword.split(' ').length;
+			return wordCount <= 3 && keyword.length <= 40; // Max 3 words, max 40 chars
+		}
+	);
+
+	// Sort by frequency (most common keywords first), then by word count (prefer 2-word), then alphabetically
+	const sortedKeywords = filteredKeywords
+		.sort((a, b) => {
+			// First sort by frequency (descending)
+			if (b[1] !== a[1]) {
+				return b[1] - a[1];
+			}
+			// Then by word count (prefer 2-word phrases, then 3-word, then 1-word)
+			const aWords = a[0].split(' ').length;
+			const bWords = b[0].split(' ').length;
+			if (aWords !== bWords) {
+				// Prefer 2-word > 3-word > 1-word
+				if (aWords === 2) return -1;
+				if (bWords === 2) return 1;
+				if (aWords === 3) return -1;
+				if (bWords === 3) return 1;
+				return aWords - bWords;
+			}
+			// Finally alphabetically for consistency
+			return a[0].localeCompare(b[0]);
+		})
+		.map(([keyword]) => keyword)
+		.slice(0, maxKeywords);
+
+	return sortedKeywords;
+}
+
 // Deterministic pseudo-metrics (no external calls) so the sample works offline.
 // Replace with a real provider when wiring into your backend.
 function hash(s: string): number {
@@ -335,6 +437,97 @@ async function getKeywordIdeasViaServer(
 	}));
 }
 
+/**
+ * Get volume for a specific keyword (exact match or close match)
+ * Returns the keyword with its volume if found, or empty array if not found
+ */
+export async function getKeywordVolume(
+	keyword: string,
+	location: string
+): Promise<KwRow | null> {
+	const normalizedKeyword = keyword.toLowerCase().trim();
+
+	// Try to get keyword ideas and find exact or close match
+	try {
+		const results = await getKeywordIdeasViaGoogleAdsServer(
+			keyword,
+			location
+		);
+
+		// Look for exact match first
+		const exactMatch = results.find(
+			(r) => r.text.toLowerCase().trim() === normalizedKeyword
+		);
+		if (exactMatch) {
+			return exactMatch;
+		}
+
+		// Look for close match (same words, different order or slight variations)
+		const keywordWords = new Set(normalizedKeyword.split(/\s+/));
+		const closeMatch = results.find((r) => {
+			const resultWords = new Set(
+				r.text.toLowerCase().trim().split(/\s+/)
+			);
+			// Check if all words from keyword are in result
+			let matchCount = 0;
+			keywordWords.forEach((word) => {
+				if (resultWords.has(word)) matchCount++;
+			});
+			// If 80%+ words match, consider it a close match
+			return matchCount >= Math.ceil(keywordWords.size * 0.8);
+		});
+
+		if (closeMatch) {
+			// Return with the original keyword text (not the API result text)
+			return {
+				...closeMatch,
+				text: keyword, // Use original keyword text
+			};
+		}
+
+		// If no match found, return null (will be filtered out)
+		return null;
+	} catch (e) {
+		// Try bloggr.ai API as fallback
+		try {
+			const results = await getKeywordIdeasViaBloggrAI(
+				keyword,
+				location
+			);
+			const exactMatch = results.find(
+				(r) => r.text.toLowerCase().trim() === normalizedKeyword
+			);
+			if (exactMatch) {
+				return exactMatch;
+			}
+
+			// Try close match in bloggr results too
+			const keywordWords = new Set(normalizedKeyword.split(/\s+/));
+			const closeMatch = results.find((r) => {
+				const resultWords = new Set(
+					r.text.toLowerCase().trim().split(/\s+/)
+				);
+				let matchCount = 0;
+				keywordWords.forEach((word) => {
+					if (resultWords.has(word)) matchCount++;
+				});
+				return matchCount >= Math.ceil(keywordWords.size * 0.8);
+			});
+
+			if (closeMatch) {
+				return {
+					...closeMatch,
+					text: keyword, // Use original keyword text
+				};
+			}
+
+			return null;
+		} catch (e2) {
+			return null;
+		}
+	}
+}
+
 export async function getKeywordIdeas(
 	seed: string,
 	location: string
@@ -415,7 +608,8 @@ export function dedupeMerge(rows: KwRow[]): KwRow[] {
 
 export function scoreIdeas(
 	rows: KwRow[],
-	title: string
+	title: string,
+	prioritizeRelevance: boolean = false
 ): Array<KwRow & { score: number }> {
 	if (!rows.length) return [] as any;
 	const vols = rows.map((r) => r.volume);
@@ -426,19 +620,54 @@ export function scoreIdeas(
 		maxD = Math.max(...diffs);
 
 	const sim = (kw: string) => {
-		// very light token overlap similarity 0..1
-		const a = new Set(
-			(title || '').toLowerCase().split(/\W+/).filter(Boolean)
+		// Enhanced similarity calculation that better captures user intent
+		const topicWords = new Set(
+			(title || '')
+				.toLowerCase()
+				.split(/\W+/)
+				.filter(Boolean)
+				.filter((w) => w.length >= 3)
 		);
-		const b = new Set(
-			(kw || '').toLowerCase().split(/\W+/).filter(Boolean)
+		const kwWords = new Set(
+			(kw || '')
+				.toLowerCase()
+				.split(/\W+/)
+				.filter(Boolean)
+				.filter((w) => w.length >= 3)
 		);
-		if (a.size === 0 || b.size === 0) return 0;
-		let inter = 0;
-		b.forEach((t) => {
-			if (a.has(t)) inter++;
+
+		if (topicWords.size === 0 || kwWords.size === 0) return 0;
+
+		// Count exact word matches
+		let exactMatches = 0;
+		kwWords.forEach((word) => {
+			if (topicWords.has(word)) exactMatches++;
 		});
-		return Math.min(1, inter / Math.max(1, Math.min(a.size, b.size)));
+
+		// Count partial matches (substring matches for better intent capture)
+		let partialMatches = 0;
+		kwWords.forEach((kwWord) => {
+			topicWords.forEach((topicWord) => {
+				if (
+					kwWord.includes(topicWord) ||
+					topicWord.includes(kwWord)
+				) {
+					partialMatches++;
+				}
+			});
+		});
+
+		// Combine exact and partial matches with weights
+		const exactScore =
+			exactMatches /
+			Math.max(1, Math.min(topicWords.size, kwWords.size));
+		const partialScore = Math.min(
+			1,
+			partialMatches / (topicWords.size + kwWords.size)
+		);
+
+		// Return combined similarity (prioritize exact matches)
+		return Math.min(1, 0.7 * exactScore + 0.3 * partialScore);
 	};
 
 	return rows
@@ -449,8 +678,24 @@ export function scoreIdeas(
 				maxD === minD
 					? 0.5
 					: (r.difficulty - minD) / (maxD - minD);
-			const s =
-				0.6 * volZ + 0.25 * (1 - diffZ) + 0.15 * sim(r.text);
+			const relevanceScore = sim(r.text);
+
+			// Adjust weights based on prioritizeRelevance flag
+			let s: number;
+			if (prioritizeRelevance) {
+				// Prioritize relevance/intent: 50% relevance, 30% volume, 20% difficulty
+				s =
+					0.5 * relevanceScore +
+					0.3 * volZ +
+					0.2 * (1 - diffZ);
+			} else {
+				// Original weights: 60% volume, 25% difficulty, 15% relevance
+				s =
+					0.6 * volZ +
+					0.25 * (1 - diffZ) +
+					0.15 * relevanceScore;
+			}
+
 			return { ...r, score: s };
 		})
 		.sort((a, b) => b.score - a.score);

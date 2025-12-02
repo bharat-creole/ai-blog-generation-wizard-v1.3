@@ -59,11 +59,7 @@ GUIDELINES:
 		opts.interlinks.map((l) => `- ${l.keyword}: ${l.url}`).join('\n') ||
 		'(none)'
 	}
-4. Use references from the following URLs to ground facts. Paraphrase and synthesize; avoid long verbatim spans. Cite with inline numeric markers like [1], [2] and include a Sources list at the end of this section:\n${
-		(opts.referenceUrls || []).map((u) => `- ${u}`).join('\n') ||
-		'(none)'
-	}
-5. Output Markdown for ONLY this section.
+4. Output Markdown for ONLY this section.
 
 BLOG TITLE: ${data.title}
 SECTION (H2): ${section.name}
@@ -76,7 +72,7 @@ SUBHEADS (H3):\n${
 		model: 'gemini-2.5-flash',
 		contents: { parts: [{ text: prompt }] },
 		config: {
-			tools: [{ googleSearch: {} }, { urlContext: {} }],
+			tools: [{ googleSearch: {} }], // Removed urlContext since we're not using references
 		},
 	});
 
@@ -123,33 +119,13 @@ ${currentDraft}
 				.join('\n')}`
 		: '';
 
-	const urlsFromChat = Array.from(
-		new Set(
-			messages
-				.map(
-					(m) =>
-						m.content.match(/https?:\/\/[^\s)]+/g) || []
-				)
-				.flat()
-		)
-	);
-	const allUrls = Array.from(
-		new Set([...(referenceUrls || []), ...urlsFromChat])
-	);
-
-	const refsBlock = allUrls.length
-		? `\n\nREFERENCE URLS (the model may fetch via urlContext):\n${allUrls
-				.map((u) => `- ${u}`)
-				.join('\n')}`
-		: '';
-
-	const finalPrompt = prompt + interlinkBlock + refsBlock;
+	const finalPrompt = prompt + interlinkBlock;
 
 	const response = await ai.models.generateContent({
 		model: 'gemini-2.5-flash',
 		contents: { parts: [{ text: finalPrompt }] },
 		config: {
-			tools: [{ googleSearch: {} }, { urlContext: {} }],
+			tools: [{ googleSearch: {} }], // Removed urlContext since we're not using references
 		},
 	});
 

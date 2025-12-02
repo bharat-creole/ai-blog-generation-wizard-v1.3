@@ -108,7 +108,17 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 				}`}
 		>
 			<div className='flex-1 overflow-y-auto py-3 px-4'>
-				{messages.map((m, i) => (
+				{messages
+					.filter((m) => {
+						// Filter out empty messages unless they have metadata for UI components
+						if (!m.content || !m.content.trim()) {
+							// Keep messages with metadata (for UI components)
+							return !!(m.keywordSelection || m.titleSelection || m.interlinkingForm || 
+								m.referencesForm || m.outlineApproval || m.controlLevelSelection);
+						}
+						return true; // Keep all messages with content
+					})
+					.map((m, i) => (
 					<div
 						key={i}
 						className={`mb-4 ${m.role === 'user'

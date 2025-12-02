@@ -134,10 +134,18 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({
 		}
 	}, [streamingCompleteCallback, hasMetadata, messageId]);
 
+	// Don't render if content is empty and there's no metadata for UI components
+	const hasContent = message.content && message.content.trim();
+	const hasMetadataForUI = hasMetadata;
+	
+	if (!hasContent && !hasMetadataForUI) {
+		return null; // Don't render empty messages without metadata
+	}
+
 	return (
 		<div className={messageClasses}>
 			{/* Render message content */}
-			{isAssistant && !hasMetadata ? (
+			{isAssistant && !hasMetadata && hasContent ? (
 				<StreamingText
 					text={message.content}
 					speed={15}
@@ -151,9 +159,9 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({
 						}
 					}}
 				/>
-			) : (
+			) : hasContent ? (
 				message.content
-			)}
+			) : null}
 
 			{/* Primary Keyword Selection */}
 			{message.keywordSelection?.type === 'primary' && (

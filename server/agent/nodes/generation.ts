@@ -16,16 +16,6 @@ export const proposalNode = async (state: AgentState): Promise<Partial<AgentStat
     }
 
     const section = state.outline[idx];
-    const useRefs =
-        state.preferences.automationLevel === 'full' || // Simplify logic for v2
-        state.data.referenceUrls?.length > 0;
-
-    // 📚 Log reference usage for this section
-    if (useRefs && idx === 0) {
-        console.log('📚 [CONTENT GENERATION] Using references:');
-        console.log(`   URLs: ${state.data.referenceUrls?.length || 0}`);
-        console.log(`   Files: ${state.data.referenceFiles?.length || 0}`);
-    }
 
     // Get apiKey from state or environment variable
     const apiKeyForSection = state.apiKey || process.env.GEMINI_API_KEY;
@@ -39,22 +29,9 @@ export const proposalNode = async (state: AgentState): Promise<Partial<AgentStat
         {
             targetKeyword: state.data.primaryKeyword,
             interlinks: state.data.interlinks as Interlink[],
-            referenceUrls: useRefs ? state.data.referenceUrls : [],
+            referenceUrls: [],
         }
     );
-
-    // Check for reference usage if required (simplified for v2)
-    // In v2, we might want to make this a separate validation node or just log it
-    if (useRefs && (state.data.referenceUrls?.length || 0) > 0) {
-        const used =
-            state.data.referenceUrls.some((u) => sectionMd.includes(u)) ||
-            /\[[0-9]+\]/.test(sectionMd) ||
-            /https?:\/\//.test(sectionMd);
-        if (!used) {
-            console.warn(`⚠️ [CONTENT GENERATION] References not detected in section "${section.name}"`);
-            // In v2, we might want to retry or flag this, but for now we proceed
-        }
-    }
 
     const newDraft = `${currentDraft}\n\n${sectionMd}`;
 

@@ -550,52 +550,117 @@ const AgentMode: React.FC<Props> = ({
 			);
 
 			// Display assistant response (only if not already added as separate messages)
+			// The queue system in useAgentExecutionV3 already adds messages, so we need to check for duplicates
 			if (result.response && result.response.trim()) {
-				setMessages((prev) => [
-					...prev,
-					{
-						role: 'assistant',
-						content: result.response,
-						...result.metadata, // ✨ Attach UI metadata (options, forms, etc.)
-					},
-				]);
-			} else if (result.metadata) {
-				// If no response but has metadata (like keyword selection UI), create message with content
-				let messageContent = '';
-				
-				// Generate appropriate message content based on metadata type
-				if (result.metadata.keywordSelection) {
-					const keywordMsg = createKeywordSelectionMessage(
-						result.metadata.keywordSelection.type,
-						result.metadata.keywordSelection.candidates || []
-					);
-					messageContent = keywordMsg.content;
-				} else if (result.metadata.titleSelection) {
-					const titleMsg = createTitleSelectionMessage(
-						result.metadata.titleSelection.titles || []
-					);
-					messageContent = titleMsg.content;
-				} else if (result.metadata.interlinkingForm) {
-					const interlinkingMsg = createInterlinkingFormMessage(
-						result.metadata.interlinkingForm.currentLinks || []
-					);
-					messageContent = interlinkingMsg.content;
-				} else if (result.metadata.referencesForm) {
-					const referencesMsg = createReferencesFormMessage(
-						result.metadata.referencesForm.currentUrls || [],
-						result.metadata.referencesForm.currentFiles || []
-					);
-					messageContent = referencesMsg.content;
+				// Check if this exact message was already added by the queue system
+				const messageAlreadyExists = messages.some((msg) => {
+					return msg.role === 'assistant' && 
+						msg.content === result.response &&
+						// Check if metadata types match (indicates duplicate)
+						((result.metadata?.keywordSelection && (msg as any).keywordSelection) ||
+						 (result.metadata?.titleSelection && (msg as any).titleSelection) ||
+						 (result.metadata?.interlinkingForm && (msg as any).interlinkingForm) ||
+						 (result.metadata?.referencesForm && (msg as any).referencesForm) ||
+						 (result.metadata?.outlineApproval && (msg as any).outlineApproval));
+				});
+
+				if (!messageAlreadyExists) {
+					setMessages((prev) => [
+						...prev,
+						{
+							role: 'assistant',
+							content: result.response,
+							...result.metadata, // ✨ Attach UI metadata (options, forms, etc.)
+						},
+					]);
 				}
-				
-				setMessages((prev) => [
-					...prev,
-					{
-						role: 'assistant',
-						content: messageContent,
-						...result.metadata,
-					},
-				]);
+			} else if (result.metadata) {
+				// Check if a message with this metadata already exists (was already queued)
+				// We check by comparing the metadata type and key properties
+				const metadataAlreadyExists = messages.some((msg) => {
+					if (msg.role !== 'assistant') return false;
+					
+					// Check for keyword selection duplicates
+					if (result.metadata.keywordSelection && (msg as any).keywordSelection) {
+						const msgCandidates = (msg as any).keywordSelection.candidates || [];
+						const resultCandidates = result.metadata.keywordSelection.candidates || [];
+						if (msgCandidates.length > 0 && resultCandidates.length > 0 &&
+							msgCandidates[0]?.keyword === resultCandidates[0]?.keyword) {
+							return true;
+						}
+					}
+					
+					// Check for title selection duplicates
+					if (result.metadata.titleSelection && (msg as any).titleSelection) {
+						const msgTitles = (msg as any).titleSelection.titles || [];
+						const resultTitles = result.metadata.titleSelection.titles || [];
+						if (msgTitles.length > 0 && resultTitles.length > 0 &&
+							msgTitles[0] === resultTitles[0]) {
+							return true;
+						}
+					}
+					
+					// Check for interlinking form duplicates (if both exist, likely same)
+					if (result.metadata.interlinkingForm && (msg as any).interlinkingForm) {
+						return true;
+					}
+					
+					// Check for references form duplicates (if both exist, likely same)
+					if (result.metadata.referencesForm && (msg as any).referencesForm) {
+						return true;
+					}
+					
+					// Check for outline approval duplicates (if both exist, likely same)
+					if (result.metadata.outlineApproval && (msg as any).outlineApproval) {
+						return true;
+					}
+					
+					return false;
+				});
+
+				// Only add if metadata doesn't already exist (message was already queued)
+				if (!metadataAlreadyExists) {
+					// If no response but has metadata (like keyword selection UI), create message with content
+					let messageContent = '';
+					
+					// Generate appropriate message content based on metadata type
+					if (result.metadata.keywordSelection) {
+						const keywordMsg = createKeywordSelectionMessage(
+							result.metadata.keywordSelection.type,
+							result.metadata.keywordSelection.candidates || []
+						);
+						messageContent = keywordMsg.content;
+					} else if (result.metadata.titleSelection) {
+						const titleMsg = createTitleSelectionMessage(
+							result.metadata.titleSelection.titles || []
+						);
+						messageContent = titleMsg.content;
+					} else if (result.metadata.interlinkingForm) {
+						const interlinkingMsg = createInterlinkingFormMessage(
+							result.metadata.interlinkingForm.currentLinks || []
+						);
+						messageContent = interlinkingMsg.content;
+					} else if (result.metadata.referencesForm) {
+						const referencesMsg = createReferencesFormMessage(
+							result.metadata.referencesForm.currentUrls || [],
+							result.metadata.referencesForm.currentFiles || []
+						);
+						messageContent = referencesMsg.content;
+					}
+					
+					// Only add message if content is not empty or if there's metadata for UI components
+					if (messageContent.trim() || result.metadata.keywordSelection || result.metadata.titleSelection ||
+						result.metadata.interlinkingForm || result.metadata.referencesForm || result.metadata.outlineApproval) {
+						setMessages((prev) => [
+							...prev,
+							{
+								role: 'assistant',
+								content: messageContent,
+								...result.metadata,
+							},
+						]);
+					}
+				}
 			}
 
 			// Update local state with backend response

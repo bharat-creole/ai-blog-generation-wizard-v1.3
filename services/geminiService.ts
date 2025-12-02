@@ -156,7 +156,6 @@ QUALITY & SEO GUIDELINES (CRITICAL):
 						.join('\n')
 				: '  (No internal links provided.)'
 		}
-    *   **External Links:** To boost authority, include 2-3 relevant, high-quality external links to non-competitive, authoritative sources (like Wikipedia, research papers, or industry leaders).
 
 DETAILS:
 - Title: "${data.title}"
@@ -174,15 +173,8 @@ const buildContentParts = async (
 	prompt: string,
 	data: BlogData
 ): Promise<Part[]> => {
+	// Removed reference files since we're not using references in content generation
 	const parts: Part[] = [{ text: prompt }];
-	for (const file of data.referenceFiles) {
-		parts.push({
-			inlineData: {
-				mimeType: file.mimeType,
-				data: file.base64,
-			},
-		});
-	}
 	return parts;
 };
 
@@ -239,6 +231,148 @@ export const generateTitles = async (
 	return titles;
 };
 
+/**
+ * Search the web using Gemini's Google Search tool to find top 20 relevant titles
+ * related to the user's query/topic
+ */
+export const searchWebForTitles = async (
+	userQuery: string,
+	apiKey: string
+): Promise<string[]> => {
+	if (!apiKey) throw new Error('API Key is required.');
+	const ai = new GoogleGenAI({ apiKey });
+
+	const prompt = `
+	ROLE: You are a web research assistant specializing in finding relevant blog titles and articles.
+	TASK: Search the web for the top 20 most relevant and popular blog titles/articles related to the user's query.
+	INSTRUCTIONS:
+	1. Use the Google Search tool to find real, existing blog titles and articles about the topic.
+	2. Focus on titles that are actually published on the web, not generated ones.
+	3. Return exactly 20 titles that are most relevant to the user's query.
+	4. The titles should be diverse and cover different aspects of the topic.
+	5. Output ONLY a clean JSON array of strings. Do not add any other text, pre-amble, or comments.
+
+	USER QUERY: "${userQuery}"
+
+	EXAMPLE OUTPUT:
+	["10 Best Practices for Cloud Computing in 2024", "Understanding Cloud Architecture: A Complete Guide", "Cloud Computing Trends: What to Expect This Year"]
+	`;
+
+	const response: GenerateContentResponse = await retryWithBackoff(
+		async () => {
+			return await ai.models.generateContent({
+				model: 'gemini-2.5-flash',
+				contents: { parts: [{ text: prompt }] },
+				config: {
+					tools: [{ googleSearch: {} }],
+					// Note: Cannot use responseMimeType with tools - must parse JSON from text
+				},
+			});
+		},
+		{
+			maxRetries: 3,
+			initialDelay: 1000,
+			onRetry: (attempt, delay) => {
+				console.log(`   ⏳ Rate limit hit. Retrying in ${Math.ceil(delay / 1000)}s (attempt ${attempt}/3)...`);
+			},
+		}
+	);
+
+	const extractedText = extractTextFromResponse(response);
+	const titles = cleanAndParseJson(extractedText);
+
+	// Ensure we return exactly 20 titles (or as many as we got, up to 20)
+	return Array.isArray(titles) ? titles.slice(0, 20) : [];
+};
+
+/**
+ * Filter meaningful keywords using LLM
+ * Removes meaningless standalone keywords like "right", "about use", "choosing right", etc.
+ */
+export const filterMeaningfulKeywords = async (
+	keywords: string[],
+	userTopic: string,
+	apiKey: string
+): Promise<string[]> => {
+	if (!apiKey) throw new Error('API Key is required.');
+	if (!keywords || keywords.length === 0) return [];
+
+	const ai = new GoogleGenAI({ apiKey });
+
+	const prompt = `
+ROLE: You are a keyword validation expert specializing in SEO and content marketing.
+TASK: Filter out meaningless or incomplete keywords that don't make sense as standalone search terms.
+
+INSTRUCTIONS:
+1. Review each keyword in the list below.
+2. Keep only keywords that are meaningful, complete, and make sense as standalone search terms.
+3. Remove keywords that are:
+   - Incomplete phrases (e.g., "right", "about use", "choosing right")
+   - Generic words without context (e.g., "using", "guide", "best" when alone)
+   - Fragments that don't convey clear intent
+   - Stop words or filler words
+4. Keep keywords that:
+   - Are complete phrases with clear meaning
+   - Relate to the user's topic: "${userTopic}"
+   - Can be used as standalone search queries
+   - Have semantic value
+
+USER TOPIC: "${userTopic}"
+
+KEYWORDS TO FILTER:
+${keywords.map((k, i) => `${i + 1}. ${k}`).join('\n')}
+
+OUTPUT: Return ONLY a JSON array of strings containing the meaningful keywords. Do not include any other text, comments, or explanations.
+
+EXAMPLE OUTPUT:
+["aws database", "amazon rds", "database management"]
+`;
+
+	try {
+		const response: GenerateContentResponse = await retryWithBackoff(
+			async () => {
+				return await ai.models.generateContent({
+					model: 'gemini-2.5-flash',
+					contents: { parts: [{ text: prompt }] },
+					config: {
+						responseMimeType: 'application/json',
+						responseSchema: {
+							type: Type.ARRAY,
+							items: { type: Type.STRING },
+						},
+					},
+				});
+			},
+			{
+				maxRetries: 2,
+				initialDelay: 1000,
+				onRetry: (attempt, delay) => {
+					console.log(`   ⏳ Retrying keyword filter in ${Math.ceil(delay / 1000)}s (attempt ${attempt}/2)...`);
+				},
+			}
+		);
+
+		const extractedText = extractTextFromResponse(response);
+		const filteredKeywords = cleanAndParseJson(extractedText);
+
+		return Array.isArray(filteredKeywords) ? filteredKeywords : [];
+	} catch (err) {
+		console.error('❌ Failed to filter keywords with LLM, using fallback filter:', err);
+		// Fallback: simple heuristic filter
+		return keywords.filter((kw) => {
+			const words = kw.toLowerCase().split(/\s+/);
+			// Filter out single generic words
+			if (words.length === 1) {
+				const genericWords = new Set(['right', 'using', 'guide', 'best', 'about', 'use', 'choosing', 'service']);
+				return !genericWords.has(words[0]);
+			}
+			// Filter out incomplete phrases
+			const incompletePatterns = ['about use', 'choosing right', 'right database'];
+			return !incompletePatterns.some(pattern => kw.toLowerCase().includes(pattern));
+		});
+	}
+};
+
 export const generateOutline = async (
 	data: BlogData,
 	apiKey: string,
@@ -256,7 +390,7 @@ export const generateOutline = async (
 				model: 'gemini-2.5-flash',
 				contents: { parts: contentParts },
 				config: {
-					tools: [{ googleSearch: {} }, { urlContext: {} }],
+					tools: [{ googleSearch: {} }], // Removed urlContext since we're not using references
 				},
 			});
 		return cleanAndParseJson(extractTextFromResponse(response));
@@ -269,13 +403,13 @@ export const generateOutline = async (
 	const plannerResponse: GenerateContentResponse =
 		await retryWithBackoff(
 			async () => {
-				return await ai.models.generateContent({
-					model: 'gemini-2.5-flash',
-					contents: { parts: plannerContentParts },
-					config: {
-						tools: [{ googleSearch: {} }, { urlContext: {} }],
-					},
-				});
+				return 			await ai.models.generateContent({
+				model: 'gemini-2.5-flash',
+				contents: { parts: plannerContentParts },
+				config: {
+					tools: [{ googleSearch: {} }], // Removed urlContext since we're not using references
+				},
+			});
 			},
 			{
 				maxRetries: 3,
@@ -309,7 +443,7 @@ export const generateOutline = async (
 						model: 'gemini-2.5-flash',
 						contents: { parts: executorContentParts },
 						config: {
-							tools: [{ googleSearch: {} }, { urlContext: {} }],
+							tools: [{ googleSearch: {} }], // Removed urlContext since we're not using references
 						},
 					});
 				},
@@ -337,20 +471,14 @@ export const generateBlogPost = async (
 	if (!apiKey) throw new Error('API Key is required.');
 	const ai = new GoogleGenAI({ apiKey });
 
-	const prompt =
-		FINAL_BLOG_PROMPT(data, outline) +
-		(data.referenceUrls.length
-			? `\n\nREFERENCE URLS to consult (via urlContext):\n${data.referenceUrls
-					.map((u) => `- ${u}`)
-					.join('\n')}`
-			: '');
+	const prompt = FINAL_BLOG_PROMPT(data, outline);
 	const contentParts = await buildContentParts(prompt, data);
 
 	const responseStream = await ai.models.generateContentStream({
 		model: 'gemini-2.5-flash',
 		contents: { parts: contentParts },
 		config: {
-			tools: [{ googleSearch: {} }, { urlContext: {} }],
+			tools: [{ googleSearch: {} }], // Removed urlContext since we're not using references
 		},
 	});
 

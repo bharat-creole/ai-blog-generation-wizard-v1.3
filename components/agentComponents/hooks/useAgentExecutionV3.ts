@@ -236,8 +236,14 @@ export const useAgentExecutionV3 = (
 								}
 							}
 							
+							// Create a unique identifier for this message to prevent duplicates
+							const messageUniqueId = message.metadata 
+								? `msg_${JSON.stringify(message.metadata).substring(0, 100)}_${Date.now()}`
+								: `msg_${Date.now()}_${Math.random()}`;
+
 							const messageMetadata = {
 								...(message.metadata || {}),
+								_messageUniqueId: messageUniqueId, // Add unique ID to track duplicates
 								_streamingCompleteCallback: () => {
 									// Add pause after "Writing section" messages complete
 									if (pauseAfterStreaming > 0 && writingSectionNumber !== null) {
@@ -274,23 +280,44 @@ export const useAgentExecutionV3 = (
 							// Store callback for this message
 							currentMessageCompleteCallback = messageMetadata._streamingCompleteCallback;
 							
-							setMessages((prev) => {
-								const newMessages = [
-									...prev,
-									{
-										role: 'assistant',
-										content: message.content,
-										...messageMetadata,
-									},
-								];
-								return newMessages;
-							});
+							// Only add message if it has content or metadata for UI components
+							const hasContent = message.content && message.content.trim();
+							const hasMetadata = messageMetadata.keywordSelection || messageMetadata.titleSelection ||
+								messageMetadata.interlinkingForm || messageMetadata.referencesForm || messageMetadata.outlineApproval;
+							
+							if (hasContent || hasMetadata) {
+								setMessages((prev) => {
+									const newMessages = [
+										...prev,
+										{
+											role: 'assistant',
+											content: message.content || '', // Ensure content is at least empty string
+											...messageMetadata,
+										},
+									];
+									return newMessages;
+								});
+							} else {
+								// Message is empty and has no metadata - skip it but still process queue
+								currentMessageStreaming = false;
+								currentMessageCompleteCallback = null;
+								isProcessingQueue = false;
+								processMessageQueue();
+							}
 						} else {
 							isProcessingQueue = false;
 						}
 					};
 
 					const queueMessage = (content: string, metadata?: any) => {
+						// Don't queue empty messages (unless they have metadata for UI components)
+						if (!content || !content.trim()) {
+							// Only queue if there's metadata (for UI components like keyword selection)
+							if (!metadata || (!metadata.keywordSelection && !metadata.titleSelection && 
+								!metadata.interlinkingForm && !metadata.referencesForm && !metadata.outlineApproval)) {
+								return; // Skip empty messages without metadata
+							}
+						}
 						messageQueue.push({ content, metadata });
 						processMessageQueue();
 					};
@@ -728,11 +755,15 @@ export const useAgentExecutionV3 = (
 								}
 							}
 
+							// Track if we queued a message with metadata to prevent duplicates
+							let messageWithMetadataQueued = false;
+
 							// Queue final response if it exists and wasn't already queued
 							// If we queue it, clear finalResponse so AgentMode won't add it again
 							if (finalResponse && finalResponse.trim()) {
 								queueMessage(finalResponse, metadata);
 								finalResponse = ''; // Clear to prevent duplicate in AgentMode
+								messageWithMetadataQueued = true;
 							}
 
 							// Wait for queue to finish processing before resolving
@@ -740,7 +771,9 @@ export const useAgentExecutionV3 = (
 								resolve({
 									response: '', // Empty since we queued it
 									updatedState,
-									metadata,
+									// Only return metadata if we didn't already queue a message with it
+									// This prevents AgentMode from adding a duplicate message
+									metadata: messageWithMetadataQueued ? undefined : metadata,
 								});
 							});
 						},

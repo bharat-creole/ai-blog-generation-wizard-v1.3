@@ -1,6 +1,7 @@
 import { AgentState } from '../state';
 import * as keywordTool from '../../../services/keywordService';
 import * as automationEngine from '../../../services/automationEngine';
+import * as geminiService from '../../../services/geminiService';
 import { AIMessage } from '@langchain/core/messages';
 
 export const researchPrimaryNode = async (
@@ -80,39 +81,173 @@ export const researchPrimaryNode = async (
 		state.data.primaryKeyword ||
 		'';
 
-	// 🎯 Extract intelligent seeds using enhanced extraction
-	const extractedSeeds = keywordTool.extractSeedsFromTitle(topicSource, 5);
-
-	// Combine with any user-provided primary keyword
-	const seeds = [
-		...(state.data.primaryKeyword ? [state.data.primaryKeyword] : []),
-		...extractedSeeds,
-	];
+	if (!topicSource || topicSource.trim().length === 0) {
+		return {
+			halt: { reason: 'no_topic_provided' },
+			currentStep: 'topic',
+			messages: [
+				...(state.messages || []),
+				new AIMessage(
+					"Please provide a topic or title to search for keywords."
+				),
+			],
+			trace: [
+				{
+					step: 'KeywordResearch.noTopic',
+					info: {},
+					at: Date.now(),
+				},
+			],
+		};
+	}
 
 	const location = state.data.targetLocation || 'United States';
 	let ranked: any[] = [];
 
 	try {
-		const batches = await Promise.all(
-			seeds.map(async (k) => {
+		// ✨ NEW FLOW: Step 1 - Search web through Gemini to get top 10 titles
+		console.log('🔍 [PRIMARY KEYWORD RESEARCH] Step 1: Searching web for titles...');
+		const apiKey = state.apiKey || process.env.GEMINI_API_KEY;
+		if (!apiKey) {
+			throw new Error('API Key is required for web search.');
+		}
+
+		const webTitles = await geminiService.searchWebForTitles(
+			topicSource,
+			apiKey
+		);
+		console.log(`   ✅ Found ${webTitles.length} titles from web search`);
+		console.log(`   📋 Web-searched titles:`);
+		webTitles.forEach((title, idx) => {
+			console.log(`      ${idx + 1}. ${title}`);
+		});
+
+		// ✨ NEW FLOW: Step 2 - Extract relevant keywords from those titles
+		console.log('🔍 [PRIMARY KEYWORD RESEARCH] Step 2: Extracting keywords from titles...');
+		const extractedKeywords = keywordTool.extractKeywordsFromTitles(
+			webTitles,
+			50 // Extract 50 keywords to ensure we get 20+ after all filtering
+		);
+		console.log(`   ✅ Extracted ${extractedKeywords.length} keywords from titles`);
+		console.log(`   📝 Extracted keywords: [${extractedKeywords.join(', ')}]`);
+
+		// ✨ NEW FLOW: Step 2.5 - Filter meaningful keywords using LLM
+		console.log('🔍 [PRIMARY KEYWORD RESEARCH] Step 2.5: Filtering meaningful keywords with LLM...');
+		const meaningfulKeywords = await geminiService.filterMeaningfulKeywords(
+			extractedKeywords,
+			topicSource,
+			apiKey
+		);
+		console.log(`   ✅ Filtered to ${meaningfulKeywords.length} meaningful keywords`);
+		console.log(`   📝 Meaningful keywords: [${meaningfulKeywords.join(', ')}]`);
+
+		// Combine with any user-provided primary keyword
+		const keywordsToResearch = [
+			...(state.data.primaryKeyword ? [state.data.primaryKeyword] : []),
+			...meaningfulKeywords,
+		];
+
+		// ✨ NEW FLOW: Step 3 - Fetch volumes ONLY for keywords extracted from titles
+		console.log('🔍 [PRIMARY KEYWORD RESEARCH] Step 3: Fetching volumes for extracted keywords only...');
+		const keywordVolumes = await Promise.all(
+			keywordsToResearch.map(async (k, idx) => {
 				try {
-					return await keywordTool.getKeywordIdeas(
-						k,
-						location
-					);
+					console.log(`   📡 Fetching volume for keyword ${idx + 1}/${keywordsToResearch.length}: "${k}"`);
+					const result = await keywordTool.getKeywordVolume(k, location);
+					if (result) {
+						console.log(`   ✅ Found volume for "${k}": ${result.volume}`);
+						return result;
+					} else {
+						console.log(`   ⚠️  No volume found for "${k}"`);
+						return null;
+					}
 				} catch (err) {
-					return [];
+					console.error(`   ❌ Failed to fetch volume for "${k}":`, err);
+					return null;
 				}
 			})
 		);
 
-		const merged = keywordTool.dedupeMerge(batches.flat());
+		// Separate keywords with volumes and without volumes
+		const keywordsWithVolume = keywordVolumes
+			.filter((kw): kw is NonNullable<typeof kw> => kw !== null)
+			.map((kw) => ({
+				...kw,
+				score: 0, // Will be scored below
+			}));
+
+		// If we don't have enough keywords with volumes, include some without volumes
+		// (but only if they passed the LLM filter)
+		const keywordsWithoutVolume = keywordVolumes
+			.map((kw, idx) => kw === null ? keywordsToResearch[idx] : null)
+			.filter((kw): kw is string => kw !== null);
+
+		// Start with keywords that have volumes
+		ranked = keywordsWithVolume;
+
+		// Score the keywords based on relevance to topic
 		ranked = keywordTool.scoreIdeas(
-			merged,
-			state.data.title || state.data.topic || ''
+			ranked,
+			state.data.title || state.data.topic || '',
+			true // Prioritize relevance/intent over volume
 		);
+
+		// ✨ Filter: Keep only short keywords (2-3 words max) and prioritize relevance/intent
+		ranked = ranked
+			.filter((kw) => {
+				const wordCount = kw.text.split(' ').length;
+				return wordCount <= 3 && kw.text.length <= 40; // Max 3 words, max 40 chars
+			})
+			.sort((a, b) => {
+				// First sort by score (descending) - score prioritizes relevance/intent
+				if (b.score !== a.score) {
+					return b.score - a.score;
+				}
+				// Then by volume (descending) - as secondary factor
+				if (b.volume !== a.volume) {
+					return b.volume - a.volume;
+				}
+				// Then prefer 2-word keywords over 3-word, then 1-word
+				const aWords = a.text.split(' ').length;
+				const bWords = b.text.split(' ').length;
+				if (aWords !== bWords) {
+					if (aWords === 2) return -1;
+					if (bWords === 2) return 1;
+					if (aWords === 3) return -1;
+					if (bWords === 3) return 1;
+					return aWords - bWords;
+				}
+				return 0;
+			})
+			.slice(0, 30); // Limit to top 30 relevant short keywords
+
+		// ✨ Ensure we have at least 20 keywords
+		// If we have fewer than 20, add keywords without volumes (they passed LLM filter)
+		if (ranked.length < 20 && keywordsWithoutVolume.length > 0) {
+			const missingCount = 20 - ranked.length;
+			const additionalKeywords = keywordsWithoutVolume
+				.filter((kw) => {
+					const wordCount = kw.split(' ').length;
+					return wordCount <= 3 && kw.length <= 40;
+				})
+				.slice(0, missingCount)
+				.map((kw) => ({
+					text: kw,
+					volume: 0, // No volume data available
+					difficulty: 0.5,
+					source: 'seed' as const,
+					score: 0.1, // Lower score since no volume
+				}));
+			ranked = [...ranked, ...additionalKeywords];
+		}
+
+		// Final limit: show at least 20, up to 30
+		ranked = ranked.slice(0, Math.max(20, ranked.length));
+
+		console.log(`✅ [PRIMARY KEYWORD RESEARCH] Complete! Found ${ranked.length} unique short keywords (2-3 words) with volumes`);
 	} catch (err) {
-		// Silent error handling
+		console.error('❌ [PRIMARY KEYWORD RESEARCH] Error:', err);
+		// Silent error handling - will return empty ranked array
 	}
 
 	// ✨ NEW: Handle no keywords found
