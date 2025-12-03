@@ -190,6 +190,13 @@ export const useAgentExecutionV3 = (
 					let shownPreMessages = new Set<string>(); // Track which pre-messages we've shown
 					let writingSectionNumber: number | null = null; // Track which section's "Writing" message is currently streaming
 					let pendingCompletionMessages: Map<number, string> = new Map(); // Store completion messages waiting for "Writing" to finish
+					
+					// Helper function to check if two arrays are equal
+					const arraysEqual = (a: any[] | undefined, b: any[] | undefined): boolean => {
+						if (!a || !b) return false;
+						if (a.length !== b.length) return false;
+						return a.every((val, idx) => val === b[idx]);
+					};
 
 					// ✨ Message queue system - ensures messages are displayed one at a time
 					// Messages wait for the previous message to finish streaming before displaying
@@ -368,6 +375,9 @@ export const useAgentExecutionV3 = (
 						return null;
 					};
 
+					// Track messages from backend to prevent duplicates
+					const backendMessages = new Set<string>();
+					
 					streamMessage(message, threadId, backendState, apiKeyToUse, {
 						onIntent: (data) => {
 							// Initial assistant response (e.g. "I'll handle that...")
@@ -379,10 +389,17 @@ export const useAgentExecutionV3 = (
 								console.log(`📨 [INTENT] Queueing ${data.assistantMessages.length} separate messages:`, data.assistantMessages);
 								// Queue each message to be displayed one at a time
 								data.assistantMessages.forEach((msg) => {
+									// Track backend messages to prevent frontend duplicates
+									const msgKey = msg.substring(0, 50); // Use first 50 chars as key
+									backendMessages.add(msgKey);
 									queueMessage(msg);
 								});
 								// Mark that messages were already added, so AgentMode.tsx won't add the single message
 								finalResponse = ''; // Clear finalResponse to prevent duplicate
+							} else if (finalResponse) {
+								// Track single message too
+								const msgKey = finalResponse.substring(0, 50);
+								backendMessages.add(msgKey);
 							}
 							// If single message, don't add here - it will be added in AgentMode.tsx with metadata
 							// This prevents duplicate messages
@@ -404,6 +421,26 @@ export const useAgentExecutionV3 = (
 								hasStateUpdate: !!stateUpdate,
 								stateUpdateKeys: stateUpdate ? Object.keys(stateUpdate) : []
 							});
+
+							// Check if we're transitioning from title to outline in full automation - show skipped steps
+							const isFullAutomation = accumulatedState.preferences?.automationLevel === 'full';
+							const wasAtTitle = accumulatedState.currentStep === 'title' || accumulatedState.currentStep === 'title_generation';
+							const isMovingToOutline = stateUpdate.currentStep === 'outline' || nodeName === 'discovery';
+							
+							if (isFullAutomation && wasAtTitle && isMovingToOutline) {
+								// Show skipped interlinking message FIRST
+								const interlinkingSkippedKey = 'interlinking_skipped';
+								if (!shownPreMessages.has(interlinkingSkippedKey)) {
+									shownPreMessages.add(interlinkingSkippedKey);
+									queueMessage('⏭️ **Skipped interlinking step**');
+								}
+								// Show skipped references message SECOND
+								const referencesSkippedKey = 'references_skipped';
+								if (!shownPreMessages.has(referencesSkippedKey)) {
+									shownPreMessages.add(referencesSkippedKey);
+									queueMessage('⏭️ **Skipped references step**');
+								}
+							}
 
 							// Show pre-execution message when we first detect a node is executing
 							// Show it immediately when we see the node name, before merging state
@@ -435,29 +472,30 @@ export const useAgentExecutionV3 = (
 										let preMessage: string | null = null;
 										
 										if (nodeName === 'research_primary') {
-											preMessage = '🔍 Generating primary keywords...';
+											// Check if backend already sent this message to prevent duplicate
+											const researchMsg = '🔍 **Researching primary keywords...**';
+											const msgKey = researchMsg.substring(0, 50);
+											if (!backendMessages.has(msgKey)) {
+												preMessage = '🔍 **Researching primary keywords...**\n\nI\'m analyzing your topic to find the best primary keyword options for SEO optimization.';
+											}
 										} else if (nodeName === 'research_secondary') {
-											preMessage = '🔍 Generating secondary keywords...';
+											preMessage = '🔍 **Generating secondary keywords...**\n\nI\'m finding related keywords that complement your primary keyword to expand your content\'s reach.';
 										} else if (nodeName === 'title_generation') {
-											preMessage = '📝 Generating title options...';
+											preMessage = '📝 **Generating title options...**\n\nI\'m creating engaging title options that incorporate your keywords and appeal to your target audience.';
 										} else if (nodeName === 'discovery') {
-											preMessage = '📋 Generating outline...';
+											preMessage = '📋 **Generating outline...**\n\nI\'m creating a comprehensive outline structure for your blog post.';
 									} else if (nodeName === 'proposal') {
 										// When proposal node starts, sectionIndex is the section that will be generated (0-based)
 										// So we show sectionIndex + 1 for user-friendly display
 										const sectionIndex = accumulatedState.progress?.sectionIndex ?? 0;
 										const sectionNumber = sectionIndex + 1;
-										preMessage = `✍️ Writing section ${sectionNumber}...`;
+										preMessage = `✍️ **Writing section ${sectionNumber}...**\n\nI'm generating the content for this section.`;
 									}
 
 									if (preMessage) {
 										shownPreMessages.add(messageKey);
-										// For proposal node, keep thinking indicator on while generating
-										if (nodeName === 'proposal') {
-											if (setIsThinking) setIsThinking(true);
-										} else {
-											if (setIsThinking) setIsThinking(false);
-										}
+										// Keep thinking indicator on during automation - don't turn it off here
+										// It will be turned off when trace messages arrive or when complete
 											
 											// Log when message is being queued
 											console.log(`🚀 [PRE-MESSAGE] Queueing: "${preMessage}"`, {
@@ -486,17 +524,33 @@ export const useAgentExecutionV3 = (
 							}
 
 							// Merge state update into accumulated state first
-							// If trace exists, it might be appended, so we need to check the full trace
+							// If trace exists, merge it properly (trace is usually appended, not replaced)
+							const existingTrace = accumulatedState.trace || [];
 							if (
 								stateUpdate.trace &&
 								Array.isArray(stateUpdate.trace)
 							) {
-								accumulatedState.trace =
-									stateUpdate.trace;
+								// Merge traces - keep existing ones and add new ones
+								const newTrace = stateUpdate.trace;
+								// Combine and deduplicate by step and timestamp
+								const combinedTrace = [...existingTrace];
+								for (const newEntry of newTrace) {
+									const exists = combinedTrace.some(
+										(existing) =>
+											existing.step === newEntry.step &&
+											existing.at === newEntry.at
+									);
+									if (!exists) {
+										combinedTrace.push(newEntry);
+									}
+								}
+								accumulatedState.trace = combinedTrace;
 							}
 							accumulatedState = {
 								...accumulatedState,
 								...stateUpdate,
+								// Preserve merged trace
+								trace: accumulatedState.trace || existingTrace,
 							};
 
 							// ✨ Update draft in real-time if it exists in the state update
@@ -574,27 +628,26 @@ export const useAgentExecutionV3 = (
 									lastTraceLength
 								)
 							) {
-								const latestTrace =
-									currentTrace[
-										currentTrace.length -
-											1
-									];
-								if (latestTrace) {
-									const stepMessage =
-										getStepMessage(
-											latestTrace.step,
-											latestTrace.info
-										);
-
-									if (stepMessage) {
-										// Turn off thinking indicator as soon as we start showing progress
-										if (setIsThinking)
-											setIsThinking(
-												false
+								// Process all new trace entries since last check
+								const newTraces = currentTrace.slice(lastTraceLength);
+								for (const traceEntry of newTraces) {
+									if (traceEntry) {
+										const stepMessage =
+											getStepMessage(
+												traceEntry.step,
+												traceEntry.info
 											);
 
-										// Queue step message
-										queueMessage(stepMessage);
+										if (stepMessage) {
+											console.log(`📨 [TRACE MESSAGE] Queueing: "${stepMessage}"`, {
+												step: traceEntry.step,
+												info: traceEntry.info,
+												traceLength: currentTraceLength,
+												lastTraceLength
+											});
+											// Queue step message
+											queueMessage(stepMessage);
+										}
 									}
 								}
 								lastTraceLength =
@@ -602,9 +655,32 @@ export const useAgentExecutionV3 = (
 							}
 
 							// Also check for other progress indicators
+							// Only show progress messages if they're not already shown via trace messages
 							let progressMsg = '';
+							const hasTraceMessage = stateUpdate.trace && Array.isArray(stateUpdate.trace) && stateUpdate.trace.length > 0;
 
-							if (chunk.keywordResearch) {
+							// Check for secondary keywords FIRST - must check this BEFORE primary keyword to avoid conflicts
+							if (
+								stateUpdate.data?.secondaryKeywords &&
+								Array.isArray(stateUpdate.data.secondaryKeywords) &&
+								stateUpdate.data.secondaryKeywords.length > 0
+							) {
+								// Check if this is a new addition (different from accumulated state)
+								const isNew = !accumulatedState.data?.secondaryKeywords || 
+									accumulatedState.data.secondaryKeywords.length !== stateUpdate.data.secondaryKeywords.length ||
+									!arraysEqual(accumulatedState.data.secondaryKeywords, stateUpdate.data.secondaryKeywords);
+								
+								if (isNew) {
+									// Show secondary keywords with full list
+									const keywordsList = stateUpdate.data.secondaryKeywords.join(', ');
+									progressMsg = `✅ Selected ${stateUpdate.data.secondaryKeywords.length} secondary keywords: ${keywordsList}`;
+									console.log(`📨 [PROGRESS] Secondary keywords detected:`, {
+										keywords: stateUpdate.data.secondaryKeywords,
+										isNew,
+										progressMsg
+									});
+								}
+							} else if (chunk.keywordResearch) {
 								const candidates =
 									chunk.keywordResearch
 										.primaryCandidates ||
@@ -613,28 +689,30 @@ export const useAgentExecutionV3 = (
 								if (candidates?.length) {
 									progressMsg = `🔍 Found ${candidates.length} keywords...`;
 								}
-							} else if (stateUpdate.data?.title) {
+							} else if (
+								stateUpdate.data?.title &&
+								// Only show if title is newly added
+								(!accumulatedState.data?.title || accumulatedState.data.title !== stateUpdate.data.title)
+							) {
 								progressMsg = `📝 Generated title: "${stateUpdate.data.title}"`;
 							} else if (
-								stateUpdate.data?.primaryKeyword
+								stateUpdate.data?.primaryKeyword &&
+								// Only show if primary keyword is newly added
+								(!accumulatedState.data?.primaryKeyword || accumulatedState.data.primaryKeyword !== stateUpdate.data.primaryKeyword) &&
+								// Don't show if we're currently processing secondary keywords
+								!(stateUpdate.data?.secondaryKeywords && stateUpdate.data.secondaryKeywords.length > 0)
 							) {
 								progressMsg = `✅ Selected primary keyword: "${stateUpdate.data.primaryKeyword}"`;
 							} else if (
-								stateUpdate.data
-									?.secondaryKeywords
-							) {
-								progressMsg = `✅ Selected ${stateUpdate.data.secondaryKeywords.length} secondary keywords`;
-							} else if (
 								stateUpdate.outline &&
-								!stateUpdate.trace
+								!hasTraceMessage
 							) {
 								// Only show this if we don't have a trace message (to avoid duplicates)
 								progressMsg = `📋 Generated outline with ${stateUpdate.outline.length} sections`;
 							}
 
 							if (progressMsg) {
-								if (setIsThinking)
-									setIsThinking(false);
+								// Keep thinking indicator on during automation
 								// Queue progress message
 								queueMessage(progressMsg);
 							}
@@ -655,6 +733,17 @@ export const useAgentExecutionV3 = (
 							// Ensure apiKey is not in final state
 							delete updatedState.apiKey;
 							finalState = updatedState;
+							
+							// Only turn off thinking indicator when automation is complete
+							// Check if we're in full automation mode
+							const isFullAutomation = updatedState.preferences?.automationLevel === 'full';
+							// If in automation and still have steps to complete, keep loader on
+							if (isFullAutomation && updatedState.halt && !updatedState.outlineApproved) {
+								// Still processing, keep loader on
+							} else {
+								// Automation complete or not in automation mode
+								if (setIsThinking) setIsThinking(false);
+							}
 
 							console.log('✅ Message processed:', {
 								executed: data.executed,

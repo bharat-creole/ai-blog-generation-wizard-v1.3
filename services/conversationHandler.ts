@@ -638,8 +638,8 @@ const handlePartialInfo = async (
 
 	let message =
 		capturedItems.length > 0
-			? `Got it! I've captured: ${capturedItems.join(', ')}.`
-			: `Got it!`;
+			? `✅ **Information captured!**\n\nI've saved: ${capturedItems.join(', ')}.`
+			: `✅ **Ready to proceed!**`;
 
 	// If topic provided but location not provided and not already set, ask for location
 	if (hasTopic && !hasLocation && !isFullAuto) {

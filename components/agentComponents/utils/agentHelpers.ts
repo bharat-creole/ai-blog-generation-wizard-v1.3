@@ -18,35 +18,29 @@ export const getStepMessage = (
     info?: Record<string, any>
 ): string | null => {
     const messages: Record<string, string> = {
-        'KeywordResearch.primaryCandidates': `🔍 Researched ${info?.count || 0
-            } keyword options`,
-        'KeywordResearch.autoSelected': `✅ Selected "${info?.keyword}" as primary keyword`,
-        'KeywordResearch.userProvided': `✅ Using your keyword: "${info?.keyword}"`,
-        'KeywordResearch.secondaryCandidates': `🔍 Found ${info?.count || 0
-            } secondary keyword options`,
-        'KeywordResearch.secondaryAutoSelected': `✅ Selected ${info?.count || 0
-            } secondary keywords`,
-        'KeywordResearch.secondaryUserProvided': `✅ Using your ${info?.count || 0
-            } secondary keywords`,
-        'TitleGeneration.generated': `📝 Generated ${info?.count || 0
-            } title options`,
-        'TitleGeneration.autoSelected': `✅ Selected title: "${info?.title}"`,
-        'TitleGeneration.userProvided': `✅ Using your title: "${info?.title}"`,
+        'KeywordResearch.primaryCandidates': null, // Don't show this - we show "Researching" before step
+        'KeywordResearch.autoSelected': `✅ Selected primary keyword: "${info?.keyword || ''}"`,
+        'KeywordResearch.userProvided': `✅ Selected primary keyword: "${info?.keyword || ''}"`,
+        'KeywordResearch.secondaryCandidates': null, // Don't show this - we show "Generating" before step
+        'KeywordResearch.secondaryAutoSelected': null, // Will be shown via progress message with actual keywords
+        'KeywordResearch.secondaryUserProvided': null, // Will be shown via progress message with actual keywords
+        'KeywordResearch.noKeywordsFound': `⚠️ No keywords found for this topic`,
+        'KeywordResearch.noSecondaryKeywordsFound': `⚠️ No secondary keywords found`,
+        'KeywordResearch.invalidTopic': `⚠️ Invalid topic provided`,
+        'KeywordResearch.noTopic': `⚠️ No topic provided`,
+        'TitleGeneration.generated': null, // Don't show this - we show "Generating" before step
+        'TitleGeneration.autoSelected': `✅ Generated title: "${info?.title || ''}"`,
+        'TitleGeneration.userProvided': `✅ Generated title: "${info?.title || ''}"`,
         'Interlinking.prompted': `🔗 Ready to add internal/external links (optional)`,
         'Interlinking.autoSkipped': `⏭️ Skipped interlinking step`,
         'Interlinking.userProvided': `✅ Added ${info?.count || 0} links`,
         'ReferencesCollection.prompted': `📚 Ready to add reference URLs (optional)`,
         'ReferencesCollection.autoSkipped': `⏭️ Skipped references step`,
-        'ReferencesCollection.userProvided': `✅ Added ${info?.count || 0
-            } references`,
-        'DiscoveryNode.generatedOutline': `📋 Generated outline with ${info?.h2Count || 0
-            } sections`,
-        'DiscoveryNode.regeneratedOutline': `🔄 Regenerated outline with ${info?.h2Count || 0
-            } sections based on your feedback`,
-        'ProposalNode.generatedSection': `✍️ Writing section ${(info?.sectionIndex || 0) + 1
-            }: ${info?.section}`,
-        'FinalBlog.generated': `🎉 Blog complete! ${info?.wordCount || 0
-            } words`,
+        'ReferencesCollection.userProvided': `✅ Added ${info?.count || 0} references`,
+        'DiscoveryNode.generatedOutline': `📋 Generated outline with ${info?.h2Count || 0} sections`,
+        'DiscoveryNode.regeneratedOutline': `🔄 Regenerated outline with ${info?.h2Count || 0} sections based on your feedback`,
+        'ProposalNode.generatedSection': null, // Don't show this - we show "Writing section X..." before and "Section X completed" after
+        'FinalBlog.generated': `🎉 Blog complete! ${info?.wordCount || 0} words`,
         'EstimatorNode.ranked': `📊 SEO analysis complete`,
     };
 

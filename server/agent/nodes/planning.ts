@@ -28,7 +28,10 @@ export const titleGenerationNode = async (state: AgentState): Promise<Partial<Ag
         return {
             data: { ...state.data, title: titles[0] },
             currentStep: 'title',
-            trace: [{ step: 'TitleGeneration.autoSelected', info: { title: titles[0] }, at: Date.now() }]
+            trace: [
+                { step: 'TitleGeneration.generated', info: { count: titles.length }, at: Date.now() },
+                { step: 'TitleGeneration.autoSelected', info: { title: titles[0] }, at: Date.now() }
+            ]
         };
     }
 

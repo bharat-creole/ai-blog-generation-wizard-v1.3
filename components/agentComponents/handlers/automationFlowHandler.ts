@@ -63,6 +63,21 @@ export const switchToAutomationMode = (
  * @param onCollapseSidebar - Optional callback to collapse sidebar
  * @returns Promise<AgentState> - Final agent state after automation
  */
+// Helper function to get "before step" message based on current step
+const getBeforeStepMessage = (currentStep: string | undefined): string | null => {
+	if (!currentStep) return null;
+	
+	const messages: Record<string, string> = {
+		'primary_keyword': '🔍 **Researching primary keywords...**\n\nI\'m analyzing your topic to find the best primary keyword options for SEO optimization.',
+		'secondary_keywords': '🔍 **Generating secondary keywords...**\n\nI\'m finding related keywords that complement your primary keyword to expand your content\'s reach.',
+		'title': '📝 **Generating title options...**\n\nI\'m creating engaging title options that incorporate your keywords and appeal to your target audience.',
+		'outline': '📋 **Generating outline...**\n\nI\'m creating a comprehensive outline structure for your blog post.',
+		'generation': '✍️ **Writing blog content...**\n\nI\'m generating the full blog post based on your outline.',
+	};
+	
+	return messages[currentStep] || null;
+};
+
 export const runAutomationFlow = async (
 	agent: AgentState,
 	setters: AgentStateSetters & {
@@ -86,25 +101,38 @@ export const runAutomationFlow = async (
 		const maxIterations = 100;
 		let guard = 0;
 		let lastTraceLength = 0;
+		let lastStep: string | undefined = working.currentStep;
+		const shownBeforeStepMessages = new Set<string>();
 
 		while (guard++ < maxIterations) {
 			const { state: ns, halted } = await lgRunNext(working);
 			working = ns;
 
+			// Check if we've moved to a new step and show "before step" message
+			if (working.currentStep && working.currentStep !== lastStep) {
+				const beforeStepMsg = getBeforeStepMessage(working.currentStep);
+				if (beforeStepMsg && !shownBeforeStepMessages.has(working.currentStep)) {
+					setMessages((prev) => [
+						...prev,
+						createAssistantMessage(beforeStepMsg),
+					]);
+					setIsStreaming(true);
+					shownBeforeStepMessages.add(working.currentStep);
+					await new Promise((resolve) => setTimeout(resolve, 200));
+				}
+				lastStep = working.currentStep;
+			}
+
 			// Update live state FIRST (before progress messages) so content appears immediately
 			// This ensures draft updates happen in real-time as content is generated section by section
 			updateAgentFromWorking(working, setters);
 
-			// Show progress messages
+			// Show progress messages from trace steps
 			if (shouldShowProgressMessage(working.trace.length, lastTraceLength)) {
 				const latestTrace = working.trace[working.trace.length - 1];
 				const stepMessage = getStepMessage(latestTrace.step, latestTrace.info);
 
 				if (stepMessage) {
-					// Turn off thinking indicator as soon as we start showing progress
-					// This allows progress messages to be visible in real-time
-					setIsThinking(false);
-					
 					setMessages((prev) => [
 						...prev,
 						createAssistantMessage(stepMessage),
@@ -154,6 +182,7 @@ export const runAutomationFlow = async (
 		setError(e?.message || 'Agent failed to respond.');
 		throw e;
 	} finally {
+		// Only turn off loader when automation is completely done
 		setIsThinking(false);
 	}
 };

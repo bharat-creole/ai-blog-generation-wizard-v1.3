@@ -281,6 +281,11 @@ export const researchPrimaryNode = async (
 			currentStep: 'primary_keyword',
 			trace: [
 				{
+					step: 'KeywordResearch.primaryCandidates',
+					info: { count: ranked.length },
+					at: Date.now(),
+				},
+				{
 					step: 'KeywordResearch.autoSelected',
 					info: {
 						keyword: ranked[0].text,
@@ -399,6 +404,11 @@ export const researchSecondaryNode = async (
 			},
 			currentStep: 'secondary_keywords',
 			trace: [
+				{
+					step: 'KeywordResearch.secondaryCandidates',
+					info: { count: filteredRanked.length },
+					at: Date.now(),
+				},
 				{
 					step: 'KeywordResearch.secondaryAutoSelected',
 					info: { count: 5 },

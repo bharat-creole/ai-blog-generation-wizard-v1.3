@@ -133,7 +133,8 @@ export const useAgentState = (
 	const [messages, setMessages] = useState<ChatMessage[]>([
 		{
 			role: 'assistant',
-			content: `Hello! I'm your Blog Agent 🤖. `,
+			content: `Hello! I'm your Blog Agent 🤖. 
+`,
 		},
 	]);
 
@@ -173,7 +174,9 @@ export const useAgentState = (
 	const [selectedSecondaries, setSelectedSecondaries] = useState<string[]>(
 		[]
 	);
-	const [selectedPrimary, setSelectedPrimary] = useState<string | null>(null);
+	const [selectedPrimary, setSelectedPrimary] = useState<string | null>(
+		null
+	);
 	const [selectedTitle, setSelectedTitle] = useState<string | null>(null);
 	const [viewMode, setViewMode] = useState<'outline' | 'blog' | 'markdown'>(
 		'outline'
@@ -261,4 +264,3 @@ export const useAgentState = (
 		isInputLocked,
 	};
 };
-
