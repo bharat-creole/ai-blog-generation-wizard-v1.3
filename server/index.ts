@@ -194,12 +194,16 @@ app.post('/api/getKeywords', async (req, res) => {
 
 // 🔥 New endpoint: Google Ads REST API with OAuth2 token refresh
 app.post('/api/getKeywordsGoogleAds', async (req, res) => {
-	const { seed, location } = req.body || {};
+	const { seed, urls, location } = req.body || {};
 
-	if (!seed || typeof seed !== 'string') {
-		return res
-			.status(400)
-			.json({ error: 'Missing required field: seed' });
+	// Support both URL-based and keyword-based requests
+	const hasUrls = urls && Array.isArray(urls) && urls.length > 0;
+	const hasSeed = seed && typeof seed === 'string';
+
+	if (!hasUrls && !hasSeed) {
+		return res.status(400).json({
+			error: 'Missing required field: either "seed" (string) or "urls" (array) must be provided',
+		});
 	}
 
 	const customerId = process.env.GOOGLE_ADS_CUSTOMER_ID;
@@ -211,84 +215,217 @@ app.post('/api/getKeywordsGoogleAds', async (req, res) => {
 	);
 
 	if (!customerId || !developerToken || !hasOAuthCreds) {
-		return res.status(503).json({
-			error: 'Google Ads REST API credentials not configured',
-			rows: simulateIdeas(seed),
-		});
+		// Fallback simulation if credentials not configured
+		if (hasSeed) {
+			return res.status(503).json({
+				error: 'Google Ads REST API credentials not configured',
+				rows: simulateIdeas(seed),
+			});
+		} else {
+			return res.status(503).json({
+				error: 'Google Ads REST API credentials not configured',
+				rows: [],
+			});
+		}
 	}
 
-	const url = `https://googleads.googleapis.com/v21/customers/${customerId}:generateKeywordIdeas`;
-	const body = {
-		customerId: customerId,
-		includeAdultKeywords: false,
-		keywordPlanNetwork: 'GOOGLE_SEARCH_AND_PARTNERS',
-		keywordSeed: {
-			keywords: [seed],
-		},
-		pageSize: 20,
-	};
+	const apiUrl = `https://googleads.googleapis.com/v21/customers/${customerId}:generateKeywordIdeas`;
+	const accessToken = await tokenManager.getValidToken();
 
-	try {
-		const accessToken = await tokenManager.getValidToken();
+	// If URLs provided, process each URL separately and aggregate results
+	if (hasUrls) {
+		const allRows: any[] = [];
 
-		const response = await fetch(url, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				'developer-token': developerToken,
-				Authorization: `Bearer ${accessToken}`,
-			},
-			body: JSON.stringify(body),
-		});
-
-		const data: any = await response.json();
-
-		if (!response.ok) {
-			const errorMessage =
-				data.error?.message ||
-				`API returned ${response.status}`;
-			throw new Error(
-				`Google Ads REST API failed: ${errorMessage}`
+		for (let i = 0; i < urls.length; i++) {
+			const urlToProcess = urls[i];
+			console.log(
+				`   🔗 Processing URL ${i + 1}/${
+					urls.length
+				}: ${urlToProcess}`
 			);
+
+			try {
+				const body: any = {
+					customerId: customerId,
+					includeAdultKeywords: false,
+					keywordPlanNetwork: 'GOOGLE_SEARCH_AND_PARTNERS',
+					urlSeed: {
+						url: urlToProcess,
+					},
+					pageSize: 20, // Limit to 20 results per URL
+				};
+
+				// For primary keyword generation, only use URLs (no keyword seed)
+				// This ensures keywords come directly from the URL content
+
+				const response = await fetch(apiUrl, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						'developer-token': developerToken,
+						Authorization: `Bearer ${accessToken}`,
+					},
+					body: JSON.stringify(body),
+				});
+
+				const data: any = await response.json();
+
+				if (
+					response.ok &&
+					data.results &&
+					data.results.length > 0
+				) {
+					const rows = data.results
+						.map((result: any) => {
+							const metrics =
+								result.keywordIdeaMetrics || {};
+							const text = result.text || '';
+							const volume =
+								metrics.avgMonthlySearches || 0;
+
+							// Map competition to difficulty (0..1)
+							let difficulty = 0.5;
+							if (
+								metrics.competitionIndex !==
+								undefined
+							) {
+								difficulty =
+									metrics.competitionIndex /
+									100;
+							} else if (metrics.competition) {
+								const compMap: Record<
+									string,
+									number
+								> = {
+									LOW: 0.25,
+									MEDIUM: 0.5,
+									HIGH: 0.75,
+								};
+								difficulty =
+									compMap[
+										metrics.competition
+									] || 0.5;
+							}
+
+							return {
+								text,
+								volume: Number(volume) || 0,
+								difficulty,
+							};
+						})
+						.filter((kw: any) => kw.text.trim() !== '');
+
+					console.log(
+						`   ✅ Got ${
+							rows.length
+						} keywords from URL ${i + 1}`
+					);
+					allRows.push(...rows);
+				} else {
+					console.log(`   ⚠️ No results from URL ${i + 1}`);
+				}
+			} catch (err: any) {
+				console.error(
+					`   ❌ Error processing URL ${i + 1}:`,
+					err?.message || err
+				);
+			}
 		}
 
-		if (data.results && data.results.length > 0) {
-			// Transform Google Ads response to match expected format
-			const rows = data.results
-				.map((result: any) => {
-					const metrics = result.keywordIdeaMetrics || {};
-					const text = result.text || '';
-					const volume = metrics.avgMonthlySearches || 0;
+		// Deduplicate by keyword text
+		const uniqueRows = Array.from(
+			new Map(
+				allRows.map((row) => [row.text.toLowerCase(), row])
+			).values()
+		);
 
-					// Map competition to difficulty (0..1)
-					let difficulty = 0.5;
-					if (metrics.competitionIndex !== undefined) {
-						difficulty = metrics.competitionIndex / 100;
-					} else if (metrics.competition) {
-						const compMap: Record<string, number> = {
-							LOW: 0.25,
-							MEDIUM: 0.5,
-							HIGH: 0.75,
+		console.log(
+			`   ✅ Total unique keywords from all URLs: ${uniqueRows.length}`
+		);
+		return res.json({ rows: uniqueRows });
+	}
+
+	// If only seed provided (no URLs), use keywordSeed
+	if (hasSeed) {
+		const body = {
+			customerId: customerId,
+			includeAdultKeywords: false,
+			keywordPlanNetwork: 'GOOGLE_SEARCH_AND_PARTNERS',
+			keywordSeed: {
+				keywords: [seed],
+			},
+			pageSize: 100,
+		};
+
+		try {
+			const response = await fetch(apiUrl, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'developer-token': developerToken,
+					Authorization: `Bearer ${accessToken}`,
+				},
+				body: JSON.stringify(body),
+			});
+
+			const data: any = await response.json();
+
+			if (!response.ok) {
+				const errorMessage =
+					data.error?.message ||
+					`API returned ${response.status}`;
+				throw new Error(
+					`Google Ads REST API failed: ${errorMessage}`
+				);
+			}
+
+			if (data.results && data.results.length > 0) {
+				// Transform Google Ads response to match expected format
+				const rows = data.results
+					.map((result: any) => {
+						const metrics =
+							result.keywordIdeaMetrics || {};
+						const text = result.text || '';
+						const volume =
+							metrics.avgMonthlySearches || 0;
+
+						// Map competition to difficulty (0..1)
+						let difficulty = 0.5;
+						if (
+							metrics.competitionIndex !== undefined
+						) {
+							difficulty =
+								metrics.competitionIndex / 100;
+						} else if (metrics.competition) {
+							const compMap: Record<
+								string,
+								number
+							> = {
+								LOW: 0.25,
+								MEDIUM: 0.5,
+								HIGH: 0.75,
+							};
+							difficulty =
+								compMap[metrics.competition] ||
+								0.5;
+						}
+
+						return {
+							text,
+							volume: Number(volume) || 0,
+							difficulty,
 						};
-						difficulty =
-							compMap[metrics.competition] || 0.5;
-					}
+					})
+					.filter((kw: any) => kw.text.trim() !== '');
 
-					return {
-						text,
-						volume: Number(volume) || 0,
-						difficulty,
-					};
-				})
-				.filter((kw: any) => kw.text.trim() !== '');
-
-			return res.json({ rows });
-		} else {
+				return res.json({ rows });
+			} else {
+				return res.json({ rows: simulateIdeas(seed) });
+			}
+		} catch (error: any) {
+			// Return simulated data as fallback
 			return res.json({ rows: simulateIdeas(seed) });
 		}
-	} catch (error: any) {
-		// Return simulated data as fallback
-		return res.json({ rows: simulateIdeas(seed) });
 	}
 });
 
@@ -299,6 +436,205 @@ app.post('/api/getKeywordsGoogleAds', async (req, res) => {
 import { graph, checkpointer } from './agent/graph.js';
 import { HumanMessage, AIMessage } from '@langchain/core/messages';
 import { processMessage } from './agent/conversationHandler.js';
+import { PrimaryAgent } from './agent/primaryAgent.js';
+import { ContextManagerAgent } from './agent/contextManagerAgent.js';
+import { AgentState } from './agent/state.js';
+
+/**
+ * Helper to persist messages to checkpointer
+ * Ensures all conversation history is stored for future queries
+ * IMPORTANT: Loads latest messages from checkpointer first to avoid losing history
+ */
+const persistMessagesToCheckpointer = async (
+	threadId: string,
+	state: Partial<AgentState>,
+	assistantMessage: string,
+	apiKey: string
+): Promise<void> => {
+	if (!threadId) return;
+
+	try {
+		const config = { configurable: { thread_id: threadId } };
+
+		// Step 1: Load FULL existing checkpoint state (not just messages)
+		let existingCheckpointState: any = null;
+		try {
+			// Try to get checkpoint tuple first to check if it exists
+			const tuple = await checkpointer.getTuple(config);
+			if (
+				tuple &&
+				tuple.checkpoint &&
+				tuple.checkpoint.channel_values
+			) {
+				existingCheckpointState =
+					tuple.checkpoint.channel_values;
+				console.log(
+					`   💾 Found existing checkpoint with ${
+						existingCheckpointState.messages?.length ||
+						0
+					} messages`
+				);
+			}
+		} catch (err: any) {
+			// Handle case where checkpoint doesn't exist yet (new thread) - this is normal
+			if (
+				err?.message?.includes('messages') ||
+				err?.message?.includes('undefined') ||
+				err?.code === 'ENOENT' ||
+				!err
+			) {
+				// Silent - new thread, no checkpoint yet
+			} else {
+				console.log(
+					`   ⚠️ Could not load existing checkpoint:`,
+					err?.message || err
+				);
+			}
+		}
+
+		// Step 2: Build complete message history
+		const existingMessages = existingCheckpointState?.messages || [];
+		const stateMessages = state.messages || [];
+
+		// Helper to safely extract message content
+		// Handles both LangChain serialized format and plain format
+		const getMessageContent = (m: any): string => {
+			if (!m) return '';
+
+			// Handle LangChain serialized format (from checkpointer)
+			if (m.kwargs && m.kwargs.content) {
+				return m.kwargs.content;
+			}
+
+			// Handle plain LangChain message format
+			if (typeof m.content === 'string') return m.content;
+			if (m.content?.text) return m.content.text;
+
+			// Handle frontend format {role, content}
+			if (m.role && typeof m.content === 'string') return m.content;
+
+			// Fallback
+			if (m.content) return JSON.stringify(m.content);
+			return '';
+		};
+
+		// Create a set of existing message contents to avoid duplicates
+		const existingContents = new Set(
+			existingMessages
+				.map((m: any) => {
+					const content = getMessageContent(m);
+					return content
+						? content.toLowerCase().trim()
+						: '';
+				})
+				.filter((c: string) => c.length > 0) // Only include non-empty content
+		);
+
+		// Add new messages from state that don't exist in checkpointer
+		const newMessagesFromState = stateMessages.filter((m: any) => {
+			const content = getMessageContent(m);
+			if (!content || content.length === 0) return false; // Skip empty messages
+			return !existingContents.has(content.toLowerCase().trim());
+		});
+
+		// Step 3: Add new assistant message
+		const assistantMsg = new AIMessage(assistantMessage);
+		const assistantContent = assistantMessage.toLowerCase().trim();
+		const assistantExists = existingMessages.some((m: any) => {
+			const content = getMessageContent(m);
+			return (
+				content &&
+				content.toLowerCase().trim() === assistantContent
+			);
+		});
+
+		// Combine all messages - preserve order: existing + new from state + new assistant
+		let allMessages = [...existingMessages];
+		if (newMessagesFromState.length > 0) {
+			allMessages = [...allMessages, ...newMessagesFromState];
+		}
+		if (!assistantExists) {
+			allMessages = [...allMessages, assistantMsg];
+		}
+
+		// Step 4: Deep merge with existing checkpoint state to preserve ALL fields
+		// This ensures we don't lose any data when saving
+		const stateToPersist: any = {
+			// Start with existing checkpoint (preserves all existing fields)
+			...(existingCheckpointState || {}),
+			// Deep merge data object if it exists
+			data: {
+				...(existingCheckpointState?.data || {}),
+				...(state.data || {}),
+			},
+			// Merge preferences
+			preferences: {
+				...(existingCheckpointState?.preferences || {}),
+				...(state.preferences || {}),
+			},
+			// Merge progress
+			progress: {
+				...(existingCheckpointState?.progress || {}),
+				...(state.progress || {}),
+			},
+			// Overwrite with new state updates (but preserve existing if not in new state)
+			...state,
+			// Use merged messages (most important - preserves all history)
+			messages: allMessages,
+		};
+
+		// IMPORTANT: Remove apiKey before persisting (security)
+		delete stateToPersist.apiKey;
+
+		console.log(
+			`   💾 Persisting ${allMessages.length} total messages (${
+				existingMessages.length
+			} existing + ${newMessagesFromState.length} from state + ${
+				assistantExists ? '0' : '1'
+			} assistant)`
+		);
+
+		// Step 5: Create proper Checkpoint structure
+		// Get existing checkpoint ID or generate new one
+		let checkpointId = 'checkpoint-' + Date.now();
+		try {
+			const tuple = await checkpointer.getTuple(config);
+			if (tuple?.checkpoint?.id) {
+				checkpointId = tuple.checkpoint.id;
+			}
+		} catch (err) {
+			// New checkpoint, use generated ID
+		}
+
+		// Create checkpoint object with proper structure
+		const checkpoint = {
+			id: checkpointId,
+			ts: new Date().toISOString(),
+			channel_values: stateToPersist,
+			channel_versions: {},
+			versions_seen: {},
+		};
+
+		// Step 6: Persist using checkpointer
+		await checkpointer.put(config, checkpoint, {});
+		console.log(
+			`   💾 Persisted ${
+				allMessages.length
+			} messages to checkpointer (${
+				newMessagesFromState.length
+			} new from state, ${
+				assistantExists
+					? 'assistant already exists'
+					: 'added assistant'
+			})`
+		);
+	} catch (err) {
+		console.log(
+			`   ⚠️ Could not persist messages to checkpointer:`,
+			err
+		);
+	}
+};
 
 // NEW: Main conversation endpoint - handles user messages with intent classification
 app.post('/api/agent/message', async (req, res) => {
@@ -325,7 +661,8 @@ app.post('/api/agent/message', async (req, res) => {
 	}
 
 	// Get apiKey from request body, state, or environment variable (in that order)
-	const apiKeyToUse = apiKey || currentState?.apiKey || process.env.GEMINI_API_KEY;
+	const apiKeyToUse =
+		apiKey || currentState?.apiKey || process.env.GEMINI_API_KEY;
 	if (!apiKeyToUse) {
 		return res.status(400).json({
 			error: 'apiKey is required. Please provide apiKey in request, state, or set GEMINI_API_KEY in your .env.local file.',
@@ -336,6 +673,138 @@ app.post('/api/agent/message', async (req, res) => {
 	const sanitizedState = { ...currentState };
 	delete sanitizedState.apiKey;
 
+	// Helper to convert frontend message format to LangChain format
+	const convertToLangChainMessage = (m: any): HumanMessage | AIMessage => {
+		// If already a LangChain message, return as is
+		if (m._getType || m.constructor?.name?.includes('Message')) {
+			return m;
+		}
+
+		// Convert frontend format {role, content} to LangChain format
+		if (m.role === 'user' || m.role === 'human') {
+			return new HumanMessage(m.content || '');
+		} else if (m.role === 'assistant' || m.role === 'ai') {
+			return new AIMessage(m.content || '');
+		}
+
+		// Fallback: try to extract content
+		const content =
+			typeof m.content === 'string'
+				? m.content
+				: m.content?.text || JSON.stringify(m.content);
+		return new HumanMessage(content);
+	};
+
+	// Helper to extract message content for comparison
+	const getMessageContent = (m: any): string => {
+		if (typeof m.content === 'string') return m.content;
+		if (m.content?.text) return m.content.text;
+		if (m.content) return JSON.stringify(m.content);
+		return '';
+	};
+
+	// Step 1: Get messages from checkpointer (most reliable source)
+	let allMessages: (HumanMessage | AIMessage)[] = [];
+	if (threadId) {
+		try {
+			const config = { configurable: { thread_id: threadId } };
+			// Try to get checkpoint tuple first to check if it exists
+			const tuple = await checkpointer.getTuple(config);
+			if (
+				tuple &&
+				tuple.checkpoint &&
+				tuple.checkpoint.channel_values
+			) {
+				const checkpointState = tuple.checkpoint.channel_values;
+				// Check if checkpoint has messages
+				if (
+					checkpointState.messages &&
+					Array.isArray(checkpointState.messages) &&
+					checkpointState.messages.length > 0
+				) {
+					allMessages = checkpointState.messages.map(
+						convertToLangChainMessage
+					);
+					console.log(
+						`   📚 Loaded ${allMessages.length} messages from checkpointer`
+					);
+				}
+			}
+		} catch (err: any) {
+			// Handle case where checkpoint doesn't exist yet (new thread) - this is normal
+			if (
+				err?.message?.includes('messages') ||
+				err?.message?.includes('undefined') ||
+				err?.code === 'ENOENT' ||
+				!err
+			) {
+				// Silent - new thread, no checkpoint yet
+			} else {
+				console.log(
+					`   ⚠️ Could not load messages from checkpointer:`,
+					err?.message || err
+				);
+			}
+		}
+	}
+
+	// Step 2: Convert and merge frontend messages
+	console.log(
+		`   📨 Frontend sent ${
+			currentState?.messages?.length || 0
+		} messages in currentState`
+	);
+	if (currentState?.messages && Array.isArray(currentState.messages)) {
+		const frontendMessages = currentState.messages.map(
+			convertToLangChainMessage
+		);
+
+		// Create a set of existing message contents to avoid duplicates
+		const existingContents = new Set(
+			allMessages.map((m) =>
+				getMessageContent(m).toLowerCase().trim()
+			)
+		);
+
+		// Add new messages that don't already exist (case-insensitive comparison)
+		const newMessages = frontendMessages.filter((m) => {
+			const content = getMessageContent(m).toLowerCase().trim();
+			return (
+				content &&
+				content.length > 0 &&
+				!existingContents.has(content)
+			);
+		});
+
+		if (newMessages.length > 0) {
+			allMessages = [...allMessages, ...newMessages];
+			console.log(
+				`   📚 Added ${newMessages.length} new messages from frontend (total: ${allMessages.length})`
+			);
+		} else {
+			console.log(
+				`   📚 No new messages from frontend (all already in checkpointer)`
+			);
+		}
+	}
+
+	// Step 3: Add current user message (if not already there)
+	const currentUserMessage = new HumanMessage(message);
+	const userMessageContent = getMessageContent(currentUserMessage);
+	const userMessageExists = allMessages.some(
+		(m) => getMessageContent(m) === userMessageContent
+	);
+
+	if (!userMessageExists) {
+		allMessages = [...allMessages, currentUserMessage];
+		console.log(
+			`   💬 Added current user message (total: ${allMessages.length})`
+		);
+	}
+
+	// Update sanitizedState with properly formatted messages
+	sanitizedState.messages = allMessages;
+
 	// Setup streaming if requested
 	if (stream) {
 		res.setHeader('Content-Type', 'text/event-stream');
@@ -345,9 +814,228 @@ app.post('/api/agent/message', async (req, res) => {
 	}
 
 	try {
-		// Process message through conversation handler
-		const response = await processMessage(
+		// 1️⃣ PRIMARY ROUTER (stateless)
+		console.log(`   🛡️ Running Primary Agent...`);
+		const primaryAgent = new PrimaryAgent(apiKeyToUse);
+		const routing = await primaryAgent.analyzeMessage(
 			message,
+			sanitizedState
+		);
+
+		// If router says: don't proceed (abort) and we have a direct response → return it.
+		if (!routing.shouldProceed) {
+			console.log(`   ⛔ Primary Agent blocked: ${routing.type}`);
+			console.log(
+				`   Direct Response: "${
+					routing.directResponse || 'NOT PROVIDED'
+				}"`
+			);
+
+			// Generate fallback response based on type if directResponse is missing
+			let fallbackMessage =
+				"I'm here to help you create blog posts. Please share a topic to get started.";
+			if (!routing.directResponse) {
+				switch (routing.type) {
+					case 'irrelevant_small_talk':
+						fallbackMessage =
+							"Hi! I'm here to help you create blog posts. What topic would you like to write about?";
+						break;
+					case 'general_question':
+						fallbackMessage =
+							"I help you create SEO-optimized blog posts. Just tell me a topic and I'll guide you through keyword research, title generation, and content creation!";
+						break;
+					case 'off_topic':
+						fallbackMessage =
+							"I'm focused on helping you create blog content. What topic would you like to write about?";
+						break;
+					case 'abusive_or_invalid':
+						fallbackMessage =
+							"I couldn't understand your message. Please provide a clear blog topic to get started.";
+						break;
+				}
+			}
+
+			const assistantResponse =
+				routing.directResponse || fallbackMessage;
+			const blockedResponse = {
+				assistantMessage: assistantResponse,
+				stateUpdates: {},
+				shouldRunAgent: false,
+			};
+
+			// Persist messages to checkpointer so they're available for next query
+			await persistMessagesToCheckpointer(
+				threadId,
+				sanitizedState,
+				assistantResponse,
+				apiKeyToUse
+			);
+
+			console.log(
+				`   📤 Sending blocked response: "${blockedResponse.assistantMessage.substring(
+					0,
+					50
+				)}..."`
+			);
+
+			if (stream) {
+				try {
+					// Send intent event with the response
+					res.write(
+						`event: intent\ndata: ${JSON.stringify(
+							blockedResponse
+						)}\n\n`
+					);
+					// Send done event with state (frontend expects state in onComplete)
+					res.write(
+						`event: done\ndata: ${JSON.stringify({
+							assistantMessage:
+								blockedResponse.assistantMessage,
+							state: sanitizedState, // Include current state
+							executed: false, // No graph execution
+						})}\n\n`
+					);
+					res.end();
+					return;
+				} catch (streamError) {
+					console.error('❌ [STREAM ERROR]', streamError);
+					// Fallback to non-streaming if streaming fails
+					return res.json(blockedResponse);
+				}
+			}
+
+			return res.json(blockedResponse);
+		}
+
+		// 2️⃣ Handle meta instructions like restart
+		if (routing.systemAction === 'restart') {
+			console.log(`   🔄 Primary Agent: Restart requested`);
+			// Clear all blog-related state except messages
+			const resetState: Partial<typeof sanitizedState> = {
+				...sanitizedState,
+				data: {} as any,
+				outline: [],
+				draft: '',
+				currentStep: 'topic',
+				halt: null,
+				progress: { sectionIndex: 0 },
+				outlineApproved: false,
+			};
+
+			const restartMessage =
+				"Okay, let's start fresh. Tell me the topic you want to write about.";
+			const restartResponse = {
+				assistantMessage: restartMessage,
+				stateUpdates: resetState,
+				shouldRunAgent: false,
+			};
+
+			// Persist restart message to checkpointer
+			await persistMessagesToCheckpointer(
+				threadId,
+				{ ...sanitizedState, ...resetState },
+				restartMessage,
+				apiKeyToUse
+			);
+
+			if (stream) {
+				try {
+					// Send intent event with the response
+					res.write(
+						`event: intent\ndata: ${JSON.stringify(
+							restartResponse
+						)}\n\n`
+					);
+					// Send done event with state (frontend expects state in onComplete)
+					res.write(
+						`event: done\ndata: ${JSON.stringify({
+							assistantMessage:
+								restartResponse.assistantMessage,
+							state: sanitizedState, // Include current state
+							executed: false, // No graph execution
+						})}\n\n`
+					);
+					res.end();
+					return;
+				} catch (streamError) {
+					console.error('❌ [STREAM ERROR]', streamError);
+					// Fallback to non-streaming if streaming fails
+					return res.json(restartResponse);
+				}
+			}
+
+			return res.json(restartResponse);
+		}
+
+		// 3️⃣ CONTEXT QUERY → Context Manager Agent (NO LangGraph)
+		if (routing.systemAction === 'route_to_context_manager') {
+			console.log(`   📚 Routing to Context Manager...`);
+			console.log(
+				`   📚 Total messages available: ${sanitizedState.messages.length}`
+			);
+
+			const contextAgent = new ContextManagerAgent(apiKeyToUse);
+			const ctxResponse = await contextAgent.handleContextQuery(
+				routing.normalizedMessage || message,
+				sanitizedState // sanitizedState already has all merged messages from start
+			);
+
+			// Persist assistant response to checkpointer
+			await persistMessagesToCheckpointer(
+				threadId,
+				sanitizedState,
+				ctxResponse.assistantMessage,
+				apiKeyToUse
+			);
+
+			const contextResponse = {
+				assistantMessage: ctxResponse.assistantMessage,
+				stateUpdates: {}, // optionally append this answer to messages in frontend
+				shouldRunAgent: false,
+			};
+
+			console.log(
+				`   📤 Sending context response: "${ctxResponse.assistantMessage.substring(
+					0,
+					50
+				)}..."`
+			);
+
+			if (stream) {
+				try {
+					// Send intent event with the response
+					res.write(
+						`event: intent\ndata: ${JSON.stringify(
+							contextResponse
+						)}\n\n`
+					);
+					// Send done event with state (frontend expects state in onComplete)
+					res.write(
+						`event: done\ndata: ${JSON.stringify({
+							assistantMessage:
+								ctxResponse.assistantMessage,
+							state: sanitizedState, // Include current state
+							executed: false, // No graph execution
+						})}\n\n`
+					);
+					res.end();
+					return;
+				} catch (streamError) {
+					console.error('❌ [STREAM ERROR]', streamError);
+					// Fallback to non-streaming if streaming fails
+					return res.json(contextResponse);
+				}
+			}
+
+			return res.json(contextResponse);
+		}
+
+		// 4️⃣ NORMAL BLOG FLOW → Intent Classifier + Conversation Handler + LangGraph
+		console.log(`   📝 Processing through Conversation Handler...`);
+		// Use normalized message for intent classification
+		const normalized = routing.normalizedMessage || message;
+		const response = await processMessage(
+			normalized,
 			sanitizedState,
 			apiKeyToUse
 		);
@@ -362,10 +1050,10 @@ app.post('/api/agent/message', async (req, res) => {
 
 		// Merge state updates (without apiKey)
 		// But ensure apiKey is available for graph execution (from request or env)
-		let updatedState = { 
-			...sanitizedState, 
+		let updatedState = {
+			...sanitizedState,
 			...response.stateUpdates,
-			apiKey: apiKeyToUse // Ensure apiKey is available for nodes during execution
+			apiKey: apiKeyToUse, // Ensure apiKey is available for nodes during execution
 		};
 
 		// Emit intent event
@@ -421,6 +1109,13 @@ app.post('/api/agent/message', async (req, res) => {
 		} else {
 			console.log(
 				`   ⏸️  Skipping graph execution (conversation only)`
+			);
+			// IMPORTANT: Persist assistant message even when not running graph
+			await persistMessagesToCheckpointer(
+				threadId,
+				updatedState,
+				response.assistantMessage,
+				apiKeyToUse
 			);
 		}
 

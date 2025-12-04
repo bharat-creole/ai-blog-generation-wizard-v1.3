@@ -400,8 +400,16 @@ export const useAgentExecutionV3 = (
 								// Track single message too
 								const msgKey = finalResponse.substring(0, 50);
 								backendMessages.add(msgKey);
+								
+								// ✨ FIX: If shouldRunAgent is false, queue the message immediately
+								// This handles cases where onComplete might not be called or message won't be displayed
+								if (data.shouldRunAgent === false && finalResponse.trim()) {
+									console.log(`📨 [INTENT] Queueing blocked response immediately: "${finalResponse.substring(0, 50)}..."`);
+									queueMessage(finalResponse);
+									finalResponse = ''; // Clear to prevent duplicate
+								}
 							}
-							// If single message, don't add here - it will be added in AgentMode.tsx with metadata
+							// If single message and shouldRunAgent is true, don't add here - it will be added in AgentMode.tsx with metadata
 							// This prevents duplicate messages
 						},
 						onProgress: (chunk) => {

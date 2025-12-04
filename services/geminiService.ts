@@ -220,7 +220,11 @@ export const generateTitles = async (
 			maxRetries: 3,
 			initialDelay: 1000,
 			onRetry: (attempt, delay) => {
-				console.log(`   ⏳ Rate limit hit. Retrying in ${Math.ceil(delay / 1000)}s (attempt ${attempt}/3)...`);
+				console.log(
+					`   ⏳ Rate limit hit. Retrying in ${Math.ceil(
+						delay / 1000
+					)}s (attempt ${attempt}/3)...`
+				);
 			},
 		}
 	);
@@ -273,7 +277,11 @@ export const searchWebForTitles = async (
 			maxRetries: 3,
 			initialDelay: 1000,
 			onRetry: (attempt, delay) => {
-				console.log(`   ⏳ Rate limit hit. Retrying in ${Math.ceil(delay / 1000)}s (attempt ${attempt}/3)...`);
+				console.log(
+					`   ⏳ Rate limit hit. Retrying in ${Math.ceil(
+						delay / 1000
+					)}s (attempt ${attempt}/3)...`
+				);
 			},
 		}
 	);
@@ -283,6 +291,111 @@ export const searchWebForTitles = async (
 
 	// Ensure we return exactly 20 titles (or as many as we got, up to 20)
 	return Array.isArray(titles) ? titles.slice(0, 20) : [];
+};
+
+/**
+ * Search web for top 5 URLs related to user topic
+ * Returns array of URLs (strings)
+ *
+ * Priority:
+ * 1. Try Google Custom Search API (if configured) - Direct Google search
+ * 2. Fallback to Gemini's googleSearch tool
+ */
+export const searchWebForUrls = async (
+	userQuery: string,
+	apiKey: string
+): Promise<string[]> => {
+	// Try Google Custom Search API first (direct Google search)
+	try {
+		const { searchGoogleForUrls, isGoogleSearchConfigured } =
+			await import('./googleSearchService');
+
+		if (isGoogleSearchConfigured()) {
+			console.log(
+				'   🔍 Using Google Custom Search API (direct Google search)...'
+			);
+			return await searchGoogleForUrls(userQuery);
+		}
+	} catch (err: any) {
+		// If import fails, API not configured, or API not enabled, fall back to Gemini
+		// Silently handle configuration errors (API not enabled, 403, etc.)
+		if (err.isConfigError) {
+			console.log(
+				'   ⚠️ Google Custom Search API not enabled, using Gemini web search...'
+			);
+		} else {
+			// For other errors (import failures, etc.), also fall back silently
+			console.log(
+				'   ⚠️ Google Custom Search API not available, using Gemini web search...'
+			);
+		}
+		// Continue to Gemini fallback below
+	}
+
+	// Fallback: Use Gemini's googleSearch tool
+	if (!apiKey) throw new Error('API Key is required.');
+	const ai = new GoogleGenAI({ apiKey });
+
+	const prompt = `
+	ROLE: You are a web research assistant specializing in finding relevant URLs and links.
+	TASK: Search the web for the top 5 most relevant and authoritative URLs/articles related to the user's query.
+	INSTRUCTIONS:
+	1. Use the Google Search tool to find real, existing URLs/articles about the topic.
+	2. Focus on URLs from authoritative sources (reputable blogs, websites, documentation).
+	3. Return exactly 5 URLs that are most relevant to the user's query.
+	4. The URLs should be diverse and cover different aspects of the topic.
+	5. Output ONLY a clean JSON array of strings (URLs). Do not add any other text, pre-amble, or comments.
+	6. Each URL must be a valid, complete URL starting with http:// or https://
+
+	USER QUERY: "${userQuery}"
+
+	EXAMPLE OUTPUT:
+	["https://example.com/article1", "https://example.com/article2", "https://example.com/article3"]
+	`;
+
+	const response: GenerateContentResponse = await retryWithBackoff(
+		async () => {
+			return await ai.models.generateContent({
+				model: 'gemini-2.5-flash',
+				contents: { parts: [{ text: prompt }] },
+				config: {
+					tools: [{ googleSearch: {} }],
+					// Note: Cannot use responseMimeType with tools - must parse JSON from text
+				},
+			});
+		},
+		{
+			maxRetries: 3,
+			initialDelay: 1000,
+			onRetry: (attempt, delay) => {
+				console.log(
+					`   ⏳ Rate limit hit. Retrying in ${Math.ceil(
+						delay / 1000
+					)}s (attempt ${attempt}/3)...`
+				);
+			},
+		}
+	);
+
+	const extractedText = extractTextFromResponse(response);
+	const urls = cleanAndParseJson(extractedText);
+
+	// Validate URLs and return top 5
+	const validUrls = Array.isArray(urls)
+		? urls
+				.filter((url: any) => {
+					if (typeof url !== 'string') return false;
+					try {
+						new URL(url);
+						return true;
+					} catch {
+						return false;
+					}
+				})
+				.slice(0, 5)
+		: [];
+
+	return validUrls;
 };
 
 /**
@@ -347,7 +460,11 @@ EXAMPLE OUTPUT:
 				maxRetries: 2,
 				initialDelay: 1000,
 				onRetry: (attempt, delay) => {
-					console.log(`   ⏳ Retrying keyword filter in ${Math.ceil(delay / 1000)}s (attempt ${attempt}/2)...`);
+					console.log(
+						`   ⏳ Retrying keyword filter in ${Math.ceil(
+							delay / 1000
+						)}s (attempt ${attempt}/2)...`
+					);
 				},
 			}
 		);
@@ -357,18 +474,36 @@ EXAMPLE OUTPUT:
 
 		return Array.isArray(filteredKeywords) ? filteredKeywords : [];
 	} catch (err) {
-		console.error('❌ Failed to filter keywords with LLM, using fallback filter:', err);
+		console.error(
+			'❌ Failed to filter keywords with LLM, using fallback filter:',
+			err
+		);
 		// Fallback: simple heuristic filter
 		return keywords.filter((kw) => {
 			const words = kw.toLowerCase().split(/\s+/);
 			// Filter out single generic words
 			if (words.length === 1) {
-				const genericWords = new Set(['right', 'using', 'guide', 'best', 'about', 'use', 'choosing', 'service']);
+				const genericWords = new Set([
+					'right',
+					'using',
+					'guide',
+					'best',
+					'about',
+					'use',
+					'choosing',
+					'service',
+				]);
 				return !genericWords.has(words[0]);
 			}
 			// Filter out incomplete phrases
-			const incompletePatterns = ['about use', 'choosing right', 'right database'];
-			return !incompletePatterns.some(pattern => kw.toLowerCase().includes(pattern));
+			const incompletePatterns = [
+				'about use',
+				'choosing right',
+				'right database',
+			];
+			return !incompletePatterns.some((pattern) =>
+				kw.toLowerCase().includes(pattern)
+			);
 		});
 	}
 };
@@ -400,25 +535,28 @@ export const generateOutline = async (
 	// 1. Planner Agent: Generate H2s
 	const plannerPrompt = PLANNING_PROMPT(data);
 	const plannerContentParts = await buildContentParts(plannerPrompt, data);
-	const plannerResponse: GenerateContentResponse =
-		await retryWithBackoff(
-			async () => {
-				return 			await ai.models.generateContent({
+	const plannerResponse: GenerateContentResponse = await retryWithBackoff(
+		async () => {
+			return await ai.models.generateContent({
 				model: 'gemini-2.5-flash',
 				contents: { parts: plannerContentParts },
 				config: {
 					tools: [{ googleSearch: {} }], // Removed urlContext since we're not using references
 				},
 			});
+		},
+		{
+			maxRetries: 3,
+			initialDelay: 1000,
+			onRetry: (attempt, delay) => {
+				console.log(
+					`   ⏳ Rate limit hit. Retrying in ${Math.ceil(
+						delay / 1000
+					)}s (attempt ${attempt}/3)...`
+				);
 			},
-			{
-				maxRetries: 3,
-				initialDelay: 1000,
-				onRetry: (attempt, delay) => {
-					console.log(`   ⏳ Rate limit hit. Retrying in ${Math.ceil(delay / 1000)}s (attempt ${attempt}/3)...`);
-				},
-			}
-		);
+		}
+	);
 	const h2Plan: string[] = cleanAndParseJson(plannerResponse.text);
 
 	if (!h2Plan || h2Plan.length === 0) {
@@ -451,7 +589,11 @@ export const generateOutline = async (
 					maxRetries: 3,
 					initialDelay: 1000,
 					onRetry: (attempt, delay) => {
-						console.log(`   ⏳ Rate limit hit. Retrying in ${Math.ceil(delay / 1000)}s (attempt ${attempt}/3)...`);
+						console.log(
+							`   ⏳ Rate limit hit. Retrying in ${Math.ceil(
+								delay / 1000
+							)}s (attempt ${attempt}/3)...`
+						);
 					},
 				}
 			);

@@ -388,16 +388,28 @@ async function getKeywordIdeasViaBloggrAI(
 // ✨ Google Ads REST API via server endpoint (uses OAuth2 token refresh)
 async function getKeywordIdeasViaGoogleAdsServer(
 	seed: string,
-	location: string
+	location: string,
+	urls?: string[] // Optional URLs to pass via urlSeed
 ): Promise<KwRow[]> {
 	// Default to localhost:3001 if not set
 	const baseUrl = API_BASE || 'http://localhost:3001';
-	const url = `${baseUrl}/api/getKeywordsGoogleAds`;
+	const apiUrl = `${baseUrl}/api/getKeywordsGoogleAds`;
 
-	const r = await fetch(url, {
+	const requestBody: any = { location };
+
+	// If URLs provided, use urlSeed (for primary keyword generation, don't combine with keyword seed)
+	if (urls && urls.length > 0) {
+		requestBody.urls = urls;
+		// Don't include seed when URLs are provided for primary keyword generation
+	} else if (seed) {
+		// Only use seed if no URLs provided
+		requestBody.seed = seed;
+	}
+
+	const r = await fetch(apiUrl, {
 		method: 'POST',
 		headers: { 'content-type': 'application/json' },
-		body: JSON.stringify({ seed, location }),
+		body: JSON.stringify(requestBody),
 	});
 
 	if (!r.ok) {
@@ -410,10 +422,82 @@ async function getKeywordIdeasViaGoogleAdsServer(
 		text: String(it.text || ''),
 		volume: Number(it.volume || 0),
 		difficulty: Number(it.difficulty ?? 0.5),
-		source: 'seed',
+		source: urls && urls.length > 0 ? 'url' : 'seed',
 	}));
 
 	return keywords;
+}
+
+/**
+ * Get keywords from URLs by passing URLs directly to Google Keyword API via urlSeed
+ * Also includes user topic as keywordSeed for better results
+ * @param urls Array of URLs to pass to Google Keyword API
+ * @param location Target location for keyword research
+ * @param userTopic Original user topic for context (used as keywordSeed)
+ * @returns Array of keywords with volumes
+ */
+export async function getKeywordsFromUrls(
+	urls: string[],
+	location: string,
+	userTopic: string
+): Promise<KwRow[]> {
+	if (!urls || urls.length === 0) return [];
+
+	console.log(
+		`   🔗 Getting 20 keywords from each of ${urls.length} URLs via Google Keyword API...`
+	);
+
+	// Aggregate keywords from all URLs
+	const allKeywords: KwRow[] = [];
+
+	// Process each URL (Google Ads API accepts one URL at a time via urlSeed)
+	for (let i = 0; i < urls.length; i++) {
+		const url = urls[i];
+		try {
+			console.log(
+				`   📡 Fetching keywords for URL ${i + 1}/${
+					urls.length
+				}: ${url}`
+			);
+
+			// Pass URL directly via urlSeed only (no keyword seed for primary keyword generation)
+			const keywords = await getKeywordIdeasViaGoogleAdsServer(
+				'', // No keyword seed - only use URLs
+				location,
+				[url] // Pass URL via urlSeed
+			);
+
+			// Get top 20 from this URL (sorted by volume, no filtering)
+			const top20FromUrl = keywords
+				.sort((a, b) => b.volume - a.volume)
+				.slice(0, 20);
+
+			console.log(
+				`   ✅ Got ${top20FromUrl.length} keywords from URL ${
+					i + 1
+				} (showing first 5): [${top20FromUrl
+					.slice(0, 5)
+					.map((k) => k.text)
+					.join(', ')}...]`
+			);
+			allKeywords.push(...top20FromUrl);
+		} catch (err) {
+			console.error(
+				`   ❌ Failed to fetch keywords for URL "${url}":`,
+				err
+			);
+		}
+	}
+
+	// Deduplicate and return (in case same keyword appears from multiple URLs)
+	const uniqueKeywords = dedupeMerge(allKeywords);
+	console.log(
+		`   ✅ Total unique keywords from all URLs: ${
+			uniqueKeywords.length
+		} (20 × ${urls.length} = ${urls.length * 20} max)`
+	);
+
+	return uniqueKeywords;
 }
 
 // Fallback API - original server (google-ads-api library)

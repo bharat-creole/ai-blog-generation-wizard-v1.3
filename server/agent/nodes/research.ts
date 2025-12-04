@@ -14,7 +14,11 @@ export const researchPrimaryNode = async (
 			if (!text || text.trim().length < 3) return false;
 			const trimmed = text.trim();
 			const vowels = (trimmed.match(/[aeiouAEIOU]/g) || []).length;
-			const consonants = (trimmed.match(/[bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ]/g) || []).length;
+			const consonants = (
+				trimmed.match(
+					/[bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ]/g
+				) || []
+			).length;
 			const totalLetters = vowels + consonants;
 			if (totalLetters === 0) return true;
 			const vowelRatio = vowels / totalLetters;
@@ -23,9 +27,10 @@ export const researchPrimaryNode = async (
 			if (hasRepeatedPattern && trimmed.length > 10) return true;
 			return false;
 		};
-		
+
 		const isValidTopic = (topic: string): boolean => {
-			if (!topic || !topic.trim() || topic.trim().length < 3) return false;
+			if (!topic || !topic.trim() || topic.trim().length < 3)
+				return false;
 			const trimmed = topic.trim();
 			const invalidPatterns = [
 				/^[^a-zA-Z]*$/,
@@ -36,8 +41,11 @@ export const researchPrimaryNode = async (
 			}
 			return true;
 		};
-		
-		if (isGibberish(state.data.topic) || !isValidTopic(state.data.topic)) {
+
+		if (
+			isGibberish(state.data.topic) ||
+			!isValidTopic(state.data.topic)
+		) {
 			return {
 				halt: { reason: 'invalid_topic' },
 				messages: [
@@ -56,7 +64,7 @@ export const researchPrimaryNode = async (
 			};
 		}
 	}
-	
+
 	// ✨ Case 1: User already provided keyword AND it exists
 	if (
 		automationEngine.isUserProvided(state as any, 'primaryKeyword') &&
@@ -88,7 +96,7 @@ export const researchPrimaryNode = async (
 			messages: [
 				...(state.messages || []),
 				new AIMessage(
-					"Please provide a topic or title to search for keywords."
+					'Please provide a topic or title to search for keywords.'
 				),
 			],
 			trace: [
@@ -105,146 +113,165 @@ export const researchPrimaryNode = async (
 	let ranked: any[] = [];
 
 	try {
-		// ✨ NEW FLOW: Step 1 - Search web through Gemini to get top 10 titles
-		console.log('🔍 [PRIMARY KEYWORD RESEARCH] Step 1: Searching web for titles...');
+		// ✨ NEW FLOW: Step 1 - Search web through Gemini to get top 5 URLs
+		console.log(
+			'🔍 [PRIMARY KEYWORD RESEARCH] Step 1: Searching web for top 5 URLs...'
+		);
 		const apiKey = state.apiKey || process.env.GEMINI_API_KEY;
 		if (!apiKey) {
 			throw new Error('API Key is required for web search.');
 		}
 
-		const webTitles = await geminiService.searchWebForTitles(
+		const webUrls = await geminiService.searchWebForUrls(
 			topicSource,
 			apiKey
 		);
-		console.log(`   ✅ Found ${webTitles.length} titles from web search`);
-		console.log(`   📋 Web-searched titles:`);
-		webTitles.forEach((title, idx) => {
-			console.log(`      ${idx + 1}. ${title}`);
+		console.log(`   ✅ Found ${webUrls.length} URLs from web search`);
+		console.log(`   📋 Web-searched URLs:`);
+		webUrls.forEach((url, idx) => {
+			console.log(`      ${idx + 1}. ${url}`);
 		});
 
-		// ✨ NEW FLOW: Step 2 - Extract relevant keywords from those titles
-		console.log('🔍 [PRIMARY KEYWORD RESEARCH] Step 2: Extracting keywords from titles...');
-		const extractedKeywords = keywordTool.extractKeywordsFromTitles(
-			webTitles,
-			50 // Extract 50 keywords to ensure we get 20+ after all filtering
+		// ✨ NEW FLOW: Step 2 - Pass URLs to Google Keyword Research API
+		console.log(
+			'🔍 [PRIMARY KEYWORD RESEARCH] Step 2: Getting keywords from URLs via Google Keyword API...'
 		);
-		console.log(`   ✅ Extracted ${extractedKeywords.length} keywords from titles`);
-		console.log(`   📝 Extracted keywords: [${extractedKeywords.join(', ')}]`);
+		const keywordsFromUrls = await keywordTool.getKeywordsFromUrls(
+			webUrls,
+			location,
+			topicSource
+		);
+		console.log(
+			`   ✅ Got ${keywordsFromUrls.length} keywords from ${webUrls.length} URLs`
+		);
 
-		// ✨ NEW FLOW: Step 2.5 - Filter meaningful keywords using LLM
-		console.log('🔍 [PRIMARY KEYWORD RESEARCH] Step 2.5: Filtering meaningful keywords with LLM...');
-		const meaningfulKeywords = await geminiService.filterMeaningfulKeywords(
-			extractedKeywords,
+		// ✨ NEW FLOW: Step 3 - Log all keywords (20 × 5 = 100), then filter to top 25 by user intent/relevancy
+		console.log(
+			'🔍 [PRIMARY KEYWORD RESEARCH] Step 3: Logging all keywords, then filtering to top 25 by user intent...'
+		);
+
+		// Log all keywords (20 × 5 = 100 max)
+		console.log(
+			`   📋 All ${keywordsFromUrls.length} keywords from ${webUrls.length} URLs (20 × ${webUrls.length}):`
+		);
+		keywordsFromUrls.forEach((kw, idx) => {
+			console.log(
+				`      ${idx + 1}. "${kw.text}" (Volume: ${
+					kw.volume
+				}, Difficulty: ${kw.difficulty})`
+			);
+		});
+
+		// Score keywords based on user intent and relevancy
+		// prioritizeRelevance: true means 50% relevance, 30% volume, 20% difficulty
+		const scoredKeywords = keywordTool.scoreIdeas(
+			keywordsFromUrls,
 			topicSource,
-			apiKey
-		);
-		console.log(`   ✅ Filtered to ${meaningfulKeywords.length} meaningful keywords`);
-		console.log(`   📝 Meaningful keywords: [${meaningfulKeywords.join(', ')}]`);
-
-		// Combine with any user-provided primary keyword
-		const keywordsToResearch = [
-			...(state.data.primaryKeyword ? [state.data.primaryKeyword] : []),
-			...meaningfulKeywords,
-		];
-
-		// ✨ NEW FLOW: Step 3 - Fetch volumes ONLY for keywords extracted from titles
-		console.log('🔍 [PRIMARY KEYWORD RESEARCH] Step 3: Fetching volumes for extracted keywords only...');
-		const keywordVolumes = await Promise.all(
-			keywordsToResearch.map(async (k, idx) => {
-				try {
-					console.log(`   📡 Fetching volume for keyword ${idx + 1}/${keywordsToResearch.length}: "${k}"`);
-					const result = await keywordTool.getKeywordVolume(k, location);
-					if (result) {
-						console.log(`   ✅ Found volume for "${k}": ${result.volume}`);
-						return result;
-					} else {
-						console.log(`   ⚠️  No volume found for "${k}"`);
-						return null;
-					}
-				} catch (err) {
-					console.error(`   ❌ Failed to fetch volume for "${k}":`, err);
-					return null;
-				}
-			})
-		);
-
-		// Separate keywords with volumes and without volumes
-		const keywordsWithVolume = keywordVolumes
-			.filter((kw): kw is NonNullable<typeof kw> => kw !== null)
-			.map((kw) => ({
-				...kw,
-				score: 0, // Will be scored below
-			}));
-
-		// If we don't have enough keywords with volumes, include some without volumes
-		// (but only if they passed the LLM filter)
-		const keywordsWithoutVolume = keywordVolumes
-			.map((kw, idx) => kw === null ? keywordsToResearch[idx] : null)
-			.filter((kw): kw is string => kw !== null);
-
-		// Start with keywords that have volumes
-		ranked = keywordsWithVolume;
-
-		// Score the keywords based on relevance to topic
-		ranked = keywordTool.scoreIdeas(
-			ranked,
-			state.data.title || state.data.topic || '',
 			true // Prioritize relevance/intent over volume
 		);
 
-		// ✨ Filter: Keep only short keywords (2-3 words max) and prioritize relevance/intent
-		ranked = ranked
-			.filter((kw) => {
-				const wordCount = kw.text.split(' ').length;
-				return wordCount <= 3 && kw.text.length <= 40; // Max 3 words, max 40 chars
-			})
-			.sort((a, b) => {
-				// First sort by score (descending) - score prioritizes relevance/intent
-				if (b.score !== a.score) {
-					return b.score - a.score;
-				}
-				// Then by volume (descending) - as secondary factor
-				if (b.volume !== a.volume) {
-					return b.volume - a.volume;
-				}
-				// Then prefer 2-word keywords over 3-word, then 1-word
-				const aWords = a.text.split(' ').length;
-				const bWords = b.text.split(' ').length;
-				if (aWords !== bWords) {
-					if (aWords === 2) return -1;
-					if (bWords === 2) return 1;
-					if (aWords === 3) return -1;
-					if (bWords === 3) return 1;
-					return aWords - bWords;
-				}
-				return 0;
-			})
-			.slice(0, 30); // Limit to top 30 relevant short keywords
+		// Filter out irrelevant keywords that don't match user intent
+		const topicWords = new Set(
+			(topicSource || '')
+				.toLowerCase()
+				.split(/\W+/)
+				.filter((w) => w.length >= 3) // Only meaningful words (3+ chars)
+		);
 
-		// ✨ Ensure we have at least 20 keywords
-		// If we have fewer than 20, add keywords without volumes (they passed LLM filter)
-		if (ranked.length < 20 && keywordsWithoutVolume.length > 0) {
-			const missingCount = 20 - ranked.length;
-			const additionalKeywords = keywordsWithoutVolume
-				.filter((kw) => {
-					const wordCount = kw.split(' ').length;
-					return wordCount <= 3 && kw.length <= 40;
-				})
-				.slice(0, missingCount)
-				.map((kw) => ({
-					text: kw,
-					volume: 0, // No volume data available
-					difficulty: 0.5,
-					source: 'seed' as const,
-					score: 0.1, // Lower score since no volume
-				}));
-			ranked = [...ranked, ...additionalKeywords];
-		}
+		// Generic phrases that should be filtered out (not topic-specific)
+		const genericPhrases = [
+			'difference between',
+			'i have been',
+			'your heart out',
+			'heart of heart',
+			'any difference',
+			'define between',
+			'difference between for',
+			'difference between is',
+			'difference between to',
+		];
 
-		// Final limit: show at least 20, up to 30
-		ranked = ranked.slice(0, Math.max(20, ranked.length));
+		// Filter function to check if keyword is relevant
+		const isRelevantKeyword = (kw: any): boolean => {
+			const kwText = kw.text.toLowerCase();
 
-		console.log(`✅ [PRIMARY KEYWORD RESEARCH] Complete! Found ${ranked.length} unique short keywords (2-3 words) with volumes`);
+			// Filter out generic phrases
+			if (
+				genericPhrases.some((phrase) => kwText.includes(phrase))
+			) {
+				return false;
+			}
+
+			// Filter out keywords with very low relevance score (< 0.1)
+			if (kw.score < 0.1) {
+				return false;
+			}
+
+			// Filter out keywords that don't contain any topic words
+			// (unless topic is too short/generic)
+			if (topicWords.size > 0) {
+				const kwWords = kwText
+					.split(/\W+/)
+					.filter((w: string) => w.length >= 3);
+				const hasTopicWord = kwWords.some((kwWord: string) => {
+					// Check exact match
+					if (topicWords.has(kwWord)) return true;
+					// Check if keyword word contains topic word or vice versa
+					for (const topicWord of topicWords) {
+						if (
+							kwWord.includes(topicWord) ||
+							topicWord.includes(kwWord)
+						) {
+							return true;
+						}
+					}
+					return false;
+				});
+
+				if (!hasTopicWord) {
+					return false;
+				}
+			}
+
+			// Filter out single generic words (unless they're part of the topic)
+			const words = kwText
+				.split(/\s+/)
+				.filter((w: string) => w.length >= 2);
+			if (words.length === 1 && !topicWords.has(words[0])) {
+				// Single word that's not in topic - likely generic
+				return false;
+			}
+
+			return true;
+		};
+
+		// Apply relevance filtering
+		const relevantKeywords = scoredKeywords.filter(isRelevantKeyword);
+
+		// Filter to top 25 based on score (user intent + relevancy)
+		ranked = relevantKeywords.slice(0, 25);
+
+		console.log(
+			`   🧹 Filtered out ${
+				scoredKeywords.length - relevantKeywords.length
+			} irrelevant keywords`
+		);
+		console.log(
+			`   🎯 Top 25 keywords filtered by user intent and relevancy:`
+		);
+		ranked.forEach((kw: any, idx: number) => {
+			console.log(
+				`      ${idx + 1}. "${
+					kw.text
+				}" (Score: ${kw.score.toFixed(3)}, Volume: ${
+					kw.volume
+				}, Difficulty: ${kw.difficulty})`
+			);
+		});
+
+		console.log(
+			`✅ [PRIMARY KEYWORD RESEARCH] Complete! Filtered ${keywordsFromUrls.length} keywords → ${ranked.length} top keywords by user intent`
+		);
 	} catch (err) {
 		console.error('❌ [PRIMARY KEYWORD RESEARCH] Error:', err);
 		// Silent error handling - will return empty ranked array

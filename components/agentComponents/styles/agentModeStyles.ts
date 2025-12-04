@@ -124,15 +124,38 @@ export const markdownStyles = `
 		width: 100%;
 		border-collapse: collapse;
 		margin: 1rem 0;
+		display: table;
+		border-spacing: 0;
+		overflow-x: auto;
+	}
+	.markdown-preview .markdown-content thead {
+		display: table-header-group;
+	}
+	.markdown-preview .markdown-content tbody {
+		display: table-row-group;
+	}
+	.markdown-preview .markdown-content tr {
+		display: table-row;
+		border-top: 1px solid #cbd5e0;
 	}
 	.markdown-preview .markdown-content th,
 	.markdown-preview .markdown-content td {
 		border: 1px solid #cbd5e0;
-		padding: 0.5rem 1rem;
+		padding: 0.75rem 1rem;
+		display: table-cell;
+		text-align: left;
+		vertical-align: top;
 	}
 	.markdown-preview .markdown-content th {
 		background-color: #f7fafc;
 		font-weight: 600;
+		text-align: left;
+	}
+	.markdown-preview .markdown-content tbody tr:nth-child(even) {
+		background-color: #f9fafb;
+	}
+	.markdown-preview .markdown-content tbody tr:hover {
+		background-color: #f3f4f6;
 	}
 	.markdown-preview .markdown-content strong {
 		font-weight: 700;
@@ -147,4 +170,3 @@ export const inputTextareaStyles: React.CSSProperties = {
 	minHeight: '24px',
 	maxHeight: '200px',
 };
-
