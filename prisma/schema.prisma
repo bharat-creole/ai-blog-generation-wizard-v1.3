@@ -53,6 +53,28 @@ model blogs {
   users             users?        @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
+model agent_history {
+  id            String    @id @default(uuid()) @db.Uuid
+  userId        String    @db.Uuid
+  threadId      String    @unique @db.VarChar(255)
+  title         String?   @db.VarChar(500)
+  topic         String?   @db.VarChar(255)
+  status        String    @default("active") @db.VarChar(50)
+  messages      Json
+  agentState    Json
+  lastMessageAt DateTime  @default(now()) @db.Timestamptz(6)
+  messageCount  Int       @default(0)
+  blogGenerated Boolean   @default(false)
+  createdAt     DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt     DateTime  @updatedAt @db.Timestamptz(6)
+  deletedAt     DateTime? @db.Timestamptz(6)
+  users         users     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, lastMessageAt])
+  @@index([threadId])
+  @@index([status])
+}
+
 model brand_voices {
   id                   String                      @id @db.Uuid
   userId               String?                     @db.Uuid
@@ -231,6 +253,7 @@ model users {
   payments       payments[]
   style_guides   style_guides[]
   user_usages    user_usages[]
+  agent_history  agent_history[]
 }
 
 model zohoCreds {

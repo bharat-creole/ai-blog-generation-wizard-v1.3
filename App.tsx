@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { AppView, BlogData } from './types';
 import AgentMode from './components/AgentMode';
+import SidebarHistory from './components/common/SidebarHistory';
 
 const initialBlogData: BlogData = {
 	apiKey: '',
@@ -30,6 +31,8 @@ const App: React.FC = () => {
 	const [showBlogInfo, setShowBlogInfo] = useState(false);
 	const [showTrace, setShowTrace] = useState(false);
 	const [showSettings, setShowSettings] = useState(false);
+	const [currentThreadId, setCurrentThreadId] = useState<string | null>(null);
+
 
 	useEffect(() => {
 		try {
@@ -37,23 +40,23 @@ const App: React.FC = () => {
 			console.log('   Full URL:', window.location.href);
 			console.log('   Search:', window.location.search);
 			console.log('   Hash:', window.location.hash);
-			
+
 			const urlParams = new URLSearchParams(window.location.search);
 			const hashParams = new URLSearchParams(window.location.hash.substring(1));
-			
+
 			// Check query parameters first, then hash
 			const token = urlParams.get('token') || hashParams.get('token');
 			const userId = urlParams.get('userId') || hashParams.get('userId');
-			
+
 			console.log('   Token found:', token ? 'Yes' : 'No');
 			console.log('   UserId found:', userId ? 'Yes' : 'No');
-			
+
 			if (token) {
 				// Store token in localStorage
 				localStorage.setItem('accessToken', token);
 				console.log('✅ [Auth] Token stored in localStorage as "accessToken"');
 				console.log('   Token length:', token.length);
-				
+
 				// Verify it was stored
 				const stored = localStorage.getItem('accessToken');
 				if (stored === token) {
@@ -61,18 +64,18 @@ const App: React.FC = () => {
 				} else {
 					console.error('❌ [Auth] Token verification: FAILED');
 				}
-				
+
 				// Also store userId if provided
 				if (userId) {
 					localStorage.setItem('userId', userId);
 					console.log('✅ [Auth] UserId stored:', userId);
 				}
-				
+
 				// Clean up URL by removing token and userId from query/hash
 				const newUrl = new URL(window.location.href);
 				newUrl.searchParams.delete('token');
 				newUrl.searchParams.delete('userId');
-				
+
 				// Remove from hash if present
 				if (window.location.hash.includes('token') || window.location.hash.includes('userId')) {
 					const hashParams = new URLSearchParams(window.location.hash.substring(1));
@@ -81,15 +84,15 @@ const App: React.FC = () => {
 					const newHash = hashParams.toString();
 					newUrl.hash = newHash ? `#${newHash}` : '';
 				}
-				
+
 				// Update URL without reload (clean URL)
 				window.history.replaceState({}, '', newUrl.toString());
 				console.log('✅ [Auth] URL cleaned, new URL:', newUrl.toString());
 			} else {
 				// Check if token already exists in localStorage
-				const existingToken = localStorage.getItem('accessToken') || 
-				                      localStorage.getItem('token') ||
-				                      localStorage.getItem('authToken');
+				const existingToken = localStorage.getItem('accessToken') ||
+					localStorage.getItem('token') ||
+					localStorage.getItem('authToken');
 				if (existingToken) {
 					console.log('ℹ️  [Auth] No token in URL, but found existing token in localStorage');
 				} else {
@@ -140,6 +143,53 @@ const App: React.FC = () => {
 		setBlogData((prev) => ({ ...prev, ...data }));
 	}, []);
 
+	// Handle selecting a conversation from history to resume
+	const handleSelectThread = useCallback(async (threadId: string) => {
+		console.log('📂 [History] Loading thread:', threadId);
+		setCurrentThreadId(threadId);
+
+		try {
+			// @ts-ignore
+			const API_BASE = import.meta.env?.VITE_AGENT_API_BASE || 'http://localhost:3001';
+			const token = localStorage.getItem('accessToken');
+
+			const response = await fetch(`${API_BASE}/api/agent/history/${threadId}`, {
+				headers: {
+					'Content-Type': 'application/json',
+					...(token && { 'Authorization': `Bearer ${token}` })
+				}
+			});
+
+			if (response.ok) {
+				const { thread } = await response.json();
+
+				// Load the agent state from history
+				if (thread.agentState) {
+					const state = thread.agentState;
+
+					// Update blog data with the conversation state
+					setBlogData({
+						...blogData,
+						topic: state.data?.topic || '',
+						title: state.data?.title || '',
+						primaryKeyword: state.data?.primaryKeyword || '',
+						secondaryKeywords: state.data?.secondaryKeywords || [],
+						outline: state.outline || [],
+						blogContent: state.draft || '',
+						targetLocation: state.data?.targetLocation || 'United States',
+						referenceUrls: state.data?.referenceUrls || [],
+						interlinks: state.data?.interlinks || [],
+					});
+
+					console.log('✅ [History] Thread loaded successfully');
+					console.log('   Messages count:', thread.messages?.length || 0);
+				}
+			}
+		} catch (error) {
+			console.error('❌ [History] Failed to load thread:', error);
+		}
+	}, [blogData]);
+
 	const renderView = () => {
 		return (
 			<AgentMode
@@ -149,6 +199,7 @@ const App: React.FC = () => {
 				showTrace={showTrace}
 				showSettings={showSettings}
 				onCollapseSidebar={() => setSidebarCollapsed(true)}
+				loadedThreadId={currentThreadId}
 			/>
 		);
 	};
@@ -218,9 +269,8 @@ const App: React.FC = () => {
 				{/* Left Sidebar - Mode Navigation */}
 				<aside
 					className={`
-					${
-						sidebarCollapsed ? 'w-20' : 'w-64'
-					} bg-white/80 backdrop-blur-lg border-r border-gray-200/50 shadow-lg flex flex-col
+					${sidebarCollapsed ? 'w-20' : 'w-64'
+						} bg-white/80 backdrop-blur-lg border-r border-gray-200/50 shadow-lg flex flex-col
 					fixed lg:relative inset-y-0 left-0 z-50 transform transition-all duration-300 ease-in-out
 					${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
 					mt-[49px] lg:mt-0
@@ -284,15 +334,13 @@ const App: React.FC = () => {
 									}
 									setSidebarOpen(false);
 								}}
-								className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-200 ${
-									view === AppView.Agent
-										? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg shadow-orange-500/30 scale-[1.02]'
-										: 'text-gray-700 hover:bg-gray-100 hover:shadow-md'
-								} ${
-									sidebarCollapsed
+								className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-200 ${view === AppView.Agent
+									? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg shadow-orange-500/30 scale-[1.02]'
+									: 'text-gray-700 hover:bg-gray-100 hover:shadow-md'
+									} ${sidebarCollapsed
 										? 'justify-center'
 										: ''
-								}`}
+									}`}
 								title={
 									sidebarCollapsed
 										? 'Agent Mode'
@@ -310,23 +358,21 @@ const App: React.FC = () => {
 												Mode
 											</div>
 											<div
-												className={`text-xs ${
-													view ===
+												className={`text-xs ${view ===
 													AppView.Agent
-														? 'text-orange-100'
-														: 'text-gray-500'
-												}`}
+													? 'text-orange-100'
+													: 'text-gray-500'
+													}`}
 											>
 												AI-powered
 												chat
 											</div>
 										</div>
 										<svg
-											className={`w-4 h-4 transition-transform ${
-												agentDropdownOpen
-													? 'rotate-180'
-													: ''
-											}`}
+											className={`w-4 h-4 transition-transform ${agentDropdownOpen
+												? 'rotate-180'
+												: ''
+												}`}
 											fill='none'
 											stroke='currentColor'
 											viewBox='0 0 24 24'
@@ -344,7 +390,7 @@ const App: React.FC = () => {
 								)}
 								{sidebarCollapsed &&
 									view ===
-										AppView.Agent && (
+									AppView.Agent && (
 										<div className='absolute right-1 top-1 w-2 h-2 bg-white rounded-full animate-pulse' />
 									)}
 							</button>
@@ -360,11 +406,10 @@ const App: React.FC = () => {
 													!showBlogInfo
 												)
 											}
-											className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs transition-all ${
-												showBlogInfo
-													? 'bg-orange-100 text-orange-700'
-													: 'text-gray-600 hover:bg-gray-100'
-											}`}
+											className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs transition-all ${showBlogInfo
+												? 'bg-orange-100 text-orange-700'
+												: 'text-gray-600 hover:bg-gray-100'
+												}`}
 										>
 											<span>
 												{showBlogInfo
@@ -385,11 +430,10 @@ const App: React.FC = () => {
 													!showTrace
 												)
 											}
-											className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs transition-all ${
-												showTrace
-													? 'bg-orange-100 text-orange-700'
-													: 'text-gray-600 hover:bg-gray-100'
-											}`}
+											className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs transition-all ${showTrace
+												? 'bg-orange-100 text-orange-700'
+												: 'text-gray-600 hover:bg-gray-100'
+												}`}
 										>
 											<span>
 												{showTrace
@@ -409,11 +453,10 @@ const App: React.FC = () => {
 													!showSettings
 												)
 											}
-											className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs transition-all ${
-												showSettings
-													? 'bg-orange-100 text-orange-700'
-													: 'text-gray-600 hover:bg-gray-100'
-											}`}
+											className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs transition-all ${showSettings
+												? 'bg-orange-100 text-orange-700'
+												: 'text-gray-600 hover:bg-gray-100'
+												}`}
 										>
 											<span>
 												{showSettings
@@ -431,6 +474,14 @@ const App: React.FC = () => {
 								)}
 						</div>
 					</nav>
+
+					{/* ✨ Conversation History Section */}
+					<div className="px-4 py-2 border-t border-gray-200/50">
+						<SidebarHistory
+							collapsed={sidebarCollapsed}
+							onSelectThread={handleSelectThread}
+						/>
+					</div>
 
 					{/* Sidebar Footer */}
 					{!sidebarCollapsed && (
@@ -452,7 +503,7 @@ const App: React.FC = () => {
 					{renderView()}
 				</main>
 			</div>
-		</div>
+		</div >
 	);
 };
 

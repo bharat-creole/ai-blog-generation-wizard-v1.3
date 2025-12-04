@@ -29,38 +29,61 @@ export interface BlogSaveData {
 export const saveBlogToDatabase = async (data: BlogSaveData): Promise<void> => {
     try {
         console.log(data)
-        // ✨ FIX: Simplified metadata to avoid VARCHAR(255) limit
-        // Store only essential metadata (no outline - it's too large)
+        
+        // Calculate word count from content
+        const wordCount = data.content
+            .replace(/<[^>]*>/g, '') // Remove HTML tags
+            .split(/\s+/)
+            .filter(word => word.length > 0)
+            .length;
+
+        // Count reference data
+        const fileCount = (data.referenceUrls || []).filter(url => 
+            url.match(/\.(pdf|doc|docx|txt)$/i)
+        ).length;
+        const urlCount = (data.referenceUrls || []).filter(url => 
+            !url.match(/\.(pdf|doc|docx|txt)$/i)
+        ).length;
+
+        // Create reference data summary
+        const referenceData = {
+            files: fileCount,
+            urls: urlCount
+        };
+
+        // Store content as plain text (remove JSON formatting for markdown display)
+        // Remove opening/closing braces and quotes, replace \n with actual newlines
+        const contentPlain = JSON.stringify(data.content)
+            .replace(/^","$/g, '\n'); // Replace \n with actual newlines
+
+        // ✨ Simplified metadata to avoid VARCHAR(255) limit
         const metadata = {
             threadId: data.threadId,
-            topic: data.topic?.substring(0, 100) || '', // Truncate to 100 chars
+            topic: data.topic?.substring(0, 100) || '',
             primaryKeyword: data.primaryKeyword?.substring(0, 100) || '',
             targetLocation: data.targetLocation,
             automationLevel: data.automationLevel,
-            // Removed outline and interlinks - they're too large for VARCHAR(255)
+            wordCount: wordCount,
+            referenceData: referenceData
         };
 
-        // Convert content to array format (as expected by blogs.content field)
-        const contentArray = data.content.split('\n').filter(line => line.trim().length > 0);
-
-        // ✨ FIX: Truncate secondary keywords to fit VARCHAR(255)
+        // ✨ Truncate secondary keywords to fit VARCHAR(255)
         const secondaryKeywordsStr = data.secondaryKeywords.join(', ').substring(0, 250);
 
-        // ✨ FIX: Truncate reference URLs to fit VARCHAR(255)
+        // ✨ Truncate reference URLs to fit VARCHAR(255)
         const referenceUrlsStr = data.referenceUrls.join(', ').substring(0, 200);
 
-        // ✨ FIX: Truncate title to fit VARCHAR(255)
+        // ✨ Truncate title to fit VARCHAR(255)
         const truncatedTitle = data.title?.substring(0, 250) || 'Untitled';
 
-        // ✨ FIX: Simplify interlinks JSON to fit VARCHAR(255)
-        // Store only the count or first few links
+        // ✨ Simplify interlinks JSON to fit VARCHAR(255)
         const interlinksSummary = data.interlinks && data.interlinks.length > 0
             ? JSON.stringify({ count: data.interlinks.length, sample: data.interlinks.slice(0, 2) })
             : '{}';
         const truncatedInterlinks = interlinksSummary.substring(0, 250);
 
-        // ✨ FIX: Create compact referenceLink JSON
-        const referenceLinkJson = JSON.stringify({ ...metadata, referenceUrls: referenceUrlsStr });
+        // ✨ Create compact referenceLink JSON with metadata
+        const referenceLinkJson = JSON.stringify(metadata);
         const truncatedReferenceLink = referenceLinkJson.substring(0, 250);
 
         // Check if blog exists by searching in referenceLink metadata
@@ -81,11 +104,13 @@ export const saveBlogToDatabase = async (data: BlogSaveData): Promise<void> => {
                     secondaryKeywords: secondaryKeywordsStr,
                     referenceLink: truncatedReferenceLink,
                     internalLinks: truncatedInterlinks,
-                    content: contentArray,
+                    content: [contentPlain], // Store as plain text
                     updatedAt: new Date(),
                 },
             });
             console.log(`✅ [DB] Blog updated for threadId: ${data.threadId}`);
+            console.log(`   📊 Word count: ${wordCount}`);
+            console.log(`   📁 Reference data: ${fileCount} files, ${urlCount} URLs`);
         } else {
             // Create new blog
             await prisma.blogs.create({
@@ -96,7 +121,7 @@ export const saveBlogToDatabase = async (data: BlogSaveData): Promise<void> => {
                     secondaryKeywords: secondaryKeywordsStr,
                     referenceLink: truncatedReferenceLink,
                     internalLinks: truncatedInterlinks,
-                    content: contentArray,
+                    content: [contentPlain], // Store as plain text
                     language: [], 
                     words: [], 
                     createdAt: new Date(),
@@ -104,6 +129,8 @@ export const saveBlogToDatabase = async (data: BlogSaveData): Promise<void> => {
                 },
             });
             console.log(`✅ [DB] Blog created for threadId: ${data.threadId}`);
+            console.log(`   📊 Word count: ${wordCount}`);
+            console.log(`   📁 Reference data: ${fileCount} files, ${urlCount} URLs`);
             console.log(`   📏 Data lengths: title=${truncatedTitle.length}, keywords=${secondaryKeywordsStr.length}, refLink=${truncatedReferenceLink.length}, links=${truncatedInterlinks.length}`);
 
             // Update user usage and create log entry (only for new blogs and if userId is provided)
