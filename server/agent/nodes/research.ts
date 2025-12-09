@@ -113,17 +113,34 @@ export const researchPrimaryNode = async (
 	let ranked: any[] = [];
 
 	try {
+		// ✨ NEW: Check for regeneration feedback
+		const feedback = state.conversationContext?.primaryKeywordFeedback;
+		const isRegeneration = !!feedback;
+
 		// ✨ NEW FLOW: Step 1 - Search web through Gemini to get top 5 URLs
+		// If regenerating with feedback, modify search query to incorporate feedback
+		const searchQuery =
+			isRegeneration && feedback
+				? `${topicSource} ${feedback}` // Include feedback in search to get different URLs
+				: topicSource;
+
 		console.log(
-			'🔍 [PRIMARY KEYWORD RESEARCH] Step 1: Searching web for top 5 URLs...'
+			`🔍 [PRIMARY KEYWORD RESEARCH] Step 1: Searching web for top 5 URLs...${
+				isRegeneration ? ' (REGENERATION WITH FEEDBACK)' : ''
+			}`
 		);
+		if (isRegeneration && feedback) {
+			console.log(`   📝 Feedback: "${feedback}"`);
+			console.log(`   🔍 Modified search query: "${searchQuery}"`);
+		}
+
 		const apiKey = state.apiKey || process.env.GEMINI_API_KEY;
 		if (!apiKey) {
 			throw new Error('API Key is required for web search.');
 		}
 
 		const webUrls = await geminiService.searchWebForUrls(
-			topicSource,
+			searchQuery, // Use modified query if regenerating
 			apiKey
 		);
 		console.log(`   ✅ Found ${webUrls.length} URLs from web search`);
@@ -164,11 +181,102 @@ export const researchPrimaryNode = async (
 
 		// Score keywords based on user intent and relevancy
 		// prioritizeRelevance: true means 50% relevance, 30% volume, 20% difficulty
-		const scoredKeywords = keywordTool.scoreIdeas(
+		let scoredKeywords = keywordTool.scoreIdeas(
 			keywordsFromUrls,
 			topicSource,
 			true // Prioritize relevance/intent over volume
 		);
+
+		// ✨ NEW: If regeneration with feedback, use Gemini to generate NEW keywords
+		if (isRegeneration && feedback) {
+			console.log(
+				`   🔄 [KEYWORD REGENERATION] Generating NEW keywords based on feedback: "${feedback}"`
+			);
+			try {
+				// Generate completely new keywords based on feedback
+				const newKeywords =
+					await geminiService.filterKeywordsWithFeedback(
+						scoredKeywords.slice(0, 50), // Pass some context keywords for reference
+						topicSource,
+						feedback,
+						apiKey
+					);
+
+				if (newKeywords && newKeywords.length > 0) {
+					console.log(
+						`   ✅ [KEYWORD REGENERATION] Generated ${newKeywords.length} NEW keywords based on feedback`
+					);
+
+					// Re-score the new keywords with the feedback in mind
+					const newScored = keywordTool.scoreIdeas(
+						newKeywords,
+						`${topicSource} ${feedback}`, // Include feedback in scoring context
+						true
+					);
+
+					// Use the new keywords as the primary source
+					scoredKeywords = newScored;
+
+					// If we still need more, merge with some original keywords (but prioritize new ones)
+					if (scoredKeywords.length < 25) {
+						const newMap = new Map(
+							scoredKeywords.map((kw) => [
+								kw.text.toLowerCase(),
+								kw,
+							])
+						);
+
+						// Add original keywords that aren't duplicates
+						keywordsFromUrls.forEach((kw) => {
+							if (
+								!newMap.has(
+									kw.text.toLowerCase()
+								) &&
+								scoredKeywords.length < 50
+							) {
+								// Add score property to match expected type
+								scoredKeywords.push({
+									...kw,
+									score: 0,
+								} as any);
+							}
+						});
+
+						// Re-score the merged list
+						scoredKeywords = keywordTool.scoreIdeas(
+							scoredKeywords,
+							`${topicSource} ${feedback}`,
+							true
+						);
+					}
+
+					console.log(
+						`   ✅ [KEYWORD REGENERATION] Using ${
+							scoredKeywords.length
+						} keywords (${newScored.length} new + ${
+							scoredKeywords.length -
+							newScored.length
+						} merged)`
+					);
+
+					// Clear feedback after using it
+					if (state.conversationContext) {
+						state.conversationContext.primaryKeywordFeedback =
+							undefined;
+					}
+				} else {
+					console.log(
+						`   ⚠️  [KEYWORD REGENERATION] No new keywords generated, using filtered original keywords`
+					);
+				}
+			} catch (err) {
+				console.error(
+					'   ⚠️  [KEYWORD REGENERATION] Failed to generate new keywords with feedback:',
+					err
+				);
+				// Continue with original keywords if regeneration fails
+			}
+		}
 
 		// Filter out irrelevant keywords that don't match user intent
 		const topicWords = new Set(
@@ -192,7 +300,11 @@ export const researchPrimaryNode = async (
 		];
 
 		// Filter function to check if keyword is relevant
-		const isRelevantKeyword = (kw: any): boolean => {
+		// scoreThreshold: minimum matching score (0.0 to 1.0)
+		const isRelevantKeyword = (
+			kw: any,
+			scoreThreshold: number = 0.3
+		): boolean => {
 			const kwText = kw.text.toLowerCase();
 
 			// Filter out generic phrases
@@ -202,8 +314,8 @@ export const researchPrimaryNode = async (
 				return false;
 			}
 
-			// Filter out keywords with very low relevance score (< 0.1)
-			if (kw.score < 0.1) {
+			// Filter out keywords with relevance score below threshold (default 30%)
+			if (kw.score < scoreThreshold) {
 				return false;
 			}
 
@@ -245,11 +357,34 @@ export const researchPrimaryNode = async (
 			return true;
 		};
 
-		// Apply relevance filtering
-		const relevantKeywords = scoredKeywords.filter(isRelevantKeyword);
+		// Apply relevance filtering with 30% threshold (preferred)
+		let relevantKeywords = scoredKeywords.filter((kw) =>
+			isRelevantKeyword(kw, 0.3)
+		);
 
-		// Filter to top 25 based on score (user intent + relevancy)
-		ranked = relevantKeywords.slice(0, 25);
+		// Sort all keywords by score (descending) to prioritize higher-scored ones
+		scoredKeywords.sort((a, b) => b.score - a.score);
+
+		// Ensure at least 25 keywords are shown, regardless of matching score
+		if (relevantKeywords.length < 25) {
+			console.log(
+				`   ⚠️  Only found ${relevantKeywords.length} keywords with 30%+ score. Including more keywords to reach at least 25...`
+			);
+
+			// Take top 25 from all scored keywords (sorted by score)
+			// This ensures we always have 25, prioritizing higher scores
+			ranked = scoredKeywords.slice(0, 25);
+
+			console.log(
+				`   ✅ Showing ${ranked.length} keywords (top ${relevantKeywords.length} with 30%+ score, rest with lower scores)`
+			);
+		} else {
+			// We have enough with 30%+ threshold, use those
+			ranked = relevantKeywords.slice(0, 25);
+			console.log(
+				`   ✅ Found ${ranked.length} keywords with 30%+ matching score`
+			);
+		}
 
 		console.log(
 			`   🧹 Filtered out ${
@@ -347,11 +482,47 @@ export const researchPrimaryNode = async (
 	};
 };
 
+/**
+ * Clean primary keyword by removing common prefixes
+ */
+const cleanPrimaryKeyword = (keyword: string): string => {
+	if (!keyword) return '';
+
+	let cleaned = keyword.trim();
+
+	// Remove "primary keyword:" prefix (case insensitive, with or without colon)
+	cleaned = cleaned.replace(/^primary\s+keyword\s*:?\s*/i, '');
+
+	// Remove "keyword:" prefix (case insensitive, with or without colon)
+	cleaned = cleaned.replace(/^keyword\s*:?\s*/i, '');
+
+	// Remove "primary keyword" phrase at the start (without colon)
+	// This handles cases like "primary keyword ai agent"
+	if (cleaned.toLowerCase().startsWith('primary keyword ')) {
+		cleaned = cleaned.substring('primary keyword '.length);
+	}
+
+	// Remove any leading/trailing whitespace
+	cleaned = cleaned.trim();
+
+	return cleaned;
+};
+
 export const researchSecondaryNode = async (
 	state: AgentState
 ): Promise<Partial<AgentState>> => {
-	const primary = (state.data.primaryKeyword || '').trim();
-	if (!primary) return {};
+	const rawPrimary = (state.data.primaryKeyword || '').trim();
+	if (!rawPrimary) return {};
+
+	// ✨ CRITICAL: Clean the primary keyword to remove any prefixes
+	const primary = cleanPrimaryKeyword(rawPrimary);
+
+	if (!primary) {
+		console.error(
+			'❌ [SECONDARY KEYWORD RESEARCH] Primary keyword is empty after cleaning'
+		);
+		return {};
+	}
 
 	// ✨ Case 1: User already provided secondary keywords AND they exist
 	if (
@@ -377,16 +548,69 @@ export const researchSecondaryNode = async (
 
 	const location = state.data.targetLocation || 'United States';
 	let ranked: any[] = [];
+	let ideas: any[] = []; // Store ideas for potential additional fetching
+
+	console.log(
+		`🔍 [SECONDARY KEYWORD RESEARCH] Using primary keyword: "${primary}" (cleaned from: "${rawPrimary}")`
+	);
 
 	try {
-		const ideas = await keywordTool.getKeywordIdeas(primary, location);
-		const merged = keywordTool.dedupeMerge(ideas);
+		// ✨ SIMPLIFIED: Directly use cleaned primary keyword with Google Keyword API
+		console.log(
+			`   📡 Calling Google Keyword API with seed: "${primary}", location: "${location}"`
+		);
+
+		ideas = await keywordTool.getKeywordIdeas(primary, location);
+
+		console.log(
+			`   📥 Received ${ideas?.length || 0} raw keywords from API`
+		);
+
+		if (!ideas || ideas.length === 0) {
+			console.warn(
+				`   ⚠️  [SECONDARY KEYWORD] No keywords returned from API for "${primary}"`
+			);
+		} else {
+			// Log first few keywords for debugging
+			console.log(
+				`   📋 Sample keywords: [${ideas
+					.slice(0, 5)
+					.map((k: any) => k.text)
+					.join(', ')}...]`
+			);
+		}
+
+		// Dedupe and merge
+		const merged = keywordTool.dedupeMerge(ideas || []);
+
+		console.log(
+			`   🔄 After deduplication: ${merged.length} unique keywords`
+		);
+
+		// Score keywords with context - prioritize relevance/intent to primary keyword
 		ranked = keywordTool.scoreIdeas(
 			merged,
-			state.data.title || state.data.topic || ''
+			primary, // Use primary keyword as context for intent filtering
+			true // Prioritize relevance/intent over volume
+		) as any[]; // Type assertion: scoreIdeas returns KwRow & { score: number }[]
+
+		console.log(
+			`✅ [SECONDARY KEYWORD RESEARCH] Found ${ranked.length} keywords from Google Keyword API (after scoring)`
 		);
+
+		if (ranked.length === 0) {
+			console.error(
+				`   ❌ [SECONDARY KEYWORD] No keywords after scoring. Raw ideas: ${
+					ideas?.length || 0
+				}, Merged: ${merged.length}`
+			);
+		}
 	} catch (err) {
-		// Silent error handling
+		console.error('❌ [SECONDARY KEYWORD RESEARCH] Failed:', err);
+		console.error(
+			'   Error details:',
+			err instanceof Error ? err.message : String(err)
+		);
 	}
 
 	// ✨ CRITICAL FIX: Filter out primary keyword from secondary candidates
@@ -394,8 +618,101 @@ export const researchSecondaryNode = async (
 		(k) => k.text.toLowerCase() !== primary.toLowerCase()
 	);
 
+	// ✨ NEW: Sort by score (descending) to get best keywords first
+	filteredRanked.sort((a, b) => (b.score || 0) - (a.score || 0));
+
+	// ✨ NEW: Ensure at least 25 keywords if available, but limit to exactly 25
+	const targetCount = 25;
+	let finalRanked = filteredRanked;
+
+	// If we have fewer than 25, try to get more by requesting additional keywords
+	if (finalRanked.length < targetCount && ideas && ideas.length > 0) {
+		console.log(
+			`   🔄 [SECONDARY KEYWORD] Only have ${finalRanked.length} keywords, need ${targetCount}. Attempting to get more...`
+		);
+
+		// Try to get more keywords by using variations of the primary keyword
+		try {
+			const variations = [
+				`${primary} guide`,
+				`${primary} tutorial`,
+				`${primary} tips`,
+				`${primary} examples`,
+				`${primary} best practices`,
+			];
+
+			const additionalBatches = await Promise.all(
+				variations.slice(0, 3).map(async (variation) => {
+					try {
+						const additionalIdeas =
+							await keywordTool.getKeywordIdeas(
+								variation,
+								location
+							);
+						return additionalIdeas || [];
+					} catch (err) {
+						console.warn(
+							`   ⚠️  Failed to get keywords for variation "${variation}"`
+						);
+						return [];
+					}
+				})
+			);
+
+			const additionalMerged = keywordTool.dedupeMerge(
+				additionalBatches.flat()
+			);
+			const additionalRanked = keywordTool.scoreIdeas(
+				additionalMerged,
+				primary,
+				true // Prioritize relevance
+			) as any[];
+
+			// Combine with existing, filter out primary keyword, and sort
+			const combined = [...filteredRanked, ...additionalRanked]
+				.filter(
+					(k) =>
+						k.text.toLowerCase() !==
+						primary.toLowerCase()
+				)
+				.sort((a, b) => (b.score || 0) - (a.score || 0));
+
+			// Remove duplicates based on text
+			const uniqueMap = new Map<string, any>();
+			combined.forEach((k) => {
+				const key = k.text.toLowerCase();
+				if (
+					!uniqueMap.has(key) ||
+					(uniqueMap.get(key)?.score || 0) < (k.score || 0)
+				) {
+					uniqueMap.set(key, k);
+				}
+			});
+
+			finalRanked = Array.from(uniqueMap.values()).sort(
+				(a, b) => (b.score || 0) - (a.score || 0)
+			);
+
+			console.log(
+				`   ✅ [SECONDARY KEYWORD] After fetching additional keywords: ${finalRanked.length} total`
+			);
+		} catch (err) {
+			console.warn(
+				`   ⚠️  [SECONDARY KEYWORD] Failed to get additional keywords:`,
+				err
+			);
+		}
+	}
+
+	// Limit to exactly 25 keywords (or available count if less than 25)
+	const limitedRanked = finalRanked.slice(0, targetCount);
+
+	console.log(
+		`📊 [SECONDARY KEYWORD RESEARCH] Final count: ${limitedRanked.length} keywords (target: ${targetCount})`
+	);
+
 	// ✨ NEW: Handle no keywords found gracefully
-	if (filteredRanked.length === 0) {
+	if (limitedRanked.length === 0) {
 		return {
 			currentStep: 'secondary_keywords',
 			messages: [
@@ -420,12 +737,12 @@ export const researchSecondaryNode = async (
 			state as any,
 			'secondaryKeywords'
 		) &&
-		filteredRanked.length > 0
+		limitedRanked.length > 0
 	) {
 		return {
 			data: {
 				...state.data,
-				secondaryKeywords: filteredRanked
+				secondaryKeywords: limitedRanked
 					.slice(0, 5)
 					.map((k) => k.text),
 			},
@@ -433,7 +750,7 @@ export const researchSecondaryNode = async (
 			trace: [
 				{
 					step: 'KeywordResearch.secondaryCandidates',
-					info: { count: filteredRanked.length },
+					info: { count: limitedRanked.length },
 					at: Date.now(),
 				},
 				{
@@ -445,22 +762,22 @@ export const researchSecondaryNode = async (
 		};
 	}
 
-	// ✨ Case 3: Show options to user
+	// ✨ Case 3: Show options to user (always show at least 25 if available)
 	return {
 		halt: { reason: 'await_secondary_selection' },
-		keywordCandidates: filteredRanked, // ✨ Now excludes primary keyword
+		keywordCandidates: limitedRanked, // ✨ Limited to 25, filtered by primary keyword intent
 		currentStep: 'secondary_keywords',
 		toolOutputs: [
 			{
 				type: 'keyword_options',
-				data: { type: 'secondary', candidates: filteredRanked },
+				data: { type: 'secondary', candidates: limitedRanked },
 				timestamp: Date.now(),
 			},
 		],
 		trace: [
 			{
 				step: 'KeywordResearch.secondaryCandidates',
-				info: { count: filteredRanked.length },
+				info: { count: limitedRanked.length },
 				at: Date.now(),
 			},
 		],

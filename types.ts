@@ -61,6 +61,11 @@ export interface AgentPreferences {
 export interface ConversationContext {
     lastIntent: string;
     pendingQuestions: string[];
+    titleFeedback?: string; // User feedback for title regeneration
+    primaryKeywordFeedback?: string; // User feedback for primary keyword regeneration
+    secondaryKeywordFeedback?: string; // User feedback for secondary keyword regeneration
+    awaitingConfirmation?: boolean; // Whether we're waiting for user confirmation
+    modificationRequest?: string; // What the user wants to modify (e.g., "primary keyword", "title")
 }
 
 export interface KeywordCandidate {

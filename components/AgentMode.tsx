@@ -582,10 +582,27 @@ const AgentMode: React.FC<Props> = ({
 					
 					// Check for keyword selection duplicates
 					if (result.metadata.keywordSelection && (msg as any).keywordSelection) {
+						const msgType = (msg as any).keywordSelection.type;
+						const resultType = result.metadata.keywordSelection.type;
 						const msgCandidates = (msg as any).keywordSelection.candidates || [];
 						const resultCandidates = result.metadata.keywordSelection.candidates || [];
-						if (msgCandidates.length > 0 && resultCandidates.length > 0 &&
-							msgCandidates[0]?.keyword === resultCandidates[0]?.keyword) {
+						
+						// If same type and same number of candidates, it's likely a duplicate
+						if (msgType === resultType && msgCandidates.length === resultCandidates.length) {
+							// Check if first candidate matches (strong indicator of duplicate)
+							const msgFirst = msgCandidates[0];
+							const resultFirst = resultCandidates[0];
+							if (msgFirst && resultFirst) {
+								// Compare by text property (keyword candidates have 'text' not 'keyword')
+								const msgText = msgFirst.text || msgFirst.keyword || '';
+								const resultText = resultFirst.text || resultFirst.keyword || '';
+								if (msgText === resultText) {
+									console.log(`📨 [AGENT MODE] Skipping duplicate keyword selection: ${resultType} with ${resultCandidates.length} candidates`);
+									return true;
+								}
+							}
+							// Even if first doesn't match, if same type and count, likely duplicate
+							console.log(`📨 [AGENT MODE] Skipping duplicate keyword selection: ${resultType} with ${resultCandidates.length} candidates (same type and count)`);
 							return true;
 						}
 					}

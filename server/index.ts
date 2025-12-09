@@ -1030,13 +1030,203 @@ app.post('/api/agent/message', async (req, res) => {
 			return res.json(contextResponse);
 		}
 
+		// 3.5️⃣ REGENERATION REQUEST → Handle node regeneration
+		if (
+			routing.systemAction === 'regenerate_node' &&
+			routing.regenerationRequest
+		) {
+			console.log(`   🔄 Handling regeneration request...`);
+			console.log(
+				`   Target node: ${routing.regenerationRequest.targetNode}`
+			);
+			console.log(
+				`   Feedback: ${
+					routing.regenerationRequest.feedback || 'none'
+				}`
+			);
+
+			// Import message reframer
+			const { reframeRegenerationMessage } = await import(
+				'./agent/messageReframer'
+			);
+
+			// Merge state updates from primary agent
+			let updatedState = {
+				...sanitizedState,
+				...(routing.stateUpdates || {}),
+				apiKey: apiKeyToUse,
+			};
+
+			// Generate friendly regeneration message
+			const regenerationMessage = reframeRegenerationMessage(
+				routing.regenerationRequest.targetNode || '',
+				routing.regenerationRequest.feedback
+			);
+
+			// Emit intent event with regeneration message
+			if (stream) {
+				res.write(
+					`event: intent\ndata: ${JSON.stringify({
+						assistantMessage: regenerationMessage,
+						shouldRunAgent: true,
+						stateUpdates: routing.stateUpdates || {},
+					})}\n\n`
+				);
+			}
+
+			// Execute graph to regenerate
+			console.log(`   🚀 Executing LangGraph for regeneration...`);
+			const config = { configurable: { thread_id: threadId } };
+
+			if (stream) {
+				const streamIterator = await graph.stream(
+					updatedState,
+					config
+				);
+				let lastNodeName = '';
+				for await (const chunk of streamIterator) {
+					// Send progress events
+					res.write(
+						`event: progress\ndata: ${JSON.stringify(
+							chunk
+						)}\n\n`
+					);
+
+					// Track last executed node
+					const nodeName = Object.keys(chunk)[0];
+					if (nodeName) {
+						lastNodeName = nodeName;
+						updatedState = {
+							...updatedState,
+							...chunk[nodeName],
+						};
+					}
+				}
+				const finalSnapshot = await graph.getState(config);
+				updatedState = finalSnapshot.values as any;
+			} else {
+				const result = await graph.invoke(updatedState, config);
+				updatedState = result;
+			}
+
+			// Reframe final state to user-friendly message
+			const { reframeStateToMessage } = await import(
+				'./agent/messageReframer'
+			);
+			const reframed = reframeStateToMessage(
+				updatedState,
+				routing.regenerationRequest.targetNode || undefined
+			);
+
+			// Serialize state
+			const serializedState = {
+				...updatedState,
+				userProvidedFields: Array.from(
+					updatedState.userProvidedFields || []
+				),
+				autoFillFields: Array.from(
+					updatedState.autoFillFields || []
+				),
+			};
+			delete serializedState.apiKey;
+
+			if (stream) {
+				res.write(
+					`event: done\ndata: ${JSON.stringify({
+						assistantMessage: reframed.message,
+						state: serializedState,
+						executed: true,
+						metadata: reframed.metadata,
+					})}\n\n`
+				);
+				res.end();
+				return;
+			} else {
+				return res.json({
+					assistantMessage: reframed.message,
+					state: serializedState,
+					executed: true,
+					metadata: reframed.metadata,
+				});
+			}
+		}
+
 		// 4️⃣ NORMAL BLOG FLOW → Intent Classifier + Conversation Handler + LangGraph
 		console.log(`   📝 Processing through Conversation Handler...`);
+
+		// Apply state updates from Primary Agent (e.g., automation level, confirmation state)
+		let stateForProcessing = sanitizedState;
+		if (routing.stateUpdates) {
+			stateForProcessing = {
+				...sanitizedState,
+				...routing.stateUpdates,
+			};
+			console.log(`   🔄 Applied state updates from Primary Agent`);
+		}
+
+		// ✨ CRITICAL: Send Primary Agent message FIRST (before LangGraph execution)
+		// This ensures proper message ordering: Primary Agent → LangGraph → Final
+		// Send this message IMMEDIATELY so user sees it while research is happening
+		if (routing.directResponse && stream && routing.shouldProceed) {
+			// Send Primary Agent message as a separate intent event BEFORE processing
+			// This message appears immediately while LangGraph is executing
+			res.write(
+				`event: intent\ndata: ${JSON.stringify({
+					assistantMessage: routing.directResponse,
+					shouldRunAgent: true, // Will proceed to LangGraph
+					stateUpdates: routing.stateUpdates || {},
+					fromPrimaryAgent: true, // Flag to identify this is from Primary Agent
+					isBeforeExecution: true, // Flag to indicate this is before LangGraph execution
+				})}\n\n`
+			);
+			console.log(
+				`   💬 Sent Primary Agent message (BEFORE execution): "${routing.directResponse.substring(
+					0,
+					50
+				)}..."`
+			);
+			// Flush the response to ensure it's sent immediately
+			res.flushHeaders?.();
+		}
+
+		// If Primary Agent blocked (shouldProceed = false), stop here
+		if (!routing.shouldProceed) {
+			// Persist the Primary Agent message
+			await persistMessagesToCheckpointer(
+				threadId,
+				stateForProcessing,
+				routing.directResponse || 'Message from Primary Agent',
+				apiKeyToUse
+			);
+
+			if (stream) {
+				res.write(
+					`event: done\ndata: ${JSON.stringify({
+						assistantMessage:
+							routing.directResponse ||
+							'Message from Primary Agent',
+						state: stateForProcessing,
+						executed: false,
+					})}\n\n`
+				);
+				res.end();
+				return;
+			}
+			return res.json({
+				assistantMessage:
+					routing.directResponse ||
+					'Message from Primary Agent',
+				stateUpdates: routing.stateUpdates || {},
+				shouldRunAgent: false,
+			});
+		}
+
 		// Use normalized message for intent classification
 		const normalized = routing.normalizedMessage || message;
+
 		const response = await processMessage(
 			normalized,
-			sanitizedState,
+			stateForProcessing,
 			apiKeyToUse
 		);
 
@@ -1051,24 +1241,46 @@ app.post('/api/agent/message', async (req, res) => {
 		// Merge state updates (without apiKey)
 		// But ensure apiKey is available for graph execution (from request or env)
 		let updatedState = {
-			...sanitizedState,
+			...stateForProcessing,
 			...response.stateUpdates,
 			apiKey: apiKeyToUse, // Ensure apiKey is available for nodes during execution
 		};
 
-		// Emit intent event
-		if (stream) {
+		// Emit intent event (only if Primary Agent didn't already send a "before execution" message)
+		// This is the Conversation Handler's response
+		// CRITICAL: If Primary Agent sent a "before execution" message, skip Conversation Handler's message
+		// to avoid duplicate/combined messages. The Primary Agent message is sufficient.
+		const primaryAgentSentBeforeMessage =
+			routing.directResponse && routing.shouldProceed && stream;
+		const hasConversationHandlerMessage =
+			response.assistantMessage && response.assistantMessage.trim();
+
+		if (
+			stream &&
+			!primaryAgentSentBeforeMessage &&
+			hasConversationHandlerMessage
+		) {
 			res.write(
 				`event: intent\ndata: ${JSON.stringify({
 					assistantMessage: response.assistantMessage,
 					assistantMessages: response.assistantMessages, // Include separate messages if available
 					shouldRunAgent: response.shouldRunAgent,
 					stateUpdates: response.stateUpdates,
+					fromPrimaryAgent: false, // This is from Conversation Handler
 				})}\n\n`
+			);
+		} else if (primaryAgentSentBeforeMessage) {
+			console.log(
+				`   ⏭️  Skipping Conversation Handler message (Primary Agent already sent before-execution message)`
+			);
+		} else if (!hasConversationHandlerMessage) {
+			console.log(
+				`   ⏭️  Skipping Conversation Handler message (empty message - Primary Agent will handle it)`
 			);
 		}
 
 		// Only execute graph if conversation handler says to
+		let lastNodeExecuted = '';
 		if (response.shouldRunAgent) {
 			console.log(`   🚀 Executing LangGraph...`);
 			const config = { configurable: { thread_id: threadId } };
@@ -1092,6 +1304,7 @@ app.post('/api/agent/message', async (req, res) => {
 					// e.g. { research: { ... } }
 					const nodeName = Object.keys(chunk)[0];
 					if (nodeName && chunk[nodeName]) {
+						lastNodeExecuted = nodeName;
 						updatedState = {
 							...updatedState,
 							...chunk[nodeName],
@@ -1121,6 +1334,19 @@ app.post('/api/agent/message', async (req, res) => {
 
 		console.log(`${'═'.repeat(70)}\n`);
 
+		// ✨ NEW: Reframe lang-graph response to be user-friendly
+		const { reframeStateToMessage } = await import(
+			'./agent/messageReframer'
+		);
+		const reframed = reframeStateToMessage(
+			updatedState,
+			lastNodeExecuted
+		);
+
+		// Use reframed message if available, otherwise use original
+		const finalMessage = reframed.message || response.assistantMessage;
+		const finalMetadata = reframed.metadata;
+
 		// Serialize state for transport (convert Sets to Arrays)
 		// Remove apiKey and other unnecessary fields before sending
 		const serializedState = {
@@ -1148,19 +1374,52 @@ app.post('/api/agent/message', async (req, res) => {
 		}
 
 		if (stream) {
-			res.write(
-				`event: done\ndata: ${JSON.stringify({
-					assistantMessage: response.assistantMessage,
-					state: serializedState,
-					executed: response.shouldRunAgent,
-				})}\n\n`
-			);
+			// ✨ CRITICAL: If we have keyword candidates, send them as a SEPARATE message
+			// This ensures the "researching" message appears first, then keyword list appears separately
+			if (
+				finalMetadata?.keywordSelection &&
+				finalMetadata.keywordSelection.candidates?.length > 0
+			) {
+				// First, send the text message (if any) without metadata
+				if (finalMessage && finalMessage.trim()) {
+					res.write(
+						`event: intent\ndata: ${JSON.stringify({
+							assistantMessage: finalMessage,
+							shouldRunAgent: false,
+							stateUpdates: {},
+							fromPrimaryAgent: false,
+						})}\n\n`
+					);
+				}
+
+				// Then, send a separate message with JUST the keyword list metadata
+				// This ensures keyword list appears as a separate UI component
+				res.write(
+					`event: done\ndata: ${JSON.stringify({
+						assistantMessage: '', // Empty message - keyword list will be shown via metadata
+						state: serializedState,
+						executed: response.shouldRunAgent,
+						metadata: finalMetadata, // Keyword list metadata
+					})}\n\n`
+				);
+			} else {
+				// Normal flow - send message with metadata together
+				res.write(
+					`event: done\ndata: ${JSON.stringify({
+						assistantMessage: finalMessage,
+						state: serializedState,
+						executed: response.shouldRunAgent,
+						metadata: finalMetadata, // Include metadata for UI components
+					})}\n\n`
+				);
+			}
 			res.end();
 		} else {
 			return res.json({
-				assistantMessage: response.assistantMessage,
+				assistantMessage: finalMessage,
 				state: serializedState,
 				executed: response.shouldRunAgent,
+				metadata: finalMetadata, // Include metadata for UI components
 			});
 		}
 	} catch (error: any) {

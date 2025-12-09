@@ -380,6 +380,21 @@ export const useAgentExecutionV3 = (
 					
 					streamMessage(message, threadId, backendState, apiKeyToUse, {
 						onIntent: (data) => {
+							// ✨ NEW: Handle Primary Agent "before execution" messages
+							// These are sent BEFORE LangGraph execution starts
+							if (data.fromPrimaryAgent && data.isBeforeExecution) {
+								console.log(`📨 [INTENT] Primary Agent before-execution message: "${data.assistantMessage?.substring(0, 50)}..."`);
+								if (data.assistantMessage && data.assistantMessage.trim()) {
+									// Track and queue the Primary Agent message immediately
+									const msgKey = data.assistantMessage.substring(0, 50);
+									backendMessages.add(msgKey);
+									queueMessage(data.assistantMessage);
+									// Clear finalResponse since we've already queued this message
+									finalResponse = '';
+								}
+								return; // Don't process further - Primary Agent message is handled
+							}
+
 							// Initial assistant response (e.g. "I'll handle that...")
 							finalResponse = data.assistantMessage;
 
@@ -497,7 +512,13 @@ export const useAgentExecutionV3 = (
 										// So we show sectionIndex + 1 for user-friendly display
 										const sectionIndex = accumulatedState.progress?.sectionIndex ?? 0;
 										const sectionNumber = sectionIndex + 1;
-										preMessage = `✍️ **Writing section ${sectionNumber}...**\n\nI'm generating the content for this section.`;
+										
+										// If this is the first section (sectionIndex === 0) and outline is approved, show starting message
+										if (sectionIndex === 0 && accumulatedState.outlineApproved && accumulatedState.outline && accumulatedState.outline.length > 0) {
+											preMessage = "✍️ **Starting blog generation...**\n\nI'll now create your blog post section by section, incorporating all your keywords and following the approved outline.";
+										} else {
+											preMessage = `✍️ **Writing section ${sectionNumber}...**\n\nI'm generating the content for this section.`;
+										}
 									}
 
 									if (preMessage) {
@@ -601,8 +622,23 @@ export const useAgentExecutionV3 = (
 											// "Writing section" message has finished or wasn't shown
 											// Queue completion message immediately
 											lastShownSectionIndex = completedSectionNumber;
-											// Turn off thinking indicator when section completes
-											if (setIsThinking) setIsThinking(false);
+											
+											// Check if blog generation is still in progress
+											const isFullAutomation = accumulatedState.preferences?.automationLevel === 'full';
+											const isBlogGenerationInProgress = 
+												accumulatedState.outlineApproved && 
+												accumulatedState.outline && 
+												accumulatedState.outline.length > 0 &&
+												(accumulatedState.progress?.sectionIndex ?? 0) < accumulatedState.outline.length;
+											
+											// Only turn off thinking indicator if blog generation is complete or not in auto mode
+											if (!isFullAutomation || !isBlogGenerationInProgress) {
+												if (setIsThinking) setIsThinking(false);
+											} else {
+												// Keep thinking indicator on during blog generation in auto mode
+												if (setIsThinking) setIsThinking(true);
+											}
+											
 											queueMessage(completionMessage);
 										}
 									}
@@ -662,6 +698,43 @@ export const useAgentExecutionV3 = (
 									currentTraceLength;
 							}
 
+							// ✨ CRITICAL: Check for keyword candidates in progress event
+							// This happens when research completes and keyword list is ready
+							if (stateUpdate.keywordCandidates && Array.isArray(stateUpdate.keywordCandidates) && stateUpdate.keywordCandidates.length > 0) {
+								// Determine if this is primary or secondary based on halt reason or current step
+								const isPrimary = stateUpdate.halt?.reason === 'await_keyword_selection' || 
+												  nodeName === 'research_primary' ||
+												  accumulatedState.currentStep === 'primary_keyword';
+								const isSecondary = stateUpdate.halt?.reason === 'await_secondary_selection' ||
+													nodeName === 'research_secondary' ||
+													accumulatedState.currentStep === 'secondary_keywords';
+								
+								// Check if we've already shown this keyword list
+								const keywordListKey = `${isPrimary ? 'primary' : 'secondary'}_keywords_${stateUpdate.keywordCandidates.length}`;
+								if (!shownPreMessages.has(keywordListKey)) {
+									shownPreMessages.add(keywordListKey);
+									
+									// Queue a message with keyword selection metadata
+									// This will trigger the keyword selection UI component
+									const keywordMessage = isPrimary
+										? `🎯 **What main keyword should this article rank for?**\n\nSelect the primary keyword that best represents your target search term. This will be the main focus keyword for SEO optimization.`
+										: `✨ **Secondary Keywords Ready!**\n\nI've found ${stateUpdate.keywordCandidates.length} secondary keywords that will help boost your SEO. Here they are:`;
+									
+									queueMessage(keywordMessage, {
+										keywordSelection: {
+											type: isPrimary ? 'primary' : 'secondary',
+											candidates: stateUpdate.keywordCandidates,
+										},
+									});
+									
+									console.log(`📨 [PROGRESS] Keyword candidates detected and queued:`, {
+										type: isPrimary ? 'primary' : 'secondary',
+										count: stateUpdate.keywordCandidates.length,
+										haltReason: stateUpdate.halt?.reason,
+									});
+								}
+							}
+
 							// Also check for other progress indicators
 							// Only show progress messages if they're not already shown via trace messages
 							let progressMsg = '';
@@ -687,15 +760,6 @@ export const useAgentExecutionV3 = (
 										isNew,
 										progressMsg
 									});
-								}
-							} else if (chunk.keywordResearch) {
-								const candidates =
-									chunk.keywordResearch
-										.primaryCandidates ||
-									chunk.keywordResearch
-										.secondaryCandidates;
-								if (candidates?.length) {
-									progressMsg = `🔍 Found ${candidates.length} keywords...`;
 								}
 							} else if (
 								stateUpdate.data?.title &&
@@ -745,9 +809,17 @@ export const useAgentExecutionV3 = (
 							// Only turn off thinking indicator when automation is complete
 							// Check if we're in full automation mode
 							const isFullAutomation = updatedState.preferences?.automationLevel === 'full';
-							// If in automation and still have steps to complete, keep loader on
-							if (isFullAutomation && updatedState.halt && !updatedState.outlineApproved) {
+							// Check if blog generation is in progress
+							const isBlogGenerationInProgress = 
+								updatedState.outlineApproved && 
+								updatedState.outline && 
+								updatedState.outline.length > 0 &&
+								(updatedState.progress?.sectionIndex ?? 0) < updatedState.outline.length;
+							
+							// If in automation and still have steps to complete OR blog generation is in progress, keep loader on
+							if (isFullAutomation && (updatedState.halt || isBlogGenerationInProgress)) {
 								// Still processing, keep loader on
+								if (setIsThinking) setIsThinking(true);
 							} else {
 								// Automation complete or not in automation mode
 								if (setIsThinking) setIsThinking(false);
@@ -763,16 +835,36 @@ export const useAgentExecutionV3 = (
 							});
 
 							// Construct UI metadata based on state
-							const metadata: Partial<ChatMessage> =
-								{};
+							// First, check if backend provided metadata in response
+							const backendMetadata = (data as any).metadata || {};
+							const metadata: Partial<ChatMessage> = {
+								...backendMetadata, // Use backend metadata if available
+							};
 
+							// ✨ CRITICAL: Check if we already showed keyword list from progress event
+							// If we did, don't show it again in done event to prevent duplicates
+							const hasPrimaryKeywords = updatedState.keywordResearch?.primaryCandidates?.length > 0;
+							const hasSecondaryKeywords = updatedState.keywordResearch?.secondaryCandidates?.length > 0;
+							const primaryKeywordListKey = hasPrimaryKeywords 
+								? `primary_keywords_${updatedState.keywordResearch.primaryCandidates.length}` 
+								: null;
+							const secondaryKeywordListKey = hasSecondaryKeywords
+								? `secondary_keywords_${updatedState.keywordResearch.secondaryCandidates.length}`
+								: null;
+							const alreadyShownPrimary = primaryKeywordListKey && shownPreMessages.has(primaryKeywordListKey);
+							const alreadyShownSecondary = secondaryKeywordListKey && shownPreMessages.has(secondaryKeywordListKey);
+
+							// If no backend metadata, construct from state
+							// BUT: Skip if we already showed it from progress event
+							if (!backendMetadata.keywordSelection && !backendMetadata.titleSelection && !backendMetadata.outlineApproval) {
 							if (updatedState.halt) {
 								const reason =
 									updatedState.halt.reason;
 
 								if (
 									reason ===
-									'await_keyword_selection'
+										'await_keyword_selection' &&
+										!alreadyShownPrimary // Only add if not already shown
 								) {
 									metadata.keywordSelection =
 										{
@@ -785,7 +877,8 @@ export const useAgentExecutionV3 = (
 										};
 								} else if (
 									reason ===
-									'await_secondary_selection'
+										'await_secondary_selection' &&
+										!alreadyShownSecondary // Only add if not already shown
 								) {
 									metadata.keywordSelection =
 										{
@@ -849,11 +942,63 @@ export const useAgentExecutionV3 = (
 												updatedState.outline ||
 												[],
 										};
+									}
+								}
+							} else {
+								// Backend provided metadata, use it
+								// Still check state for any additional metadata
+								// ✨ CRITICAL: Check if we already showed keyword list from progress event
+								const hasPrimaryKeywords = updatedState.keywordResearch?.primaryCandidates?.length > 0;
+								const hasSecondaryKeywords = updatedState.keywordResearch?.secondaryCandidates?.length > 0;
+								const primaryKeywordListKey = hasPrimaryKeywords 
+									? `primary_keywords_${updatedState.keywordResearch.primaryCandidates.length}` 
+									: null;
+								const secondaryKeywordListKey = hasSecondaryKeywords
+									? `secondary_keywords_${updatedState.keywordResearch.secondaryCandidates.length}`
+									: null;
+								const alreadyShownPrimary = primaryKeywordListKey && shownPreMessages.has(primaryKeywordListKey);
+								const alreadyShownSecondary = secondaryKeywordListKey && shownPreMessages.has(secondaryKeywordListKey);
+
+								if (updatedState.halt) {
+									const reason = updatedState.halt.reason;
+									// Only add metadata if not already provided by backend AND not already shown from progress
+									if (!metadata.keywordSelection && reason === 'await_keyword_selection' && !alreadyShownPrimary) {
+										metadata.keywordSelection = {
+											type: 'primary',
+											candidates: updatedState.keywordResearch?.primaryCandidates || [],
+										};
+									} else if (!metadata.keywordSelection && reason === 'await_secondary_selection' && !alreadyShownSecondary) {
+										metadata.keywordSelection = {
+											type: 'secondary',
+											candidates: updatedState.keywordResearch?.secondaryCandidates || [],
+										};
+									} else if (!metadata.titleSelection && reason === 'await_title_selection') {
+										metadata.titleSelection = {
+											titles: updatedState.titleOptions || [],
+										};
+									} else if (!metadata.outlineApproval && reason === 'awaiting_approval') {
+										metadata.outlineApproval = {
+											outline: updatedState.outline || [],
+										};
+									}
 								}
 							}
 
 							// Track if we queued a message with metadata to prevent duplicates
 							let messageWithMetadataQueued = false;
+
+							// ✨ CRITICAL: If keyword list was already shown from progress event, 
+							// don't include it in metadata to prevent duplicates
+							if (metadata.keywordSelection) {
+								const keywordType = metadata.keywordSelection.type;
+								const keywordCount = metadata.keywordSelection.candidates?.length || 0;
+								const keywordListKey = `${keywordType}_keywords_${keywordCount}`;
+								if (shownPreMessages.has(keywordListKey)) {
+									// Already shown from progress event, remove from metadata to prevent duplicate
+									console.log(`📨 [DONE] Skipping keyword metadata (already shown from progress): ${keywordListKey}`);
+									delete metadata.keywordSelection;
+								}
+							}
 
 							// Queue final response if it exists and wasn't already queued
 							// If we queue it, clear finalResponse so AgentMode won't add it again

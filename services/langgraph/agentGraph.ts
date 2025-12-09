@@ -280,13 +280,120 @@ export async function researchPrimaryNode(s: AgentState): Promise<AgentState> {
 		);
 
 		const merged = keywordTool.dedupeMerge(batches.flat());
-		ranked = keywordTool.scoreIdeas(
+		let scoredKeywords = keywordTool.scoreIdeas(
 			merged,
-			s.data.title || s.data.topic || ''
+			s.data.title || s.data.topic || '',
+			true // Prioritize relevance/intent over volume
 		);
 
+		// ✨ NEW: Check for regeneration feedback
+		const feedback = s.conversationContext?.primaryKeywordFeedback;
+		if (feedback) {
+			console.log(
+				`   🔄 [KEYWORD REGENERATION] Generating NEW keywords based on feedback: "${feedback}"`
+			);
+			try {
+				const { filterKeywordsWithFeedback } = await import('../geminiService');
+				// Generate completely new keywords based on feedback
+				const newKeywords = await filterKeywordsWithFeedback(
+					scoredKeywords.slice(0, 50), // Pass some context for reference
+					s.data.title || s.data.topic || '',
+					feedback,
+					s.apiKey
+				);
+				if (newKeywords && newKeywords.length > 0) {
+					// Re-score new keywords with feedback in mind
+					scoredKeywords = keywordTool.scoreIdeas(
+						newKeywords,
+						`${s.data.title || s.data.topic || ''} ${feedback}`,
+						true
+					);
+					console.log(
+						`   ✅ [KEYWORD REGENERATION] Generated ${scoredKeywords.length} NEW keywords based on feedback`
+					);
+					// Clear feedback after using it
+					if (s.conversationContext) {
+						s.conversationContext.primaryKeywordFeedback = undefined;
+					}
+				}
+			} catch (err) {
+				console.error('   ⚠️  [KEYWORD REGENERATION] Failed to generate new keywords with feedback:', err);
+			}
+		}
+
+		// Filter keywords with 30%+ matching score, ensuring at least 25 keywords
+		const topicSource = s.data.title || s.data.topic || '';
+		const topicWords = new Set(
+			(topicSource || '')
+				.toLowerCase()
+				.split(/\W+/)
+				.filter((w) => w.length >= 3)
+		);
+
+		// Filter function with configurable threshold
+		const isRelevantKeyword = (kw: any, scoreThreshold: number = 0.3): boolean => {
+			const kwText = kw.text.toLowerCase();
+			
+			// Filter out keywords with score below threshold
+			if (kw.score < scoreThreshold) {
+				return false;
+			}
+
+			// Filter out keywords that don't contain any topic words
+			if (topicWords.size > 0) {
+				const kwWords = kwText
+					.split(/\W+/)
+					.filter((w: string) => w.length >= 3);
+				const hasTopicWord = kwWords.some((kwWord: string) => {
+					if (topicWords.has(kwWord)) return true;
+					for (const topicWord of topicWords) {
+						if (
+							kwWord.includes(topicWord) ||
+							topicWord.includes(kwWord)
+						) {
+							return true;
+						}
+					}
+					return false;
+				});
+
+				if (!hasTopicWord) {
+					return false;
+				}
+			}
+
+			return true;
+		};
+
+		// Apply filtering with 30% threshold (preferred)
+		let relevantKeywords = scoredKeywords.filter((kw) => isRelevantKeyword(kw, 0.3));
+
+		// Sort all keywords by score (descending) to prioritize higher-scored ones
+		scoredKeywords.sort((a, b) => b.score - a.score);
+
+		// Ensure at least 25 keywords are shown, regardless of matching score
+		if (relevantKeywords.length < 25) {
+			console.log(
+				`   ⚠️  Only found ${relevantKeywords.length} keywords with 30%+ score. Including more keywords to reach at least 25...`
+			);
+			
+			// Take top 25 from all scored keywords (sorted by score)
+			// This ensures we always have 25, prioritizing higher scores
+			ranked = scoredKeywords.slice(0, 25);
+			
+			console.log(
+				`   ✅ Showing ${ranked.length} keywords (top ${relevantKeywords.length} with 30%+ score, rest with lower scores)`
+			);
+		} else {
+			// We have enough with 30%+ threshold, use those
+			ranked = relevantKeywords.slice(0, 25);
+			console.log(
+				`   ✅ Found ${ranked.length} keywords with 30%+ matching score`
+			);
+		}
+
 		console.log(
-			`✅ [PRIMARY KEYWORD RESEARCH] Complete! Found ${ranked.length} unique keywords`
+			`✅ [PRIMARY KEYWORD RESEARCH] Complete! Found ${ranked.length} top keywords (filtered from ${scoredKeywords.length} total)`
 		);
 
 		s.keywordResearch = s.keywordResearch || {};
@@ -354,10 +461,47 @@ export async function researchSecondaryNode(
 		console.log(`   ✅ Got ${ideas.length} keyword ideas`);
 
 		const merged = keywordTool.dedupeMerge(ideas);
-		ranked = keywordTool.scoreIdeas(
+		let scoredKeywords = keywordTool.scoreIdeas(
 			merged,
 			s.data.title || s.data.topic || ''
 		);
+
+		// ✨ NEW: Check for regeneration feedback
+		const feedback = s.conversationContext?.secondaryKeywordFeedback;
+		if (feedback) {
+			console.log(
+				`   🔄 [SECONDARY KEYWORD REGENERATION] Generating NEW keywords based on feedback: "${feedback}"`
+			);
+			try {
+				const { filterKeywordsWithFeedback } = await import('../geminiService');
+				// Generate completely new keywords based on feedback
+				const newKeywords = await filterKeywordsWithFeedback(
+					scoredKeywords.slice(0, 30), // Pass some context for reference
+					s.data.title || s.data.topic || primary,
+					feedback,
+					s.apiKey
+				);
+				if (newKeywords && newKeywords.length > 0) {
+					// Re-score new keywords with feedback in mind
+					scoredKeywords = keywordTool.scoreIdeas(
+						newKeywords,
+						`${s.data.title || s.data.topic || primary} ${feedback}`,
+						true
+					);
+					console.log(
+						`   ✅ [SECONDARY KEYWORD REGENERATION] Generated ${scoredKeywords.length} NEW keywords based on feedback`
+					);
+					// Clear feedback after using it
+					if (s.conversationContext) {
+						s.conversationContext.secondaryKeywordFeedback = undefined;
+					}
+				}
+			} catch (err) {
+				console.error('   ⚠️  [SECONDARY KEYWORD REGENERATION] Failed to generate new keywords with feedback:', err);
+			}
+		}
+
+		ranked = scoredKeywords;
 
 		console.log(
 			`✅ [SECONDARY KEYWORD RESEARCH] Complete! Found ${ranked.length} unique keywords`
@@ -372,6 +516,7 @@ export async function researchSecondaryNode(
 
 		s.keywordResearch = s.keywordResearch || {};
 		s.keywordResearch.secondaryCandidates = filteredRanked; // ✨ Use filtered list
+		ranked = filteredRanked; // Update ranked for consistency
 	} catch (err) {
 		console.error('❌ [SECONDARY KEYWORD RESEARCH] Failed:', err);
 		// Set empty results on failure
@@ -411,9 +556,27 @@ export async function titleGenerationNode(s: AgentState): Promise<AgentState> {
 		return s;
 	}
 
-	// Generate title options using Gemini
-	const titles = await geminiService.generateTitles(s.data, s.apiKey);
+	// ✨ NEW: Check for regeneration feedback
+	const titleFeedback = s.conversationContext?.titleFeedback;
+	const isRegeneration = !s.titleSelected && (titleFeedback || s.titleOptions?.length === 0);
+
+	if (isRegeneration) {
+		console.log('🔄 [TITLE REGENERATION] Regenerating titles with feedback...');
+		console.log(`   Feedback: ${titleFeedback || 'none (fresh generation)'}`);
+	}
+
+	// Generate title options using Gemini (with feedback if provided)
+	const titles = await geminiService.generateTitles(
+		s.data,
+		s.apiKey,
+		titleFeedback // Pass feedback for regeneration
+	);
 	s.titleOptions = titles;
+
+	// Clear feedback after using it
+	if (titleFeedback && s.conversationContext) {
+		s.conversationContext.titleFeedback = undefined;
+	}
 
 	// ✨ Case 2: Auto-select if automation enabled
 	if (automationEngine.shouldAutoFill(s, 'title') && titles.length > 0) {
@@ -427,7 +590,10 @@ export async function titleGenerationNode(s: AgentState): Promise<AgentState> {
 
 	// ✨ Case 3: Show options to user (default behavior)
 	s.halt = { reason: 'await_title_selection' };
-	appendTrace(s, 'TitleGeneration.generated', { count: titles.length });
+	appendTrace(s, isRegeneration ? 'TitleGeneration.regenerated' : 'TitleGeneration.generated', {
+		count: titles.length,
+		hadFeedback: !!titleFeedback,
+	});
 	return s;
 }
 

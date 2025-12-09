@@ -180,23 +180,34 @@ const buildContentParts = async (
 
 export const generateTitles = async (
 	data: BlogData,
-	apiKey: string
+	apiKey: string,
+	feedback?: string
 ): Promise<string[]> => {
 	if (!apiKey) throw new Error('API Key is required.');
 	const ai = new GoogleGenAI({ apiKey });
 
+	const feedbackSection = feedback
+		? `
+    USER FEEDBACK (IMPORTANT - incorporate this into the new titles):
+    "${feedback}"
+    
+    Please generate NEW titles that address this feedback. Make sure the titles are different from previous attempts and incorporate the user's suggestions.`
+		: '';
+
 	const prompt = `
     ROLE: You are a creative copywriter specializing in blog titles.
-    TASK: Generate 5 engaging and SEO-friendly blog titles based on the provided topic and keywords.
+    TASK: Generate 5 engaging and SEO-friendly blog titles based on the provided topic and keywords.${feedback ? ' This is a regeneration request - please create NEW titles that incorporate the user feedback.' : ''}
     INSTRUCTIONS:
     1. The titles should be catchy and relevant.
     2. Incorporate the primary keyword naturally.
-    3. Output ONLY a clean JSON array of strings. Do not add any other text, pre-amble, or comments.
+    3. ${feedback ? 'Address the user feedback in the new titles.' : ''}
+    4. Output ONLY a clean JSON array of strings. Do not add any other text, pre-amble, or comments.
 
     DETAILS:
     - Topic: "${data.topic}"
     - Primary Keyword: "${data.primaryKeyword}"
     - Target Location: "${data.targetLocation}"
+    ${feedbackSection}
 
     EXAMPLE OUTPUT:
     ["10 AWS Database Services You Need to Know", "The Ultimate Guide to AWS Databases in ${data.targetLocation}", "Why ${data.primaryKeyword} is Crucial for Your Business"]
@@ -233,6 +244,110 @@ export const generateTitles = async (
 	const titles = cleanAndParseJson(extractedText);
 
 	return titles;
+};
+
+/**
+ * Filter and refine keywords based on user feedback
+ * Used when regenerating keywords with specific user requirements
+ * This function can both filter existing keywords AND generate new variations based on feedback
+ */
+export const filterKeywordsWithFeedback = async (
+	keywords: Array<{ text: string; volume: number; difficulty: number; score?: number }>,
+	topic: string,
+	feedback: string,
+	apiKey: string
+): Promise<Array<{ text: string; volume: number; difficulty: number; score?: number }>> => {
+	if (!apiKey) throw new Error('API Key is required.');
+	const ai = new GoogleGenAI({ apiKey });
+
+	const keywordsList = keywords.slice(0, 50).map((kw, idx) => `${idx + 1}. "${kw.text}" (Volume: ${kw.volume}, Difficulty: ${kw.difficulty})`).join('\n');
+
+	const prompt = `
+ROLE: You are a keyword research expert specializing in SEO and content marketing.
+TASK: Generate NEW and DIFFERENT keywords based on user feedback. This is a REGENERATION request - the user wants different keywords, not just filtered versions of the same ones.
+
+CONTEXT:
+- Topic: "${topic}"
+- User Feedback: "${feedback}"
+- Previous Keywords (shown for reference, but you should generate DIFFERENT ones):
+${keywordsList}
+
+INSTRUCTIONS:
+1. Analyze the user feedback carefully. The user wants DIFFERENT keywords that address their feedback.
+2. Generate NEW keyword variations that:
+   - Are relevant to the topic "${topic}"
+   - Address the specific feedback: "${feedback}"
+   - Are DIFFERENT from the previous keywords shown above
+   - Match the intent described in the feedback (e.g., if feedback says "more technical", generate technical keywords; if "long-tail", generate longer phrases)
+3. Return a JSON array of NEW keyword objects
+4. Each keyword should have: text, volume (estimate 500-5000), difficulty (estimate 0.3-0.8)
+5. Generate at least 25-30 keywords to ensure variety
+6. Make sure keywords are DIFFERENT from the previous list - don't just return the same keywords
+7. Output ONLY a clean JSON array. Do not add any other text or comments.
+
+EXAMPLES:
+- If feedback is "more technical": Generate technical terms, jargon, specific technologies
+- If feedback is "long-tail keywords": Generate longer, more specific phrases (3-5 words)
+- If feedback is "focus on beginners": Generate beginner-friendly, tutorial-style keywords
+- If feedback is "higher volume": Generate more popular, mainstream keywords
+
+OUTPUT FORMAT:
+[
+  {"text": "new keyword 1", "volume": 1000, "difficulty": 0.5},
+  {"text": "new keyword 2", "volume": 2000, "difficulty": 0.6}
+]
+
+CRITICAL: Generate NEW keywords that are DIFFERENT from the previous list. The user wants fresh keywords that match their feedback.
+`;
+
+	try {
+		const response: GenerateContentResponse = await retryWithBackoff(
+			async () => {
+				return await ai.models.generateContent({
+					model: 'gemini-2.5-flash',
+					contents: { parts: [{ text: prompt }] },
+					config: {
+						responseMimeType: 'application/json',
+						responseSchema: {
+							type: Type.ARRAY,
+							items: {
+								type: Type.OBJECT,
+								properties: {
+									text: { type: Type.STRING },
+									volume: { type: Type.NUMBER },
+									difficulty: { type: Type.NUMBER },
+								},
+								required: ['text', 'volume', 'difficulty'],
+							},
+						},
+					},
+				});
+			},
+			{
+				maxRetries: 3,
+				initialDelay: 1000,
+			}
+		);
+
+		const extractedText = extractTextFromResponse(response);
+		const refinedKeywords = cleanAndParseJson(extractedText);
+
+		// Map back to original format, preserving scores if available
+		return refinedKeywords.map((kw: any) => {
+			// Find original keyword to preserve volume/difficulty if text matches
+			const original = keywords.find((k) => k.text.toLowerCase() === kw.text.toLowerCase());
+			return {
+				text: kw.text,
+				volume: kw.volume || original?.volume || 0,
+				difficulty: kw.difficulty || original?.difficulty || 0.5,
+				score: original?.score,
+			};
+		});
+	} catch (error) {
+		console.error('❌ [FILTER KEYWORDS WITH FEEDBACK] Error:', error);
+		// Return original keywords if filtering fails
+		return keywords;
+	}
 };
 
 /**
