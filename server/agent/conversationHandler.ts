@@ -228,29 +228,34 @@ export const processMessage = async (
 	// BUT modification requests take priority over halt states
 	if (currentState.halt?.reason === 'await_keyword_selection') {
 		console.log('📝 [DIRECT INPUT] Handling primary keyword selection');
-		
+
 		// ✨ CRITICAL: Clean the primary keyword to remove any prefixes
 		let cleanedKeyword = userMessage.trim();
-		
+
 		// Remove "primary keyword:" prefix (case insensitive, with or without colon)
-		cleanedKeyword = cleanedKeyword.replace(/^primary\s+keyword\s*:?\s*/i, '');
-		
+		cleanedKeyword = cleanedKeyword.replace(
+			/^primary\s+keyword\s*:?\s*/i,
+			''
+		);
+
 		// Remove "keyword:" prefix (case insensitive, with or without colon)
 		cleanedKeyword = cleanedKeyword.replace(/^keyword\s*:?\s*/i, '');
-		
+
 		// Remove "primary keyword" phrase at the start (without colon)
 		// This handles cases like "primary keyword ai agent"
 		if (cleanedKeyword.toLowerCase().startsWith('primary keyword ')) {
-			cleanedKeyword = cleanedKeyword.substring('primary keyword '.length);
+			cleanedKeyword = cleanedKeyword.substring(
+				'primary keyword '.length
+			);
 		}
-		
+
 		// Remove any leading/trailing whitespace
 		cleanedKeyword = cleanedKeyword.trim();
-		
+
 		console.log(
 			`   🧹 Cleaned keyword: "${cleanedKeyword}" (from: "${userMessage.trim()}")`
 		);
-		
+
 		// Mark keyword as user-provided so research node skips research
 		const userProvidedFields = new Set(
 			currentState.userProvidedFields || []
@@ -1137,7 +1142,8 @@ const handleApproval = (currentState: AgentState): ConversationResponse => {
 	if (currentState.halt?.reason === 'awaiting_approval') {
 		// User approved the outline - message will be shown when proposal node starts
 		return {
-			assistantMessage: "✅ **Outline approved!**\n\nStarting blog generation...",
+			assistantMessage:
+				'✅ **Outline approved!**\n\nStarting blog generation...',
 			stateUpdates: {
 				outlineApproved: true,
 				halt: null,

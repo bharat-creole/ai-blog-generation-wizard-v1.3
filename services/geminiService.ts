@@ -4,8 +4,10 @@ import {
 	GenerateContentResponse,
 	Part,
 } from '@google/genai';
+import OpenAI from 'openai';
 import { BlogData, OutlineSection } from '../types';
 import { retryWithBackoff } from '../utils/retryWithBackoff';
+import { searchGoogleForUrls } from './googleSearchService';
 
 // Helper to safely extract text from Gemini response (handles non-text parts like thoughtSignature)
 const extractTextFromResponse = (response: GenerateContentResponse): string => {
@@ -45,64 +47,196 @@ const cleanAndParseJson = (text: string): any => {
 	}
 };
 
-const PLANNING_PROMPT = (data: BlogData): string => `
-ROLE: You are a Blog Outline Planner Agent. Your task is to determine the main structure (H2 headings) for a comprehensive blog post.
-INSTRUCTIONS:
-1. Use the provided Title and Keywords to create a logical, comprehensive structure.
-2. If the Reference Data is empty, use the Google Search Tool to understand the topic.
-3. Generate exactly 5 to 10 H2 headings.
-4. The final H2 heading MUST be a concluding section, such as "Conclusion", "Final Thoughts", or "Summary".
-5. Output ONLY a clean JSON array of strings, where each string is an H2 heading. DO NOT add any other text, pre-amble, or comments.
-6. If you cannot find sufficient context from search or reference data, output an empty array [].
-7. PRIORITIZE the Title for topical scope and intent. Treat the Primary Keyword as an SEO/interlinking signal only. Do not pivot the topic to chase the keyword; keep the outline faithful to the Title and references.
+const PLANNING_PROMPT = (data: BlogData): string => {
+	// Extract meaningful keywords from title and topic
+	const extractKeywords = (text: string): string[] => {
+		if (!text) return [];
+		const stopWords = new Set([
+			'the',
+			'a',
+			'an',
+			'and',
+			'or',
+			'but',
+			'in',
+			'on',
+			'at',
+			'to',
+			'for',
+			'of',
+			'with',
+			'by',
+			'is',
+			'are',
+			'was',
+			'were',
+			'be',
+			'been',
+			'being',
+			'have',
+			'has',
+			'had',
+			'do',
+			'does',
+			'did',
+			'will',
+			'would',
+			'should',
+			'could',
+			'may',
+			'might',
+			'must',
+			'can',
+			'its',
+			'it',
+			'this',
+			'that',
+			'what',
+			'how',
+			'when',
+			'where',
+			'why',
+			'your',
+			'you',
+			'their',
+			'they',
+			'them',
+			'these',
+			'those',
+		]);
+
+		return text
+			.toLowerCase()
+			.split(/\W+/)
+			.filter((w) => w.length >= 3)
+			.filter((w) => !stopWords.has(w));
+	};
+
+	const titleKeywords = extractKeywords(data.title || '');
+	const topicKeywords = extractKeywords(data.topic || '');
+	const allKeywords = [...new Set([...titleKeywords, ...topicKeywords])];
+	const keywordContext =
+		allKeywords.length > 0
+			? `\n- Keywords from Title & Topic: ${allKeywords.join(', ')}`
+			: '';
+
+	return `
+ROLE: Blog Outline Planner. Generate 5-10 H2 headings for a blog post.
+
+PRIORITY (in order):
+1. User Topic: "${data.topic || 'N/A'}" - PRIMARY focus
+2. Title: "${data.title || 'N/A'}" - Defines scope
+3. Keywords: ${data.primaryKeyword || 'N/A'}${
+		data.secondaryKeywords.length > 0
+			? `, ${data.secondaryKeywords.join(', ')}`
+			: ''
+	}${keywordContext}
+
+REQUIREMENTS:
+- Sections must flow logically (each builds on previous)
+- Incorporate keywords naturally into H2 headings
+- Use Google Search if no references provided
+- Output ONLY JSON array of H2 strings
+
+STRUCTURE (MANDATORY ORDER - MUST FOLLOW):
+1. Introduction (strong opening that sets context and captures attention)
+2. Main topics (title + topic keywords) - 3-7 sections covering core content
+3. Conclusion (MANDATORY - must be the second-to-last section, wrap up key points and summarize main takeaways)
+4. Frequently Asked Questions (FAQs) (MANDATORY - must be the LAST section, include 5-7 questions related to the topic)
+
+CRITICAL: The outline MUST end with:
+- Second-to-last: "Conclusion" or "Summary" or similar conclusion section
+- Last: "Frequently Asked Questions" or "FAQs" or "Common Questions" section
+
+NOTE: The blog will automatically include:
+- TL;DR section at the very beginning (3-5 lines summarizing key takeaways)
 
 DETAILS:
-- Title: "${data.title}"
-- Primary Keyword: "${data.primaryKeyword}"
-- Secondary Keywords: "${data.secondaryKeywords.join(', ')}"
+- Topic: "${data.topic || 'N/A'}"
+- Title: "${data.title || 'N/A'}"
+- Primary: "${data.primaryKeyword || 'N/A'}"
+- Secondary: ${
+		data.secondaryKeywords.length > 0
+			? data.secondaryKeywords.join(', ')
+			: 'None'
+	}
 - Language: ${data.language}
-- Reference Data Summary: ${data.referenceFiles.length} files and ${
-	data.referenceUrls.length
-} URLs provided.
- - Reference URLs to consult (via urlContext):
-${data.referenceUrls.map((u) => `   - ${u}`).join('\n')}
+- References: ${data.referenceFiles.length} files, ${
+		data.referenceUrls.length
+	} URLs
+${
+	data.referenceUrls.length > 0
+		? `- URLs:\n${data.referenceUrls.map((u) => `   ${u}`).join('\n')}`
+		: ''
+}
 `;
+};
 
 const EXECUTION_PROMPT = (
 	data: BlogData,
 	h2_name: string,
-	h2_id: string
-): string => `
-ROLE: You are a Blog Section Detail Agent. Your task is to generate the H3 subheadings for a single H2 heading.
-INSTRUCTIONS:
-1. Use the provided H2 Name as the context for this section.
-2. If the Reference Data is empty, use the Google Search Tool to fetch specific details for this H2.
-3. Generate 3 to 5 relevant H3 subheadings for the H2.
-4. Output ONLY a single JSON object that follows the specified format. DO NOT add any other text or comments.
-5. PRIORITIZE the Title for topical scope and intent. Treat the Primary Keyword as an SEO/interlinking signal only, not as the section topic driver.
+	h2_id: string,
+	previousH2?: string,
+	nextH2?: string
+): string => {
+	const contextSection =
+		previousH2 || nextH2
+			? `
+CONTEXT FOR CONTINUITY:
+${
+	previousH2
+		? `- Previous Section: "${previousH2}" (this section should build upon or relate to it)`
+		: ''
+}
+${
+	nextH2
+		? `- Next Section: "${nextH2}" (this section should lead into it)`
+		: ''
+}
+- Ensure H3 subheadings create a smooth transition between sections`
+			: '';
+
+	return `
+ROLE: Blog Section Detail Agent. Generate 3-5 H3 subheadings for H2: "${h2_name}"
+
+PRIORITY:
+- Topic: "${data.topic || 'N/A'}"
+- Title: "${data.title || 'N/A'}"
+- Keywords: ${data.primaryKeyword || 'N/A'}${
+		data.secondaryKeywords.length > 0
+			? `, ${data.secondaryKeywords.join(', ')}`
+			: ''
+	}${contextSection}
+
+REQUIREMENTS:
+- H3s must relate to each other and flow logically
+- Incorporate keywords naturally
+- Use Google Search if no references
+- Output ONLY JSON object (no other text)
 
 DETAILS:
-- Blog Title: "${data.title}"
-- H2 Section to detail: "${h2_name}"
-- Primary Keyword: "${data.primaryKeyword}"
-- Secondary Keywords: "${data.secondaryKeywords.join(', ')}"
-- Reference Data Summary: ${data.referenceFiles.length} files and ${
-	data.referenceUrls.length
-} URLs provided.
- - Reference URLs to consult (via urlContext):
-${data.referenceUrls.map((u) => `   - ${u}`).join('\n')}
+- H2: "${h2_name}"
+- References: ${data.referenceFiles.length} files, ${
+		data.referenceUrls.length
+	} URLs
+${
+	data.referenceUrls.length > 0
+		? `- URLs:\n${data.referenceUrls.map((u) => `   ${u}`).join('\n')}`
+		: ''
+}
 
-EXAMPLE OUTPUT:
+OUTPUT FORMAT:
 {
   "id": "${h2_id}",
   "name": "${h2_name}",
   "items": [
-    {"id": "${h2_id}1", "name": "Deep Dive into Amazon Aurora"},
-    {"id": "${h2_id}2", "name": "Comparing RDS Engines"},
-    {"id": "${h2_id}3", "name": "Managed Services for RDS"}
+    {"id": "${h2_id}1", "name": "H3 subheading 1"},
+    {"id": "${h2_id}2", "name": "H3 subheading 2"},
+    {"id": "${h2_id}3", "name": "H3 subheading 3"}
   ]
 }
 `;
+};
 
 const REGENERATION_PROMPT = (data: BlogData, feedback: string): string => `
 ROLE: You are an expert Blog Outline editor. Your task is to regenerate a blog outline based on the original data, a previous outline, and specific user feedback.
@@ -110,6 +244,11 @@ INSTRUCTIONS:
 1. Analyze the user's feedback carefully.
 2. Modify the 'Previous Outline' to incorporate the feedback. This may involve adding, removing, reordering, or rephrasing H2s and H3s.
 3. The output must be a valid JSON array of objects, following the same structure as the 'Previous Outline'. Do not add any other text or comments.
+4. CRITICAL: Ensure the outline ALWAYS ends with:
+   - Second-to-last section: "Conclusion" or "Summary" (wrap up key points)
+   - Last section: "Frequently Asked Questions" or "FAQs" or "Common Questions" (5-7 questions related to the topic)
+   - If these sections are missing, ADD them at the end
+   - If they exist but are not in the correct position, MOVE them to the end
 
 DETAILS:
 - Title: "${data.title}"
@@ -122,30 +261,76 @@ const FINAL_BLOG_PROMPT = (
 	data: BlogData,
 	outline: OutlineSection[]
 ): string => `
-ROLE: You are an expert SEO Content Strategist and Writer. Your task is to generate a comprehensive, high-quality, and well-structured blog post that is optimized for search engines and provides excellent value to the reader.
+ROLE: You are an expert SEO Content Strategist and Writer. Your task is to generate original, valuable, and SEO-friendly blog content that provides excellent value to readers.
 
-BASE INSTRUCTIONS:
-1.  **Adhere to Outline:** Follow the Approved Outline's H2 and H3 structure exactly.
-2.  **Source Context:** Base the content on the knowledge you have, prioritizing any reference data context provided during outline generation.
-3.  **Keywords:** Naturally integrate the Primary Keyword ("${
-	data.primaryKeyword
-}") and Secondary Keywords ("${data.secondaryKeywords.join(
-	', '
-)}"). The primary keyword should appear in the first paragraph.
-4.  **Tone/Style:** Maintain a professional, educational, and non-promotional tone, consistent with the selected Brand Voice: "${
-	data.brandVoice
-}".
+MANDATORY STRUCTURE (follow this exact order):
+1. **TL;DR Section** (MUST be first, before title)
+   - Write a concise 3-5 line summary of key takeaways
+   - Use format: "## TL;DR" as H2 heading
+   - Make it scannable and informative
 
-QUALITY & SEO GUIDELINES (CRITICAL):
-1.  **Content Depth & Rich Formatting:**
-    *   Provide in-depth, comprehensive information for each section. Do not write superficial content.
-    *   **Crucially, use rich formatting to enhance readability. Use Markdown tables for comparisons or data, and use bullet points for lists wherever appropriate.** This is mandatory.
-2.  **E-E-A-T (Experience, Expertise, Authoritativeness, Trust):**
-    *   Write with authority and expertise.
-    *   Demonstrate experience with practical examples or phrasing like "In practice..." or "A common challenge is...".
-    *   Ensure all information is accurate and trustworthy.
-3.  **Linking Strategy:**
-    *   **Internal Links:** Seamlessly integrate the following internal links where the text naturally discusses the associated keyword. Format them as Markdown links: \`[keyword text](URL)\`. Do not just list them.
+2. **Title** (H1)
+   - Use: # ${data.title}
+
+3. **Introduction** (First H2 section)
+   - Strong opening that sets context and captures attention
+   - Include the primary keyword naturally in the first paragraph
+   - Set the stage for what readers will learn
+
+4. **Main Content** (Follow outline H2/H3 structure exactly)
+   - Use clear H2 and H3 headings for structure
+   - Each section should flow logically into the next
+
+5. **FAQs Section** (MUST be last, after all outline sections)
+   - Generate 5-7 frequently asked questions related to the topic
+   - Use format: "## Frequently Asked Questions (FAQs)" as H2 heading
+   - Each FAQ should have a clear question (H3) and comprehensive answer
+   - Questions should cover common concerns, clarifications, and related topics
+
+CONTENT QUALITY GUIDELINES (CRITICAL):
+1. **Originality & Value:**
+   - Write original, valuable content - avoid rephrasing generic ideas
+   - Focus on delivering clarity and depth
+   - Avoid fluff, keyword stuffing, and overly promotional language
+
+2. **Tone & Readability:**
+   - Write in a conversational, human-friendly tone to improve readability and engagement
+   - Maintain a professional, educational, and non-promotional tone
+   - Consistent with Brand Voice: "${data.brandVoice || 'Professional'}"
+
+3. **Content Depth:**
+   - Aim for 800+ words unless the topic is very narrow or highly specific
+   - Provide in-depth, comprehensive information for each section
+   - Do not write superficial content
+
+4. **Rich Formatting:**
+   - Use Markdown tables for comparisons or data
+   - Use bullet points and numbered lists wherever appropriate
+   - Use bold/italic for emphasis when needed
+   - Maintain consistent formatting and flow
+
+5. **Real Examples & Credibility:**
+   - Include real examples, research-backed insights, case studies, or statistics wherever relevant
+   - Use phrasing like "In practice...", "A common challenge is...", "Research shows..."
+   - Demonstrate experience and expertise
+
+6. **SEO Optimization:**
+   - Naturally integrate Primary Keyword ("${
+		data.primaryKeyword || ''
+   }") throughout
+   - Naturally integrate Secondary Keywords ("${
+		data.secondaryKeywords.join(', ') || ''
+   }")
+   - Primary keyword should appear in the first paragraph
+   - Keywords should feel natural, not forced
+
+7. **E-E-A-T (Experience, Expertise, Authoritativeness, Trust):**
+   - Write with authority and expertise
+   - Ensure all information is accurate and trustworthy
+   - Demonstrate practical knowledge
+
+8. **Linking Strategy:**
+   - **Internal Links:** Seamlessly integrate the following internal links where the text naturally discusses the associated keyword. Format them as Markdown links: \`[keyword text](URL)\`. Do not just list them.
         ${
 			data.interlinks.length > 0
 				? data.interlinks
@@ -159,14 +344,20 @@ QUALITY & SEO GUIDELINES (CRITICAL):
 
 DETAILS:
 - Title: "${data.title}"
-- Language: ${data.language}
+- Topic: "${data.topic || ''}"
+- Language: ${data.language || 'English'}
 
-APPROVED OUTLINE (Do NOT change this structure):
+APPROVED OUTLINE (Follow this H2/H3 structure exactly for main content):
 ${JSON.stringify(outline, null, 2)}
 
-OUTPUT: Generate the full blog content in Markdown format, starting with the Title (# ${
-	data.title
-}).
+OUTPUT FORMAT:
+- Start with TL;DR section (## TL;DR)
+- Then Title (# ${data.title})
+- Then Introduction (first H2 from outline)
+- Then all other outline sections in order
+- End with FAQs section (## Frequently Asked Questions (FAQs))
+- Use proper Markdown formatting throughout
+- Ensure the blog feels structured, easy to read, and maintains consistent flow
 `;
 
 const buildContentParts = async (
@@ -181,7 +372,8 @@ const buildContentParts = async (
 export const generateTitles = async (
 	data: BlogData,
 	apiKey: string,
-	feedback?: string
+	feedback?: string,
+	referenceTitles?: string[]
 ): Promise<string[]> => {
 	if (!apiKey) throw new Error('API Key is required.');
 	const ai = new GoogleGenAI({ apiKey });
@@ -194,23 +386,93 @@ export const generateTitles = async (
     Please generate NEW titles that address this feedback. Make sure the titles are different from previous attempts and incorporate the user's suggestions.`
 		: '';
 
+	const secondaryKeywordsSection =
+		data.secondaryKeywords && data.secondaryKeywords.length > 0
+			? `
+    - Secondary Keywords: ${data.secondaryKeywords.join(', ')}
+    - MANDATORY: At least one secondary keyword MUST be included in each title`
+			: '';
+
+	const referenceTitlesSection =
+		referenceTitles && referenceTitles.length > 0
+			? `
+    
+    REFERENCE TITLES (from web search - use these as inspiration for style and structure):
+    ${referenceTitles
+		.map((title, idx) => `${idx + 1}. ${title}`)
+		.join('\n    ')}
+    
+    IMPORTANT: Study these reference titles to understand:
+    - How they structure titles
+    - What makes them engaging
+    - How they incorporate keywords
+    - Their tone and style
+    Use these as inspiration but create ORIGINAL titles, don't copy them.`
+			: '';
+
+	const userTopic = data.topic || '';
+	const primaryKeyword = data.primaryKeyword || '';
+
+	if (!primaryKeyword) {
+		throw new Error('Primary keyword is required for title generation');
+	}
+
 	const prompt = `
     ROLE: You are a creative copywriter specializing in blog titles.
-    TASK: Generate 5 engaging and SEO-friendly blog titles based on the provided topic and keywords.${feedback ? ' This is a regeneration request - please create NEW titles that incorporate the user feedback.' : ''}
-    INSTRUCTIONS:
-    1. The titles should be catchy and relevant.
-    2. Incorporate the primary keyword naturally.
-    3. ${feedback ? 'Address the user feedback in the new titles.' : ''}
-    4. Output ONLY a clean JSON array of strings. Do not add any other text, pre-amble, or comments.
-
+    TASK: Generate 8-10 engaging and SEO-friendly blog titles based on the provided topic and keywords.${
+		feedback
+			? ' This is a regeneration request - please create NEW titles that incorporate the user feedback.'
+			: ''
+    }
+    
+    MANDATORY REQUIREMENTS (ALL must be met):
+    1. ✨ USER TOPIC INTENT: The title MUST reflect the user's topic intent: "${userTopic}"
+    2. 🔑 PRIMARY KEYWORD: The primary keyword "${primaryKeyword}" MUST be included in EVERY title
+    3. 🔑 SECONDARY KEYWORDS: At least one secondary keyword MUST be included in each title${
+		data.secondaryKeywords && data.secondaryKeywords.length > 0
+			? ` (available: ${data.secondaryKeywords.join(', ')})`
+			: ''
+    }
+    4. 📚 REFERENCE TITLES: Use the reference titles provided as inspiration for style, structure, and engagement techniques${
+		referenceTitles && referenceTitles.length > 0
+			? ' (see reference titles below)'
+			: ''
+    }
+    5. 🎯 VARIETY: Generate different types of titles:
+       - Clickbait style (e.g., "You Won't Believe...", "The Shocking Truth About...")
+       - How-to guides (e.g., "How to...", "Complete Guide to...")
+       - List-based (e.g., "10 Ways...", "Top 5...")
+       - Question-based (e.g., "What is...?", "Why Does...?")
+       - Comparison/versus (e.g., "...vs...", "The Difference Between...")
+       - Ultimate guides (e.g., "The Ultimate Guide to...", "Everything You Need to Know About...")
+    6. 🎯 SEO OPTIMIZATION: Titles should be 50-70 characters for optimal SEO
+    7. 🎯 ENGAGEMENT: Make titles compelling, click-worthy, and relevant to the target audience in ${
+		data.targetLocation || 'United States'
+    }
+    ${feedback ? '8. Address the user feedback in the new titles.' : ''}
+    
     DETAILS:
-    - Topic: "${data.topic}"
-    - Primary Keyword: "${data.primaryKeyword}"
-    - Target Location: "${data.targetLocation}"
-    ${feedbackSection}
+    - User Topic: "${userTopic}"
+    - Primary Keyword: "${primaryKeyword}"${secondaryKeywordsSection}
+    - Target Location: "${
+		data.targetLocation || 'United States'
+    }"${referenceTitlesSection}${feedbackSection}
+
+    OUTPUT FORMAT:
+    - Output ONLY a clean JSON array of strings
+    - Do not add any other text, pre-amble, or comments
+    - Generate 8-10 titles with variety in style
+    - Each title MUST include the primary keyword "${primaryKeyword}"
+    ${
+		data.secondaryKeywords && data.secondaryKeywords.length > 0
+			? `- Each title MUST include at least one secondary keyword from: ${data.secondaryKeywords.join(
+					', '
+			  )}`
+			: ''
+    }
 
     EXAMPLE OUTPUT:
-    ["10 AWS Database Services You Need to Know", "The Ultimate Guide to AWS Databases in ${data.targetLocation}", "Why ${data.primaryKeyword} is Crucial for Your Business"]
+    ["10 ${primaryKeyword} Strategies You Need to Know in 2024", "The Ultimate Guide to ${primaryKeyword} for Beginners", "Why ${primaryKeyword} is Revolutionizing ${userTopic}", "How to Master ${primaryKeyword}: A Complete Tutorial", "The Shocking Truth About ${primaryKeyword} and ${userTopic}"]
     `;
 
 	const response: GenerateContentResponse = await retryWithBackoff(
@@ -243,7 +505,106 @@ export const generateTitles = async (
 	const extractedText = extractTextFromResponse(response);
 	const titles = cleanAndParseJson(extractedText);
 
-	return titles;
+	// ✨ VALIDATION: Ensure all titles contain the primary keyword
+	if (!Array.isArray(titles)) {
+		console.warn(
+			'⚠️  [TITLE GENERATION] Invalid response format, returning empty array'
+		);
+		return [];
+	}
+
+	const primaryKeywordLower = primaryKeyword.toLowerCase();
+	// Split primary keyword into words for flexible matching
+	const primaryKeywordWords = primaryKeywordLower
+		.split(/\s+/)
+		.filter((w) => w.length > 0);
+
+	const validatedTitles: string[] = [];
+	const filteredTitles: string[] = [];
+
+	titles.forEach((title: string) => {
+		if (!title || typeof title !== 'string') {
+			filteredTitles.push(title || '[invalid]');
+			return;
+		}
+
+		const titleLower = title.toLowerCase();
+
+		// First check: Exact phrase match (preferred)
+		if (titleLower.includes(primaryKeywordLower)) {
+			validatedTitles.push(title);
+			return;
+		}
+
+		// Second check: All words from primary keyword are present (flexible matching)
+		// This handles cases like "AI in Marketing" vs "AI Marketing" or "Marketing AI"
+		const allWordsPresent = primaryKeywordWords.every((word) =>
+			titleLower.includes(word)
+		);
+
+		if (allWordsPresent) {
+			validatedTitles.push(title);
+		} else {
+			filteredTitles.push(title);
+		}
+	});
+
+	if (filteredTitles.length > 0) {
+		console.warn(
+			`   ⚠️  Filtered out ${filteredTitles.length} title(s) that didn't contain primary keyword "${primaryKeyword}"`
+		);
+		// Log filtered titles for debugging (first 3 only)
+		filteredTitles.slice(0, 3).forEach((title, idx) => {
+			console.warn(`      ${idx + 1}. "${title}"`);
+		});
+		if (filteredTitles.length > 3) {
+			console.warn(
+				`      ... and ${filteredTitles.length - 3} more`
+			);
+		}
+	}
+
+	// If we have secondary keywords, also validate that titles include at least one
+	if (data.secondaryKeywords && data.secondaryKeywords.length > 0) {
+		const secondaryKeywordsLower = data.secondaryKeywords.map((kw) =>
+			kw.toLowerCase()
+		);
+		const titlesWithSecondary = validatedTitles.filter(
+			(title: string) => {
+				const titleLower = title.toLowerCase();
+				return secondaryKeywordsLower.some((kw) =>
+					titleLower.includes(kw)
+				);
+			}
+		);
+
+		if (titlesWithSecondary.length > 0) {
+			// Prioritize titles with secondary keywords
+			const titlesWithoutSecondary = validatedTitles.filter(
+				(title: string) => !titlesWithSecondary.includes(title)
+			);
+			const finalTitles = [
+				...titlesWithSecondary,
+				...titlesWithoutSecondary,
+			];
+
+			console.log(
+				`   ✅ [TITLE VALIDATION] ${finalTitles.length} titles passed validation (${titlesWithSecondary.length} with secondary keywords, ${titlesWithoutSecondary.length} without)`
+			);
+
+			return finalTitles;
+		} else {
+			console.warn(
+				`   ⚠️  [TITLE VALIDATION] No titles contain secondary keywords, but returning ${validatedTitles.length} titles with primary keyword only`
+			);
+		}
+	}
+
+	console.log(
+		`   ✅ [TITLE VALIDATION] ${validatedTitles.length} titles passed validation (all contain primary keyword "${primaryKeyword}")`
+	);
+
+	return validatedTitles;
 };
 
 /**
@@ -252,15 +613,35 @@ export const generateTitles = async (
  * This function can both filter existing keywords AND generate new variations based on feedback
  */
 export const filterKeywordsWithFeedback = async (
-	keywords: Array<{ text: string; volume: number; difficulty: number; score?: number }>,
+	keywords: Array<{
+		text: string;
+		volume: number;
+		difficulty: number;
+		score?: number;
+	}>,
 	topic: string,
 	feedback: string,
 	apiKey: string
-): Promise<Array<{ text: string; volume: number; difficulty: number; score?: number }>> => {
+): Promise<
+	Array<{
+		text: string;
+		volume: number;
+		difficulty: number;
+		score?: number;
+	}>
+> => {
 	if (!apiKey) throw new Error('API Key is required.');
 	const ai = new GoogleGenAI({ apiKey });
 
-	const keywordsList = keywords.slice(0, 50).map((kw, idx) => `${idx + 1}. "${kw.text}" (Volume: ${kw.volume}, Difficulty: ${kw.difficulty})`).join('\n');
+	const keywordsList = keywords
+		.slice(0, 50)
+		.map(
+			(kw, idx) =>
+				`${idx + 1}. "${kw.text}" (Volume: ${
+					kw.volume
+				}, Difficulty: ${kw.difficulty})`
+		)
+		.join('\n');
 
 	const prompt = `
 ROLE: You are a keyword research expert specializing in SEO and content marketing.
@@ -313,11 +694,21 @@ CRITICAL: Generate NEW keywords that are DIFFERENT from the previous list. The u
 							items: {
 								type: Type.OBJECT,
 								properties: {
-									text: { type: Type.STRING },
-									volume: { type: Type.NUMBER },
-									difficulty: { type: Type.NUMBER },
+									text: {
+										type: Type.STRING,
+									},
+									volume: {
+										type: Type.NUMBER,
+									},
+									difficulty: {
+										type: Type.NUMBER,
+									},
 								},
-								required: ['text', 'volume', 'difficulty'],
+								required: [
+									'text',
+									'volume',
+									'difficulty',
+								],
 							},
 						},
 					},
@@ -335,11 +726,14 @@ CRITICAL: Generate NEW keywords that are DIFFERENT from the previous list. The u
 		// Map back to original format, preserving scores if available
 		return refinedKeywords.map((kw: any) => {
 			// Find original keyword to preserve volume/difficulty if text matches
-			const original = keywords.find((k) => k.text.toLowerCase() === kw.text.toLowerCase());
+			const original = keywords.find(
+				(k) => k.text.toLowerCase() === kw.text.toLowerCase()
+			);
 			return {
 				text: kw.text,
 				volume: kw.volume || original?.volume || 0,
-				difficulty: kw.difficulty || original?.difficulty || 0.5,
+				difficulty:
+					kw.difficulty || original?.difficulty || 0.5,
 				score: original?.score,
 			};
 		});
@@ -409,46 +803,463 @@ export const searchWebForTitles = async (
 };
 
 /**
- * Search web for top 5 URLs related to user topic
- * Returns array of URLs (strings)
+ * Extract keywords from URLs using Gemini's urlContext tool
+ * Analyzes URL content and extracts relevant SEO keywords with estimated volumes and difficulty
  *
- * Priority:
- * 1. Try Google Custom Search API (if configured) - Direct Google search
- * 2. Fallback to Gemini's googleSearch tool
+ * @param urls Array of URLs to analyze
+ * @param topic User's topic for context
+ * @param apiKey Gemini API key
+ * @returns Array of keywords with text, volume, and difficulty
+ */
+export const extractKeywordsFromUrls = async (
+	urls: string[],
+	topic: string,
+	apiKey: string
+): Promise<Array<{ text: string; volume: number; difficulty: number }>> => {
+	if (!apiKey) throw new Error('API Key is required.');
+	if (!urls || urls.length === 0) return [];
+
+	const ai = new GoogleGenAI({ apiKey });
+
+	const prompt = `
+ROLE: You are an SEO keyword research expert specializing in extracting relevant keywords from web content.
+TASK: Analyze the provided URLs and extract the most relevant SEO keywords related to the topic "${topic}".
+
+INSTRUCTIONS:
+1. Use the urlContext tool to analyze the content of each URL provided.
+2. Extract 20 highly relevant keywords from EACH URL (total: ${
+		urls.length
+	} URLs × 20 keywords = ${urls.length * 20} keywords).
+3. Focus on keywords that:
+   - Are directly related to the topic "${topic}"
+   - Have clear search intent
+   - Are 1-4 words long (prefer 2-3 word phrases)
+   - Would be valuable for SEO and content optimization
+4. For each keyword, estimate:
+   - volume: Monthly search volume (estimate between 100-50000 based on keyword popularity)
+   - difficulty: SEO difficulty score (0.0 to 1.0, where 0 is easy and 1 is very hard)
+5. Prioritize:
+   - Long-tail keywords (2-4 words) over single words
+   - Specific, actionable keywords over generic terms
+   - Keywords with commercial or informational intent
+6. Output ONLY a clean JSON array of keyword objects. Do not add any other text or comments.
+
+TOPIC: "${topic}"
+
+URLs TO ANALYZE:
+${urls.map((url, i) => `${i + 1}. ${url}`).join('\n')}
+
+OUTPUT FORMAT:
+[
+  {"text": "keyword phrase 1", "volume": 5000, "difficulty": 0.45},
+  {"text": "keyword phrase 2", "volume": 2000, "difficulty": 0.62},
+  {"text": "keyword phrase 3", "volume": 8000, "difficulty": 0.38}
+]
+
+CRITICAL: Extract exactly 20 keywords per URL. Make sure keywords are relevant to "${topic}" and have realistic volume/difficulty estimates.
+`;
+
+	try {
+		const response: GenerateContentResponse = await retryWithBackoff(
+			async () => {
+				return await ai.models.generateContent({
+					model: 'gemini-2.5-flash',
+					contents: { parts: [{ text: prompt }] },
+					config: {
+						tools: [
+							{ googleSearch: {} },
+							{ urlContext: { urls } },
+						],
+						// Note: Cannot use responseMimeType with tools - must parse JSON from text
+					},
+				});
+			},
+			{
+				maxRetries: 3,
+				initialDelay: 1000,
+				onRetry: (attempt, delay) => {
+					console.log(
+						`   ⏳ Rate limit hit. Retrying in ${Math.ceil(
+							delay / 1000
+						)}s (attempt ${attempt}/3)...`
+					);
+				},
+			}
+		);
+
+		const extractedText = extractTextFromResponse(response);
+		const keywords = cleanAndParseJson(extractedText);
+
+		// Validate and return keywords
+		if (Array.isArray(keywords)) {
+			return keywords
+				.filter(
+					(kw: any) =>
+						kw.text &&
+						typeof kw.text === 'string' &&
+						kw.text.trim().length > 0 &&
+						typeof kw.volume === 'number' &&
+						typeof kw.difficulty === 'number'
+				)
+				.map((kw: any) => ({
+					text: kw.text.trim(),
+					volume: Math.max(0, Math.min(100000, kw.volume)), // Clamp volume
+					difficulty: Math.max(
+						0,
+						Math.min(1, kw.difficulty)
+					), // Clamp difficulty to 0-1
+				}));
+		}
+
+		return [];
+	} catch (error) {
+		console.error('❌ [EXTRACT KEYWORDS FROM URLS] Error:', error);
+		return [];
+	}
+};
+
+/**
+ * Search web for top 5 URLs related to user topic
+ * Uses OpenAI with Google Custom Search to get recent, valid URLs with sources
+ *
+ * @param userQuery The search query/topic
+ * @param apiKey OpenAI API key (or Gemini API key for fallback)
+ * @returns Array of 5 URLs
  */
 export const searchWebForUrls = async (
 	userQuery: string,
 	apiKey: string
 ): Promise<string[]> => {
-	// Try Google Custom Search API first (direct Google search)
-	try {
-		const { searchGoogleForUrls, isGoogleSearchConfigured } =
-			await import('./googleSearchService');
+	if (!apiKey) throw new Error('API Key is required.');
 
-		if (isGoogleSearchConfigured()) {
-			console.log(
-				'   🔍 Using Google Custom Search API (direct Google search)...'
+	// COMMENTED OUT: Perplexity API implementation
+	/*
+	// Try Perplexity API first
+	const perplexityApiKey = process.env.PERPLEXITY_API_KEY;
+
+	if (perplexityApiKey) {
+		console.log('   🔍 Using Perplexity API search...');
+
+		try {
+			const response = await fetch(
+				'https://api.perplexity.ai/search',
+				{
+					method: 'POST',
+					headers: {
+						Authorization: `Bearer ${perplexityApiKey}`,
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({
+						query: userQuery,
+						max_results: 15, // Get more results to filter down to 5
+						search_recency_filter: 'month', // Get recent results (last month)
+						// Exclude unwanted domains
+						search_domain_filter: [], // Empty means no domain restrictions
+					}),
+				}
 			);
-			return await searchGoogleForUrls(userQuery);
+
+			if (!response.ok) {
+				const errorText = await response.text();
+				throw new Error(
+					`Perplexity API failed: ${response.status} ${
+						response.statusText
+					}. ${errorText.substring(0, 200)}`
+				);
+			}
+
+			const data = await response.json();
+
+			// Extract URLs from search results
+			const urls: string[] = [];
+
+			if (data.results && Array.isArray(data.results)) {
+				for (const result of data.results) {
+					if (
+						result.url &&
+						typeof result.url === 'string'
+					) {
+						urls.push(result.url);
+					}
+				}
+			}
+
+			// Domains to exclude
+			const excludedDomains = [
+				'cloud.google.com',
+				'ai.google.dev',
+				'console.cloud.google.com',
+				'developers.google.com',
+				'youtube.com',
+				'youtu.be',
+				'wikipedia.org',
+				'quora.com',
+			];
+
+			// Filter and validate URLs
+			const seenUrls = new Set<string>();
+			const validUrls = urls
+				.filter((url: string) => {
+					if (!url || typeof url !== 'string') return false;
+
+					// Deduplicate
+					const normalizedUrl = url.trim().toLowerCase();
+					if (seenUrls.has(normalizedUrl)) return false;
+					seenUrls.add(normalizedUrl);
+
+					try {
+						const urlObj = new URL(url);
+						const hostname =
+							urlObj.hostname.toLowerCase();
+
+						// Exclude unwanted domains
+						const isExcluded = excludedDomains.some(
+							(domain) => hostname.includes(domain)
+						);
+
+						if (isExcluded) {
+							console.log(
+								`   ⚠️ Filtered out excluded domain: ${url.substring(
+									0,
+									60
+								)}...`
+							);
+							return false;
+						}
+
+						return true;
+					} catch {
+						return false;
+					}
+				})
+				.slice(0, 5);
+
+			console.log(
+				`   ✅ Found ${validUrls.length} URLs from Perplexity`
+			);
+			return validUrls;
+		} catch (error: any) {
+			console.error(
+				`   ❌ Perplexity API error: ${error?.message || error}`
+			);
+			console.warn(
+				`   ⚠️ Perplexity search failed. Please ensure PERPLEXITY_API_KEY is set in .env`
+			);
+			return [];
 		}
-	} catch (err: any) {
-		// If import fails, API not configured, or API not enabled, fall back to Gemini
-		// Silently handle configuration errors (API not enabled, 403, etc.)
-		if (err.isConfigError) {
-			console.log(
-				'   ⚠️ Google Custom Search API not enabled, using Gemini web search...'
-			);
-		} else {
-			// For other errors (import failures, etc.), also fall back silently
-			console.log(
-				'   ⚠️ Google Custom Search API not available, using Gemini web search...'
-			);
-		}
-		// Continue to Gemini fallback below
 	}
 
-	// Fallback: Use Gemini's googleSearch tool
-	if (!apiKey) throw new Error('API Key is required.');
+	// If PERPLEXITY_API_KEY is not set, return empty
+	console.warn(
+		'   ⚠️ PERPLEXITY_API_KEY not configured. Please set it in .env file'
+	);
+	return [];
+	*/
+
+	// NEW: Use OpenAI with Google Custom Search
+	const openaiApiKey = process.env.OPENAI_API_KEY;
+
+	if (!openaiApiKey) {
+		console.warn(
+			'   ⚠️ OPENAI_API_KEY not configured. Please set it in .env file'
+		);
+		return [];
+	}
+
+	console.log('   🔍 Using OpenAI with Google Custom Search...');
+
+	try {
+		// Step 1: Get search results from Google Custom Search
+		let searchResults: string[] = [];
+		try {
+			searchResults = await searchGoogleForUrls(userQuery);
+			if (searchResults.length === 0) {
+				console.warn(
+					'   ⚠️ No results from Google Custom Search'
+				);
+				return [];
+			}
+		} catch (error: any) {
+			// If Google Search is not configured, try to use OpenAI directly
+			if (error.message?.includes('not configured')) {
+				console.warn(
+					'   ⚠️ Google Custom Search not configured. Using OpenAI only...'
+				);
+			} else {
+				throw error;
+			}
+		}
+
+		// Step 2: Use OpenAI to process, rank, and extract top 5 URLs with citations
+		const openai = new OpenAI({ apiKey: openaiApiKey });
+
+		const prompt = `You are a web research assistant. Analyze the following search results and extract the top 5 most relevant and authoritative URLs for the query: "${userQuery}"
+
+Search Results:
+${
+	searchResults.length > 0
+		? searchResults.map((url, idx) => `${idx + 1}. ${url}`).join('\n')
+		: 'No search results provided'
+}
+
+Instructions:
+1. Select the top 5 most relevant URLs that best match the query
+2. Prioritize authoritative sources (reputable blogs, websites, documentation)
+3. Ensure URLs are diverse and cover different aspects of the topic
+4. Exclude the following domains:
+   - cloud.google.com
+   - ai.google.dev
+   - console.cloud.google.com
+   - developers.google.com
+   - youtube.com
+   - youtu.be
+   - wikipedia.org
+   - quora.com
+5. Return a JSON object with a "urls" key containing an array of exactly 5 URL strings
+6. Each URL must be a valid, complete URL starting with http:// or https://
+7. If fewer than 5 valid URLs are available, return only the valid ones
+
+Output format (JSON object only, no other text):
+{"urls": ["https://example.com/article1", "https://example.com/article2", ...]}`;
+
+		const completion = await openai.chat.completions.create({
+			model: 'gpt-4o-mini',
+			messages: [
+				{
+					role: 'system',
+					content: 'You are a web research assistant. Return only valid JSON objects with a "urls" key containing an array of URLs.',
+				},
+				{
+					role: 'user',
+					content: prompt,
+				},
+			],
+			temperature: 0.3,
+			response_format: { type: 'json_object' },
+		});
+
+		const responseText =
+			completion.choices[0]?.message?.content || '{}';
+		let parsedResponse: any;
+
+		try {
+			// Try to parse as JSON object first
+			parsedResponse = JSON.parse(responseText);
+			// If it's an object, look for a 'urls' key or extract array values
+			if (
+				parsedResponse.urls &&
+				Array.isArray(parsedResponse.urls)
+			) {
+				parsedResponse = parsedResponse.urls;
+			} else if (Array.isArray(parsedResponse)) {
+				// Already an array
+			} else {
+				// Try to find array in the response
+				const arrayMatch = responseText.match(/\[.*\]/s);
+				if (arrayMatch) {
+					parsedResponse = JSON.parse(arrayMatch[0]);
+				} else {
+					throw new Error('No array found in response');
+				}
+			}
+		} catch (parseError) {
+			// Fallback: try to extract JSON array from text
+			const arrayMatch = responseText.match(/\[.*\]/s);
+			if (arrayMatch) {
+				parsedResponse = JSON.parse(arrayMatch[0]);
+			} else {
+				console.error(
+					'   ❌ Failed to parse OpenAI response:',
+					responseText
+				);
+				// Fallback to using search results directly
+				parsedResponse = searchResults.slice(0, 5);
+			}
+		}
+
+		// Ensure we have an array
+		if (!Array.isArray(parsedResponse)) {
+			console.warn(
+				'   ⚠️ OpenAI did not return an array, using search results directly'
+			);
+			parsedResponse = searchResults.slice(0, 5);
+		}
+
+		// Domains to exclude
+		const excludedDomains = [
+			'cloud.google.com',
+			'ai.google.dev',
+			'console.cloud.google.com',
+			'developers.google.com',
+			'youtube.com',
+			'youtu.be',
+			'wikipedia.org',
+			'quora.com',
+		];
+
+		// Filter and validate URLs
+		const seenUrls = new Set<string>();
+		const validUrls = parsedResponse
+			.filter((url: any) => {
+				if (!url || typeof url !== 'string') return false;
+
+				// Deduplicate
+				const normalizedUrl = url.trim().toLowerCase();
+				if (seenUrls.has(normalizedUrl)) return false;
+				seenUrls.add(normalizedUrl);
+
+				try {
+					const urlObj = new URL(url);
+					const hostname = urlObj.hostname.toLowerCase();
+
+					// Exclude unwanted domains
+					const isExcluded = excludedDomains.some(
+						(domain) => hostname.includes(domain)
+					);
+
+					if (isExcluded) {
+						console.log(
+							`   ⚠️ Filtered out excluded domain: ${url.substring(
+								0,
+								60
+							)}...`
+						);
+						return false;
+					}
+
+					return true;
+				} catch {
+					return false;
+				}
+			})
+			.slice(0, 5);
+
+		console.log(
+			`   ✅ Found ${validUrls.length} URLs using OpenAI with web search`
+		);
+		return validUrls;
+	} catch (error: any) {
+		console.error(
+			`   ❌ OpenAI web search error: ${error?.message || error}`
+		);
+		// Fallback: try to use Google Search results directly if available
+		try {
+			const fallbackResults = await searchGoogleForUrls(userQuery);
+			if (fallbackResults.length > 0) {
+				console.log(
+					`   ⚠️ Using fallback: ${fallbackResults.length} URLs from Google Search`
+				);
+				return fallbackResults.slice(0, 5);
+			}
+		} catch (fallbackError) {
+			// Ignore fallback errors
+		}
+		return [];
+	}
+
+	// FALLBACK: Original Gemini implementation (commented but kept for reference)
+	/*
+	console.log('   🔍 Using Gemini web search...');
 	const ai = new GoogleGenAI({ apiKey });
 
 	const prompt = `
@@ -461,6 +1272,12 @@ export const searchWebForUrls = async (
 	4. The URLs should be diverse and cover different aspects of the topic.
 	5. Output ONLY a clean JSON array of strings (URLs). Do not add any other text, pre-amble, or comments.
 	6. Each URL must be a valid, complete URL starting with http:// or https://
+	7. EXCLUDE the following types of URLs:
+	   - Vertex AI documentation (cloud.google.com/vertex-ai)
+	   - Google Cloud Platform documentation (cloud.google.com)
+	   - Google AI documentation (ai.google.dev)
+	   - Any internal Google documentation or API reference pages
+	   - Focus on third-party blogs, articles, and independent sources
 
 	USER QUERY: "${userQuery}"
 
@@ -495,13 +1312,36 @@ export const searchWebForUrls = async (
 	const extractedText = extractTextFromResponse(response);
 	const urls = cleanAndParseJson(extractedText);
 
-	// Validate URLs and return top 5
+	// Domains to exclude (Vertex AI, Google Cloud, Google AI documentation)
+	const excludedDomains = [
+		'cloud.google.com',
+		'ai.google.dev',
+		'console.cloud.google.com',
+		'developers.google.com',
+	];
+
+	// Validate URLs, filter out excluded domains, and return top 5
 	const validUrls = Array.isArray(urls)
 		? urls
 				.filter((url: any) => {
 					if (typeof url !== 'string') return false;
 					try {
-						new URL(url);
+						const urlObj = new URL(url);
+						const hostname =
+							urlObj.hostname.toLowerCase();
+
+						// Exclude Google Cloud, Vertex AI, and Google AI documentation
+						const isExcluded = excludedDomains.some(
+							(domain) => hostname.includes(domain)
+						);
+
+						if (isExcluded) {
+							console.log(
+								`   ⚠️ Filtered out excluded domain: ${url}`
+							);
+							return false;
+						}
+
 						return true;
 					} catch {
 						return false;
@@ -511,6 +1351,11 @@ export const searchWebForUrls = async (
 		: [];
 
 	return validUrls;
+	*/
+
+	// If OpenAI fails and no fallback, return empty
+	console.error('   ❌ OpenAI web search failed');
+	return [];
 };
 
 /**
@@ -680,10 +1525,24 @@ export const generateOutline = async (
 		);
 	}
 
-	// 2. Executor Agent: Generate H3s for each H2 in parallel
+	// 2. Executor Agent: Generate H3s for each H2 in parallel (with context for continuity)
+	// Process in parallel for speed - each section knows its position and can reference neighbors
+	console.log(
+		`   🚀 Generating H3 subheadings for ${h2Plan.length} sections in parallel...`
+	);
+
 	const outlinePromises = h2Plan.map(async (h2Name, i) => {
 		const h2Id = (i + 1).toString();
-		const executorPrompt = EXECUTION_PROMPT(data, h2Name, h2Id);
+		const previousH2 = i > 0 ? h2Plan[i - 1] : undefined;
+		const nextH2 = i < h2Plan.length - 1 ? h2Plan[i + 1] : undefined;
+
+		const executorPrompt = EXECUTION_PROMPT(
+			data,
+			h2Name,
+			h2Id,
+			previousH2,
+			nextH2
+		);
 		const executorContentParts = await buildContentParts(
 			executorPrompt,
 			data
@@ -713,11 +1572,173 @@ export const generateOutline = async (
 				}
 			);
 
-		return cleanAndParseJson(executorResponse.text) as OutlineSection;
+		const section = cleanAndParseJson(
+			executorResponse.text
+		) as OutlineSection;
+
+		// Normalize items: ensure all items are objects with id and name
+		if (section.items && Array.isArray(section.items)) {
+			section.items = section.items.map((item, idx) => {
+				// If item is a string, convert it to an object
+				if (typeof item === 'string') {
+					return {
+						id: `${section.id || i + 1}${idx + 1}`,
+						name: item,
+					};
+				}
+				// If item is an object but missing id or name, fix it
+				if (typeof item === 'object' && item !== null) {
+					return {
+						id:
+							item.id ||
+							`${section.id || i + 1}${idx + 1}`,
+						name: item.name || String(item),
+					};
+				}
+				// Fallback for any other type
+				return {
+					id: `${section.id || i + 1}${idx + 1}`,
+					name: String(item),
+				};
+			});
+		}
+
+		console.log(
+			`   ✅ Generated H3s for section ${i + 1}/${
+				h2Plan.length
+			}: "${h2Name}" (${section.items?.length || 0} H3 subheadings)`
+		);
+
+		return section;
 	});
 
+	// Wait for all sections to complete in parallel
 	const fullOutline = await Promise.all(outlinePromises);
-	return fullOutline;
+
+	// Sort by ID to ensure correct order (in case promises resolve out of order)
+	fullOutline.sort((a, b) => {
+		const aId = parseInt(a.id || '0');
+		const bId = parseInt(b.id || '0');
+		return aId - bId;
+	});
+
+	// ✨ ENFORCE: Ensure Conclusion and FAQs sections are always present at the end
+	const conclusionKeywords = [
+		'conclusion',
+		'summary',
+		'wrap up',
+		'final thoughts',
+		'key takeaways',
+	];
+	const faqKeywords = [
+		'faq',
+		'frequently asked',
+		'common questions',
+		'questions',
+		'faqs',
+	];
+
+	// Separate main sections from conclusion/FAQ sections
+	const mainSections: OutlineSection[] = [];
+	let conclusionSection: OutlineSection | null = null;
+	let faqSection: OutlineSection | null = null;
+
+	fullOutline.forEach((section) => {
+		const nameLower = section.name?.toLowerCase() || '';
+		const isConclusion = conclusionKeywords.some((kw) =>
+			nameLower.includes(kw)
+		);
+		const isFAQ = faqKeywords.some((kw) => nameLower.includes(kw));
+
+		if (isConclusion) {
+			conclusionSection = section;
+		} else if (isFAQ) {
+			faqSection = section;
+		} else {
+			mainSections.push(section);
+		}
+	});
+
+	// Build final outline: main sections, then conclusion, then FAQs
+	const finalOutline: OutlineSection[] = [...mainSections];
+
+	// Add conclusion second-to-last (create if missing)
+	if (conclusionSection) {
+		finalOutline.push(conclusionSection);
+	} else {
+		const conclusionId = (finalOutline.length + 1).toString();
+		finalOutline.push({
+			id: conclusionId,
+			name: 'Conclusion',
+			items: [
+				{ id: `${conclusionId}1`, name: 'Key Takeaways' },
+				{ id: `${conclusionId}2`, name: 'Final Thoughts' },
+			],
+		});
+		console.log('   ✅ Added missing Conclusion section');
+	}
+
+	// Add FAQs last (create if missing)
+	if (faqSection) {
+		finalOutline.push(faqSection);
+	} else {
+		const faqId = (finalOutline.length + 1).toString();
+		finalOutline.push({
+			id: faqId,
+			name: 'Frequently Asked Questions (FAQs)',
+			items: [
+				{ id: `${faqId}1`, name: 'Question 1' },
+				{ id: `${faqId}2`, name: 'Question 2' },
+				{ id: `${faqId}3`, name: 'Question 3' },
+				{ id: `${faqId}4`, name: 'Question 4' },
+				{ id: `${faqId}5`, name: 'Question 5' },
+			],
+		});
+		console.log('   ✅ Added missing FAQs section');
+	}
+
+	// Re-number IDs to ensure sequential order
+	finalOutline.forEach((section, index) => {
+		section.id = (index + 1).toString();
+		if (section.items && Array.isArray(section.items)) {
+			section.items = section.items.map((item, itemIndex) => {
+				// Ensure item is an object, not a string
+				if (typeof item === 'string') {
+					return {
+						id: `${section.id}${itemIndex + 1}`,
+						name: item,
+					};
+				}
+				// If item is an object, update its id
+				if (typeof item === 'object' && item !== null) {
+					return {
+						...item,
+						id: `${section.id}${itemIndex + 1}`,
+						name: item.name || String(item),
+					};
+				}
+				// Fallback
+				return {
+					id: `${section.id}${itemIndex + 1}`,
+					name: String(item),
+				};
+			});
+		}
+	});
+
+	console.log(
+		`   ✅ [OUTLINE GENERATION] Complete! Generated ${
+			finalOutline.length
+		} H2 sections with ${finalOutline.reduce(
+			(sum, s) => sum + (s.items?.length || 0),
+			0
+		)} total H3 subheadings`
+	);
+	console.log(
+		`   ✅ Verified: Conclusion and FAQs sections are present at the end`
+	);
+
+	return finalOutline;
 };
 
 export const generateBlogPost = async (

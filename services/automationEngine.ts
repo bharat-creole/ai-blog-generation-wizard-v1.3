@@ -183,7 +183,22 @@ export const autoFillTitle = async (s: AgentState): Promise<string> => {
 	if (!apiKey) {
 		throw new Error('API Key is required. Please provide apiKey in state or set GEMINI_API_KEY in your .env.local file.');
 	}
-	const titles = await geminiService.generateTitles(s.data, apiKey);
+
+	// ✨ NEW: Fetch reference titles from web search for inspiration
+	console.log('🔍 [AUTO-FILL TITLE] Fetching reference titles from web search...');
+	const topicForSearch = s.data.title || s.data.topic || s.data.primaryKeyword || '';
+	let referenceTitles: string[] = [];
+	
+	if (topicForSearch) {
+		try {
+			referenceTitles = await geminiService.searchWebForTitles(topicForSearch, apiKey);
+			console.log(`   ✅ Found ${referenceTitles.length} reference titles from web search`);
+		} catch (err) {
+			console.warn('   ⚠️  Failed to fetch reference titles, continuing without them:', err);
+		}
+	}
+
+	const titles = await geminiService.generateTitles(s.data, apiKey, undefined, referenceTitles);
 	// Auto-select the first (best) title
 	return titles.length > 0 ? titles[0] : s.data.topic || 'Untitled Blog';
 };

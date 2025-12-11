@@ -16,7 +16,14 @@ interface InterlinkingFormProps {
 	setOutline: React.Dispatch<React.SetStateAction<any[]>>;
 	setDraft: React.Dispatch<React.SetStateAction<string>>;
 	setTraceItems: React.Dispatch<React.SetStateAction<any[]>>;
-	sendUserMessage: (message: string, agentState: AgentState) => Promise<{ response: string; updatedState: AgentState; metadata?: any }>;
+	sendUserMessage: (
+		message: string,
+		agentState: AgentState
+	) => Promise<{
+		response: string;
+		updatedState: AgentState;
+		metadata?: any;
+	}>;
 }
 
 const InterlinkingForm: React.FC<InterlinkingFormProps> = ({
@@ -69,7 +76,12 @@ const InterlinkingForm: React.FC<InterlinkingFormProps> = ({
 			setDraft(result.updatedState.draft);
 
 			if (result.updatedState.trace) {
-				setTraceItems(result.updatedState.trace.map((t) => ({ step: t.step, at: t.at })));
+				setTraceItems(
+					result.updatedState.trace.map((t) => ({
+						step: t.step,
+						at: t.at,
+					}))
+				);
 			}
 
 			// Update parent data
@@ -84,10 +96,9 @@ const InterlinkingForm: React.FC<InterlinkingFormProps> = ({
 				{
 					role: 'assistant',
 					content: result.response,
-					...result.metadata
+					...result.metadata,
 				},
 			]);
-
 		} catch (error) {
 			console.error('Error processing interlinking:', error);
 			// Revert on error
@@ -114,11 +125,17 @@ const InterlinkingForm: React.FC<InterlinkingFormProps> = ({
 			// Update the message to reflect the change
 			setMessages((prev) =>
 				prev.map((msg, i) => {
-					if (i === messages.length - 1 && msg.interlinkingForm) {
+					if (
+						i === messages.length - 1 &&
+						msg.interlinkingForm
+					) {
 						return {
 							...msg,
 							interlinkingForm: {
-								currentLinks: [...data.interlinks, newLink],
+								currentLinks: [
+									...data.interlinks,
+									newLink,
+								],
 							},
 						};
 					}
@@ -141,7 +158,9 @@ const InterlinkingForm: React.FC<InterlinkingFormProps> = ({
 					return {
 						...msg,
 						interlinkingForm: {
-							currentLinks: data.interlinks.filter((l) => l.id !== linkId),
+							currentLinks: data.interlinks.filter(
+								(l) => l.id !== linkId
+							),
 						},
 					};
 				}
@@ -160,12 +179,18 @@ const InterlinkingForm: React.FC<InterlinkingFormProps> = ({
 							className='flex items-center justify-between text-sm bg-white border rounded p-2'
 						>
 							<div>
-								<div className='font-medium text-gray-800'>{link.keyword}</div>
-								<div className='text-xs text-blue-600 break-all'>{link.url}</div>
+								<div className='font-medium text-gray-800'>
+									{link.keyword}
+								</div>
+								<div className='text-xs text-blue-600 break-all'>
+									{link.url}
+								</div>
 							</div>
 							<button
 								className='px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600 transition-colors'
-								onClick={() => handleRemoveLink(link.id)}
+								onClick={() =>
+									handleRemoveLink(link.id)
+								}
 							>
 								Remove
 							</button>
@@ -179,7 +204,9 @@ const InterlinkingForm: React.FC<InterlinkingFormProps> = ({
 					type='text'
 					placeholder='Keyword/Anchor Text'
 					value={interlinkKeyword}
-					onChange={(e) => setInterlinkKeyword(e.target.value)}
+					onChange={(e) =>
+						setInterlinkKeyword(e.target.value)
+					}
 					className='flex-1 px-3 py-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-green-500 focus:border-green-500'
 				/>
 				<input
@@ -191,7 +218,10 @@ const InterlinkingForm: React.FC<InterlinkingFormProps> = ({
 				/>
 				<button
 					className='px-3 py-2 text-sm bg-green-500 text-white rounded hover:bg-green-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed'
-					disabled={!interlinkKeyword.trim() || !interlinkUrl.trim()}
+					disabled={
+						!interlinkKeyword.trim() ||
+						!interlinkUrl.trim()
+					}
 					onClick={handleAddLink}
 				>
 					Add
@@ -201,14 +231,16 @@ const InterlinkingForm: React.FC<InterlinkingFormProps> = ({
 			<div className='text-right'>
 				<button
 					disabled={completedSelections.has('interlinking')}
-					className={`px-4 py-2 text-sm text-white rounded transition-colors ${completedSelections.has('interlinking')
+					className={`px-4 py-2 text-sm text-white rounded transition-colors ${
+						completedSelections.has('interlinking')
 							? 'bg-gray-400 cursor-not-allowed'
 							: 'bg-green-600 hover:bg-green-700'
-						}`}
+					}`}
 					onClick={handleContinue}
 				>
 					Continue (skip){' '}
-					{data.interlinks.length > 0 && `(${data.interlinks.length} links)`}
+					{data.interlinks.length > 0 &&
+						`(${data.interlinks.length} links)`}
 				</button>
 			</div>
 		</div>
@@ -216,4 +248,3 @@ const InterlinkingForm: React.FC<InterlinkingFormProps> = ({
 };
 
 export default InterlinkingForm;
-

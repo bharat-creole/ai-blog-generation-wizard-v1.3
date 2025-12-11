@@ -21,7 +21,35 @@ export const titleGenerationNode = async (state: AgentState): Promise<Partial<Ag
     if (!apiKey) {
         throw new Error('API Key is required. Please provide apiKey in state or set GEMINI_API_KEY in your .env.local file.');
     }
-    const titles = await geminiService.generateTitles(state.data, apiKey);
+
+    // ✨ NEW: Fetch reference titles from web search for inspiration
+    console.log('🔍 [TITLE GENERATION] Fetching reference titles from web search...');
+    const topicForSearch = state.data.title || state.data.topic || state.data.primaryKeyword || '';
+    let referenceTitles: string[] = [];
+    
+    if (topicForSearch) {
+        try {
+            referenceTitles = await geminiService.searchWebForTitles(topicForSearch, apiKey);
+            console.log(`   ✅ Found ${referenceTitles.length} reference titles from web search`);
+            if (referenceTitles.length > 0) {
+                console.log(`   📋 Sample reference titles:`);
+                referenceTitles.slice(0, 5).forEach((title, idx) => {
+                    console.log(`      ${idx + 1}. ${title}`);
+                });
+            }
+        } catch (err) {
+            console.warn('   ⚠️  Failed to fetch reference titles, continuing without them:', err);
+        }
+    }
+
+    // Generate titles with reference titles and feedback
+    const titleFeedback = state.conversationContext?.titleFeedback;
+    const titles = await geminiService.generateTitles(
+        state.data, 
+        apiKey, 
+        titleFeedback,
+        referenceTitles
+    );
 
     // ✨ Case 2: Auto-select if automation enabled
     if (automationEngine.shouldAutoFill(state as any, 'title') && titles.length > 0) {

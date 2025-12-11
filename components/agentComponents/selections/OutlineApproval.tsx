@@ -21,7 +21,14 @@ interface OutlineApprovalProps {
 	setViewMode: React.Dispatch<React.SetStateAction<string>>;
 	setShowBlogContent: React.Dispatch<React.SetStateAction<boolean>>;
 	onCollapseSidebar?: () => void;
-	sendUserMessage: (message: string, agentState: AgentState) => Promise<{ response: string; updatedState: AgentState; metadata?: any }>;
+	sendUserMessage: (
+		message: string,
+		agentState: AgentState
+	) => Promise<{
+		response: string;
+		updatedState: AgentState;
+		metadata?: any;
+	}>;
 }
 
 const OutlineApproval: React.FC<OutlineApprovalProps> = ({
@@ -86,7 +93,12 @@ const OutlineApproval: React.FC<OutlineApprovalProps> = ({
 			setDraft(result.updatedState.draft);
 
 			if (result.updatedState.trace) {
-				setTraceItems(result.updatedState.trace.map((t) => ({ step: t.step, at: t.at })));
+				setTraceItems(
+					result.updatedState.trace.map((t) => ({
+						step: t.step,
+						at: t.at,
+					}))
+				);
 			}
 
 			// Update parent data
@@ -95,16 +107,27 @@ const OutlineApproval: React.FC<OutlineApprovalProps> = ({
 				blogContent: result.updatedState.draft,
 			});
 
-			// Show completion message
-			setMessages((prev) => [
-				...prev,
-				{
-					role: 'assistant',
-					content: result.response,
-					...result.metadata
-				},
-			]);
+			// Check if blog generation is complete
+			const isBlogComplete =
+				result.updatedState.outlineApproved &&
+				result.updatedState.outline &&
+				result.updatedState.outline.length > 0 &&
+				(result.updatedState.progress?.sectionIndex ?? 0) >=
+					result.updatedState.outline.length;
 
+			// Only show completion message if blog is done, otherwise don't show duplicate message
+			// (The initial "Starting blog generation..." message was already shown at line 61)
+			if (isBlogComplete) {
+				setMessages((prev) => [
+					...prev,
+					{
+						role: 'assistant',
+						content: '✅ **Blog generation completed!**\n\nYour blog post is ready for review. Check the Live Draft panel to see the full content.',
+						...result.metadata,
+					},
+				]);
+			}
+			// If not complete, don't show result.response as it contains duplicate "Starting blog generation..." message
 		} catch (error) {
 			console.error('Error approving outline:', error);
 			// Revert on error
@@ -115,22 +138,26 @@ const OutlineApproval: React.FC<OutlineApprovalProps> = ({
 			});
 			setOutlineApproved(false);
 			setShowBlogContent(false);
-		} finally {
+			// Only turn off loader on error
 			setIsThinking(false);
 		}
+		// Don't turn off loader in finally - let useAgentExecutionV3 manage it during blog generation
 	};
 
 	const handleOutlineChange = (newOutline: OutlineSection[]) => {
 		// Update the outline in the message
 		setMessages((prev) =>
 			prev.map((msg, idx) =>
-				idx === messages.findIndex((m2) => m2 === messages[messages.length - 1])
+				idx ===
+				messages.findIndex(
+					(m2) => m2 === messages[messages.length - 1]
+				)
 					? {
-						...msg,
-						outlineApproval: {
-							outline: newOutline,
-						},
-					}
+							...msg,
+							outlineApproval: {
+								outline: newOutline,
+							},
+					  }
 					: msg
 			)
 		);
@@ -156,15 +183,19 @@ const OutlineApproval: React.FC<OutlineApprovalProps> = ({
 
 	return (
 		<div className='mt-3'>
-			<DraggableOutline outline={outline} onOutlineChange={handleOutlineChange} />
+			<DraggableOutline
+				outline={outline}
+				onOutlineChange={handleOutlineChange}
+			/>
 
 			<div className='flex gap-3'>
 				<button
 					disabled={completedSelections.has('outline')}
-					className={`px-6 py-3 text-sm font-semibold rounded-xl transition-all duration-200 ${completedSelections.has('outline')
+					className={`px-6 py-3 text-sm font-semibold rounded-xl transition-all duration-200 ${
+						completedSelections.has('outline')
 							? 'bg-gray-400 text-gray-200 cursor-not-allowed'
 							: 'text-white bg-gradient-to-r from-orange-500 to-orange-600 hover:shadow-lg hover:shadow-orange-500/30'
-						}`}
+					}`}
 					onClick={handleApprove}
 				>
 					✅ Approve Outline
@@ -172,7 +203,9 @@ const OutlineApproval: React.FC<OutlineApprovalProps> = ({
 				<button
 					className='px-4 py-3 text-sm font-semibold bg-gray-200 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-300 transition-all'
 					onClick={() => {
-						setInput('Regenerate the outline with more detail');
+						setInput(
+							'Regenerate the outline with more detail'
+						);
 					}}
 				>
 					💬 Request Changes
@@ -180,11 +213,12 @@ const OutlineApproval: React.FC<OutlineApprovalProps> = ({
 			</div>
 
 			<div className='mt-3 text-xs text-gray-600 bg-blue-50 p-2 rounded'>
-				💡 <strong>Tip:</strong> Type feedback like "Add a section about X" or "Make it more technical" to regenerate
+				💡 <strong>Tip:</strong> Type feedback like "Add a
+				section about X" or "Make it more technical" to
+				regenerate
 			</div>
 		</div>
 	);
 };
 
 export default OutlineApproval;
-

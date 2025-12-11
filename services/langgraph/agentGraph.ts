@@ -565,11 +565,32 @@ export async function titleGenerationNode(s: AgentState): Promise<AgentState> {
 		console.log(`   Feedback: ${titleFeedback || 'none (fresh generation)'}`);
 	}
 
-	// Generate title options using Gemini (with feedback if provided)
+	// ✨ NEW: Fetch reference titles from web search for inspiration
+	console.log('🔍 [TITLE GENERATION] Fetching reference titles from web search...');
+	const topicForSearch = s.data.title || s.data.topic || s.data.primaryKeyword || '';
+	let referenceTitles: string[] = [];
+	
+	if (topicForSearch) {
+		try {
+			referenceTitles = await geminiService.searchWebForTitles(topicForSearch, s.apiKey);
+			console.log(`   ✅ Found ${referenceTitles.length} reference titles from web search`);
+			if (referenceTitles.length > 0) {
+				console.log(`   📋 Sample reference titles:`);
+				referenceTitles.slice(0, 5).forEach((title, idx) => {
+					console.log(`      ${idx + 1}. ${title}`);
+				});
+			}
+		} catch (err) {
+			console.warn('   ⚠️  Failed to fetch reference titles, continuing without them:', err);
+		}
+	}
+
+	// Generate title options using Gemini (with feedback and reference titles)
 	const titles = await geminiService.generateTitles(
 		s.data,
 		s.apiKey,
-		titleFeedback // Pass feedback for regeneration
+		titleFeedback, // Pass feedback for regeneration
+		referenceTitles // Pass reference titles for inspiration
 	);
 	s.titleOptions = titles;
 

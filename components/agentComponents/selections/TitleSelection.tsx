@@ -16,7 +16,14 @@ interface TitleSelectionProps {
 	setOutline: React.Dispatch<React.SetStateAction<any[]>>;
 	setDraft: React.Dispatch<React.SetStateAction<string>>;
 	setTraceItems: React.Dispatch<React.SetStateAction<any[]>>;
-	sendUserMessage: (message: string, agentState: AgentState) => Promise<{ response: string; updatedState: AgentState; metadata?: any }>;
+	sendUserMessage: (
+		message: string,
+		agentState: AgentState
+	) => Promise<{
+		response: string;
+		updatedState: AgentState;
+		metadata?: any;
+	}>;
 }
 
 const TitleSelection: React.FC<TitleSelectionProps> = ({
@@ -46,19 +53,19 @@ const TitleSelection: React.FC<TitleSelectionProps> = ({
 	// Reset selection whenever component loads with new titles
 	useEffect(() => {
 		const isCompleted = completedSelections.has('title');
-		
+
 		// Reset if:
 		// 1. Titles changed (different set of titles)
 		// 2. Component is shown with titles and selection is not completed
-		const shouldReset = 
+		const shouldReset =
 			titlesKey !== prevTitlesRef.current &&
 			titles.length > 0 &&
 			!isCompleted;
-		
+
 		if (shouldReset) {
 			setSelectedTitle(null);
 		}
-		
+
 		// Always update ref to track current titles
 		prevTitlesRef.current = titlesKey;
 	}, [titlesKey, titles.length, completedSelections, setSelectedTitle]);
@@ -91,7 +98,12 @@ const TitleSelection: React.FC<TitleSelectionProps> = ({
 
 			// Update trace items if available
 			if (result.updatedState.trace) {
-				setTraceItems(result.updatedState.trace.map((t) => ({ step: t.step, at: t.at })));
+				setTraceItems(
+					result.updatedState.trace.map((t) => ({
+						step: t.step,
+						at: t.at,
+					}))
+				);
 			}
 
 			// Update parent data
@@ -107,10 +119,9 @@ const TitleSelection: React.FC<TitleSelectionProps> = ({
 				{
 					role: 'assistant',
 					content: result.response,
-					...result.metadata
+					...result.metadata,
 				},
 			]);
-
 		} catch (error) {
 			console.error('Error selecting title:', error);
 			// Revert selection on error
@@ -144,12 +155,20 @@ const TitleSelection: React.FC<TitleSelectionProps> = ({
 								<input
 									type='radio'
 									name='title'
-									disabled={completedSelections.has('title')}
+									disabled={completedSelections.has(
+										'title'
+									)}
 									checked={isSelected}
-									onChange={() => setSelectedTitle(title)}
+									onChange={() =>
+										setSelectedTitle(
+											title
+										)
+									}
 									className='w-4 h-4 text-purple-600 focus:ring-purple-500 border-gray-300'
 								/>
-								<div className='flex-1 font-medium text-gray-800'>{title}</div>
+								<div className='flex-1 font-medium text-gray-800'>
+									{title}
+								</div>
 							</div>
 						</label>
 					);
@@ -172,4 +191,3 @@ const TitleSelection: React.FC<TitleSelectionProps> = ({
 };
 
 export default TitleSelection;
-

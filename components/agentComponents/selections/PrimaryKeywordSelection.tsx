@@ -16,7 +16,14 @@ interface PrimaryKeywordSelectionProps {
 	setOutline: React.Dispatch<React.SetStateAction<any[]>>;
 	setDraft: React.Dispatch<React.SetStateAction<string>>;
 	setTraceItems: React.Dispatch<React.SetStateAction<any[]>>;
-	sendUserMessage: (message: string, agentState: AgentState) => Promise<{ response: string; updatedState: AgentState; metadata?: any }>;
+	sendUserMessage: (
+		message: string,
+		agentState: AgentState
+	) => Promise<{
+		response: string;
+		updatedState: AgentState;
+		metadata?: any;
+	}>;
 }
 
 const PrimaryKeywordSelection: React.FC<PrimaryKeywordSelectionProps> = ({
@@ -35,9 +42,19 @@ const PrimaryKeywordSelection: React.FC<PrimaryKeywordSelectionProps> = ({
 	setTraceItems,
 	sendUserMessage,
 }) => {
+	// Sort candidates by volume (descending - highest volume first)
+	const sortedCandidates = useMemo(() => {
+		return [...candidates].sort(
+			(a, b) => (b.volume || 0) - (a.volume || 0)
+		);
+	}, [candidates]);
+
 	// Create a stable key from candidates to detect actual changes
 	const candidatesKey = useMemo(() => {
-		return candidates.map(c => c.text).sort().join('|');
+		return candidates
+			.map((c) => c.text)
+			.sort()
+			.join('|');
 	}, [candidates]);
 
 	// Track previous candidates to detect when they change
@@ -46,27 +63,34 @@ const PrimaryKeywordSelection: React.FC<PrimaryKeywordSelectionProps> = ({
 	// Reset selection whenever component loads with new candidates
 	useEffect(() => {
 		const isCompleted = completedSelections.has('primaryKeyword');
-		
+
 		// Reset if:
 		// 1. Candidates changed (different set of keywords)
 		// 2. Component is shown with candidates and selection is not completed
-		const shouldReset = 
+		const shouldReset =
 			candidatesKey !== prevCandidatesRef.current &&
 			candidates.length > 0 &&
 			!isCompleted;
-		
+
 		if (shouldReset) {
 			setSelectedPrimary(null);
 		}
-		
+
 		// Always update ref to track current candidates
 		prevCandidatesRef.current = candidatesKey;
-	}, [candidatesKey, candidates.length, completedSelections, setSelectedPrimary]);
+	}, [
+		candidatesKey,
+		candidates.length,
+		completedSelections,
+		setSelectedPrimary,
+	]);
 
 	const handleConfirm = async () => {
 		if (!agent || !selectedPrimary) return;
 
-		setCompletedSelections((prev) => new Set(prev).add('primaryKeyword'));
+		setCompletedSelections((prev) =>
+			new Set(prev).add('primaryKeyword')
+		);
 
 		// Add user message immediately for UI feedback
 		const userMsg = {
@@ -91,13 +115,19 @@ const PrimaryKeywordSelection: React.FC<PrimaryKeywordSelectionProps> = ({
 
 			// Update trace items if available
 			if (result.updatedState.trace) {
-				setTraceItems(result.updatedState.trace.map((t) => ({ step: t.step, at: t.at })));
+				setTraceItems(
+					result.updatedState.trace.map((t) => ({
+						step: t.step,
+						at: t.at,
+					}))
+				);
 			}
 
 			// Update parent data
 			updateData({
 				primaryKeyword: result.updatedState.data.primaryKeyword,
-				secondaryKeywords: result.updatedState.data.secondaryKeywords,
+				secondaryKeywords:
+					result.updatedState.data.secondaryKeywords,
 				outline: result.updatedState.outline,
 				blogContent: result.updatedState.draft,
 			});
@@ -108,10 +138,9 @@ const PrimaryKeywordSelection: React.FC<PrimaryKeywordSelectionProps> = ({
 				{
 					role: 'assistant',
 					content: result.response,
-					...result.metadata
+					...result.metadata,
 				},
 			]);
-
 		} catch (error) {
 			console.error('Error selecting primary keyword:', error);
 			// Revert selection on error
@@ -128,7 +157,7 @@ const PrimaryKeywordSelection: React.FC<PrimaryKeywordSelectionProps> = ({
 	return (
 		<>
 			<div className='mt-3 grid grid-cols-1 md:grid-cols-2 gap-2'>
-				{candidates.map((kw, idx) => {
+				{sortedCandidates.map((kw, idx) => {
 					const isSelected = selectedPrimary === kw.text;
 					return (
 						<label
@@ -143,13 +172,21 @@ const PrimaryKeywordSelection: React.FC<PrimaryKeywordSelectionProps> = ({
 								<input
 									type='radio'
 									name='primaryKeyword'
-									disabled={completedSelections.has('primaryKeyword')}
+									disabled={completedSelections.has(
+										'primaryKeyword'
+									)}
 									checked={isSelected}
-									onChange={() => setSelectedPrimary(kw.text)}
+									onChange={() =>
+										setSelectedPrimary(
+											kw.text
+										)
+									}
 									className='w-4 h-4 text-orange-600 focus:ring-orange-500 border-gray-300'
 								/>
 								<div>
-									<div className='font-medium text-gray-800'>{kw.text}</div>
+									<div className='font-medium text-gray-800'>
+										{kw.text}
+									</div>
 									<div className='text-xs text-gray-500'>
 										Vol: {kw.volume}
 									</div>
@@ -176,4 +213,3 @@ const PrimaryKeywordSelection: React.FC<PrimaryKeywordSelectionProps> = ({
 };
 
 export default PrimaryKeywordSelection;
-

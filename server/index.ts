@@ -230,11 +230,332 @@ app.post('/api/getKeywordsGoogleAds', async (req, res) => {
 	}
 
 	const apiUrl = `https://googleads.googleapis.com/v21/customers/${customerId}:generateKeywordIdeas`;
+
+	// Get token once and reuse for all requests (token is cached by TokenManager)
 	const accessToken = await tokenManager.getValidToken();
+	console.log(
+		`   🔑 [TOKEN] Using access token (first ${accessToken.substring(
+			0,
+			20
+		)}...)`
+	);
 
 	// If URLs provided, process each URL separately and aggregate results
 	if (hasUrls) {
 		const allRows: any[] = [];
+
+		// Helper function to fetch keywords with quick retry
+		const fetchKeywordsWithRetry = async (
+			url: string,
+			urlIndex: number,
+			attempt: number = 1
+		): Promise<any[]> => {
+			// Use a function to get current token (may refresh if needed)
+			let currentToken = accessToken;
+
+			const body: any = {
+				customerId: customerId,
+				includeAdultKeywords: false,
+				keywordPlanNetwork: 'GOOGLE_SEARCH_AND_PARTNERS',
+				urlSeed: {
+					url: url,
+				},
+				pageSize: 20,
+			};
+
+			const makeRequest = async (
+				attemptNum: number,
+				useFreshToken: boolean = false
+			): Promise<any[] | null> => {
+				const isRetry = attemptNum > 1;
+				try {
+					// Refresh token if requested (e.g., after 401 error)
+					if (useFreshToken) {
+						console.log(
+							`   🔄 [TOKEN] Refreshing token for retry...`
+						);
+						currentToken =
+							await tokenManager.getValidToken();
+					}
+
+					console.log(
+						`   📡 [API] Attempt ${attemptNum} for URL ${
+							urlIndex + 1
+						}: ${url.substring(0, 60)}...`
+					);
+
+					const response = await fetch(apiUrl, {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+							'developer-token': developerToken,
+							Authorization: `Bearer ${currentToken}`,
+						},
+						body: JSON.stringify(body),
+					});
+
+					if (!isRetry) {
+						console.log(
+							`   📊 [API] Response status: ${response.status} ${response.statusText}`
+						);
+					}
+
+					// Read response as text first to inspect it
+					const responseText = await response.text();
+
+					// Handle non-OK responses
+					if (!response.ok) {
+						let errorData: any;
+						try {
+							errorData = JSON.parse(responseText);
+						} catch {
+							errorData = { message: responseText };
+						}
+
+						if (!isRetry) {
+							console.error(
+								`   ❌ [API] HTTP Error ${response.status}:`,
+								JSON.stringify(
+									errorData,
+									null,
+									2
+								)
+							);
+						}
+
+						// Check for rate limiting
+						if (response.status === 429) {
+							if (!isRetry) {
+								console.log(
+									`   ⚠️ [API] Rate limit detected, will retry after delay`
+								);
+							}
+							return []; // Return empty to trigger retry
+						}
+
+						// Check for authentication errors
+						if (
+							response.status === 401 ||
+							response.status === 403
+						) {
+							if (!isRetry) {
+								console.error(
+									`   ❌ [API] Authentication error (${response.status}) - token may be invalid`
+								);
+							}
+							// Return null as marker to trigger token refresh and retry
+							return null;
+						}
+
+						return [];
+					}
+
+					// Parse JSON response
+					let data: any;
+					try {
+						data = JSON.parse(responseText);
+					} catch (parseError) {
+						console.error(
+							`   ❌ [API] Failed to parse JSON response:`,
+							parseError
+						);
+						console.error(
+							`   📄 [API] Raw response (first 500 chars):`,
+							responseText.substring(0, 500)
+						);
+						return [];
+					}
+
+					// Check for empty response (only log on first attempt)
+					const isEmptyResponse =
+						!data || Object.keys(data).length === 0;
+					if (isEmptyResponse && !isRetry) {
+						console.warn(
+							`   ⚠️ [API] Empty response object received for URL: ${url.substring(
+								0,
+								80
+							)}...`
+						);
+						console.warn(
+							`   📄 [API] Response text: "${responseText}" (length: ${responseText.length})`
+						);
+					}
+
+					// Log response structure for debugging (only on first attempt)
+					if (!isRetry) {
+						const responseKeys = Object.keys(data);
+						if (responseKeys.length > 0) {
+							console.log(
+								`   📋 [API] Response keys: ${responseKeys.join(
+									', '
+								)}`
+							);
+						}
+					}
+
+					// Check for API errors in response (even if HTTP status is OK)
+					if (data.error) {
+						if (!isRetry) {
+							console.error(
+								`   ❌ [API] Error in response:`,
+								JSON.stringify(
+									data.error,
+									null,
+									2
+								)
+							);
+						}
+
+						// Check for specific error codes
+						if (
+							data.error.code === 429 ||
+							data.error.status ===
+								'RESOURCE_EXHAUSTED'
+						) {
+							if (!isRetry) {
+								console.log(
+									`   ⚠️ [API] Rate limit in error response, will retry`
+								);
+							}
+							return []; // Return empty to trigger retry
+						}
+
+						return [];
+					}
+
+					// Check for results
+					if (data.results) {
+						if (!isRetry) {
+							console.log(
+								`   📊 [API] Results array length: ${data.results.length}`
+							);
+						}
+
+						if (data.results.length > 0) {
+							const rows = data.results
+								.map((result: any) => {
+									const metrics =
+										result.keywordIdeaMetrics ||
+										{};
+									const text =
+										result.text || '';
+									const volume =
+										metrics.avgMonthlySearches ||
+										0;
+
+									// Map competition to difficulty (0..1)
+									let difficulty = 0.5;
+									if (
+										metrics.competitionIndex !==
+										undefined
+									) {
+										difficulty =
+											metrics.competitionIndex /
+											100;
+									} else if (
+										metrics.competition
+									) {
+										const compMap: Record<
+											string,
+											number
+										> = {
+											LOW: 0.25,
+											MEDIUM: 0.5,
+											HIGH: 0.75,
+										};
+										difficulty =
+											compMap[
+												metrics
+													.competition
+											] || 0.5;
+									}
+
+									return {
+										text,
+										volume:
+											Number(
+												volume
+											) || 0,
+										difficulty,
+									};
+								})
+								.filter(
+									(kw: any) =>
+										kw.text.trim() !==
+										''
+								);
+
+							if (!isRetry) {
+								console.log(
+									`   ✅ [API] Processed ${rows.length} valid keywords from ${data.results.length} results`
+								);
+							}
+							return rows;
+						} else {
+							if (!isRetry) {
+								console.log(
+									`   ⚠️ [API] Results array is empty`
+								);
+							}
+						}
+					} else {
+						if (!isRetry && !isEmptyResponse) {
+							console.warn(
+								`   ⚠️ [API] No 'results' key in response`
+							);
+						}
+					}
+
+					return [];
+				} catch (err: any) {
+					console.error(
+						`   ❌ [API] Request error:`,
+						err?.message || err
+					);
+					return [];
+				}
+			};
+
+			// Try first attempt
+			let rows = await makeRequest(1, false);
+
+			// Check if we got an auth error (null marker)
+			if (rows === null) {
+				console.log(
+					`   🔄 [RETRY] Auth error detected, refreshing token and retrying for URL ${
+						urlIndex + 1
+					}...`
+				);
+				await new Promise((resolve) =>
+					setTimeout(resolve, 1000)
+				);
+				rows = await makeRequest(2, true); // Refresh token and retry
+			}
+
+			// If no results and not auth error, do a quick retry after 2 seconds
+			// Use longer delay for empty responses as they might need more processing time
+			if (rows && rows.length === 0) {
+				console.log(
+					`   ⚠️ [RETRY] No results from URL ${
+						urlIndex + 1
+					}, retrying in 2s...`
+				);
+				await new Promise((resolve) =>
+					setTimeout(resolve, 2000)
+				);
+				rows = await makeRequest(2, false);
+
+				if (rows && rows.length === 0) {
+					console.log(
+						`   ❌ [RETRY] Still no results after retry for URL ${
+							urlIndex + 1
+						}. This URL may not be supported by Google Ads API or has no extractable keywords.`
+					);
+				}
+			}
+
+			return rows || [];
+		};
 
 		for (let i = 0; i < urls.length; i++) {
 			const urlToProcess = urls[i];
@@ -245,76 +566,12 @@ app.post('/api/getKeywordsGoogleAds', async (req, res) => {
 			);
 
 			try {
-				const body: any = {
-					customerId: customerId,
-					includeAdultKeywords: false,
-					keywordPlanNetwork: 'GOOGLE_SEARCH_AND_PARTNERS',
-					urlSeed: {
-						url: urlToProcess,
-					},
-					pageSize: 20, // Limit to 20 results per URL
-				};
+				const rows = await fetchKeywordsWithRetry(
+					urlToProcess,
+					i
+				);
 
-				// For primary keyword generation, only use URLs (no keyword seed)
-				// This ensures keywords come directly from the URL content
-
-				const response = await fetch(apiUrl, {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-						'developer-token': developerToken,
-						Authorization: `Bearer ${accessToken}`,
-					},
-					body: JSON.stringify(body),
-				});
-
-				const data: any = await response.json();
-
-				if (
-					response.ok &&
-					data.results &&
-					data.results.length > 0
-				) {
-					const rows = data.results
-						.map((result: any) => {
-							const metrics =
-								result.keywordIdeaMetrics || {};
-							const text = result.text || '';
-							const volume =
-								metrics.avgMonthlySearches || 0;
-
-							// Map competition to difficulty (0..1)
-							let difficulty = 0.5;
-							if (
-								metrics.competitionIndex !==
-								undefined
-							) {
-								difficulty =
-									metrics.competitionIndex /
-									100;
-							} else if (metrics.competition) {
-								const compMap: Record<
-									string,
-									number
-								> = {
-									LOW: 0.25,
-									MEDIUM: 0.5,
-									HIGH: 0.75,
-								};
-								difficulty =
-									compMap[
-										metrics.competition
-									] || 0.5;
-							}
-
-							return {
-								text,
-								volume: Number(volume) || 0,
-								difficulty,
-							};
-						})
-						.filter((kw: any) => kw.text.trim() !== '');
-
+				if (rows.length > 0) {
 					console.log(
 						`   ✅ Got ${
 							rows.length
@@ -322,12 +579,23 @@ app.post('/api/getKeywordsGoogleAds', async (req, res) => {
 					);
 					allRows.push(...rows);
 				} else {
-					console.log(`   ⚠️ No results from URL ${i + 1}`);
+					console.log(
+						`   ⚠️ No results from URL ${
+							i + 1
+						} after retry`
+					);
 				}
 			} catch (err: any) {
 				console.error(
 					`   ❌ Error processing URL ${i + 1}:`,
 					err?.message || err
+				);
+			}
+
+			// Add small delay between URLs to avoid rate limiting (except for last URL)
+			if (i < urls.length - 1) {
+				await new Promise((resolve) =>
+					setTimeout(resolve, 500)
 				);
 			}
 		}
@@ -1436,10 +1704,10 @@ app.post('/api/agent/message', async (req, res) => {
 
 		let errorMessage = error.message || 'Message processing failed';
 		let statusCode = 500;
+		let retryDelay: number | null = null;
 
 		if (isRateLimit) {
 			// Extract retry delay from error
-			let retryDelay: number | null = null;
 			if (error?.error?.details) {
 				for (const detail of error.error.details) {
 					if (

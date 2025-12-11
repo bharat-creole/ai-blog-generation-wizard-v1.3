@@ -149,9 +149,9 @@ export const researchPrimaryNode = async (
 			console.log(`      ${idx + 1}. ${url}`);
 		});
 
-		// ✨ NEW FLOW: Step 2 - Pass URLs to Google Keyword Research API
+		// ✨ FLOW: Step 2 - Pass URLs to Google Ads Keyword Planner API
 		console.log(
-			'🔍 [PRIMARY KEYWORD RESEARCH] Step 2: Getting keywords from URLs via Google Keyword API...'
+			'🔍 [PRIMARY KEYWORD RESEARCH] Step 2: Getting keywords from URLs via Google Ads Keyword Planner API...'
 		);
 		const keywordsFromUrls = await keywordTool.getKeywordsFromUrls(
 			webUrls,
@@ -279,11 +279,244 @@ export const researchPrimaryNode = async (
 		}
 
 		// Filter out irrelevant keywords that don't match user intent
+		// Common stop words to exclude from topic word matching
+		const stopWords = new Set([
+			'and',
+			'the',
+			'for',
+			'are',
+			'but',
+			'not',
+			'you',
+			'all',
+			'can',
+			'her',
+			'was',
+			'one',
+			'our',
+			'out',
+			'day',
+			'get',
+			'has',
+			'him',
+			'his',
+			'how',
+			'its',
+			'may',
+			'new',
+			'now',
+			'old',
+			'see',
+			'two',
+			'way',
+			'who',
+			'boy',
+			'did',
+			'its',
+			'let',
+			'put',
+			'say',
+			'she',
+			'too',
+			'use',
+			'that',
+			'this',
+			'with',
+			'have',
+			'from',
+			'they',
+			'been',
+			'than',
+			'their',
+			'would',
+			'there',
+			'about',
+			'which',
+			'these',
+			'other',
+			'more',
+			'very',
+			'what',
+			'know',
+			'just',
+			'first',
+			'also',
+			'after',
+			'back',
+			'well',
+			'many',
+			'only',
+			'over',
+			'such',
+			'take',
+			'than',
+			'them',
+			'then',
+			'when',
+			'will',
+			'your',
+			'into',
+			'time',
+			'come',
+			'here',
+			'make',
+			'like',
+			'long',
+			'look',
+			'more',
+			'most',
+			'much',
+			'name',
+			'never',
+			'next',
+			'once',
+			'open',
+			'own',
+			'part',
+			'play',
+			'right',
+			'same',
+			'seem',
+			'show',
+			'side',
+			'some',
+			'take',
+			'tell',
+			'than',
+			'that',
+			'them',
+			'then',
+			'there',
+			'these',
+			'they',
+			'thing',
+			'think',
+			'this',
+			'those',
+			'three',
+			'through',
+			'time',
+			'today',
+			'together',
+			'too',
+			'turn',
+			'two',
+			'under',
+			'until',
+			'upon',
+			'very',
+			'want',
+			'way',
+			'well',
+			'were',
+			'what',
+			'when',
+			'where',
+			'which',
+			'while',
+			'white',
+			'who',
+			'whole',
+			'whose',
+			'why',
+			'will',
+			'with',
+			'within',
+			'without',
+			'work',
+			'world',
+			'would',
+			'write',
+			'year',
+			'years',
+			'yet',
+			'you',
+			'young',
+			'your',
+			'yours',
+			'yourself',
+		]);
+
+		// Common acronyms and their expansions for better keyword matching
+		const acronymExpansions: Record<string, string[]> = {
+			asi: [
+				'artificial',
+				'superintelligence',
+				'super',
+				'intelligence',
+			],
+			ai: ['artificial', 'intelligence'],
+			agi: ['artificial', 'general', 'intelligence'],
+			ml: ['machine', 'learning'],
+			dl: ['deep', 'learning'],
+			nlp: ['natural', 'language', 'processing'],
+			cv: ['computer', 'vision'],
+			api: ['application', 'programming', 'interface'],
+			ui: ['user', 'interface'],
+			ux: ['user', 'experience'],
+			seo: ['search', 'engine', 'optimization'],
+			crm: ['customer', 'relationship', 'management'],
+			erp: ['enterprise', 'resource', 'planning'],
+			saas: ['software', 'service'],
+			paas: ['platform', 'service'],
+			iaas: ['infrastructure', 'service'],
+		};
+
+		// Expand acronyms in topic for better matching
+		const expandAcronyms = (
+			text: string
+		): { expanded: string; expansions: string[] } => {
+			const lowerText = text.toLowerCase();
+			const words = lowerText.split(/\W+/);
+
+			// Check each word if it's an acronym and expand it
+			const expandedWords: string[] = [];
+			const foundExpansions: string[] = [];
+
+			words.forEach((word) => {
+				const lowerWord = word.toLowerCase();
+				if (acronymExpansions[lowerWord]) {
+					// Add both the acronym and its expansion
+					expandedWords.push(word); // Keep original
+					expandedWords.push(
+						...acronymExpansions[lowerWord]
+					); // Add expansion
+					foundExpansions.push(
+						`${word.toUpperCase()} → ${acronymExpansions[
+							lowerWord
+						].join(' ')}`
+					);
+				} else {
+					expandedWords.push(word);
+				}
+			});
+
+			return {
+				expanded: expandedWords.join(' '),
+				expansions: foundExpansions,
+			};
+		};
+
+		// Expand topic to include acronym expansions
+		const {
+			expanded: expandedTopic,
+			expansions: acronymExpansionsFound,
+		} = expandAcronyms(topicSource || '');
+
+		if (acronymExpansionsFound.length > 0) {
+			console.log(`   🔤 Expanded acronyms in topic:`);
+			acronymExpansionsFound.forEach((exp) => {
+				console.log(`      ${exp}`);
+			});
+		}
+
+		// Extract meaningful topic words (exclude stop words and short words)
+		// Include both original and expanded forms
 		const topicWords = new Set(
-			(topicSource || '')
-				.toLowerCase()
+			expandedTopic
 				.split(/\W+/)
 				.filter((w) => w.length >= 3) // Only meaningful words (3+ chars)
+				.filter((w) => !stopWords.has(w)) // Exclude stop words
 		);
 
 		// Generic phrases that should be filtered out (not topic-specific)
@@ -297,14 +530,104 @@ export const researchPrimaryNode = async (
 			'difference between for',
 			'difference between is',
 			'difference between to',
+			'sign up',
+			'signing up',
+			'sign up for',
+			'sign up to',
+			'sign up with',
+			'sign up at',
+			'sign up on',
+			'sign up by',
+			'sign up as',
+			'got you',
+			'nothing anything',
+			'you say it',
 		];
 
-		// Filter function to check if keyword is relevant
-		// scoreThreshold: minimum matching score (0.0 to 1.0)
-		const isRelevantKeyword = (
-			kw: any,
-			scoreThreshold: number = 0.3
-		): boolean => {
+		// Calculate relevance score for each keyword (similarity to topic)
+		// Also returns the count of topic words found in the keyword
+		// Stop words are excluded from matching
+		const calculateRelevanceScore = (
+			kwText: string
+		): {
+			score: number;
+			topicWordMatches: number;
+			matchedTopicWords: string[];
+		} => {
+			const kwWords = new Set(
+				kwText
+					.toLowerCase()
+					.split(/\W+/)
+					.filter(Boolean)
+					.filter((w) => w.length >= 3)
+					.filter((w) => !stopWords.has(w)) // Exclude stop words
+			);
+
+			if (topicWords.size === 0 || kwWords.size === 0) {
+				return {
+					score: 0,
+					topicWordMatches: 0,
+					matchedTopicWords: [],
+				};
+			}
+
+			// Track which topic words are matched
+			const matchedTopicWords: string[] = [];
+
+			// Count exact word matches
+			let exactMatches = 0;
+			kwWords.forEach((word) => {
+				if (topicWords.has(word)) {
+					exactMatches++;
+					if (!matchedTopicWords.includes(word)) {
+						matchedTopicWords.push(word);
+					}
+				}
+			});
+
+			// Count partial matches (substring matches for better intent capture)
+			let partialMatches = 0;
+			kwWords.forEach((kwWord) => {
+				topicWords.forEach((topicWord) => {
+					if (
+						kwWord.includes(topicWord) ||
+						topicWord.includes(kwWord)
+					) {
+						partialMatches++;
+						if (
+							!matchedTopicWords.includes(topicWord)
+						) {
+							matchedTopicWords.push(topicWord);
+						}
+					}
+				});
+			});
+
+			// Combine exact and partial matches with weights
+			const exactScore =
+				exactMatches /
+				Math.max(1, Math.min(topicWords.size, kwWords.size));
+			const partialScore = Math.min(
+				1,
+				partialMatches / (topicWords.size + kwWords.size)
+			);
+
+			// Return combined similarity (prioritize exact matches)
+			const score = Math.min(
+				1,
+				0.7 * exactScore + 0.3 * partialScore
+			);
+
+			return {
+				score,
+				topicWordMatches: matchedTopicWords.length,
+				matchedTopicWords,
+			};
+		};
+
+		// Filter function to check if keyword should be included
+		// MUST contain at least one word from the user's topic
+		const shouldIncludeKeyword = (kw: any): boolean => {
 			const kwText = kw.text.toLowerCase();
 
 			// Filter out generic phrases
@@ -314,35 +637,57 @@ export const researchPrimaryNode = async (
 				return false;
 			}
 
-			// Filter out keywords with relevance score below threshold (default 30%)
-			if (kw.score < scoreThreshold) {
-				return false;
-			}
-
-			// Filter out keywords that don't contain any topic words
-			// (unless topic is too short/generic)
+			// ✨ STRICT REQUIREMENT: Keyword MUST contain at least one MEANINGFUL word from user's topic
+			// Stop words are NOT considered valid matches
 			if (topicWords.size > 0) {
 				const kwWords = kwText
 					.split(/\W+/)
-					.filter((w: string) => w.length >= 3);
-				const hasTopicWord = kwWords.some((kwWord: string) => {
-					// Check exact match
-					if (topicWords.has(kwWord)) return true;
-					// Check if keyword word contains topic word or vice versa
+					.filter((w: string) => w.length >= 3)
+					.filter((w: string) => !stopWords.has(w)); // Exclude stop words from keyword words too
+
+				// If keyword only contains stop words, reject it immediately
+				if (kwWords.length === 0) {
+					return false;
+				}
+
+				// Check for exact matches first (most important) - only meaningful words
+				const exactMatches = kwWords.filter((kwWord: string) =>
+					topicWords.has(kwWord)
+				);
+
+				// Check for partial matches (substring matches) - only meaningful words
+				const partialMatches: string[] = [];
+				kwWords.forEach((kwWord: string) => {
 					for (const topicWord of topicWords) {
 						if (
-							kwWord.includes(topicWord) ||
-							topicWord.includes(kwWord)
+							(kwWord.includes(topicWord) ||
+								topicWord.includes(kwWord)) &&
+							!exactMatches.includes(kwWord) &&
+							!partialMatches.includes(topicWord)
 						) {
-							return true;
+							partialMatches.push(topicWord);
 						}
 					}
-					return false;
 				});
+
+				// ✨ STRICT: Require at least one MEANINGFUL topic word match (exact or partial)
+				// Stop words don't count as valid matches
+				const hasTopicWord =
+					exactMatches.length > 0 ||
+					partialMatches.length > 0;
 
 				if (!hasTopicWord) {
 					return false;
 				}
+
+				// Store the matched topic words for later use in scoring
+				kw._matchedTopicWords = [
+					...exactMatches,
+					...partialMatches,
+				];
+			} else {
+				// If no meaningful topic words (only stop words), reject the keyword
+				return false;
 			}
 
 			// Filter out single generic words (unless they're part of the topic)
@@ -357,50 +702,421 @@ export const researchPrimaryNode = async (
 			return true;
 		};
 
-		// Apply relevance filtering with 30% threshold (preferred)
-		let relevantKeywords = scoredKeywords.filter((kw) =>
-			isRelevantKeyword(kw, 0.3)
-		);
+		// Add relevance score to each keyword and filter
+		// First filter to ensure keywords contain topic words
+		const preFilteredKeywords =
+			scoredKeywords.filter(shouldIncludeKeyword);
 
-		// Sort all keywords by score (descending) to prioritize higher-scored ones
-		scoredKeywords.sort((a, b) => b.score - a.score);
+		// Then calculate relevance scores for filtered keywords
+		const keywordsWithRelevance = preFilteredKeywords.map((kw) => {
+			const relevanceData = calculateRelevanceScore(kw.text);
+			return {
+				...kw,
+				relevanceScore: relevanceData.score,
+				topicWordMatches: relevanceData.topicWordMatches,
+				matchedTopicWords: relevanceData.matchedTopicWords,
+			};
+		});
 
-		// Ensure at least 25 keywords are shown, regardless of matching score
-		if (relevantKeywords.length < 25) {
-			console.log(
-				`   ⚠️  Only found ${relevantKeywords.length} keywords with 30%+ score. Including more keywords to reach at least 25...`
-			);
+		// ✨ ENHANCED FILTERING: Prioritize keywords with more topic word matches
+		// Sort by: 1) Number of topic word matches, 2) Relevance score, 3) Overall score
+		keywordsWithRelevance.sort((a, b) => {
+			// First priority: More topic word matches = better
+			if (b.topicWordMatches !== a.topicWordMatches) {
+				return b.topicWordMatches - a.topicWordMatches;
+			}
+			// Second priority: Higher relevance score
+			if (b.relevanceScore !== a.relevanceScore) {
+				return b.relevanceScore - a.relevanceScore;
+			}
+			// Third priority: Higher overall score
+			return b.score - a.score;
+		});
 
-			// Take top 25 from all scored keywords (sorted by score)
-			// This ensures we always have 25, prioritizing higher scores
-			ranked = scoredKeywords.slice(0, 25);
+		// Group keywords by relevance score tiers (100%, 90%, 80%, etc.)
+		const groupByRelevanceTier = (
+			keywords: Array<(typeof keywordsWithRelevance)[0]>
+		) => {
+			const tiers: Array<{
+				minScore: number;
+				maxScore: number;
+				label: string;
+				keywords: typeof keywords;
+			}> = [
+				{
+					minScore: 0.95,
+					maxScore: 1.0,
+					label: '100%',
+					keywords: [],
+				},
+				{
+					minScore: 0.85,
+					maxScore: 0.95,
+					label: '90%',
+					keywords: [],
+				},
+				{
+					minScore: 0.75,
+					maxScore: 0.85,
+					label: '80%',
+					keywords: [],
+				},
+				{
+					minScore: 0.65,
+					maxScore: 0.75,
+					label: '70%',
+					keywords: [],
+				},
+				{
+					minScore: 0.55,
+					maxScore: 0.65,
+					label: '60%',
+					keywords: [],
+				},
+				{
+					minScore: 0.45,
+					maxScore: 0.55,
+					label: '50%',
+					keywords: [],
+				},
+				{
+					minScore: 0.35,
+					maxScore: 0.45,
+					label: '40%',
+					keywords: [],
+				},
+				{
+					minScore: 0.25,
+					maxScore: 0.35,
+					label: '30%',
+					keywords: [],
+				},
+				{
+					minScore: 0.15,
+					maxScore: 0.25,
+					label: '20%',
+					keywords: [],
+				},
+				{
+					minScore: 0.0,
+					maxScore: 0.15,
+					label: '10%',
+					keywords: [],
+				},
+			];
 
-			console.log(
-				`   ✅ Showing ${ranked.length} keywords (top ${relevantKeywords.length} with 30%+ score, rest with lower scores)`
-			);
-		} else {
-			// We have enough with 30%+ threshold, use those
-			ranked = relevantKeywords.slice(0, 25);
-			console.log(
-				`   ✅ Found ${ranked.length} keywords with 30%+ matching score`
-			);
+			keywords.forEach((kw) => {
+				for (const tier of tiers) {
+					// For the highest tier (100%), use >= minScore
+					// For other tiers, use >= minScore && < maxScore to avoid overlap
+					const isHighestTier = tier.minScore === 0.95;
+					if (
+						isHighestTier
+							? kw.relevanceScore >= tier.minScore
+							: kw.relevanceScore >=
+									tier.minScore &&
+							  kw.relevanceScore < tier.maxScore
+					) {
+						tier.keywords.push(kw);
+						break;
+					}
+				}
+			});
+
+			// Sort keywords within each tier by: 1) topic word matches, 2) overall score
+			tiers.forEach((tier) => {
+				tier.keywords.sort((a, b) => {
+					// First priority: More topic word matches
+					const aMatches = a.topicWordMatches || 0;
+					const bMatches = b.topicWordMatches || 0;
+					if (bMatches !== aMatches) {
+						return bMatches - aMatches;
+					}
+					// Second priority: Higher overall score
+					return b.score - a.score;
+				});
+			});
+
+			return tiers;
+		};
+
+		const relevanceTiers = groupByRelevanceTier(keywordsWithRelevance);
+
+		// Log tier distribution
+		console.log('   📊 Keywords grouped by relevance to topic:');
+		relevanceTiers.forEach((tier) => {
+			if (tier.keywords.length > 0) {
+				const avgTopicMatches =
+					tier.keywords.reduce(
+						(sum, kw) =>
+							sum + (kw.topicWordMatches || 0),
+						0
+					) / tier.keywords.length;
+				console.log(
+					`      ${tier.label} match (${(
+						tier.minScore * 100
+					).toFixed(0)}-${(tier.maxScore * 100).toFixed(
+						0
+					)}%): ${
+						tier.keywords.length
+					} keywords (avg ${avgTopicMatches.toFixed(
+						1
+					)} topic word matches)`
+				);
+			}
+		});
+
+		// Combine keywords in order: 100% first, then 90%, then 80%, etc.
+		ranked = [];
+		for (const tier of relevanceTiers) {
+			if (ranked.length >= 25) break;
+			const remaining = 25 - ranked.length;
+			ranked.push(...tier.keywords.slice(0, remaining));
+		}
+
+		// If we still need more keywords, fill from remaining tiers
+		if (ranked.length < 25) {
+			for (const tier of relevanceTiers) {
+				if (ranked.length >= 25) break;
+				const alreadyAdded = ranked.filter((kw) =>
+					tier.keywords.some((tkw) => tkw.text === kw.text)
+				).length;
+				const remaining = 25 - ranked.length;
+				ranked.push(
+					...tier.keywords.slice(
+						alreadyAdded,
+						alreadyAdded + remaining
+					)
+				);
+			}
 		}
 
 		console.log(
-			`   🧹 Filtered out ${
-				scoredKeywords.length - relevantKeywords.length
-			} irrelevant keywords`
+			`   ✅ Filtered and ranked ${ranked.length} keywords by relevance tiers (100% → 90% → 80% → ...)`
 		);
+
+		// ✨ FALLBACK: If we have less than 10 keywords, search for more URLs and fetch additional keywords
+		if (ranked.length < 10) {
+			console.log(
+				`   ⚠️  Only found ${ranked.length} keywords (less than 10). Searching for additional URLs...`
+			);
+
+			try {
+				// Store existing URLs to avoid duplicates
+				const existingUrls = new Set(
+					webUrls.map((url) => url.toLowerCase())
+				);
+
+				// Search for new URLs with a slightly modified query to get different results
+				const fallbackSearchQuery = `${topicSource} guide tutorial examples`;
+				console.log(
+					`   🔍 [FALLBACK SEARCH] Searching for additional URLs with query: "${fallbackSearchQuery}"`
+				);
+
+				const additionalWebUrls =
+					await geminiService.searchWebForUrls(
+						fallbackSearchQuery,
+						apiKey
+					);
+
+				// Filter out URLs we've already used
+				const newUrls = additionalWebUrls.filter(
+					(url) => !existingUrls.has(url.toLowerCase())
+				);
+
+				console.log(
+					`   ✅ Found ${newUrls.length} new URLs (${
+						additionalWebUrls.length - newUrls.length
+					} duplicates filtered)`
+				);
+
+				if (newUrls.length > 0) {
+					console.log(`   📋 New URLs:`);
+					newUrls.forEach((url, idx) => {
+						console.log(`      ${idx + 1}. ${url}`);
+					});
+
+					// Fetch keywords from new URLs
+					console.log(
+						'   🔍 [FALLBACK] Getting keywords from new URLs...'
+					);
+					const additionalKeywords =
+						await keywordTool.getKeywordsFromUrls(
+							newUrls,
+							location,
+							topicSource
+						);
+
+					console.log(
+						`   ✅ Got ${additionalKeywords.length} additional keywords from ${newUrls.length} new URLs`
+					);
+
+					if (additionalKeywords.length > 0) {
+						// Merge with existing keywords (avoid duplicates)
+						const existingKeywordTexts = new Set(
+							keywordsFromUrls.map((kw) =>
+								kw.text.toLowerCase()
+							)
+						);
+						const uniqueAdditionalKeywords =
+							additionalKeywords.filter(
+								(kw) =>
+									!existingKeywordTexts.has(
+										kw.text.toLowerCase()
+									)
+							);
+
+						console.log(
+							`   🔄 Merging ${uniqueAdditionalKeywords.length} unique additional keywords with existing ${keywordsFromUrls.length} keywords`
+						);
+
+						// Combine all keywords
+						const allKeywords = [
+							...keywordsFromUrls,
+							...uniqueAdditionalKeywords,
+						];
+
+						// Re-score all keywords
+						let rescoredKeywords =
+							keywordTool.scoreIdeas(
+								allKeywords,
+								topicSource,
+								true // Prioritize relevance/intent over volume
+							);
+
+						// Re-apply filtering with relevance scoring
+						const rescoredWithRelevance =
+							rescoredKeywords
+								.map((kw) => {
+									const relevanceData =
+										calculateRelevanceScore(
+											kw.text
+										);
+									return {
+										...kw,
+										relevanceScore:
+											relevanceData.score,
+										topicWordMatches:
+											relevanceData.topicWordMatches,
+										matchedTopicWords:
+											relevanceData.matchedTopicWords,
+									};
+								})
+								.filter(shouldIncludeKeyword);
+
+						// Re-sort by topic word matches, relevance, and score
+						rescoredWithRelevance.sort((a, b) => {
+							if (
+								b.topicWordMatches !==
+								a.topicWordMatches
+							) {
+								return (
+									b.topicWordMatches -
+									a.topicWordMatches
+								);
+							}
+							if (
+								b.relevanceScore !==
+								a.relevanceScore
+							) {
+								return (
+									b.relevanceScore -
+									a.relevanceScore
+								);
+							}
+							return b.score - a.score;
+						});
+
+						// Re-group by relevance tiers
+						const newRelevanceTiers =
+							groupByRelevanceTier(
+								rescoredWithRelevance
+							);
+
+						// Re-create ranked list
+						ranked = [];
+						for (const tier of newRelevanceTiers) {
+							if (ranked.length >= 25) break;
+							const remaining = 25 - ranked.length;
+							ranked.push(
+								...tier.keywords.slice(
+									0,
+									remaining
+								)
+							);
+						}
+
+						// Fill remaining slots if needed
+						if (ranked.length < 25) {
+							for (const tier of newRelevanceTiers) {
+								if (ranked.length >= 25) break;
+								const alreadyAdded =
+									ranked.filter((kw) =>
+										tier.keywords.some(
+											(tkw) =>
+												tkw.text ===
+												kw.text
+										)
+									).length;
+								const remaining =
+									25 - ranked.length;
+								ranked.push(
+									...tier.keywords.slice(
+										alreadyAdded,
+										alreadyAdded +
+											remaining
+									)
+								);
+							}
+						}
+
+						console.log(
+							`   ✅ [FALLBACK] After additional search: ${ranked.length} keywords total (added ${uniqueAdditionalKeywords.length} new keywords)`
+						);
+					} else {
+						console.log(
+							`   ⚠️  [FALLBACK] No additional keywords found from new URLs`
+						);
+					}
+				} else {
+					console.log(
+						`   ⚠️  [FALLBACK] No new URLs found (all were duplicates)`
+					);
+				}
+			} catch (err) {
+				console.error(
+					'   ⚠️  [FALLBACK] Failed to fetch additional keywords:',
+					err
+				);
+				// Continue with existing ranked list even if fallback fails
+			}
+		}
+
+		const filteredOutCount =
+			scoredKeywords.length - keywordsWithRelevance.length;
+		if (filteredOutCount > 0) {
+			console.log(
+				`   🧹 Filtered out ${filteredOutCount} irrelevant keywords`
+			);
+		}
 		console.log(
-			`   🎯 Top 25 keywords filtered by user intent and relevancy:`
+			`   🎯 Top ${ranked.length} keywords filtered by relevance tiers (100% → 90% → 80% → ...):`
 		);
 		ranked.forEach((kw: any, idx: number) => {
+			const relevancePercent = (
+				(kw.relevanceScore || 0) * 100
+			).toFixed(0);
+			const topicMatches = kw.topicWordMatches || 0;
+			const matchedWords =
+				kw.matchedTopicWords && kw.matchedTopicWords.length > 0
+					? ` [${kw.matchedTopicWords.join(', ')}]`
+					: '';
 			console.log(
 				`      ${idx + 1}. "${
 					kw.text
-				}" (Score: ${kw.score.toFixed(3)}, Volume: ${
-					kw.volume
-				}, Difficulty: ${kw.difficulty})`
+				}" (Relevance: ${relevancePercent}%, Topic Words: ${topicMatches}${matchedWords}, Overall Score: ${kw.score.toFixed(
+					3
+				)}, Volume: ${kw.volume}, Difficulty: ${kw.difficulty})`
 			);
 		});
 

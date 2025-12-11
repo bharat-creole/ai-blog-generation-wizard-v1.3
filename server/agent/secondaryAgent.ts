@@ -110,6 +110,9 @@ Requirements:
 - Each section should have 2-4 subsections (H3)
 - Ensure natural keyword integration
 - Follow SEO best practices
+- CRITICAL: The outline MUST end with:
+  * Second-to-last section: "Conclusion" or "Summary" (wrap up key points)
+  * Last section: "Frequently Asked Questions" or "FAQs" (5-7 questions related to the topic)
 
 Return ONLY a JSON array of sections with this structure:
 [

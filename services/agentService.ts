@@ -49,23 +49,65 @@ export const generateSectionContent = async (
 	if (!apiKey) throw new Error('API Key is required.');
 	const ai = new GoogleGenAI({ apiKey });
 
-	const prompt = `ROLE: You are an expert SEO Content Writer.
+	const prompt = `ROLE: You are an expert SEO Content Writer specializing in original, valuable, and SEO-friendly content.
 TASK: Write the content for one H2 section of a blog, including its H3 items if any.
 
-GUIDELINES:
-1. Follow the blog's tone and depth rules: use rich formatting (lists, tables where useful), E-E-A-T signals, accurate claims.
-2. Integrate the primary keyword naturally: "${opts.targetKeyword}".
-3. Integrate INTERNAL LINKS inline when relevant using Markdown [text](url):\n${
-		opts.interlinks.map((l) => `- ${l.keyword}: ${l.url}`).join('\n') ||
-		'(none)'
-	}
-4. Output Markdown for ONLY this section.
+CONTENT QUALITY GUIDELINES (CRITICAL):
+1. **Originality & Value:**
+   - Write original, valuable content - avoid rephrasing generic ideas
+   - Focus on delivering clarity and depth
+   - Avoid fluff, keyword stuffing, and overly promotional language
 
-BLOG TITLE: ${data.title}
-SECTION (H2): ${section.name}
-SUBHEADS (H3):\n${
-		section.items?.map((i) => `- ${i.name}`).join('\n') || '(none)'
+2. **Tone & Readability:**
+   - Write in a conversational, human-friendly tone to improve readability and engagement
+   - Maintain a professional, educational, and non-promotional tone
+   - Consistent with Brand Voice: "${data.brandVoice || 'Professional'}"
+
+3. **Content Depth:**
+   - Provide in-depth, comprehensive information for this section
+   - Do not write superficial content
+   - Include real examples, research-backed insights, case studies, or statistics wherever relevant
+
+4. **Rich Formatting:**
+   - Use Markdown tables for comparisons or data
+   - Use bullet points and numbered lists wherever appropriate
+   - Use bold/italic for emphasis when needed
+   - Maintain consistent formatting and flow
+
+5. **SEO Optimization:**
+   - Integrate the primary keyword naturally: "${opts.targetKeyword}"
+   - Keywords should feel natural, not forced
+   - Include secondary keywords where relevant: ${data.secondaryKeywords?.join(', ') || 'N/A'}
+
+6. **E-E-A-T (Experience, Expertise, Authoritativeness, Trust):**
+   - Write with authority and expertise
+   - Use phrasing like "In practice...", "A common challenge is...", "Research shows..."
+   - Ensure all information is accurate and trustworthy
+
+7. **Internal Links:**
+   - Integrate INTERNAL LINKS inline when relevant using Markdown [text](url)
+   - Do not just list them - make them contextual
+   ${opts.interlinks.length > 0
+		? `Available internal links:\n${opts.interlinks
+				.map((l) => `- ${l.keyword}: ${l.url}`)
+				.join('\n')}`
+		: '(No internal links provided)'
 	}
+
+SECTION DETAILS:
+- Blog Title: ${data.title}
+- Blog Topic: ${data.topic || 'N/A'}
+- Section (H2): ${section.name}
+- Subheadings (H3):\n${
+		section.items?.map((i) => `  - ${i.name}`).join('\n') || '  (none)'
+	}
+
+OUTPUT:
+- Output Markdown for ONLY this section
+- Start with the H2 heading: ## ${section.name}
+- Then write content for each H3 subheading in order
+- Ensure smooth transitions between H3 subheadings
+- Make the content flow logically and maintain reader engagement
 `;
 
 	const response = await ai.models.generateContent({

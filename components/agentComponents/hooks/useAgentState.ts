@@ -129,35 +129,18 @@ export const useAgentState = (
 		pendingModificationRequest: null,
 	});
 
-	// Messages
+	// Messages - Start with initial greeting
 	const [messages, setMessages] = useState<ChatMessage[]>([
 		{
 			role: 'assistant',
-			content: `Hello! I'm your Blog Agent 🤖.
+			content: `Hello! 👋 I'm your Bloggr Agent 🤖
 
-Let's create an SEO-optimized blog post together.
+I'm here to help you create amazing, SEO-optimized blog posts that engage your audience and drive results.
 
-To get started, please provide the following details:
-
-**Topic:** The subject of your blog.
-**Primary Keyword:** One main keyword for SEO focus.
-**Secondary Keywords:** Up to five additional keywords.
-**Title (Optional):** Your desired title.
-**Reference Links (Optional):** Any external links for research.
-**Internal Links (Optional):** Any links to your own content.
-
-Here's an example of how you can provide this information:
+**What topic would you like to write a blog about?**
 
 
-Topic: The benefits of AI in marketing
-Primary Keyword: AI marketing tools
-Secondary Keywords: machine learning, marketing automation, predictive analytics
-
-
-**Tip:** You can also say **"generate blog automatically"** if you'd like me to handle everything for you!
-
-I'm ready when you are! 🚀. 
-`,
+Let's get started! `,
 		},
 	]);
 
