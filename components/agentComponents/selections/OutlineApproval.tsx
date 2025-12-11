@@ -161,9 +161,9 @@ const OutlineApproval: React.FC<OutlineApprovalProps> = ({
 			<div className='flex gap-3'>
 				<button
 					disabled={completedSelections.has('outline')}
-					className={`px-6 py-3 text-sm font-semibold rounded-xl transition-all duration-200 ${completedSelections.has('outline')
-							? 'bg-gray-400 text-gray-200 cursor-not-allowed'
-							: 'text-white bg-gradient-to-r from-orange-500 to-orange-600 hover:shadow-lg hover:shadow-orange-500/30'
+					className={`px-6 py-3 text-[14px]  font-semibold rounded-[26px] transition-all duration-200 ${completedSelections.has('outline')
+							? 'text-white bg-primary hover:shadow-lg cursor-not-allowed'
+							: 'text-white bg-primary hover:shadow-lg '
 						}`}
 					onClick={handleApprove}
 				>
@@ -175,13 +175,11 @@ const OutlineApproval: React.FC<OutlineApprovalProps> = ({
 						setInput('Regenerate the outline with more detail');
 					}}
 				>
-					💬 Request Changes
+					✍️ Request Changes
 				</button>
 			</div>
 
-			<div className='mt-3 text-xs text-gray-600 bg-blue-50 p-2 rounded'>
-				💡 <strong>Tip:</strong> Type feedback like "Add a section about X" or "Make it more technical" to regenerate
-			</div>
+			
 		</div>
 	);
 };

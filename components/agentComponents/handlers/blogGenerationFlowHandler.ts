@@ -118,7 +118,7 @@ export const createSetupMessages = (
 		setMessages((prev) => [
 			...prev,
 			createAssistantMessage(
-				`Great! I'll help you create a blog post about **"${currentTopic}"**.\n\nLet me start by researching keywords and generating an outline. I'll ask for your approval at key steps.`
+				`Great! I’ll help you to generate blog about **"${currentTopic}"**.\n\nLet me start by researching keywords and generating an outline. I’ll ask for your approval at key points.`
 			),
 		]);
 	} else {

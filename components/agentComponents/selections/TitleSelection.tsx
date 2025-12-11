@@ -127,47 +127,50 @@ const TitleSelection: React.FC<TitleSelectionProps> = ({
 	if (!titles || titles.length === 0) return null;
 
 	return (
-		<>
-			<div className='mt-3 space-y-2'>
+		<div>
+			<div className='font-inter text-[16px] font-normal text-[#777777] mb-[12px]'>Tip: You can also type your own Title in the chat if you prefer.</div>
+			<div className='space-y-[3px] bg-[#FFFFFF] p-[16px] rounded-[10px] border border-offwhite'>
 				{titles.map((title, idx) => {
 					const isSelected = selectedTitle === title;
 					return (
 						<label
 							key={idx}
-							className={`flex items-center justify-between text-sm bg-white border rounded p-3 cursor-pointer transition-colors ${
+							className={`relative flex items-center justify-between text-sm bg-white border border-primary rounded-[8px]   cursor-pointer transition-colors hover:border-primary hover:bg-[#FFF8F1] ${
 								isSelected
-									? 'border-purple-500 bg-purple-50'
-									: 'border-gray-200 hover:border-purple-400 hover:bg-gray-50'
+									? 'border-primary bg-[#FFF4E8]'
+									: 'border-offwhite'
 							}`}
 						>
-							<div className='flex items-center gap-2 flex-1'>
+							<div className='px-[12px] py-[16px]'>
+
 								<input
 									type='radio'
 									name='title'
 									disabled={completedSelections.has('title')}
 									checked={isSelected}
 									onChange={() => setSelectedTitle(title)}
-									className='w-4 h-4 text-purple-600 focus:ring-purple-500 border-gray-300'
-								/>
-								<div className='flex-1 font-medium text-gray-800'>{title}</div>
-							</div>
+									className='w-4 h-4  text-primary focus:ring-primary border-primary'
+									/>
+									</div>
+								<div className='flex-1 font-inter px-[10px] py-[17.5px] text-[14px] font-medium text-black'>{title}</div>
+							
 						</label>
 					);
 				})}
 			</div>
-			<div className='mt-3 text-right'>
+			<div className='mt-3 text-left'>
 				<button
 					disabled={
 						completedSelections.has('title') ||
 						!selectedTitle
 					}
-					className='px-4 py-2 text-sm bg-purple-600 text-white rounded hover:bg-purple-700 transition-colors disabled:bg-purple-300 disabled:cursor-not-allowed'
+					className='px-[18px] py-[8px] text-sm bg-success text-white  transition-colors disabled:opacity-[60%] disabled:cursor-not-allowed rounded-[26px]'
 					onClick={handleConfirm}
-				>
+				> 
 					Confirm Selection
 				</button>
 			</div>
-		</>
+		</div>
 	);
 };
 

@@ -19,7 +19,8 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { OutlineSection, OutlineItem } from '../../../types';
-import { GripVertical, Plus, Trash2, Edit2, Check, X } from '../../../components/icons';
+import { GripVertical, Plus, Trash2, Edit2,plusIcon, Check, X,EditIcon,DeleteIcon,DragHandleIcon, PlusIcon2} from '../../../components/icons';
+
 
 interface DraggableOutlineProps {
 	outline: OutlineSection[];
@@ -79,7 +80,7 @@ const SortableH3Item: React.FC<{
 		<div
 			ref={setNodeRef}
 			style={style}
-			className='flex items-center gap-2 text-xs py-1.5 px-2 bg-gray-50 rounded hover:bg-gray-100 transition-colors group'
+			className='flex items-center gap-[10px] text-xs py-1.5 px-2 bg-offwhite rounded-[8px]  hover:bg-gray-100 '
 		>
 			<div
 				{...attributes}
@@ -88,7 +89,7 @@ const SortableH3Item: React.FC<{
 				tabIndex={0}
 				aria-label='Drag to reorder H3'
 			>
-				<GripVertical className='w-3 h-3' />
+				<DragHandleIcon />
 			</div>
 
 			{isEditing ? (
@@ -121,15 +122,15 @@ const SortableH3Item: React.FC<{
 				</>
 			) : (
 				<>
-					<span className='flex-1 text-gray-600'>• {item.name}</span>
-					<div className='flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity'>
+					<span className='flex-1 text-sm font-normal text-black'>{item.name}</span>
+					<div className='flex gap-[9px]  group-hover:opacity-100 transition-opacity'>
 						<button
 							onClick={() => setIsEditing(true)}
-							className='p-1 text-blue-500 hover:text-blue-600 transition-colors'
+							className=''
 							aria-label='Edit H3'
 							tabIndex={0}
 						>
-							<Edit2 className='w-3 h-3' />
+							<EditIcon />
 						</button>
 						<button
 							onClick={() => onDelete(sectionId, item.id)}
@@ -137,7 +138,7 @@ const SortableH3Item: React.FC<{
 							aria-label='Delete H3'
 							tabIndex={0}
 						>
-							<Trash2 className='w-3 h-3' />
+							<DeleteIcon className='w-3 h-3' />
 						</button>
 					</div>
 				</>
@@ -228,9 +229,9 @@ const SortableH2Item: React.FC<SortableH2Props> = ({
 		<div
 			ref={setNodeRef}
 			style={style}
-			className='border-l-4 border-blue-400 pl-3 mb-3 bg-white rounded-r-lg p-3 shadow-sm hover:shadow-md transition-shadow group'
+			className='border-l-2 border-l-lightgray pl-3'
 		>
-			<div className='flex items-center gap-2 mb-2'>
+			<div className='flex items-center  px-[15px] py-[8px] gap-[10px] mb-[14px] bg-[#DBE5F1] rounded-[8px]'>
 				<div
 					{...attributes}
 					{...listeners}
@@ -238,7 +239,7 @@ const SortableH2Item: React.FC<SortableH2Props> = ({
 					tabIndex={0}
 					aria-label='Drag to reorder H2'
 				>
-					<GripVertical className='w-4 h-4' />
+					<DragHandleIcon />
 				</div>
 
 				{isEditing ? (
@@ -271,25 +272,25 @@ const SortableH2Item: React.FC<SortableH2Props> = ({
 					</>
 				) : (
 					<>
-						<span className='flex-1 font-semibold text-gray-800 text-sm'>
+						<span className='flex-1 text-base font-medium text-black'>
 							{index + 1}. {section.name}
 						</span>
-						<div className='flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity'>
+						<div className='flex gap-[9px]  group-hover:opacity-100 transition-opacity'>
 							<button
 								onClick={() => setIsEditing(true)}
-								className='p-1.5 text-blue-500 hover:text-blue-600 transition-colors'
+								className=''
 								aria-label='Edit H2'
 								tabIndex={0}
 							>
-								<Edit2 className='w-4 h-4' />
+								<EditIcon />
 							</button>
 							<button
 								onClick={() => onDeleteH2(section.id)}
-								className='p-1.5 text-red-500 hover:text-red-600 transition-colors'
+								className=''
 								aria-label='Delete H2'
 								tabIndex={0}
 							>
-								<Trash2 className='w-4 h-4' />
+								<DeleteIcon/>
 							</button>
 						</div>
 					</>
@@ -306,7 +307,7 @@ const SortableH2Item: React.FC<SortableH2Props> = ({
 						items={section.items.map((item) => item.id)}
 						strategy={verticalListSortingStrategy}
 					>
-						<div className='ml-4 space-y-1'>
+						<div className='ml-[10px] space-y-[4px]'>
 							{section.items.map((item) => (
 								<SortableH3Item
 									key={item.id}
@@ -322,7 +323,7 @@ const SortableH2Item: React.FC<SortableH2Props> = ({
 			)}
 
 			{/* Add H3 Form */}
-			<div className='ml-4 mt-2'>
+			<div className='ml-[10px] mt-[4px]'>
 				{isAddingH3 ? (
 					<div className='flex items-center gap-2'>
 						<input
@@ -358,11 +359,10 @@ const SortableH2Item: React.FC<SortableH2Props> = ({
 				) : (
 					<button
 						onClick={() => setIsAddingH3(true)}
-						className='flex items-center gap-1 px-2 py-1 text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded transition-colors'
-						aria-label='Add new H3 heading'
+						className='flex items-center gap-2 px-[10px] py-[7.5px] text-sm font-medium text-primary  justify-center bg-offwhite'
 						tabIndex={0}
 					>
-						<Plus className='w-3 h-3' />
+						<PlusIcon2/>
 						Add H3
 					</button>
 				)}
@@ -499,13 +499,16 @@ const DraggableOutline: React.FC<DraggableOutlineProps> = ({
 		: null;
 
 	return (
-		<div className='bg-white p-4 rounded-md border border-blue-200'>
-			<div className='font-bold text-lg mb-3 text-gray-800 flex items-center justify-between'>
-				<span>📋 Blog Outline</span>
-				<span className='text-xs font-normal text-gray-500'>
-					Drag to reorder • Click to edit
-				</span>
+		<div className=''>
+			<div className='flex flex-col gap-[14px] pb-[14px] mb-[14px] border-b border-lightgray'>
+				
+					<div className='text-base font-semibold text-black'>
+						✅ Outline generated! Here's the proposed structure for your blog:
+					</div>
+			
+				<div className='text-base font-normal text-[#777777]'>Tip: Drag to order & Click to edit</div>
 			</div>
+		
 
 			<DndContext
 				sensors={sensors}
@@ -517,7 +520,7 @@ const DraggableOutline: React.FC<DraggableOutlineProps> = ({
 					items={outline.map((section) => section.id)}
 					strategy={verticalListSortingStrategy}
 				>
-					<div className='space-y-3 text-sm mb-4'>
+					<div className='space-y-[20px] text-sm mb-4'>
 						{outline.map((section, index) => (
 							<SortableH2Item
 								key={section.id}
@@ -546,7 +549,7 @@ const DraggableOutline: React.FC<DraggableOutlineProps> = ({
 			</DndContext>
 
 			{/* Add H2 Form */}
-			<div className='mt-3 pt-3 border-t border-gray-200'>
+			<div className='mt-[18px] pt-[18px] border-t border-lightgray'>
 				{isAddingH2 ? (
 					<div className='flex items-center gap-2'>
 						<input
@@ -582,11 +585,11 @@ const DraggableOutline: React.FC<DraggableOutlineProps> = ({
 				) : (
 					<button
 						onClick={() => setIsAddingH2(true)}
-						className='flex items-center gap-2 px-4 py-2 text-sm text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded transition-colors w-full justify-center border border-dashed border-blue-300 hover:border-blue-400'
+						className='flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary  w-full justify-center bg-offwhite rounded-[8px]'
 						aria-label='Add new H2 heading'
 						tabIndex={0}
 					>
-						<Plus className='w-4 h-4' />
+						<PlusIcon2/>
 						Add New H2 Heading
 					</button>
 				)}

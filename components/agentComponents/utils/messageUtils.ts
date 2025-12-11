@@ -60,7 +60,7 @@ export const createKeywordSelectionMessage = (
 ): ChatMessage => {
 	const content =
 		type === 'primary'
-			? '🎯 **What main keyword should this article rank for?**\n\nSelect the primary keyword that best represents your target search term. This will be the main focus keyword for SEO optimization.\n\n💡 *Tip: You can also type your own primary keyword in the chat if you prefer.*'
+			? ''
 			: '🎯 **Which secondary keywords should we target?**\n\nSelect up to 5 related keywords that complement your primary keyword. These help cover related search terms and improve your content\'s reach.\n\n💡 *Tip: You can also type your own secondary keywords in the chat (comma-separated).*';
 
 	return {

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { AgentState } from '../../../../server/agent/state';
 import { ReferenceFile, ChatMessage, BlogData } from '../../../types';
 import { fileToBase64 } from '../utils/agentHelpers';
+import { WhitePlusIcon } from '@/components/icons';
 
 interface ReferencesFormProps {
 	currentUrls: string[];
@@ -150,37 +151,41 @@ const ReferencesForm: React.FC<ReferencesFormProps> = ({
 	};
 
 	return (
-		<div className='mt-3'>
-			<div className='grid grid-cols-1 md:grid-cols-2 gap-4 mb-4'>
+		<div className=''>
+			<div className='grid grid-cols-1 md:grid-cols-2 gap-[12px] mb-[12px]'>
 				{/* URLs Section */}
-				<div className='bg-white p-3 rounded-md border border-yellow-200'>
-					<div className='font-semibold mb-2 text-gray-800 flex items-center gap-2 text-sm'>
-						🔗 Reference URLs
+				<div className=''>
+					<div className='font-inter text-[16px] font-medium text-black mb-[4px]'>
+						Reference External URLs
 					</div>
 					{displayUrls.length > 0 && (
-						<div className='space-y-2 mb-3 max-h-32 overflow-y-auto'>
+						<div className='space-y-[4px] mb-[4px] max-h-32 overflow-y-auto'>
 							{displayUrls.map((url, idx) => (
-								<div
-									key={idx}
-									className='flex items-center justify-between text-xs bg-gray-50 border rounded p-2'
-								>
-									<span className='truncate flex-1 text-blue-600'>{url}</span>
+								<div className='flex gap-[10px]'>
+									<div
+										key={idx}
+										className='flex-grow px-[14px] py-[14.5px] text-regular bg-offwhite rounded-[8px] border border-offwhite outline-none'
+									>
+										<span className='text-[14px] text-[#3330E4] truncate block max-w-[220px]' title={url}>
+											{url}
+										</span>
+									</div>
 									<button
-										className='px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600 transition-colors ml-2'
+										className='w-[84px] flex justify-center items-center text-white bg-alert_error rounded-[8px] p-[14.5px] disabled:bg-opacity-60 disabled:cursor-not-allowed'
 										onClick={() => {
 											const currentUrls = data.referenceUrls || [];
 											updateData({
 												referenceUrls: currentUrls.filter((_, i) => i !== idx),
 											});
-										}}
-									>
+											}}
+										>
 										Remove
 									</button>
 								</div>
 							))}
 						</div>
 					)}
-					<div className='flex gap-2'>
+					<div className='flex gap-[10px]'>
 						<input
 							type='text'
 							value={currentReferenceUrl}
@@ -191,68 +196,109 @@ const ReferencesForm: React.FC<ReferencesFormProps> = ({
 								}
 							}}
 							placeholder='https://example.com/article'
-							className='flex-grow px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-yellow-500 focus:border-yellow-500'
+							className='flex-grow px-[14px]  py-[14.5px] font-inter text-black text-regular bg-white rounded-[8px] border border-offwhite outline-none placeholder:text-[14px] placeholder:text-[#777777]'
 						/>
 						<button
 							onClick={handleAddUrl}
-							className='px-4 py-2 text-sm bg-gray-200 text-gray-700 border border-gray-300 rounded-md hover:bg-gray-300'
+							className='w-[84px] flex justify-center items-center text-white bg-success  rounded-[8px]  p-[14.5px] disabled:bg-opacity-60 disabled:cursor-not-allowed'
 						>
-							Add
+							<div className='flex gap-[8px] items-center'>
+												<WhitePlusIcon/>
+							<div>Add</div>
+												</div>
 						</button>
 					</div>
 				</div>
 
 				{/* Files Section */}
-				<div className='bg-white p-3 rounded-md border border-yellow-200'>
-					<div className='font-semibold mb-2 text-gray-800 flex items-center gap-2 text-sm'>
-						📄 Upload Files (PDF/DOCX)
+				<div className=''>
+					<div className='font-inter text-[16px] font-medium text-black mb-[4px]'>
+						Upload Files (PDF/Docx)
 					</div>
 					{displayFiles.length > 0 && (
-						<div className='space-y-2 mb-3 max-h-32 overflow-y-auto'>
+						<div className='space-y-[4px] mb-[4px] max-h-32 overflow-y-auto'>
 							{displayFiles.map((file, idx) => (
+								<div className='flex gap-[10px] '>
+
 								<div
 									key={idx}
-									className='flex items-center justify-between text-xs bg-gray-50 border rounded p-2'
-								>
-									<span className='truncate flex-1'>{file.name}</span>
+									className='flex-grow px-[14px]  py-[14.5px] text-regular bg-offwhite rounded-[8px] border border-offwhite outline-none '
+									>
+									<span className='truncate block max-w-[220px]' title={file.name}>
+										{file.name}
+									</span>
+									</div>
 									<button
-										className='px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600 transition-colors ml-2'
+										className='w-[84px] flex justify-center items-center text-white bg-alert_error  rounded-[8px]  p-[14.5px] disabled:bg-opacity-60 disabled:cursor-not-allowed'
 										onClick={() => {
 											const currentFiles = data.referenceFiles || [];
 											updateData({
 												referenceFiles: currentFiles.filter((_, i) => i !== idx),
 											});
 										}}
-									>
+										>
 										Remove
 									</button>
 								</div>
 							))}
 						</div>
 					)}
-					<input
-						type='file'
-						accept='.pdf,.docx'
-						onChange={handleFileUpload}
-						className='block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-yellow-50 file:text-yellow-700 hover:file:bg-yellow-100 cursor-pointer'
-					/>
+					{/* Custom file input and Add button */}
+					<div className='flex gap-[10px] items-center'>
+						<label className='flex-grow relative'>
+							<input
+								type='file'
+								accept='.pdf,.docx'
+								onChange={handleFileUpload}
+								className='absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10'
+							/>
+							<div className='flex items-center px-[14px] py-[14.5px] bg-white border border-offwhite rounded-[8px] font-inter text-regular text-[14px] text-gray pointer-events-none'>
+								{(() => {
+									// Show selected file name or placeholder
+									const input = document.querySelector("input[type='file']") as HTMLInputElement;
+									return input && input.files && input.files[0] ? input.files[0].name : 'Choose File';
+								})()}
+							</div>
+						</label>
+						<button
+							type='button'
+							className='w-[84px] flex justify-center items-center text-white bg-success rounded-[8px]  p-[14.5px] disabled:bg-opacity-60 disabled:cursor-not-allowed'
+							onClick={() => {
+								// Trigger file input click
+								const input = document.querySelector("input[type='file']") as HTMLInputElement;
+								if (input) input.click();
+							}}
+						>
+							<div className='flex gap-[8px] items-center'>
+								<WhitePlusIcon />
+								<div>Add</div>
+							</div>
+						</button>
+					</div>
 				</div>
 			</div>
 
-			<div className='bg-white/70 p-3 rounded-md border border-yellow-200'>
-				<div className='text-sm text-gray-700 mb-2'>
-					<strong>Added:</strong> {data.referenceUrls?.length || 0} URL(s),{' '}
-					{data.referenceFiles?.length || 0} File(s)
-				</div>
+			<div className='text-left flex gap-[10px]'>
+				
 				<button
 					disabled={completedSelections.has('references')}
-					className={`w-full px-4 py-2 text-sm font-semibold text-white rounded-lg shadow-md transition-all ${completedSelections.has('references')
-							? 'bg-gray-400 cursor-not-allowed'
-							: 'bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 hover:shadow-lg'
+					className={` bg-primary text-white px-[18px] py-[8px] text-regular text-[14px] rounded-[26px] ${completedSelections.has('references')
+							? 'cursor-not-allowed'
+							: ' hover:bg-primary'
 						}`}
 					onClick={handleContinue}
 				>
-					Continue (skip)
+					Continue
+				</button>
+				<button
+					disabled={completedSelections.has('references')}
+					className={` bg-lightgray text-black px-[18px] py-[8px] text-regular text-[14px] rounded-[26px] ${completedSelections.has('references')
+							? 'cursor-not-allowed'
+							: ' hover:bg-lightgray'
+						}`}
+					onClick={handleContinue}
+				>
+				Skip
 				</button>
 			</div>
 		</div>

@@ -133,8 +133,7 @@ export const useAgentState = (
 	const [messages, setMessages] = useState<ChatMessage[]>([
 		{
 			role: 'assistant',
-			content: `Hello! I'm your Blog Agent 🤖. 
-`,
+			content: `👋 Hello I’m your blog agent`,
 		},
 	]);
 

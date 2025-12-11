@@ -134,24 +134,30 @@ const SecondaryKeywordSelection: React.FC<SecondaryKeywordSelectionProps> = ({
 					return (
 						<label
 							key={idx}
-							className='flex items-center justify-between text-sm bg-white border rounded p-2 cursor-pointer hover:bg-gray-50'
+							className={`relative flex items-center justify-between text-sm bg-white border rounded p-2 cursor-pointer transition-colors ${
+								checked
+									? 'border-primary bg-[#FFF4E8]'
+									: 'border-gray-200 hover:border-primary hover:bg-gray-50'
+							}`}
 						>
 							<div className='flex items-center gap-2'>
-								<input
-									type='checkbox'
-									disabled={completedSelections.has('secondaryKeywords')}
-									checked={checked}
-									onChange={(e) => {
-										setSelectedSecondaries((prev) => {
-											if (e.target.checked) {
-												const next = [...prev, kw.text];
-												return next.slice(0, 5);
-											}
-											return prev.filter((x) => x !== kw.text);
-										});
-									}}
-									className='w-4 h-4 text-orange-600 focus:ring-orange-500 border-gray-300 rounded'
-								/>
+								<span className='relative'>
+									<input
+										type='checkbox'
+										disabled={completedSelections.has('secondaryKeywords')}
+										checked={checked}
+										onChange={(e) => {
+											setSelectedSecondaries((prev) => {
+												if (e.target.checked) {
+													const next = [...prev, kw.text];
+													return next.slice(0, 5);
+												}
+												return prev.filter((x) => x !== kw.text);
+											});
+										}}
+										className={`w-4 h-4 text-primary focus:ring-primary border-primary rounded bg-white ${checked ? 'bg-primary' : ''}`}
+										/>
+								</span>
 								<div>
 									<div className='font-medium text-gray-800'>{kw.text}</div>
 									<div className='text-xs text-gray-500'>
@@ -163,13 +169,13 @@ const SecondaryKeywordSelection: React.FC<SecondaryKeywordSelectionProps> = ({
 					);
 				})}
 			</div>
-			<div className='mt-3 text-right'>
+			<div className='mt-3 text-left'>
 				<button
 					disabled={
 						completedSelections.has('secondaryKeywords') ||
 						selectedSecondaries.length === 0
 					}
-					className='px-4 py-2 text-sm bg-orange-600 text-white rounded hover:bg-orange-700 transition-colors disabled:bg-orange-300 disabled:cursor-not-allowed'
+					className='px-4 py-2 text-sm bg-success text-white  transition-colors disabled:opacity-[60%] disabled:cursor-not-allowed rounded-[26px]'
 					onClick={handleConfirm}
 				>
 					Confirm Selection ({selectedSecondaries.length}/5)

@@ -5,6 +5,7 @@ import { AgentState } from '../../../../server/agent/state';
 import { BlogData } from '../../../types';
 import { MessageRenderer } from './MessageRenderer';
 import { ChatInput } from './ChatInput';
+import ChatHeader from './ChatHeader';
 
 /**
  * Props for ChatInterface component
@@ -108,6 +109,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 				}`}
 		>
 			<div className='flex-1 overflow-y-auto py-3 px-4'>
+				<ChatHeader/>
 				{messages
 					.filter((m) => {
 						// Filter out empty messages unless they have metadata for UI components
@@ -121,7 +123,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 					.map((m, i) => (
 					<div
 						key={i}
-						className={`mb-4 ${m.role === 'user'
+						className={`mb-[12px] ${m.role === 'user'
 								? 'flex justify-end'
 								: 'flex justify-start'
 							}`}

@@ -89,14 +89,14 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({
 		message.outlineApproval ||
 		message.controlLevelSelection;
 
-	const messageClasses = `px-4 py-2.5 rounded-xl text-sm whitespace-pre-wrap ${isSystem
-			? 'bg-blue-50 text-blue-700 border border-blue-100 w-full text-xs font-mono my-1'
-			: message.role === 'user'
-				? 'bg-orange-500 text-white max-w-[75%]'
-				: hasMetadata
-					? 'bg-gray-100 border border-gray-200 max-w-full w-full'
-					: 'bg-gray-100 text-gray-800 max-w-[75%]'
-		}`;
+	const messageClasses = `px-4 py-[10.5px] bg-[#FBFBFB]  rounded-[20px] text-base font-normal font-inter whitespace-pre-wrap ${isSystem
+		? 'border border-blue-100 w-full text-xs font-mono my-1 bg-blue-50 text-blue-700'
+		: message.role === 'user'
+			? 'bg-primary text-white max-w-[75%]'
+			: hasMetadata
+				? 'border border-gray-200 max-w-full w-full  text-gray-800'
+				: 'max-w-[75%]  text-black'
+	}`;
 
 	// Log when message is being rendered
 	React.useEffect(() => {

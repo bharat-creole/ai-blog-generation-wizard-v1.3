@@ -279,7 +279,7 @@ const AgentMode: React.FC<Props> = ({
 					userMsg,
 					{
 						role: 'assistant',
-						content: `Great! I'll help you create a blog post about **"${finalTopic}"**.\n\nLet me start by researching keywords and generating an outline. I'll ask for your approval at key steps.`,
+						content: `Great! I’ll help you to generate blog about **"${finalTopic}"**.\n\nLet me start by researching keywords and generating an outline. I’ll ask for your approval at key points.`,
 					},
 				]);
 

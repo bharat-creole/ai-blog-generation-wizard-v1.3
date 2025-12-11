@@ -379,7 +379,7 @@ const App: React.FC = () => {
 				</aside>
 
 				{/* Main Content Area */}
-				<main className='flex-1 overflow-hidden p-6'>
+				<main className='flex-1 overflow-hidden p-6 bg-[#FFFFFF]'>
 					{renderView()}
 				</main>
 			</div>

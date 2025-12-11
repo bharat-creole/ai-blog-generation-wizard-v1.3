@@ -136,11 +136,14 @@ const PrimaryKeywordSelection: React.FC<PrimaryKeywordSelectionProps> = ({
     };
 
     return (
-        <div className='mt-3 grid grid-cols-1 md:grid-cols-2 gap-2'>
+        <div>
+            
+
+        <div className='grid grid-cols-1 md:grid-cols-2 gap-2'>
             {candidates.map((kw, idx) => (
                 <div
-                    key={idx}
-                    className='flex items-center justify-between text-sm bg-white border border-gray-200 rounded-md p-2 hover:border-orange-400 transition-colors'
+                key={idx}
+                className='flex items-center justify-between text-sm bg-white border border-gray-200 rounded-md p-2 hover:border-orange-400 transition-colors'
                 >
                     <div>
                         <div className='font-medium text-gray-800'>{kw.text}</div>
@@ -151,16 +154,17 @@ const PrimaryKeywordSelection: React.FC<PrimaryKeywordSelectionProps> = ({
                     <button
                         disabled={completedSelections.has('primaryKeyword')}
                         className={`px-3 py-1 text-xs text-white rounded transition-colors ${completedSelections.has('primaryKeyword')
-                                ? 'bg-gray-400 cursor-not-allowed'
-                                : 'bg-orange-500 hover:bg-orange-600'
-                            }`}
+                            ? 'bg-gray-400 cursor-not-allowed'
+                            : 'bg-orange-500 hover:bg-orange-600'
+                        }`}
                         onClick={() => handleSelect(kw)}
-                    >
+                        >
                         Select
                     </button>
                 </div>
             ))}
         </div>
+            </div>
     );
 };
 

@@ -126,52 +126,63 @@ const PrimaryKeywordSelection: React.FC<PrimaryKeywordSelectionProps> = ({
 	};
 
 	return (
-		<>
-			<div className='mt-3 grid grid-cols-1 md:grid-cols-2 gap-2'>
+		<div>
+			<div className='flex flex-col gap-[12px] mb-[12px]'>
+                <div className='font-inter text-[16px] font-semibold text-black'>What main keyword should this article rank for?</div>
+                <div className='font-inter text-[16px] font-normal text-black'>Select the primary keyword that best represent your target search term. This will be the main focus keyword for SEO optimization.</div>
+                <div className='font-inter text-[16px] font-normal text-[#777777]'>Tip: You can also type your own primary keyword in the chat if you prefer.</div>
+            </div>
+			<div className='p-[16px] rounded-[10px] border border-offwhite bg-[#FFFFFF] gap-[4px]'>
+				<div className='font-inter text-[16px] font-semibold text-black mb-[8px]'>Primary Keywords in</div>
+				<div className='font-inter text-[14px] font-medium text-[#777777] mb-[9px]'>Primary Keywords</div>
+			<div className=' grid grid-cols-1 md:grid-cols-2 gap-x-[8px] gap-y-[4px] '>
 				{candidates.map((kw, idx) => {
 					const isSelected = selectedPrimary === kw.text;
 					return (
 						<label
-							key={idx}
-							className={`flex items-center justify-between text-sm bg-white border rounded p-2 cursor-pointer transition-colors ${
+						key={idx}
+						className={`flex items-center  text-sm bg-white border border-primary rounded-[8px]   cursor-pointer transition-colors hover:border-primary hover:bg-[#FFF8F1] ${
 								isSelected
-									? 'border-orange-500 bg-orange-50'
-									: 'border-gray-200 hover:border-orange-400 hover:bg-gray-50'
-							}`}
+									? 'border-primary bg-[#FFF4E8]'
+									: 'border-offwhite'
+						}`}
 						>
-							<div className='flex items-center gap-2 flex-1'>
+							<div className='px-[13px] py-[17px]'>
+
 								<input
 									type='radio'
 									name='primaryKeyword'
 									disabled={completedSelections.has('primaryKeyword')}
 									checked={isSelected}
 									onChange={() => setSelectedPrimary(kw.text)}
-									className='w-4 h-4 text-orange-600 focus:ring-orange-500 border-gray-300'
-								/>
-								<div>
-									<div className='font-medium text-gray-800'>{kw.text}</div>
-									<div className='text-xs text-gray-500'>
+									className='w-4 h-4 text-primary focus:ring-primary border-primary'
+									/>
+									</div>
+								<div className='px-[10px] py-[9px] gap-[2px]'>
+									<div className='font-inter font-medium text-black'>{kw.text}</div>
+									<div className='font-inter text-[12px] font-normal text-[#777777]'>
 										Vol: {kw.volume}
 									</div>
 								</div>
-							</div>
+							
 						</label>
 					);
 				})}
 			</div>
-			<div className='mt-3 text-right'>
+				</div>
+			<div className='mt-3 text-left'>
 				<button
 					disabled={
 						completedSelections.has('primaryKeyword') ||
 						!selectedPrimary
 					}
-					className='px-4 py-2 text-sm bg-orange-600 text-white rounded hover:bg-orange-700 transition-colors disabled:bg-orange-300 disabled:cursor-not-allowed'
+					className='px-4 py-2 text-sm bg-success text-white  transition-colors disabled:opacity-[60%] disabled:cursor-not-allowed rounded-[26px]'
 					onClick={handleConfirm}
 				>
 					Confirm Selection
 				</button>
 			</div>
-		</>
+		</div>
 	);
 };
 

@@ -950,7 +950,7 @@ const handleSkipStep = (currentState: AgentState): ConversationResponse => {
 		// User skipped references, move to interlinking
 		return {
 			assistantMessage:
-				'Skipped. Please add any internal links to your existing content (optional).',
+				'Do you want to add any internal links to your existing content(optional)?',
 			stateUpdates: {
 				currentStep: 'interlinking',
 				halt: { reason: 'await_interlinking_selection' },
