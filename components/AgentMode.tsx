@@ -47,6 +47,7 @@ interface Props {
 	showTrace: boolean;
 	showSettings: boolean;
 	onCollapseSidebar?: () => void;
+	loadedThreadId?: string | null;
 }
 
 const AgentMode: React.FC<Props> = ({
@@ -56,6 +57,7 @@ const AgentMode: React.FC<Props> = ({
 	showTrace,
 	showSettings,
 	onCollapseSidebar,
+	loadedThreadId,
 }) => {
 	const apiKey = data.apiKey;
 	const interlinks: Interlink[] = data.interlinks;
@@ -215,6 +217,51 @@ const AgentMode: React.FC<Props> = ({
 			});
 		}
 	}, [agent?.halt?.reason, completedSelections, setCompletedSelections]);
+
+	// ✨ Load messages from history when thread is selected
+	useEffect(() => {
+		if (!loadedThreadId) return;
+
+		const loadThreadMessages = async () => {
+			try {
+				// @ts-ignore
+				const API_BASE = import.meta.env?.VITE_AGENT_API_BASE || 'http://localhost:3001';
+				const token = localStorage.getItem('accessToken');
+
+				const response = await fetch(`${API_BASE}/api/agent/history/${loadedThreadId}`, {
+					headers: {
+						'Content-Type': 'application/json',
+						...(token && { 'Authorization': `Bearer ${token}` })
+					}
+				});
+
+				if (response.ok) {
+					const { thread } = await response.json();
+
+					if (thread.messages && thread.messages.length > 0) {
+						console.log('📜 [History] Loading', thread.messages.length, 'messages');
+						setMessages(thread.messages);
+					}
+
+					if (thread.agentState) {
+						setAgent(thread.agentState);
+						setOutline(thread.agentState.outline || []);
+						setDraft(thread.agentState.draft || '');
+						setOutlineApproved(thread.agentState.outlineApproved || false);
+						setUserTopic(thread.agentState.data?.topic || '');
+
+						if (thread.agentState.draft) {
+							setShowBlogContent(true);
+						}
+					}
+				}
+			} catch (error) {
+				console.error('❌ [History] Failed to load messages:', error);
+			}
+		};
+
+		loadThreadMessages();
+	}, [loadedThreadId]);
 
 	// Removed SEO ranking feature
 

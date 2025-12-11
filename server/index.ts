@@ -59,6 +59,28 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use(cors());
 
+app.get('/', (req, res) => {
+	const { token, userId } = req.query;
+	const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3002';
+
+	if (token) {
+		// Redirect to frontend with token preserved
+		const redirectUrl = new URL(frontendUrl);
+		redirectUrl.searchParams.set('token', token as string);
+		if (userId) {
+			redirectUrl.searchParams.set('userId', userId as string);
+		}
+		console.log(
+			`🔄 [Redirect] Redirecting to frontend: ${redirectUrl.toString()}`
+		);
+		return res.redirect(redirectUrl.toString());
+	}
+
+	// No token, just redirect to frontend
+	console.log(`🔄 [Redirect] Redirecting to frontend: ${frontendUrl}`);
+	res.redirect(frontendUrl);
+});
+
 app.post('/api/getKeywords', async (req, res) => {
 	const { seed, location } = req.body || {};
 	if (!seed || typeof seed !== 'string') {
@@ -704,6 +726,9 @@ app.post('/api/getKeywordsGoogleAds', async (req, res) => {
 import { graph, checkpointer } from './agent/graph.js';
 import { HumanMessage, AIMessage } from '@langchain/core/messages';
 import { processMessage } from './agent/conversationHandler.js';
+import { saveBlogIfComplete } from './hooks/blogCompletionHook.js';
+import { authenticateToken, optionalAuth } from './middleware/auth.js';
+import { saveAgentHistory } from './db/agentHistoryService.js';
 import { PrimaryAgent } from './agent/primaryAgent.js';
 import { ContextManagerAgent } from './agent/contextManagerAgent.js';
 import { AgentState } from './agent/state.js';
@@ -905,7 +930,8 @@ const persistMessagesToCheckpointer = async (
 };
 
 // NEW: Main conversation endpoint - handles user messages with intent classification
-app.post('/api/agent/message', async (req, res) => {
+// ✨ Added optionalAuth middleware to extract userId from JWT token
+app.post('/api/agent/message', optionalAuth, async (req, res) => {
 	const {
 		message,
 		threadId,
@@ -913,13 +939,14 @@ app.post('/api/agent/message', async (req, res) => {
 		apiKey, // Extract apiKey from request body, not from state
 		stream = false,
 	} = req.body || {};
-
+	const userId = req.userId; // ✨ Extracted from JWT token by optionalAuth middleware
 	console.log(`\n${'═'.repeat(70)}`);
 	console.log(
 		`💬 [AGENT] Message Request Received ${stream ? '(Streaming)' : ''}`
 	);
 	console.log(`${'═'.repeat(70)}`);
 	console.log(`   Thread ID: ${threadId}`);
+	console.log(`   User ID: ${userId || 'Not authenticated'}`); // ✨ Log userId
 	console.log(`   Message: "${message}"`);
 
 	if (!threadId || !message) {
@@ -1690,6 +1717,60 @@ app.post('/api/agent/message', async (req, res) => {
 				metadata: finalMetadata, // Include metadata for UI components
 			});
 		}
+
+		// ✨ Save agent history to database
+		if (userId) {
+			// Convert LangChain messages to simple format
+			const langchainMessages = (updatedState.messages || []).map(
+				(msg: any) => ({
+					role: msg._getType
+						? msg._getType()
+						: msg.role || 'assistant',
+					content:
+						typeof msg.content === 'string'
+							? msg.content
+							: JSON.stringify(msg.content),
+					timestamp: Date.now(),
+				})
+			);
+
+			// Build complete message history including current exchange
+			const completeMessages = [
+				...langchainMessages,
+				// Add current user message
+				{
+					role: 'user',
+					content: message,
+					timestamp: Date.now(),
+				},
+				// Add assistant response if available
+				...(response.assistantMessage
+					? [
+							{
+								role: 'assistant',
+								content: response.assistantMessage,
+								timestamp: Date.now(),
+							},
+					  ]
+					: []),
+			];
+
+			console.log(
+				`💾 [History] Saving ${completeMessages.length} messages for thread: ${threadId}`
+			);
+
+			await saveAgentHistory({
+				threadId,
+				userId,
+				messages: completeMessages,
+				agentState: updatedState,
+				topic: updatedState.data?.topic,
+				blogGenerated: updatedState.finalBlogGenerated,
+			});
+		}
+
+		// Save blog if complete
+		await saveBlogIfComplete(updatedState, threadId, userId);
 	} catch (error: any) {
 		console.error(`   ❌ Message processing failed:`, error);
 		console.log(`${'═'.repeat(70)}\n`);
@@ -1853,6 +1934,91 @@ app.delete('/api/agent/state/:threadId', async (req, res) => {
 	} catch (error: any) {
 		console.error(`Failed to delete thread ${threadId}:`, error);
 		return res.status(500).json({ error: error.message });
+	}
+});
+
+// ═══════════════════════════════════════════════════════════════════════
+// 📜 Agent History API Endpoints
+// ═══════════════════════════════════════════════════════════════════════
+
+import {
+	getUserHistory,
+	getHistoryThread,
+	deleteHistory,
+} from './db/agentHistoryService.js';
+
+// Get user's conversation history list
+app.get('/api/agent/history', optionalAuth, async (req, res) => {
+	const userId = req.userId;
+	if (!userId) {
+		return res.status(401).json({ error: 'Authentication required' });
+	}
+
+	const { limit, offset, status } = req.query;
+
+	try {
+		const history = await getUserHistory(userId, {
+			limit: limit ? parseInt(limit as string) : 20,
+			offset: offset ? parseInt(offset as string) : 0,
+			status: status as string,
+		});
+
+		res.json({ history, count: history.length });
+	} catch (error: any) {
+		console.error('Failed to get history:', error);
+		res.status(500).json({ error: error.message });
+	}
+});
+
+// Get full conversation thread
+app.get('/api/agent/history/:threadId', optionalAuth, async (req, res) => {
+	const { threadId } = req.params;
+	const userId = req.userId;
+
+	if (!userId) {
+		return res.status(401).json({ error: 'Authentication required' });
+	}
+
+	try {
+		const thread = await getHistoryThread(threadId);
+
+		if (!thread) {
+			return res.status(404).json({ error: 'Thread not found' });
+		}
+
+		// Check ownership
+		if (thread.userId !== userId) {
+			return res.status(403).json({ error: 'Access denied' });
+		}
+
+		res.json({ thread });
+	} catch (error: any) {
+		console.error('Failed to get thread:', error);
+		res.status(500).json({ error: error.message });
+	}
+});
+
+// Delete conversation history
+app.delete('/api/agent/history/:threadId', optionalAuth, async (req, res) => {
+	const { threadId } = req.params;
+	const userId = req.userId;
+
+	if (!userId) {
+		return res.status(401).json({ error: 'Authentication required' });
+	}
+
+	try {
+		const thread = await getHistoryThread(threadId);
+
+		if (!thread || thread.userId !== userId) {
+			return res.status(403).json({ error: 'Access denied' });
+		}
+
+		await deleteHistory(threadId);
+		res.json({ success: true });
+	} catch (error: any) {
+		console.error('Failed to delete history:', error);
+		res.status(500).json({ error: error.message });
 	}
 });
 

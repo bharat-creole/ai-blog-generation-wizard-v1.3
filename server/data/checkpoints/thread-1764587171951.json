@@ -1,0 +1,649 @@
+{
+  "checkpoint": {
+    "v": 4,
+    "id": "1f0cea5d-051e-68c0-8008-f08a5a5f4b84",
+    "ts": "2025-12-01T11:06:40.844Z",
+    "channel_values": {
+      "messages": [
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "lc": 1,
+          "type": "constructor",
+          "id": [
+            "langchain_core",
+            "messages",
+            "AIMessage"
+          ],
+          "kwargs": {
+            "content": "I couldn't find any secondary keywords. I'll proceed with just the primary keyword for now.",
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "additional_kwargs": {},
+            "response_metadata": {}
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "lc": 1,
+          "type": "constructor",
+          "id": [
+            "langchain_core",
+            "messages",
+            "AIMessage"
+          ],
+          "kwargs": {
+            "content": "I couldn't find any secondary keywords. I'll proceed with just the primary keyword for now.",
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "additional_kwargs": {},
+            "response_metadata": {}
+          }
+        },
+        {
+          "lc": 1,
+          "type": "constructor",
+          "id": [
+            "langchain_core",
+            "messages",
+            "AIMessage"
+          ],
+          "kwargs": {
+            "content": "I couldn't find any secondary keywords. I'll proceed with just the primary keyword for now.",
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "additional_kwargs": {},
+            "response_metadata": {}
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "lc": 1,
+          "type": "constructor",
+          "id": [
+            "langchain_core",
+            "messages",
+            "AIMessage"
+          ],
+          "kwargs": {
+            "content": "I couldn't find any secondary keywords. I'll proceed with just the primary keyword for now.",
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "additional_kwargs": {},
+            "response_metadata": {}
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "lc": 1,
+          "type": "constructor",
+          "id": [
+            "langchain_core",
+            "messages",
+            "AIMessage"
+          ],
+          "kwargs": {
+            "content": "I couldn't find any secondary keywords. I'll proceed with just the primary keyword for now.",
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "additional_kwargs": {},
+            "response_metadata": {}
+          }
+        },
+        {
+          "lc": 1,
+          "type": "constructor",
+          "id": [
+            "langchain_core",
+            "messages",
+            "AIMessage"
+          ],
+          "kwargs": {
+            "content": "I couldn't find any secondary keywords. I'll proceed with just the primary keyword for now.",
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "additional_kwargs": {},
+            "response_metadata": {}
+          }
+        },
+        {
+          "lc": 1,
+          "type": "constructor",
+          "id": [
+            "langchain_core",
+            "messages",
+            "AIMessage"
+          ],
+          "kwargs": {
+            "content": "I couldn't find any secondary keywords. I'll proceed with just the primary keyword for now.",
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "additional_kwargs": {},
+            "response_metadata": {}
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "lc": 1,
+          "type": "constructor",
+          "id": [
+            "langchain_core",
+            "messages",
+            "AIMessage"
+          ],
+          "kwargs": {
+            "content": "I couldn't find any secondary keywords. I'll proceed with just the primary keyword for now.",
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "additional_kwargs": {},
+            "response_metadata": {}
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "lc": 1,
+          "type": "constructor",
+          "id": [
+            "langchain_core",
+            "messages",
+            "AIMessage"
+          ],
+          "kwargs": {
+            "content": "I couldn't find any secondary keywords. I'll proceed with just the primary keyword for now.",
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "additional_kwargs": {},
+            "response_metadata": {}
+          }
+        },
+        {
+          "lc": 1,
+          "type": "constructor",
+          "id": [
+            "langchain_core",
+            "messages",
+            "AIMessage"
+          ],
+          "kwargs": {
+            "content": "I couldn't find any secondary keywords. I'll proceed with just the primary keyword for now.",
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "additional_kwargs": {},
+            "response_metadata": {}
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "lc": 1,
+          "type": "constructor",
+          "id": [
+            "langchain_core",
+            "messages",
+            "AIMessage"
+          ],
+          "kwargs": {
+            "content": "I couldn't find any secondary keywords. I'll proceed with just the primary keyword for now.",
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "additional_kwargs": {},
+            "response_metadata": {}
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "lc": 1,
+          "type": "constructor",
+          "id": [
+            "langchain_core",
+            "messages",
+            "AIMessage"
+          ],
+          "kwargs": {
+            "content": "I couldn't find any secondary keywords. I'll proceed with just the primary keyword for now.",
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "additional_kwargs": {},
+            "response_metadata": {}
+          }
+        },
+        {
+          "lc": 1,
+          "type": "constructor",
+          "id": [
+            "langchain_core",
+            "messages",
+            "AIMessage"
+          ],
+          "kwargs": {
+            "content": "I couldn't find any secondary keywords. I'll proceed with just the primary keyword for now.",
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "additional_kwargs": {},
+            "response_metadata": {}
+          }
+        },
+        {
+          "lc": 1,
+          "type": "constructor",
+          "id": [
+            "langchain_core",
+            "messages",
+            "AIMessage"
+          ],
+          "kwargs": {
+            "content": "I couldn't find any secondary keywords. I'll proceed with just the primary keyword for now.",
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "additional_kwargs": {},
+            "response_metadata": {}
+          }
+        },
+        {
+          "lc": 1,
+          "type": "constructor",
+          "id": [
+            "langchain_core",
+            "messages",
+            "AIMessage"
+          ],
+          "kwargs": {
+            "content": "I couldn't find any secondary keywords. I'll proceed with just the primary keyword for now.",
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "additional_kwargs": {},
+            "response_metadata": {}
+          }
+        }
+      ],
+      "apiKey": "AIzaSyCXtEUadPIwJrxvskOFbKHxSEzCJe2vjUs",
+      "data": {
+        "apiKey": "AIzaSyCXtEUadPIwJrxvskOFbKHxSEzCJe2vjUs",
+        "title": "",
+        "topic": "ghghjdsgjahguwadhwhfo",
+        "targetLocation": "United States",
+        "primaryKeyword": "ghghjdsgjahguwadhwhfo",
+        "secondaryKeywords": [],
+        "suggestedTitles": [],
+        "referenceUrls": [],
+        "referenceFiles": [],
+        "interlinks": [],
+        "brandVoice": "Default",
+        "blogGuideline": "Default",
+        "llmModel": "gemini-2.5-flash",
+        "language": "English",
+        "outline": [],
+        "blogContent": ""
+      },
+      "outline": [],
+      "outlineApproved": false,
+      "draft": "",
+      "progress": {
+        "sectionIndex": 0
+      },
+      "preferences": {
+        "automationLevel": "guided",
+        "skipOptionalSteps": false,
+        "autoSelectBestOptions": false
+      },
+      "policy": {
+        "referencesUsage": "both",
+        "grounding": true
+      },
+      "userProvidedFields": {},
+      "autoFillFields": {},
+      "trace": [
+        {
+          "step": "KeywordResearch.primaryCandidates",
+          "info": {
+            "count": 1
+          },
+          "at": 1764587190313
+        },
+        {
+          "step": "KeywordResearch.primaryCandidates",
+          "info": {
+            "count": 1
+          },
+          "at": 1764587190313
+        },
+        {
+          "step": "KeywordResearch.noSecondaryKeywordsFound",
+          "info": {},
+          "at": 1764587199155
+        },
+        {
+          "step": "KeywordResearch.noSecondaryKeywordsFound",
+          "info": {},
+          "at": 1764587199690
+        },
+        {
+          "step": "KeywordResearch.noSecondaryKeywordsFound",
+          "info": {},
+          "at": 1764587200188
+        },
+        {
+          "step": "KeywordResearch.noSecondaryKeywordsFound",
+          "info": {},
+          "at": 1764587200527
+        },
+        {
+          "step": "KeywordResearch.secondaryCandidates",
+          "info": {
+            "count": 7
+          },
+          "at": 1764587200843
+        }
+      ],
+      "halt": {
+        "reason": "await_secondary_selection"
+      },
+      "keywordCandidates": [
+        {
+          "text": "ghghjdsgjahguwadhwhfo vs alternatives",
+          "volume": 6741,
+          "difficulty": -0.46,
+          "source": "seed",
+          "score": 1
+        },
+        {
+          "text": "ghghjdsgjahguwadhwhfo for beginners",
+          "volume": 5758,
+          "difficulty": 0.43,
+          "source": "seed",
+          "score": 0.6428026172300981
+        },
+        {
+          "text": "ghghjdsgjahguwadhwhfo checklist",
+          "volume": 4489,
+          "difficulty": 0.09,
+          "source": "seed",
+          "score": 0.5999221937681497
+        },
+        {
+          "text": "ghghjdsgjahguwadhwhfo tutorial",
+          "volume": 4436,
+          "difficulty": 0.29,
+          "source": "seed",
+          "score": 0.5379627020205114
+        },
+        {
+          "text": "ghghjdsgjahguwadhwhfo best practices",
+          "volume": 3549,
+          "difficulty": 0.43,
+          "source": "seed",
+          "score": 0.4019083969465649
+        },
+        {
+          "text": "ghghjdsgjahguwadhwhfo guide",
+          "volume": 2446,
+          "difficulty": 0.23,
+          "source": "seed",
+          "score": 0.3378046389668312
+        },
+        {
+          "text": "ghghjdsgjahguwadhwhfo benefits",
+          "volume": 1239,
+          "difficulty": 0.13,
+          "source": "seed",
+          "score": 0.2342696629213483
+        }
+      ],
+      "titleCandidates": [],
+      "currentStep": "secondary_keywords",
+      "toolOutputs": [
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "primary",
+            "candidates": [
+              {
+                "text": "ghghjdsgjahguwadhwhfo",
+                "volume": 0,
+                "difficulty": 0.5,
+                "source": "seed",
+                "score": 0.575
+              }
+            ]
+          },
+          "timestamp": 1764587190313
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "primary",
+            "candidates": [
+              {
+                "text": "ghghjdsgjahguwadhwhfo",
+                "volume": 0,
+                "difficulty": 0.5,
+                "source": "seed",
+                "score": 0.575
+              }
+            ]
+          },
+          "timestamp": 1764587190313
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "secondary",
+            "candidates": [
+              {
+                "text": "ghghjdsgjahguwadhwhfo vs alternatives",
+                "volume": 6741,
+                "difficulty": -0.46,
+                "source": "seed",
+                "score": 1
+              },
+              {
+                "text": "ghghjdsgjahguwadhwhfo for beginners",
+                "volume": 5758,
+                "difficulty": 0.43,
+                "source": "seed",
+                "score": 0.6428026172300981
+              },
+              {
+                "text": "ghghjdsgjahguwadhwhfo checklist",
+                "volume": 4489,
+                "difficulty": 0.09,
+                "source": "seed",
+                "score": 0.5999221937681497
+              },
+              {
+                "text": "ghghjdsgjahguwadhwhfo tutorial",
+                "volume": 4436,
+                "difficulty": 0.29,
+                "source": "seed",
+                "score": 0.5379627020205114
+              },
+              {
+                "text": "ghghjdsgjahguwadhwhfo best practices",
+                "volume": 3549,
+                "difficulty": 0.43,
+                "source": "seed",
+                "score": 0.4019083969465649
+              },
+              {
+                "text": "ghghjdsgjahguwadhwhfo guide",
+                "volume": 2446,
+                "difficulty": 0.23,
+                "source": "seed",
+                "score": 0.3378046389668312
+              },
+              {
+                "text": "ghghjdsgjahguwadhwhfo benefits",
+                "volume": 1239,
+                "difficulty": 0.13,
+                "source": "seed",
+                "score": 0.2342696629213483
+              }
+            ]
+          },
+          "timestamp": 1764587200843
+        }
+      ],
+      "__pregel_tasks": [
+        [],
+        []
+      ]
+    },
+    "channel_versions": {
+      "__start__": 5,
+      "messages": 9,
+      "data": 5,
+      "outline": 5,
+      "outlineApproved": 5,
+      "draft": 5,
+      "progress": 5,
+      "preferences": 5,
+      "trace": 10,
+      "halt": 10,
+      "userProvidedFields": 5,
+      "autoFillFields": 5,
+      "toolOutputs": 10,
+      "currentStep": 10,
+      "apiKey": 5,
+      "branch:to:research_primary": 3,
+      "keywordCandidates": 10,
+      "branch:to:research_secondary": 10
+    },
+    "versions_seen": {
+      "__input__": {},
+      "__start__": {
+        "__start__": 4
+      },
+      "research_primary": {
+        "branch:to:research_primary": 2
+      },
+      "research_secondary": {
+        "branch:to:research_secondary": 9
+      }
+    }
+  },
+  "metadata": {
+    "source": "loop",
+    "step": 8,
+    "parents": {}
+  },
+  "parentCheckpointId": "1f0cea5d-021b-6100-8007-13fb2a4b1076",
+  "updatedAt": 1764587200844
+}

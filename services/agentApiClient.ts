@@ -2,6 +2,8 @@
  * API client for communicating with the backend LangGraph agent
  */
 
+import { getAuthHeaders } from './authUtils';
+
 export interface AgentAPIClient {
     sendMessage: (message: string, threadId: string, currentState: any) => Promise<{ assistantMessage: string, state: any, executed: boolean }>;
     invoke: (state: any, threadId: string) => Promise<any>;
@@ -213,7 +215,7 @@ export async function streamMessage(
     
     const response = await fetch(`${API_BASE}/api/agent/message`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(), // ✨ Use auth headers with JWT token
         body: JSON.stringify(requestBody),
     });
 

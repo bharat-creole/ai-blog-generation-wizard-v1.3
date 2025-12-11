@@ -1,0 +1,5464 @@
+{
+  "checkpoint": {
+    "v": 4,
+    "id": "1f0cea52-3455-6f40-801a-714139b8ad35",
+    "ts": "2025-12-01T11:01:50.516Z",
+    "channel_values": {
+      "messages": [
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "lc": 1,
+          "type": "constructor",
+          "id": [
+            "langchain_core",
+            "messages",
+            "AIMessage"
+          ],
+          "kwargs": {
+            "content": "I couldn't find any secondary keywords. I'll proceed with just the primary keyword for now.",
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "additional_kwargs": {},
+            "response_metadata": {}
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "lc": 1,
+          "type": "constructor",
+          "id": [
+            "langchain_core",
+            "messages",
+            "AIMessage"
+          ],
+          "kwargs": {
+            "content": "I couldn't find any secondary keywords. I'll proceed with just the primary keyword for now.",
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "additional_kwargs": {},
+            "response_metadata": {}
+          }
+        },
+        {
+          "lc": 1,
+          "type": "constructor",
+          "id": [
+            "langchain_core",
+            "messages",
+            "AIMessage"
+          ],
+          "kwargs": {
+            "content": "I couldn't find any secondary keywords. I'll proceed with just the primary keyword for now.",
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "additional_kwargs": {},
+            "response_metadata": {}
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "lc": 1,
+          "type": "constructor",
+          "id": [
+            "langchain_core",
+            "messages",
+            "AIMessage"
+          ],
+          "kwargs": {
+            "content": "I couldn't find any secondary keywords. I'll proceed with just the primary keyword for now.",
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "additional_kwargs": {},
+            "response_metadata": {}
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "lc": 1,
+          "type": "constructor",
+          "id": [
+            "langchain_core",
+            "messages",
+            "AIMessage"
+          ],
+          "kwargs": {
+            "content": "I couldn't find any secondary keywords. I'll proceed with just the primary keyword for now.",
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "additional_kwargs": {},
+            "response_metadata": {}
+          }
+        },
+        {
+          "lc": 1,
+          "type": "constructor",
+          "id": [
+            "langchain_core",
+            "messages",
+            "AIMessage"
+          ],
+          "kwargs": {
+            "content": "I couldn't find any secondary keywords. I'll proceed with just the primary keyword for now.",
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "additional_kwargs": {},
+            "response_metadata": {}
+          }
+        },
+        {
+          "lc": 1,
+          "type": "constructor",
+          "id": [
+            "langchain_core",
+            "messages",
+            "AIMessage"
+          ],
+          "kwargs": {
+            "content": "I couldn't find any secondary keywords. I'll proceed with just the primary keyword for now.",
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "additional_kwargs": {},
+            "response_metadata": {}
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "lc": 1,
+          "type": "constructor",
+          "id": [
+            "langchain_core",
+            "messages",
+            "AIMessage"
+          ],
+          "kwargs": {
+            "content": "I couldn't find any secondary keywords. I'll proceed with just the primary keyword for now.",
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "additional_kwargs": {},
+            "response_metadata": {}
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "lc": 1,
+          "type": "constructor",
+          "id": [
+            "langchain_core",
+            "messages",
+            "AIMessage"
+          ],
+          "kwargs": {
+            "content": "I couldn't find any secondary keywords. I'll proceed with just the primary keyword for now.",
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "additional_kwargs": {},
+            "response_metadata": {}
+          }
+        },
+        {
+          "lc": 1,
+          "type": "constructor",
+          "id": [
+            "langchain_core",
+            "messages",
+            "AIMessage"
+          ],
+          "kwargs": {
+            "content": "I couldn't find any secondary keywords. I'll proceed with just the primary keyword for now.",
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "additional_kwargs": {},
+            "response_metadata": {}
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "lc": 1,
+          "type": "constructor",
+          "id": [
+            "langchain_core",
+            "messages",
+            "AIMessage"
+          ],
+          "kwargs": {
+            "content": "I couldn't find any secondary keywords. I'll proceed with just the primary keyword for now.",
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "additional_kwargs": {},
+            "response_metadata": {}
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "lc": 1,
+          "type": "constructor",
+          "id": [
+            "langchain_core",
+            "messages",
+            "AIMessage"
+          ],
+          "kwargs": {
+            "content": "I couldn't find any secondary keywords. I'll proceed with just the primary keyword for now.",
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "additional_kwargs": {},
+            "response_metadata": {}
+          }
+        },
+        {
+          "lc": 1,
+          "type": "constructor",
+          "id": [
+            "langchain_core",
+            "messages",
+            "AIMessage"
+          ],
+          "kwargs": {
+            "content": "I couldn't find any secondary keywords. I'll proceed with just the primary keyword for now.",
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "additional_kwargs": {},
+            "response_metadata": {}
+          }
+        },
+        {
+          "lc": 1,
+          "type": "constructor",
+          "id": [
+            "langchain_core",
+            "messages",
+            "AIMessage"
+          ],
+          "kwargs": {
+            "content": "I couldn't find any secondary keywords. I'll proceed with just the primary keyword for now.",
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "additional_kwargs": {},
+            "response_metadata": {}
+          }
+        },
+        {
+          "lc": 1,
+          "type": "constructor",
+          "id": [
+            "langchain_core",
+            "messages",
+            "AIMessage"
+          ],
+          "kwargs": {
+            "content": "I couldn't find any secondary keywords. I'll proceed with just the primary keyword for now.",
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "additional_kwargs": {},
+            "response_metadata": {}
+          }
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        }
+      ],
+      "apiKey": "AIzaSyCXtEUadPIwJrxvskOFbKHxSEzCJe2vjUs",
+      "data": {
+        "apiKey": "AIzaSyCXtEUadPIwJrxvskOFbKHxSEzCJe2vjUs",
+        "topic": "happy leaving",
+        "targetLocation": "United States",
+        "secondaryKeywords": [
+          "happy leaving benefits",
+          "happy leaving guide"
+        ],
+        "suggestedTitles": [],
+        "referenceUrls": [],
+        "referenceFiles": [],
+        "interlinks": [],
+        "brandVoice": "Default",
+        "blogGuideline": "Default",
+        "llmModel": "gemini-2.5-flash",
+        "language": "English",
+        "outline": [],
+        "blogContent": "",
+        "primaryKeyword": "happy leaving",
+        "title": "The Art of Happy Leaving: Making Your Next Move with Joy"
+      },
+      "outline": [
+        {
+          "id": "1",
+          "name": "Understanding 'Happy Leaving': More Than Just a Farewell",
+          "items": [
+            {
+              "id": "11",
+              "name": "Defining 'Happy Leaving': A Deeper Perspective"
+            },
+            {
+              "id": "12",
+              "name": "The Distinction Between 'Happy' and 'Well' Leaving"
+            },
+            {
+              "id": "13",
+              "name": "Cultivating Positive Legacies Through Departure"
+            },
+            {
+              "id": "14",
+              "name": "The Psychological Impact of Intentional Goodbyes"
+            }
+          ]
+        },
+        {
+          "id": "2",
+          "name": "The Psychology of Letting Go: Cultivating a Positive Mindset for Change",
+          "items": [
+            {
+              "id": "21",
+              "name": "Understanding the Core Principles of Letting Go"
+            },
+            {
+              "id": "22",
+              "name": "Overcoming Emotional Barriers to Embracing Change"
+            },
+            {
+              "id": "23",
+              "name": "Practical Strategies for Cultivating a Positive Mindset"
+            },
+            {
+              "id": "24",
+              "name": "The Transformative Benefits of Embracing Release"
+            }
+          ]
+        },
+        {
+          "id": "3",
+          "name": "Strategic Planning for a Joyful Transition: Preparing Your Next Move",
+          "items": [
+            {
+              "id": "31",
+              "name": "Envisioning Your Ideal Future: Setting Clear Goals"
+            },
+            {
+              "id": "32",
+              "name": "Building Your Step-by-Step Transition Roadmap"
+            },
+            {
+              "id": "33",
+              "name": "Navigating Emotional Landscapes: Embracing Change with Confidence"
+            },
+            {
+              "id": "34",
+              "name": "The Art of a Thoughtful Farewell: Strengthening Bonds"
+            }
+          ]
+        },
+        {
+          "id": "4",
+          "name": "Navigating the Departure: Practical Steps for a Smooth Exit",
+          "items": [
+            {
+              "id": "41",
+              "name": "Strategic Communication for a Positive Departure"
+            },
+            {
+              "id": "42",
+              "name": "Seamless Handover and Knowledge Transfer"
+            },
+            {
+              "id": "43",
+              "name": "Preserving Professional Relationships and Your Reputation"
+            },
+            {
+              "id": "44",
+              "name": "Navigating Exit Interviews and Final Details"
+            }
+          ]
+        },
+        {
+          "id": "5",
+          "name": "Embracing the New Beginning: Settling In with Optimism",
+          "items": [
+            {
+              "id": "51",
+              "name": "Cultivating an Optimistic Outlook for Your Next Chapter"
+            },
+            {
+              "id": "52",
+              "name": "Strategic Settling: Making Your New Space Your Own"
+            },
+            {
+              "id": "53",
+              "name": "Building Connections: Finding Your Tribe in a New Place"
+            },
+            {
+              "id": "54",
+              "name": "Embracing Challenges as Stepping Stones to Joy"
+            }
+          ]
+        },
+        {
+          "id": "6",
+          "name": "The Lasting Benefits of Mindful Transitions",
+          "items": [
+            {
+              "id": "61",
+              "name": "Cultivating Emotional Resilience and Calm"
+            },
+            {
+              "id": "62",
+              "name": "Fostering Self-Awareness and Personal Growth"
+            },
+            {
+              "id": "63",
+              "name": "Building Adaptability for Future Changes"
+            },
+            {
+              "id": "64",
+              "name": "Enhancing Overall Well-being and Lasting Joy"
+            }
+          ]
+        },
+        {
+          "id": "7",
+          "name": "Conclusion: Mastering the Art of Happy Leaving",
+          "items": [
+            {
+              "id": "71",
+              "name": "Embracing the Power of Intentional Departure"
+            },
+            {
+              "id": "72",
+              "name": "The Lasting Legacy of a Graceful Exit"
+            },
+            {
+              "id": "73",
+              "name": "Cultivating Future Happiness Through Letting Go"
+            },
+            {
+              "id": "74",
+              "name": "Your Continuous Journey of Joyful Transitions"
+            }
+          ]
+        }
+      ],
+      "outlineApproved": true,
+      "draft": "# The Art of Happy Leaving: Making Your Next Move with Joy\n\n\n\n## Understanding 'Happy Leaving': More Than Just a Farewell\n\nThe phrase \"happy leaving\" might initially sound like a contradiction. We often associate goodbyes with sadness, regret, or at best, neutrality. However, the art of happy leaving transcends a simple farewell; it's a profound approach to transitions, embracing joy, intention, and a forward-looking perspective. It's about consciously shaping your departure to reflect positivity and growth, rather than just an exit.\n\n### Defining 'Happy Leaving': A Deeper Perspective\n\nAt its core, 'happy leaving' is about embracing transitions with a sense of purpose and contentment, rather than trepidation or relief. It’s an intentional act where you acknowledge past contributions, celebrate growth, and enthusiastically anticipate future opportunities. This isn't about ignoring any difficulties or challenges that might have led to a departure, but rather choosing to frame the end of one chapter as the joyful beginning of another. It involves a mindful process of wrapping up, expressing gratitude, and setting the stage for what’s next, all while maintaining a positive emotional state.\n\n### The Distinction Between 'Happy' and 'Well' Leaving\n\nWhile both are desirable, there's a significant difference between leaving \"well\" and happy leaving. Leaving \"well\" typically implies handling a departure professionally, completing tasks, training successors, and maintaining good relationships – essentially, not burning bridges. This is crucial for reputation and future networking. However, happy leaving goes a step further. It encompasses all aspects of leaving well but adds an emotional layer of genuine joy, fulfillment, and a clear conscience. It's not just about what you *do* during your departure, but how you *feel* about it – approaching the change with optimism and excitement for what lies ahead, rather than just obligation.\n\n### Cultivating Positive Legacies Through Departure\n\nA truly happy leaving allows you to cultivate a positive legacy that endures beyond your physical presence. This involves more than just completing your final tasks; it means ensuring a smooth handover, sharing institutional knowledge, expressing sincere appreciation to colleagues and mentors, and leaving systems or projects in a better state than you found them. By taking these intentional steps, you not only make the transition easier for those remaining but also solidify your reputation as someone who acts with integrity and cares deeply about their work and relationships. This mindful approach ensures that your final act is one of contribution and positive impact, fostering goodwill that can benefit you and your network long-term.\n\n### The Psychological Impact of Intentional Goodbyes\n\nThe act of an intentional and happy leaving can have profound psychological benefits. Rather than feeling like a victim of circumstance or being weighed down by unresolved emotions, taking control of your departure empowers you. It fosters a sense of agency, reduces stress, and prevents potential regrets. This proactive approach allows for emotional closure, enabling you to fully embrace new beginnings without lingering negativity from past experiences. By consciously choosing to leave with positivity and intention, you reinforce a resilient mindset, proving to yourself that you can navigate change gracefully and emerge stronger and happier on the other side. This positive psychological framing of transitions is key to continuous personal and professional growth.\n\n## The Psychology of Letting Go: Cultivating a Positive Mindset for Change\n\nEmbracing change can often feel daunting, yet it holds the key to personal growth and new beginnings. The art of \"happy leaving\"—departing from old habits, situations, or mindsets with a sense of optimism and joy—is deeply rooted in our psychological approach to transitions. By understanding the mental frameworks that support this process, we can cultivate a positive mindset that transforms apprehension into anticipation.\n\n### Understanding the Core Principles of Letting Go\n\nAt its heart, letting go is about conscious release. It's an active decision to detach from what no longer serves us, making space for new experiences and opportunities. This isn't about forgetting or dismissing the past, but rather re-framing its role in our present and future. Key principles include:\n\n*   **Acceptance:** Acknowledging the reality of a situation and accepting that change is inevitable.\n*   **Detachment:** Reducing emotional over-identification with past events or outcomes.\n*   **Forward Focus:** Shifting attention from what was to what can be, embracing the potential inherent in a \"happy leaving.\"\n\n### Overcoming Emotional Barriers to Embracing Change\n\nThe path to a positive mindset isn't always smooth. We often face emotional barriers such as fear of the unknown, guilt, regret, or a deep-seated resistance to letting go of familiarity. These feelings are normal, but they can impede our ability to move forward joyfully. Strategies to overcome them include:\n\n*   **Mindfulness:** Practicing awareness of our emotions without judgment, allowing us to process them constructively.\n*   **Self-Compassion:** Treating ourselves with kindness and understanding during times of transition, recognizing that letting go is a process.\n*   **Reframing Narratives:** Consciously changing negative self-talk into positive affirmations about growth and new possibilities.\n\n### Practical Strategies for Cultivating a Positive Mindset\n\nCultivating a mindset conducive to \"happy leaving\" involves intentional practices that reinforce positive thinking and emotional resilience.\n\n*   **Set Clear Intentions:** Define what you aim to achieve by letting go and focus on the positive outcomes.\n*   **Practice Gratitude:** Appreciate the lessons learned from past experiences, even challenging ones, and find gratitude for the new opportunities ahead.\n*   **Visualize Success:** Imagine yourself thriving in your new situation or with your new mindset, reinforcing positive expectations.\n*   **Build a Support System:** Surround yourself with individuals who encourage your growth and offer constructive perspectives.\n\n### The Transformative Benefits of Embracing Release\n\nEmbracing the process of letting go with a positive outlook offers profound benefits. It liberates us from the weight of the past, fosters emotional freedom, and empowers us to live more authentically. A \"happy leaving\" paves the way for reduced stress, enhanced creativity, deeper relationships, and an overall sense of peace and contentment as we navigate life's inevitable changes. This psychological shift isn't just about coping with change; it's about actively shaping a future filled with possibility and joy.\n\n## Strategic Planning for a Joyful Transition: Preparing Your Next Move\n\nEmbarking on a new chapter, whether it's a career change, a relocation, or a significant life pivot, offers a profound opportunity for growth and renewal. The secret to a truly **happy leaving** lies not in impulsivity, but in thoughtful, strategic planning. This isn't just about logistics; it's about consciously shaping your future to align with your deepest aspirations, ensuring that each step forward is taken with joy and purpose. By laying a robust foundation, you can transform potential anxieties into excited anticipation, making your departure a celebrated launch into what's next.\n\n### Envisioning Your Ideal Future: Setting Clear Goals\n\nBefore you can chart a course, you must first define your destination. Envisioning your ideal future is the crucial first step in any successful **happy leaving**. What does \"success\" look like in this new phase? What values will guide your decisions? Take time to reflect deeply on your desires, your non-negotiables, and the kind of life you wish to build.\n*   **Identify Your \"Why\":** Understand the core motivations behind your move. Is it personal growth, a desire for new experiences, or a pursuit of passion?\n*   **Define Tangible Outcomes:** Translate your vision into specific, measurable, achievable, relevant, and time-bound (SMART) goals. For instance, if relocating, specify the type of community, housing, and amenities you seek. If changing careers, outline the industry, role, and company culture you desire.\n*   **Visualize Success:** Regularly visualize yourself thriving in your new environment or role. This powerful practice reinforces your commitment and helps maintain a positive mindset throughout the transition.\n\n### Building Your Step-by-Step Transition Roadmap\n\nOnce your goals are crystal clear, it’s time to construct a practical roadmap. A well-structured plan breaks down the daunting prospect of change into manageable, actionable steps, making a **happy leaving** feel less overwhelming and more like an exciting project.\n*   **Break It Down:** Divide your overall transition into smaller, sequential tasks. For example, if moving, tasks might include decluttering, researching moving companies, updating addresses, and packing specific rooms.\n*   **Set Realistic Timelines:** Assign realistic deadlines to each step. This creates a sense of momentum and helps you track progress effectively. Be flexible, but maintain accountability.\n*   **Identify Resources:** Determine what resources you’ll need – financial, informational, or human. Who can offer support, advice, or practical help? Don't hesitate to lean on your network.\n*   **Contingency Planning:** Anticipate potential challenges and develop backup plans. Thinking ahead about \"what ifs\" can significantly reduce stress if unexpected issues arise.\n\n### Navigating Emotional Landscapes: Embracing Change with Confidence\n\nEven the most positive transitions come with an emotional component. A truly **happy leaving** acknowledges and addresses these feelings, transforming apprehension into empowered confidence. It's natural to experience a mix of excitement, nostalgia, and even a touch of fear.\n*   **Acknowledge and Process Emotions:** Give yourself permission to feel all emotions without judgment. Journaling, talking to trusted friends, or seeking professional guidance can be invaluable tools for processing feelings of loss, uncertainty, or excitement.\n*   **Focus on Growth:** Reframe change as an opportunity for personal and professional development. Each new experience expands your horizons and strengthens your resilience.\n*   **Practice Self-Care:** During periods of significant change, self-care is paramount. Ensure you maintain healthy habits regarding sleep, nutrition, exercise, and stress management.\n*   **Build a Support System:** Surround yourself with people who uplift and encourage you. Share your journey with those who can provide emotional support and practical advice.\n\n### The Art of a Thoughtful Farewell: Strengthening Bonds\n\nA truly **happy leaving** extends beyond your personal journey; it encompasses the relationships you leave behind. A thoughtful farewell isn't just a formality; it's an opportunity to reinforce bonds, express gratitude, and leave a positive lasting impression.\n*   **Express Gratitude:** Take the time to thank individuals who have supported you, mentored you, or simply been a positive presence in your life. A heartfelt message, a small gift, or a personal conversation can make a significant impact.\n*   **Maintain Connections:** Discuss how you plan to stay in touch with friends, family, and colleagues. In today's digital age, distance doesn't have to mean disconnection.\n*   **Leave Things in Order:** Professionally, ensure a smooth handover of responsibilities. Personally, tie up loose ends and fulfill any commitments. This demonstrates respect and consideration.\n*   **Celebrate the Past, Embrace the Future:** Organize a farewell gathering or spend quality time with loved ones to celebrate shared memories. This allows for closure and helps everyone embrace your new chapter with warmth and good wishes, cementing the essence of a truly **happy leaving**.\n\n## Navigating the Departure: Practical Steps for a Smooth Exit\n\nA graceful exit from a role is just as important as a strong entry. To achieve a truly \"happy leaving\" experience, it's crucial to approach your departure with professionalism and strategic foresight. By carefully managing communication, ensuring a seamless handover, preserving your professional network, and handling final details with care, you can transition to your next opportunity with joy and integrity.\n\n### Strategic Communication for a Positive Departure\n\nEffective communication forms the cornerstone of a positive departure. Once you've made the decision to move on, introspection about your motivations and career goals will help you communicate with clarity and purpose.\n\n*   **Timely Notice:** Provide ample notice to your employer. While two weeks is standard, consider offering a longer period if your role demands more extensive transition planning. This courtesy demonstrates respect and minimizes disruption for your team and the organization.\n*   **In-Person Conversation:** Schedule a private meeting with your supervisor to discuss your intentions in person. This shows consideration and respect, setting a positive tone for your departure. Be honest about your reasons for leaving, focusing on your growth and future aspirations rather than dwelling on any negatives of your current role.\n*   **Express Gratitude:** Articulate your appreciation for the opportunities, experiences, and relationships you've gained during your tenure.\n*   **Professional Resignation Letter:** Follow up your conversation with a well-crafted resignation letter that is professional and avoids assigning blame.\n\n### Seamless Handover and Knowledge Transfer\n\nA thorough handover is vital for ensuring business continuity and allowing you to leave with a sense of accomplishment. It prevents loss of institutional memory and sets your successor up for success, contributing to your \"happy leaving\" experience.\n\n*   **Early Start:** Begin documenting your tasks and projects as soon as you give notice, rather than waiting until your final week.\n*   **Comprehensive Documentation:** Create detailed records of your responsibilities, processes, ongoing projects, key deadlines, and essential contacts. Include information on systems and platforms used, along with access details and troubleshooting tips.\n*   **Knowledge-Transfer Sessions:** Facilitate dedicated meetings with your successor or manager to transfer knowledge that can't be easily put on paper, sharing insights, experiences, and best practices. Offer to train your replacement if applicable.\n*   **Accessibility:** Ensure all handover documentation is clear, well-organized, and stored in an easily accessible shared location.\n\n### Preserving Professional Relationships and Your Reputation\n\nHow you leave a job can significantly impact your professional reputation and future career prospects. Maintaining integrity and positive relationships is key to a truly \"happy leaving.\"\n\n*   **Maintain Professionalism:** Continue to perform your duties diligently until your last day. Your commitment and work ethic during this period will leave a lasting positive impression.\n*   **Avoid Negative Remarks:** Refrain from speaking negatively about your employer, colleagues, or the company, especially on social media. Word travels quickly within industries, and burning bridges can tarnish your reputation.\n*   **Express Appreciation:** Send personalized thank-you notes or farewell messages to colleagues and supervisors, acknowledging their support and the positive experiences you've shared.\n*   **Stay Connected:** Leverage platforms like LinkedIn to stay in touch with former colleagues and supervisors. These connections can serve as valuable references and networking opportunities in the future.\n\n### Navigating Exit Interviews and Final Details\n\nThe exit interview is often the final formal step in the departure process. Approach it as an opportunity to provide constructive feedback and clarify any remaining administrative details, completing your \"happy leaving\" journey.\n\n*   **Understand the Purpose:** Exit interviews are a chance for the company to gather insights into the employee experience and identify areas for improvement. While you are not always obligated to participate, doing so can demonstrate integrity and professionalism.\n*   **Prepare Thoughtfully:** Before the interview, reflect on your experiences and identify a few key points you wish to share, focusing on constructive criticism framed around your own experiences. Aim to include positive acknowledgments alongside any feedback.\n*   **Be Professional and Tactful:** Maintain a calm, respectful, and objective demeanor. Avoid personal attacks and focus on specific issues and potential improvements. When discussing why you are leaving, emphasize what is drawing you to your new role rather than what pushed you away from the current one.\n*   **Clarify Final Logistics:** Use this opportunity to confirm important final details with HR, such as:\n    *   When to expect your final paycheck and any accrued benefits.\n    *   How your health insurance or other benefits continue, including COBRA options.\n    *   The process for returning company property (equipment, keys, IDs).\n    *   How your employment will be referenced in the future.\n\nBy taking these practical steps, you can ensure your departure is smooth, professional, and culminates in a truly \"happy leaving\" that benefits both you and your former organization.\n\n---\n**Sources:**\n https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQG7PuOPJlZQluJNfhB_BV7kJ2N3MS0RSLHGMmjeRrxRgOSQz_yLAwSArmt1gLxZ_cyRtV3L0LBRzL4uuJ7Xq6uogRWhAGg_4bhlFwCB2ey1RLJEZhRQwYJA5BKdCPXGyDJ4DYcUdOxllspmafS2JMIy7aokeORL38BWJz-20Dp0sMwOI7TWYo7WEvsSEk2m5_7bLQra19LsMnfJyUyvKgIBJ-s1GonST8g3kh26fLFfunYv\n https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGrhYfO_glTsS1I-91WIXvW6eoW0MLj5k4qWZct86lrec8kp0hAwGo8WMK7uFjeXeScZowCdszjNDqrYtg5Dt9_szGsAz_nMb47ltTu0-5YeqdP6ANj2dei6oOtb3XG02dLnvU10Gfa9WFLPbk40W1xfwWLHXX_Zwv9HU4Q51ua9qEFW7s_NsXDBVUhGPx5uwXzHpR_Vf1_roc\n https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQF0zvMBTX2YlOFK61m9Sl6tFPB5e0cc3z0XmOtChwsP5zjiVwmHhlTygG78ieyytI_yXzXSiSbCSUt-QdW9j_g1jITNrQWaBF_z0PWhJj8N8aI1-je7oL1XeJTx8WmtYyHS1M3mzA==\n https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHgPvA1nbaRuHHs49pOpAZ2Yd1olY2ejdGg5U1BrCmCY9zKpNv0-zBn4elmUW_WO9DxHwPk4igd--WpPyGnKbR6y0ju1YHz3qj-rEBXFR5bJvmG4C5uHwEc4LPmxdV7WNJSeW-dcbmdDcHe2TWb2Yaf7c7w\n https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGRkU6nXVVE1Z-i5571f6189dDDi-hLokxnoY-B4hIr91FCdHvcPWJ2yG7n65BCd_4RM55B4vNGzeOyxVT1Rz8ubIRxJfJ66mFTzqIl86pqMpKUh4OPPhoPQFd3574YKnkNfA3rBCFbsxlr_px-4HSR4_YelP9u_4mCNG8FDI5Q_VEBSlQSljfe5NM2d_UMDuDEmr2jow",
+      "progress": {
+        "sectionIndex": 4
+      },
+      "preferences": {
+        "automationLevel": "guided",
+        "skipOptionalSteps": false,
+        "autoSelectBestOptions": false
+      },
+      "policy": {
+        "referencesUsage": "both",
+        "grounding": true
+      },
+      "userProvidedFields": {},
+      "autoFillFields": {},
+      "trace": [
+        {
+          "step": "KeywordResearch.primaryCandidates",
+          "info": {
+            "count": 41
+          },
+          "at": 1764586478313
+        },
+        {
+          "step": "KeywordResearch.primaryCandidates",
+          "info": {
+            "count": 41
+          },
+          "at": 1764586478313
+        },
+        {
+          "step": "KeywordResearch.secondaryCandidates",
+          "info": {
+            "count": 3
+          },
+          "at": 1764586744890
+        },
+        {
+          "step": "KeywordResearch.primaryCandidates",
+          "info": {
+            "count": 41
+          },
+          "at": 1764586478313
+        },
+        {
+          "step": "KeywordResearch.secondaryCandidates",
+          "info": {
+            "count": 3
+          },
+          "at": 1764586744890
+        },
+        {
+          "step": "KeywordResearch.primaryCandidates",
+          "info": {
+            "count": 41
+          },
+          "at": 1764586777073
+        },
+        {
+          "step": "KeywordResearch.primaryCandidates",
+          "info": {
+            "count": 41
+          },
+          "at": 1764586478313
+        },
+        {
+          "step": "KeywordResearch.secondaryCandidates",
+          "info": {
+            "count": 3
+          },
+          "at": 1764586744890
+        },
+        {
+          "step": "KeywordResearch.primaryCandidates",
+          "info": {
+            "count": 41
+          },
+          "at": 1764586777073
+        },
+        {
+          "step": "KeywordResearch.noSecondaryKeywordsFound",
+          "info": {},
+          "at": 1764586787167
+        },
+        {
+          "step": "KeywordResearch.noSecondaryKeywordsFound",
+          "info": {},
+          "at": 1764586787710
+        },
+        {
+          "step": "KeywordResearch.noSecondaryKeywordsFound",
+          "info": {},
+          "at": 1764586788174
+        },
+        {
+          "step": "KeywordResearch.noSecondaryKeywordsFound",
+          "info": {},
+          "at": 1764586788691
+        },
+        {
+          "step": "KeywordResearch.secondaryCandidates",
+          "info": {
+            "count": 7
+          },
+          "at": 1764586789020
+        },
+        {
+          "step": "KeywordResearch.primaryCandidates",
+          "info": {
+            "count": 41
+          },
+          "at": 1764586478313
+        },
+        {
+          "step": "KeywordResearch.secondaryCandidates",
+          "info": {
+            "count": 3
+          },
+          "at": 1764586744890
+        },
+        {
+          "step": "KeywordResearch.primaryCandidates",
+          "info": {
+            "count": 41
+          },
+          "at": 1764586777073
+        },
+        {
+          "step": "KeywordResearch.noSecondaryKeywordsFound",
+          "info": {},
+          "at": 1764586787167
+        },
+        {
+          "step": "KeywordResearch.noSecondaryKeywordsFound",
+          "info": {},
+          "at": 1764586787710
+        },
+        {
+          "step": "KeywordResearch.noSecondaryKeywordsFound",
+          "info": {},
+          "at": 1764586788174
+        },
+        {
+          "step": "KeywordResearch.noSecondaryKeywordsFound",
+          "info": {},
+          "at": 1764586788691
+        },
+        {
+          "step": "KeywordResearch.secondaryCandidates",
+          "info": {
+            "count": 7
+          },
+          "at": 1764586789020
+        },
+        {
+          "step": "TitleGeneration.generated",
+          "info": {
+            "count": 5
+          },
+          "at": 1764586803683
+        },
+        {
+          "step": "KeywordResearch.primaryCandidates",
+          "info": {
+            "count": 41
+          },
+          "at": 1764586478313
+        },
+        {
+          "step": "KeywordResearch.secondaryCandidates",
+          "info": {
+            "count": 3
+          },
+          "at": 1764586744890
+        },
+        {
+          "step": "KeywordResearch.primaryCandidates",
+          "info": {
+            "count": 41
+          },
+          "at": 1764586777073
+        },
+        {
+          "step": "KeywordResearch.noSecondaryKeywordsFound",
+          "info": {},
+          "at": 1764586787167
+        },
+        {
+          "step": "KeywordResearch.noSecondaryKeywordsFound",
+          "info": {},
+          "at": 1764586787710
+        },
+        {
+          "step": "KeywordResearch.noSecondaryKeywordsFound",
+          "info": {},
+          "at": 1764586788174
+        },
+        {
+          "step": "KeywordResearch.noSecondaryKeywordsFound",
+          "info": {},
+          "at": 1764586788691
+        },
+        {
+          "step": "KeywordResearch.secondaryCandidates",
+          "info": {
+            "count": 7
+          },
+          "at": 1764586789020
+        },
+        {
+          "step": "TitleGeneration.generated",
+          "info": {
+            "count": 5
+          },
+          "at": 1764586803683
+        },
+        {
+          "step": "DiscoveryNode.generatedOutline",
+          "info": {
+            "h2Count": 7
+          },
+          "at": 1764586863383
+        },
+        {
+          "step": "KeywordResearch.primaryCandidates",
+          "info": {
+            "count": 41
+          },
+          "at": 1764586478313
+        },
+        {
+          "step": "KeywordResearch.secondaryCandidates",
+          "info": {
+            "count": 3
+          },
+          "at": 1764586744890
+        },
+        {
+          "step": "KeywordResearch.primaryCandidates",
+          "info": {
+            "count": 41
+          },
+          "at": 1764586777073
+        },
+        {
+          "step": "KeywordResearch.noSecondaryKeywordsFound",
+          "info": {},
+          "at": 1764586787167
+        },
+        {
+          "step": "KeywordResearch.noSecondaryKeywordsFound",
+          "info": {},
+          "at": 1764586787710
+        },
+        {
+          "step": "KeywordResearch.noSecondaryKeywordsFound",
+          "info": {},
+          "at": 1764586788174
+        },
+        {
+          "step": "KeywordResearch.noSecondaryKeywordsFound",
+          "info": {},
+          "at": 1764586788691
+        },
+        {
+          "step": "KeywordResearch.secondaryCandidates",
+          "info": {
+            "count": 7
+          },
+          "at": 1764586789020
+        },
+        {
+          "step": "TitleGeneration.generated",
+          "info": {
+            "count": 5
+          },
+          "at": 1764586803683
+        },
+        {
+          "step": "DiscoveryNode.generatedOutline",
+          "info": {
+            "h2Count": 7
+          },
+          "at": 1764586863383
+        },
+        {
+          "step": "ProposalNode.generatedSection",
+          "info": {
+            "sectionIndex": 0,
+            "section": "Understanding 'Happy Leaving': More Than Just a Farewell"
+          },
+          "at": 1764586876700
+        },
+        {
+          "step": "ProposalNode.generatedSection",
+          "info": {
+            "sectionIndex": 1,
+            "section": "The Psychology of Letting Go: Cultivating a Positive Mindset for Change"
+          },
+          "at": 1764586882444
+        },
+        {
+          "step": "ProposalNode.generatedSection",
+          "info": {
+            "sectionIndex": 2,
+            "section": "Strategic Planning for a Joyful Transition: Preparing Your Next Move"
+          },
+          "at": 1764586891404
+        },
+        {
+          "step": "ProposalNode.generatedSection",
+          "info": {
+            "sectionIndex": 3,
+            "section": "Navigating the Departure: Practical Steps for a Smooth Exit"
+          },
+          "at": 1764586910514
+        }
+      ],
+      "halt": null,
+      "keywordCandidates": [
+        {
+          "text": "happy leaving tutorial",
+          "volume": 5865,
+          "difficulty": -0.69,
+          "source": "seed",
+          "score": 0.8611013613252418
+        },
+        {
+          "text": "happy leaving checklist",
+          "volume": 7252,
+          "difficulty": 0.38,
+          "source": "seed",
+          "score": 0.8324175824175825
+        },
+        {
+          "text": "happy leaving benefits",
+          "volume": 2668,
+          "difficulty": -0.84,
+          "source": "seed",
+          "score": 0.609040511727079
+        },
+        {
+          "text": "happy leaving for beginners",
+          "volume": 217,
+          "difficulty": -0.66,
+          "source": "seed",
+          "score": 0.3752747252747253
+        },
+        {
+          "text": "happy leaving best practices",
+          "volume": 866,
+          "difficulty": 0,
+          "source": "seed",
+          "score": 0.33996719698212235
+        },
+        {
+          "text": "happy leaving vs alternatives",
+          "volume": 336,
+          "difficulty": 0.64,
+          "source": "seed",
+          "score": 0.20685255043463996
+        },
+        {
+          "text": "happy leaving guide",
+          "volume": 409,
+          "difficulty": 0.89,
+          "source": "seed",
+          "score": 0.1787379038871576
+        }
+      ],
+      "titleCandidates": [
+        "The Art of Happy Leaving: Making Your Next Move with Joy",
+        "Happy Leaving: How to Transition Smoothly and Positively",
+        "Embracing Change: Your Guide to a Happy Leaving Experience",
+        "Beyond Goodbyes: Cultivating a Happy Leaving Mindset",
+        "Why Happy Leaving is the Key to Your Next Big Adventure"
+      ],
+      "currentStep": "generation",
+      "toolOutputs": [
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "primary",
+            "candidates": [
+              {
+                "text": "happy",
+                "volume": 3350000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.9974999999999999
+              },
+              {
+                "text": "leaving",
+                "volume": 450000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.48058306044042975
+              },
+              {
+                "text": "happy days",
+                "volume": 550000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.41849398939075977
+              },
+              {
+                "text": "happy leaving",
+                "volume": 480,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3950698526229063
+              },
+              {
+                "text": "happy ever after",
+                "volume": 165000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.35203691293198924
+              },
+              {
+                "text": "absence",
+                "volume": 550000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.34849398939075976
+              },
+              {
+                "text": "after ever happy",
+                "volume": 135000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.34666363424689023
+              },
+              {
+                "text": "happy trails",
+                "volume": 110000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3446859020093077
+              },
+              {
+                "text": "happy music",
+                "volume": 135000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3441636342468902
+              },
+              {
+                "text": "happy home",
+                "volume": 165000,
+                "difficulty": 0.08,
+                "source": "seed",
+                "score": 0.3345369129319892
+              },
+              {
+                "text": "happy holiday",
+                "volume": 246000,
+                "difficulty": 0.14,
+                "source": "seed",
+                "score": 0.33404476538175654
+              },
+              {
+                "text": "happy go lucky",
+                "volume": 60500,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.33081999217889435
+              },
+              {
+                "text": "cleaved",
+                "volume": 450000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.33058306044042973
+              },
+              {
+                "text": "after ever happy netflix",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3250304485792156
+              },
+              {
+                "text": "after ever happy online",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3250304485792156
+              },
+              {
+                "text": "after ever happy watch online",
+                "volume": 140,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.32500895546447517
+              },
+              {
+                "text": "happy valley season 3",
+                "volume": 8100,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.3239346654089214
+              },
+              {
+                "text": "pop culture happy hour",
+                "volume": 4400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.32077196103775923
+              },
+              {
+                "text": "watch after ever happy",
+                "volume": 2400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3204137424587526
+              },
+              {
+                "text": "after ever happy where to watch",
+                "volume": 90,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.3125
+              },
+              {
+                "text": "mr happy",
+                "volume": 40500,
+                "difficulty": 0.28,
+                "source": "seed",
+                "score": 0.2622378063888283
+              },
+              {
+                "text": "interleaved",
+                "volume": 22200,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.253960106390918
+              },
+              {
+                "text": "encashment",
+                "volume": 9900,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25175706213002735
+              },
+              {
+                "text": "ate and left no crumbs",
+                "volume": 8100,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25143466540892145
+              },
+              {
+                "text": "leaf meaning in urdu",
+                "volume": 8100,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25143466540892145
+              },
+              {
+                "text": "get off work",
+                "volume": 3600,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2506286736061566
+              },
+              {
+                "text": "leaf stalk",
+                "volume": 3600,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2506286736061566
+              },
+              {
+                "text": "lanceolate leaf",
+                "volume": 2900,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2505032971035043
+              },
+              {
+                "text": "fig leaf meaning",
+                "volume": 2400,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25041374245875264
+              },
+              {
+                "text": "wayleave meaning",
+                "volume": 1900,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25032418781400095
+              },
+              {
+                "text": "coriander meaning in malayalam",
+                "volume": 880,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2501414963387076
+              },
+              {
+                "text": "leaf through",
+                "volume": 880,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2501414963387076
+              },
+              {
+                "text": "leaven",
+                "volume": 27100,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.24233774190948412
+              },
+              {
+                "text": "upbeat music",
+                "volume": 110000,
+                "difficulty": 0.11,
+                "source": "seed",
+                "score": 0.24218590200930773
+              },
+              {
+                "text": "play upbeat music",
+                "volume": 1900,
+                "difficulty": 0.04,
+                "source": "seed",
+                "score": 0.24032418781400097
+              },
+              {
+                "text": "pine leaf",
+                "volume": 5400,
+                "difficulty": 0.06,
+                "source": "seed",
+                "score": 0.2359510703272625
+              },
+              {
+                "text": "merry christmas and happy new year",
+                "volume": 135000,
+                "difficulty": 0.47,
+                "source": "seed",
+                "score": 0.23166363424689024
+              },
+              {
+                "text": "leaf fall",
+                "volume": 9900,
+                "difficulty": 0.12,
+                "source": "seed",
+                "score": 0.22175706213002738
+              },
+              {
+                "text": "pain is weakness leaving the body",
+                "volume": 5400,
+                "difficulty": 0.46,
+                "source": "seed",
+                "score": 0.2109510703272625
+              },
+              {
+                "text": "plant leaf",
+                "volume": 9900,
+                "difficulty": 0.33,
+                "source": "seed",
+                "score": 0.16925706213002736
+              },
+              {
+                "text": "leaving present",
+                "volume": 590,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.07508955464475164
+              }
+            ]
+          },
+          "timestamp": 1764586478313
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "primary",
+            "candidates": [
+              {
+                "text": "happy",
+                "volume": 3350000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.9974999999999999
+              },
+              {
+                "text": "leaving",
+                "volume": 450000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.48058306044042975
+              },
+              {
+                "text": "happy days",
+                "volume": 550000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.41849398939075977
+              },
+              {
+                "text": "happy leaving",
+                "volume": 480,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3950698526229063
+              },
+              {
+                "text": "happy ever after",
+                "volume": 165000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.35203691293198924
+              },
+              {
+                "text": "absence",
+                "volume": 550000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.34849398939075976
+              },
+              {
+                "text": "after ever happy",
+                "volume": 135000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.34666363424689023
+              },
+              {
+                "text": "happy trails",
+                "volume": 110000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3446859020093077
+              },
+              {
+                "text": "happy music",
+                "volume": 135000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3441636342468902
+              },
+              {
+                "text": "happy home",
+                "volume": 165000,
+                "difficulty": 0.08,
+                "source": "seed",
+                "score": 0.3345369129319892
+              },
+              {
+                "text": "happy holiday",
+                "volume": 246000,
+                "difficulty": 0.14,
+                "source": "seed",
+                "score": 0.33404476538175654
+              },
+              {
+                "text": "happy go lucky",
+                "volume": 60500,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.33081999217889435
+              },
+              {
+                "text": "cleaved",
+                "volume": 450000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.33058306044042973
+              },
+              {
+                "text": "after ever happy netflix",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3250304485792156
+              },
+              {
+                "text": "after ever happy online",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3250304485792156
+              },
+              {
+                "text": "after ever happy watch online",
+                "volume": 140,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.32500895546447517
+              },
+              {
+                "text": "happy valley season 3",
+                "volume": 8100,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.3239346654089214
+              },
+              {
+                "text": "pop culture happy hour",
+                "volume": 4400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.32077196103775923
+              },
+              {
+                "text": "watch after ever happy",
+                "volume": 2400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3204137424587526
+              },
+              {
+                "text": "after ever happy where to watch",
+                "volume": 90,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.3125
+              },
+              {
+                "text": "mr happy",
+                "volume": 40500,
+                "difficulty": 0.28,
+                "source": "seed",
+                "score": 0.2622378063888283
+              },
+              {
+                "text": "interleaved",
+                "volume": 22200,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.253960106390918
+              },
+              {
+                "text": "encashment",
+                "volume": 9900,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25175706213002735
+              },
+              {
+                "text": "ate and left no crumbs",
+                "volume": 8100,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25143466540892145
+              },
+              {
+                "text": "leaf meaning in urdu",
+                "volume": 8100,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25143466540892145
+              },
+              {
+                "text": "get off work",
+                "volume": 3600,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2506286736061566
+              },
+              {
+                "text": "leaf stalk",
+                "volume": 3600,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2506286736061566
+              },
+              {
+                "text": "lanceolate leaf",
+                "volume": 2900,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2505032971035043
+              },
+              {
+                "text": "fig leaf meaning",
+                "volume": 2400,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25041374245875264
+              },
+              {
+                "text": "wayleave meaning",
+                "volume": 1900,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25032418781400095
+              },
+              {
+                "text": "coriander meaning in malayalam",
+                "volume": 880,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2501414963387076
+              },
+              {
+                "text": "leaf through",
+                "volume": 880,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2501414963387076
+              },
+              {
+                "text": "leaven",
+                "volume": 27100,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.24233774190948412
+              },
+              {
+                "text": "upbeat music",
+                "volume": 110000,
+                "difficulty": 0.11,
+                "source": "seed",
+                "score": 0.24218590200930773
+              },
+              {
+                "text": "play upbeat music",
+                "volume": 1900,
+                "difficulty": 0.04,
+                "source": "seed",
+                "score": 0.24032418781400097
+              },
+              {
+                "text": "pine leaf",
+                "volume": 5400,
+                "difficulty": 0.06,
+                "source": "seed",
+                "score": 0.2359510703272625
+              },
+              {
+                "text": "merry christmas and happy new year",
+                "volume": 135000,
+                "difficulty": 0.47,
+                "source": "seed",
+                "score": 0.23166363424689024
+              },
+              {
+                "text": "leaf fall",
+                "volume": 9900,
+                "difficulty": 0.12,
+                "source": "seed",
+                "score": 0.22175706213002738
+              },
+              {
+                "text": "pain is weakness leaving the body",
+                "volume": 5400,
+                "difficulty": 0.46,
+                "source": "seed",
+                "score": 0.2109510703272625
+              },
+              {
+                "text": "plant leaf",
+                "volume": 9900,
+                "difficulty": 0.33,
+                "source": "seed",
+                "score": 0.16925706213002736
+              },
+              {
+                "text": "leaving present",
+                "volume": 590,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.07508955464475164
+              }
+            ]
+          },
+          "timestamp": 1764586478313
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "secondary",
+            "candidates": [
+              {
+                "text": "encashed cheque",
+                "volume": 2400,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.26953441295546554
+              },
+              {
+                "text": "cash encashment",
+                "volume": 110,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.13046558704453443
+              },
+              {
+                "text": "encashment meaning in insurance",
+                "volume": 20,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.125
+              }
+            ]
+          },
+          "timestamp": 1764586744890
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "primary",
+            "candidates": [
+              {
+                "text": "happy",
+                "volume": 3350000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.9974999999999999
+              },
+              {
+                "text": "leaving",
+                "volume": 450000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.48058306044042975
+              },
+              {
+                "text": "happy days",
+                "volume": 550000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.41849398939075977
+              },
+              {
+                "text": "happy leaving",
+                "volume": 480,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3950698526229063
+              },
+              {
+                "text": "happy ever after",
+                "volume": 165000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.35203691293198924
+              },
+              {
+                "text": "absence",
+                "volume": 550000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.34849398939075976
+              },
+              {
+                "text": "after ever happy",
+                "volume": 135000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.34666363424689023
+              },
+              {
+                "text": "happy trails",
+                "volume": 110000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3446859020093077
+              },
+              {
+                "text": "happy music",
+                "volume": 135000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3441636342468902
+              },
+              {
+                "text": "happy home",
+                "volume": 165000,
+                "difficulty": 0.08,
+                "source": "seed",
+                "score": 0.3345369129319892
+              },
+              {
+                "text": "happy holiday",
+                "volume": 246000,
+                "difficulty": 0.14,
+                "source": "seed",
+                "score": 0.33404476538175654
+              },
+              {
+                "text": "happy go lucky",
+                "volume": 60500,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.33081999217889435
+              },
+              {
+                "text": "cleaved",
+                "volume": 450000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.33058306044042973
+              },
+              {
+                "text": "after ever happy netflix",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3250304485792156
+              },
+              {
+                "text": "after ever happy online",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3250304485792156
+              },
+              {
+                "text": "after ever happy watch online",
+                "volume": 140,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.32500895546447517
+              },
+              {
+                "text": "happy valley season 3",
+                "volume": 8100,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.3239346654089214
+              },
+              {
+                "text": "pop culture happy hour",
+                "volume": 4400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.32077196103775923
+              },
+              {
+                "text": "watch after ever happy",
+                "volume": 2400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3204137424587526
+              },
+              {
+                "text": "after ever happy where to watch",
+                "volume": 90,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.3125
+              },
+              {
+                "text": "mr happy",
+                "volume": 40500,
+                "difficulty": 0.28,
+                "source": "seed",
+                "score": 0.2622378063888283
+              },
+              {
+                "text": "interleaved",
+                "volume": 22200,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.253960106390918
+              },
+              {
+                "text": "encashment",
+                "volume": 9900,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25175706213002735
+              },
+              {
+                "text": "ate and left no crumbs",
+                "volume": 8100,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25143466540892145
+              },
+              {
+                "text": "leaf meaning in urdu",
+                "volume": 8100,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25143466540892145
+              },
+              {
+                "text": "get off work",
+                "volume": 3600,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2506286736061566
+              },
+              {
+                "text": "leaf stalk",
+                "volume": 3600,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2506286736061566
+              },
+              {
+                "text": "lanceolate leaf",
+                "volume": 2900,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2505032971035043
+              },
+              {
+                "text": "fig leaf meaning",
+                "volume": 2400,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25041374245875264
+              },
+              {
+                "text": "wayleave meaning",
+                "volume": 1900,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25032418781400095
+              },
+              {
+                "text": "coriander meaning in malayalam",
+                "volume": 880,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2501414963387076
+              },
+              {
+                "text": "leaf through",
+                "volume": 880,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2501414963387076
+              },
+              {
+                "text": "leaven",
+                "volume": 27100,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.24233774190948412
+              },
+              {
+                "text": "upbeat music",
+                "volume": 110000,
+                "difficulty": 0.11,
+                "source": "seed",
+                "score": 0.24218590200930773
+              },
+              {
+                "text": "play upbeat music",
+                "volume": 1900,
+                "difficulty": 0.04,
+                "source": "seed",
+                "score": 0.24032418781400097
+              },
+              {
+                "text": "pine leaf",
+                "volume": 5400,
+                "difficulty": 0.06,
+                "source": "seed",
+                "score": 0.2359510703272625
+              },
+              {
+                "text": "merry christmas and happy new year",
+                "volume": 135000,
+                "difficulty": 0.47,
+                "source": "seed",
+                "score": 0.23166363424689024
+              },
+              {
+                "text": "leaf fall",
+                "volume": 9900,
+                "difficulty": 0.12,
+                "source": "seed",
+                "score": 0.22175706213002738
+              },
+              {
+                "text": "pain is weakness leaving the body",
+                "volume": 5400,
+                "difficulty": 0.46,
+                "source": "seed",
+                "score": 0.2109510703272625
+              },
+              {
+                "text": "plant leaf",
+                "volume": 9900,
+                "difficulty": 0.33,
+                "source": "seed",
+                "score": 0.16925706213002736
+              },
+              {
+                "text": "leaving present",
+                "volume": 590,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.07508955464475164
+              }
+            ]
+          },
+          "timestamp": 1764586478313
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "secondary",
+            "candidates": [
+              {
+                "text": "encashed cheque",
+                "volume": 2400,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.26953441295546554
+              },
+              {
+                "text": "cash encashment",
+                "volume": 110,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.13046558704453443
+              },
+              {
+                "text": "encashment meaning in insurance",
+                "volume": 20,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.125
+              }
+            ]
+          },
+          "timestamp": 1764586744890
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "primary",
+            "candidates": [
+              {
+                "text": "happy",
+                "volume": 3350000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.9974999999999999
+              },
+              {
+                "text": "leaving",
+                "volume": 450000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.48058306044042975
+              },
+              {
+                "text": "happy days",
+                "volume": 550000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.41849398939075977
+              },
+              {
+                "text": "happy leaving",
+                "volume": 480,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3950698526229063
+              },
+              {
+                "text": "happy ever after",
+                "volume": 165000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.35203691293198924
+              },
+              {
+                "text": "absence",
+                "volume": 550000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.34849398939075976
+              },
+              {
+                "text": "after ever happy",
+                "volume": 135000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.34666363424689023
+              },
+              {
+                "text": "happy trails",
+                "volume": 110000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3446859020093077
+              },
+              {
+                "text": "happy music",
+                "volume": 135000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3441636342468902
+              },
+              {
+                "text": "happy home",
+                "volume": 165000,
+                "difficulty": 0.08,
+                "source": "seed",
+                "score": 0.3345369129319892
+              },
+              {
+                "text": "happy holiday",
+                "volume": 246000,
+                "difficulty": 0.14,
+                "source": "seed",
+                "score": 0.33404476538175654
+              },
+              {
+                "text": "happy go lucky",
+                "volume": 60500,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.33081999217889435
+              },
+              {
+                "text": "cleaved",
+                "volume": 450000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.33058306044042973
+              },
+              {
+                "text": "after ever happy netflix",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3250304485792156
+              },
+              {
+                "text": "after ever happy online",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3250304485792156
+              },
+              {
+                "text": "after ever happy watch online",
+                "volume": 140,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.32500895546447517
+              },
+              {
+                "text": "happy valley season 3",
+                "volume": 8100,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.3239346654089214
+              },
+              {
+                "text": "pop culture happy hour",
+                "volume": 4400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.32077196103775923
+              },
+              {
+                "text": "watch after ever happy",
+                "volume": 2400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3204137424587526
+              },
+              {
+                "text": "after ever happy where to watch",
+                "volume": 90,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.3125
+              },
+              {
+                "text": "mr happy",
+                "volume": 40500,
+                "difficulty": 0.28,
+                "source": "seed",
+                "score": 0.2622378063888283
+              },
+              {
+                "text": "interleaved",
+                "volume": 22200,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.253960106390918
+              },
+              {
+                "text": "encashment",
+                "volume": 9900,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25175706213002735
+              },
+              {
+                "text": "ate and left no crumbs",
+                "volume": 8100,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25143466540892145
+              },
+              {
+                "text": "leaf meaning in urdu",
+                "volume": 8100,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25143466540892145
+              },
+              {
+                "text": "get off work",
+                "volume": 3600,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2506286736061566
+              },
+              {
+                "text": "leaf stalk",
+                "volume": 3600,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2506286736061566
+              },
+              {
+                "text": "lanceolate leaf",
+                "volume": 2900,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2505032971035043
+              },
+              {
+                "text": "fig leaf meaning",
+                "volume": 2400,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25041374245875264
+              },
+              {
+                "text": "wayleave meaning",
+                "volume": 1900,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25032418781400095
+              },
+              {
+                "text": "coriander meaning in malayalam",
+                "volume": 880,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2501414963387076
+              },
+              {
+                "text": "leaf through",
+                "volume": 880,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2501414963387076
+              },
+              {
+                "text": "leaven",
+                "volume": 27100,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.24233774190948412
+              },
+              {
+                "text": "upbeat music",
+                "volume": 110000,
+                "difficulty": 0.11,
+                "source": "seed",
+                "score": 0.24218590200930773
+              },
+              {
+                "text": "play upbeat music",
+                "volume": 1900,
+                "difficulty": 0.04,
+                "source": "seed",
+                "score": 0.24032418781400097
+              },
+              {
+                "text": "pine leaf",
+                "volume": 5400,
+                "difficulty": 0.06,
+                "source": "seed",
+                "score": 0.2359510703272625
+              },
+              {
+                "text": "merry christmas and happy new year",
+                "volume": 135000,
+                "difficulty": 0.47,
+                "source": "seed",
+                "score": 0.23166363424689024
+              },
+              {
+                "text": "leaf fall",
+                "volume": 9900,
+                "difficulty": 0.12,
+                "source": "seed",
+                "score": 0.22175706213002738
+              },
+              {
+                "text": "pain is weakness leaving the body",
+                "volume": 5400,
+                "difficulty": 0.46,
+                "source": "seed",
+                "score": 0.2109510703272625
+              },
+              {
+                "text": "plant leaf",
+                "volume": 9900,
+                "difficulty": 0.33,
+                "source": "seed",
+                "score": 0.16925706213002736
+              },
+              {
+                "text": "leaving present",
+                "volume": 590,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.07508955464475164
+              }
+            ]
+          },
+          "timestamp": 1764586777073
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "primary",
+            "candidates": [
+              {
+                "text": "happy",
+                "volume": 3350000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.9974999999999999
+              },
+              {
+                "text": "leaving",
+                "volume": 450000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.48058306044042975
+              },
+              {
+                "text": "happy days",
+                "volume": 550000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.41849398939075977
+              },
+              {
+                "text": "happy leaving",
+                "volume": 480,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3950698526229063
+              },
+              {
+                "text": "happy ever after",
+                "volume": 165000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.35203691293198924
+              },
+              {
+                "text": "absence",
+                "volume": 550000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.34849398939075976
+              },
+              {
+                "text": "after ever happy",
+                "volume": 135000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.34666363424689023
+              },
+              {
+                "text": "happy trails",
+                "volume": 110000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3446859020093077
+              },
+              {
+                "text": "happy music",
+                "volume": 135000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3441636342468902
+              },
+              {
+                "text": "happy home",
+                "volume": 165000,
+                "difficulty": 0.08,
+                "source": "seed",
+                "score": 0.3345369129319892
+              },
+              {
+                "text": "happy holiday",
+                "volume": 246000,
+                "difficulty": 0.14,
+                "source": "seed",
+                "score": 0.33404476538175654
+              },
+              {
+                "text": "happy go lucky",
+                "volume": 60500,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.33081999217889435
+              },
+              {
+                "text": "cleaved",
+                "volume": 450000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.33058306044042973
+              },
+              {
+                "text": "after ever happy netflix",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3250304485792156
+              },
+              {
+                "text": "after ever happy online",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3250304485792156
+              },
+              {
+                "text": "after ever happy watch online",
+                "volume": 140,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.32500895546447517
+              },
+              {
+                "text": "happy valley season 3",
+                "volume": 8100,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.3239346654089214
+              },
+              {
+                "text": "pop culture happy hour",
+                "volume": 4400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.32077196103775923
+              },
+              {
+                "text": "watch after ever happy",
+                "volume": 2400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3204137424587526
+              },
+              {
+                "text": "after ever happy where to watch",
+                "volume": 90,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.3125
+              },
+              {
+                "text": "mr happy",
+                "volume": 40500,
+                "difficulty": 0.28,
+                "source": "seed",
+                "score": 0.2622378063888283
+              },
+              {
+                "text": "interleaved",
+                "volume": 22200,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.253960106390918
+              },
+              {
+                "text": "encashment",
+                "volume": 9900,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25175706213002735
+              },
+              {
+                "text": "ate and left no crumbs",
+                "volume": 8100,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25143466540892145
+              },
+              {
+                "text": "leaf meaning in urdu",
+                "volume": 8100,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25143466540892145
+              },
+              {
+                "text": "get off work",
+                "volume": 3600,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2506286736061566
+              },
+              {
+                "text": "leaf stalk",
+                "volume": 3600,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2506286736061566
+              },
+              {
+                "text": "lanceolate leaf",
+                "volume": 2900,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2505032971035043
+              },
+              {
+                "text": "fig leaf meaning",
+                "volume": 2400,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25041374245875264
+              },
+              {
+                "text": "wayleave meaning",
+                "volume": 1900,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25032418781400095
+              },
+              {
+                "text": "coriander meaning in malayalam",
+                "volume": 880,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2501414963387076
+              },
+              {
+                "text": "leaf through",
+                "volume": 880,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2501414963387076
+              },
+              {
+                "text": "leaven",
+                "volume": 27100,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.24233774190948412
+              },
+              {
+                "text": "upbeat music",
+                "volume": 110000,
+                "difficulty": 0.11,
+                "source": "seed",
+                "score": 0.24218590200930773
+              },
+              {
+                "text": "play upbeat music",
+                "volume": 1900,
+                "difficulty": 0.04,
+                "source": "seed",
+                "score": 0.24032418781400097
+              },
+              {
+                "text": "pine leaf",
+                "volume": 5400,
+                "difficulty": 0.06,
+                "source": "seed",
+                "score": 0.2359510703272625
+              },
+              {
+                "text": "merry christmas and happy new year",
+                "volume": 135000,
+                "difficulty": 0.47,
+                "source": "seed",
+                "score": 0.23166363424689024
+              },
+              {
+                "text": "leaf fall",
+                "volume": 9900,
+                "difficulty": 0.12,
+                "source": "seed",
+                "score": 0.22175706213002738
+              },
+              {
+                "text": "pain is weakness leaving the body",
+                "volume": 5400,
+                "difficulty": 0.46,
+                "source": "seed",
+                "score": 0.2109510703272625
+              },
+              {
+                "text": "plant leaf",
+                "volume": 9900,
+                "difficulty": 0.33,
+                "source": "seed",
+                "score": 0.16925706213002736
+              },
+              {
+                "text": "leaving present",
+                "volume": 590,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.07508955464475164
+              }
+            ]
+          },
+          "timestamp": 1764586478313
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "secondary",
+            "candidates": [
+              {
+                "text": "encashed cheque",
+                "volume": 2400,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.26953441295546554
+              },
+              {
+                "text": "cash encashment",
+                "volume": 110,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.13046558704453443
+              },
+              {
+                "text": "encashment meaning in insurance",
+                "volume": 20,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.125
+              }
+            ]
+          },
+          "timestamp": 1764586744890
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "primary",
+            "candidates": [
+              {
+                "text": "happy",
+                "volume": 3350000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.9974999999999999
+              },
+              {
+                "text": "leaving",
+                "volume": 450000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.48058306044042975
+              },
+              {
+                "text": "happy days",
+                "volume": 550000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.41849398939075977
+              },
+              {
+                "text": "happy leaving",
+                "volume": 480,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3950698526229063
+              },
+              {
+                "text": "happy ever after",
+                "volume": 165000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.35203691293198924
+              },
+              {
+                "text": "absence",
+                "volume": 550000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.34849398939075976
+              },
+              {
+                "text": "after ever happy",
+                "volume": 135000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.34666363424689023
+              },
+              {
+                "text": "happy trails",
+                "volume": 110000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3446859020093077
+              },
+              {
+                "text": "happy music",
+                "volume": 135000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3441636342468902
+              },
+              {
+                "text": "happy home",
+                "volume": 165000,
+                "difficulty": 0.08,
+                "source": "seed",
+                "score": 0.3345369129319892
+              },
+              {
+                "text": "happy holiday",
+                "volume": 246000,
+                "difficulty": 0.14,
+                "source": "seed",
+                "score": 0.33404476538175654
+              },
+              {
+                "text": "happy go lucky",
+                "volume": 60500,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.33081999217889435
+              },
+              {
+                "text": "cleaved",
+                "volume": 450000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.33058306044042973
+              },
+              {
+                "text": "after ever happy netflix",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3250304485792156
+              },
+              {
+                "text": "after ever happy online",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3250304485792156
+              },
+              {
+                "text": "after ever happy watch online",
+                "volume": 140,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.32500895546447517
+              },
+              {
+                "text": "happy valley season 3",
+                "volume": 8100,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.3239346654089214
+              },
+              {
+                "text": "pop culture happy hour",
+                "volume": 4400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.32077196103775923
+              },
+              {
+                "text": "watch after ever happy",
+                "volume": 2400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3204137424587526
+              },
+              {
+                "text": "after ever happy where to watch",
+                "volume": 90,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.3125
+              },
+              {
+                "text": "mr happy",
+                "volume": 40500,
+                "difficulty": 0.28,
+                "source": "seed",
+                "score": 0.2622378063888283
+              },
+              {
+                "text": "interleaved",
+                "volume": 22200,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.253960106390918
+              },
+              {
+                "text": "encashment",
+                "volume": 9900,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25175706213002735
+              },
+              {
+                "text": "ate and left no crumbs",
+                "volume": 8100,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25143466540892145
+              },
+              {
+                "text": "leaf meaning in urdu",
+                "volume": 8100,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25143466540892145
+              },
+              {
+                "text": "get off work",
+                "volume": 3600,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2506286736061566
+              },
+              {
+                "text": "leaf stalk",
+                "volume": 3600,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2506286736061566
+              },
+              {
+                "text": "lanceolate leaf",
+                "volume": 2900,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2505032971035043
+              },
+              {
+                "text": "fig leaf meaning",
+                "volume": 2400,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25041374245875264
+              },
+              {
+                "text": "wayleave meaning",
+                "volume": 1900,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25032418781400095
+              },
+              {
+                "text": "coriander meaning in malayalam",
+                "volume": 880,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2501414963387076
+              },
+              {
+                "text": "leaf through",
+                "volume": 880,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2501414963387076
+              },
+              {
+                "text": "leaven",
+                "volume": 27100,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.24233774190948412
+              },
+              {
+                "text": "upbeat music",
+                "volume": 110000,
+                "difficulty": 0.11,
+                "source": "seed",
+                "score": 0.24218590200930773
+              },
+              {
+                "text": "play upbeat music",
+                "volume": 1900,
+                "difficulty": 0.04,
+                "source": "seed",
+                "score": 0.24032418781400097
+              },
+              {
+                "text": "pine leaf",
+                "volume": 5400,
+                "difficulty": 0.06,
+                "source": "seed",
+                "score": 0.2359510703272625
+              },
+              {
+                "text": "merry christmas and happy new year",
+                "volume": 135000,
+                "difficulty": 0.47,
+                "source": "seed",
+                "score": 0.23166363424689024
+              },
+              {
+                "text": "leaf fall",
+                "volume": 9900,
+                "difficulty": 0.12,
+                "source": "seed",
+                "score": 0.22175706213002738
+              },
+              {
+                "text": "pain is weakness leaving the body",
+                "volume": 5400,
+                "difficulty": 0.46,
+                "source": "seed",
+                "score": 0.2109510703272625
+              },
+              {
+                "text": "plant leaf",
+                "volume": 9900,
+                "difficulty": 0.33,
+                "source": "seed",
+                "score": 0.16925706213002736
+              },
+              {
+                "text": "leaving present",
+                "volume": 590,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.07508955464475164
+              }
+            ]
+          },
+          "timestamp": 1764586777073
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "secondary",
+            "candidates": [
+              {
+                "text": "happy leaving tutorial",
+                "volume": 5865,
+                "difficulty": -0.69,
+                "source": "seed",
+                "score": 0.8611013613252418
+              },
+              {
+                "text": "happy leaving checklist",
+                "volume": 7252,
+                "difficulty": 0.38,
+                "source": "seed",
+                "score": 0.8324175824175825
+              },
+              {
+                "text": "happy leaving benefits",
+                "volume": 2668,
+                "difficulty": -0.84,
+                "source": "seed",
+                "score": 0.609040511727079
+              },
+              {
+                "text": "happy leaving for beginners",
+                "volume": 217,
+                "difficulty": -0.66,
+                "source": "seed",
+                "score": 0.3752747252747253
+              },
+              {
+                "text": "happy leaving best practices",
+                "volume": 866,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.33996719698212235
+              },
+              {
+                "text": "happy leaving vs alternatives",
+                "volume": 336,
+                "difficulty": 0.64,
+                "source": "seed",
+                "score": 0.20685255043463996
+              },
+              {
+                "text": "happy leaving guide",
+                "volume": 409,
+                "difficulty": 0.89,
+                "source": "seed",
+                "score": 0.1787379038871576
+              }
+            ]
+          },
+          "timestamp": 1764586789020
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "primary",
+            "candidates": [
+              {
+                "text": "happy",
+                "volume": 3350000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.9974999999999999
+              },
+              {
+                "text": "leaving",
+                "volume": 450000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.48058306044042975
+              },
+              {
+                "text": "happy days",
+                "volume": 550000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.41849398939075977
+              },
+              {
+                "text": "happy leaving",
+                "volume": 480,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3950698526229063
+              },
+              {
+                "text": "happy ever after",
+                "volume": 165000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.35203691293198924
+              },
+              {
+                "text": "absence",
+                "volume": 550000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.34849398939075976
+              },
+              {
+                "text": "after ever happy",
+                "volume": 135000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.34666363424689023
+              },
+              {
+                "text": "happy trails",
+                "volume": 110000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3446859020093077
+              },
+              {
+                "text": "happy music",
+                "volume": 135000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3441636342468902
+              },
+              {
+                "text": "happy home",
+                "volume": 165000,
+                "difficulty": 0.08,
+                "source": "seed",
+                "score": 0.3345369129319892
+              },
+              {
+                "text": "happy holiday",
+                "volume": 246000,
+                "difficulty": 0.14,
+                "source": "seed",
+                "score": 0.33404476538175654
+              },
+              {
+                "text": "happy go lucky",
+                "volume": 60500,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.33081999217889435
+              },
+              {
+                "text": "cleaved",
+                "volume": 450000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.33058306044042973
+              },
+              {
+                "text": "after ever happy netflix",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3250304485792156
+              },
+              {
+                "text": "after ever happy online",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3250304485792156
+              },
+              {
+                "text": "after ever happy watch online",
+                "volume": 140,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.32500895546447517
+              },
+              {
+                "text": "happy valley season 3",
+                "volume": 8100,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.3239346654089214
+              },
+              {
+                "text": "pop culture happy hour",
+                "volume": 4400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.32077196103775923
+              },
+              {
+                "text": "watch after ever happy",
+                "volume": 2400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3204137424587526
+              },
+              {
+                "text": "after ever happy where to watch",
+                "volume": 90,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.3125
+              },
+              {
+                "text": "mr happy",
+                "volume": 40500,
+                "difficulty": 0.28,
+                "source": "seed",
+                "score": 0.2622378063888283
+              },
+              {
+                "text": "interleaved",
+                "volume": 22200,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.253960106390918
+              },
+              {
+                "text": "encashment",
+                "volume": 9900,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25175706213002735
+              },
+              {
+                "text": "ate and left no crumbs",
+                "volume": 8100,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25143466540892145
+              },
+              {
+                "text": "leaf meaning in urdu",
+                "volume": 8100,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25143466540892145
+              },
+              {
+                "text": "get off work",
+                "volume": 3600,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2506286736061566
+              },
+              {
+                "text": "leaf stalk",
+                "volume": 3600,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2506286736061566
+              },
+              {
+                "text": "lanceolate leaf",
+                "volume": 2900,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2505032971035043
+              },
+              {
+                "text": "fig leaf meaning",
+                "volume": 2400,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25041374245875264
+              },
+              {
+                "text": "wayleave meaning",
+                "volume": 1900,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25032418781400095
+              },
+              {
+                "text": "coriander meaning in malayalam",
+                "volume": 880,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2501414963387076
+              },
+              {
+                "text": "leaf through",
+                "volume": 880,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2501414963387076
+              },
+              {
+                "text": "leaven",
+                "volume": 27100,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.24233774190948412
+              },
+              {
+                "text": "upbeat music",
+                "volume": 110000,
+                "difficulty": 0.11,
+                "source": "seed",
+                "score": 0.24218590200930773
+              },
+              {
+                "text": "play upbeat music",
+                "volume": 1900,
+                "difficulty": 0.04,
+                "source": "seed",
+                "score": 0.24032418781400097
+              },
+              {
+                "text": "pine leaf",
+                "volume": 5400,
+                "difficulty": 0.06,
+                "source": "seed",
+                "score": 0.2359510703272625
+              },
+              {
+                "text": "merry christmas and happy new year",
+                "volume": 135000,
+                "difficulty": 0.47,
+                "source": "seed",
+                "score": 0.23166363424689024
+              },
+              {
+                "text": "leaf fall",
+                "volume": 9900,
+                "difficulty": 0.12,
+                "source": "seed",
+                "score": 0.22175706213002738
+              },
+              {
+                "text": "pain is weakness leaving the body",
+                "volume": 5400,
+                "difficulty": 0.46,
+                "source": "seed",
+                "score": 0.2109510703272625
+              },
+              {
+                "text": "plant leaf",
+                "volume": 9900,
+                "difficulty": 0.33,
+                "source": "seed",
+                "score": 0.16925706213002736
+              },
+              {
+                "text": "leaving present",
+                "volume": 590,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.07508955464475164
+              }
+            ]
+          },
+          "timestamp": 1764586478313
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "secondary",
+            "candidates": [
+              {
+                "text": "encashed cheque",
+                "volume": 2400,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.26953441295546554
+              },
+              {
+                "text": "cash encashment",
+                "volume": 110,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.13046558704453443
+              },
+              {
+                "text": "encashment meaning in insurance",
+                "volume": 20,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.125
+              }
+            ]
+          },
+          "timestamp": 1764586744890
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "primary",
+            "candidates": [
+              {
+                "text": "happy",
+                "volume": 3350000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.9974999999999999
+              },
+              {
+                "text": "leaving",
+                "volume": 450000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.48058306044042975
+              },
+              {
+                "text": "happy days",
+                "volume": 550000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.41849398939075977
+              },
+              {
+                "text": "happy leaving",
+                "volume": 480,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3950698526229063
+              },
+              {
+                "text": "happy ever after",
+                "volume": 165000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.35203691293198924
+              },
+              {
+                "text": "absence",
+                "volume": 550000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.34849398939075976
+              },
+              {
+                "text": "after ever happy",
+                "volume": 135000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.34666363424689023
+              },
+              {
+                "text": "happy trails",
+                "volume": 110000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3446859020093077
+              },
+              {
+                "text": "happy music",
+                "volume": 135000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3441636342468902
+              },
+              {
+                "text": "happy home",
+                "volume": 165000,
+                "difficulty": 0.08,
+                "source": "seed",
+                "score": 0.3345369129319892
+              },
+              {
+                "text": "happy holiday",
+                "volume": 246000,
+                "difficulty": 0.14,
+                "source": "seed",
+                "score": 0.33404476538175654
+              },
+              {
+                "text": "happy go lucky",
+                "volume": 60500,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.33081999217889435
+              },
+              {
+                "text": "cleaved",
+                "volume": 450000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.33058306044042973
+              },
+              {
+                "text": "after ever happy netflix",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3250304485792156
+              },
+              {
+                "text": "after ever happy online",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3250304485792156
+              },
+              {
+                "text": "after ever happy watch online",
+                "volume": 140,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.32500895546447517
+              },
+              {
+                "text": "happy valley season 3",
+                "volume": 8100,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.3239346654089214
+              },
+              {
+                "text": "pop culture happy hour",
+                "volume": 4400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.32077196103775923
+              },
+              {
+                "text": "watch after ever happy",
+                "volume": 2400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3204137424587526
+              },
+              {
+                "text": "after ever happy where to watch",
+                "volume": 90,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.3125
+              },
+              {
+                "text": "mr happy",
+                "volume": 40500,
+                "difficulty": 0.28,
+                "source": "seed",
+                "score": 0.2622378063888283
+              },
+              {
+                "text": "interleaved",
+                "volume": 22200,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.253960106390918
+              },
+              {
+                "text": "encashment",
+                "volume": 9900,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25175706213002735
+              },
+              {
+                "text": "ate and left no crumbs",
+                "volume": 8100,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25143466540892145
+              },
+              {
+                "text": "leaf meaning in urdu",
+                "volume": 8100,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25143466540892145
+              },
+              {
+                "text": "get off work",
+                "volume": 3600,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2506286736061566
+              },
+              {
+                "text": "leaf stalk",
+                "volume": 3600,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2506286736061566
+              },
+              {
+                "text": "lanceolate leaf",
+                "volume": 2900,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2505032971035043
+              },
+              {
+                "text": "fig leaf meaning",
+                "volume": 2400,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25041374245875264
+              },
+              {
+                "text": "wayleave meaning",
+                "volume": 1900,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25032418781400095
+              },
+              {
+                "text": "coriander meaning in malayalam",
+                "volume": 880,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2501414963387076
+              },
+              {
+                "text": "leaf through",
+                "volume": 880,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2501414963387076
+              },
+              {
+                "text": "leaven",
+                "volume": 27100,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.24233774190948412
+              },
+              {
+                "text": "upbeat music",
+                "volume": 110000,
+                "difficulty": 0.11,
+                "source": "seed",
+                "score": 0.24218590200930773
+              },
+              {
+                "text": "play upbeat music",
+                "volume": 1900,
+                "difficulty": 0.04,
+                "source": "seed",
+                "score": 0.24032418781400097
+              },
+              {
+                "text": "pine leaf",
+                "volume": 5400,
+                "difficulty": 0.06,
+                "source": "seed",
+                "score": 0.2359510703272625
+              },
+              {
+                "text": "merry christmas and happy new year",
+                "volume": 135000,
+                "difficulty": 0.47,
+                "source": "seed",
+                "score": 0.23166363424689024
+              },
+              {
+                "text": "leaf fall",
+                "volume": 9900,
+                "difficulty": 0.12,
+                "source": "seed",
+                "score": 0.22175706213002738
+              },
+              {
+                "text": "pain is weakness leaving the body",
+                "volume": 5400,
+                "difficulty": 0.46,
+                "source": "seed",
+                "score": 0.2109510703272625
+              },
+              {
+                "text": "plant leaf",
+                "volume": 9900,
+                "difficulty": 0.33,
+                "source": "seed",
+                "score": 0.16925706213002736
+              },
+              {
+                "text": "leaving present",
+                "volume": 590,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.07508955464475164
+              }
+            ]
+          },
+          "timestamp": 1764586777073
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "secondary",
+            "candidates": [
+              {
+                "text": "happy leaving tutorial",
+                "volume": 5865,
+                "difficulty": -0.69,
+                "source": "seed",
+                "score": 0.8611013613252418
+              },
+              {
+                "text": "happy leaving checklist",
+                "volume": 7252,
+                "difficulty": 0.38,
+                "source": "seed",
+                "score": 0.8324175824175825
+              },
+              {
+                "text": "happy leaving benefits",
+                "volume": 2668,
+                "difficulty": -0.84,
+                "source": "seed",
+                "score": 0.609040511727079
+              },
+              {
+                "text": "happy leaving for beginners",
+                "volume": 217,
+                "difficulty": -0.66,
+                "source": "seed",
+                "score": 0.3752747252747253
+              },
+              {
+                "text": "happy leaving best practices",
+                "volume": 866,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.33996719698212235
+              },
+              {
+                "text": "happy leaving vs alternatives",
+                "volume": 336,
+                "difficulty": 0.64,
+                "source": "seed",
+                "score": 0.20685255043463996
+              },
+              {
+                "text": "happy leaving guide",
+                "volume": 409,
+                "difficulty": 0.89,
+                "source": "seed",
+                "score": 0.1787379038871576
+              }
+            ]
+          },
+          "timestamp": 1764586789020
+        },
+        {
+          "type": "title_options",
+          "data": {
+            "titles": [
+              "The Art of Happy Leaving: Making Your Next Move with Joy",
+              "Happy Leaving: How to Transition Smoothly and Positively",
+              "Embracing Change: Your Guide to a Happy Leaving Experience",
+              "Beyond Goodbyes: Cultivating a Happy Leaving Mindset",
+              "Why Happy Leaving is the Key to Your Next Big Adventure"
+            ]
+          },
+          "timestamp": 1764586803683
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "primary",
+            "candidates": [
+              {
+                "text": "happy",
+                "volume": 3350000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.9974999999999999
+              },
+              {
+                "text": "leaving",
+                "volume": 450000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.48058306044042975
+              },
+              {
+                "text": "happy days",
+                "volume": 550000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.41849398939075977
+              },
+              {
+                "text": "happy leaving",
+                "volume": 480,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3950698526229063
+              },
+              {
+                "text": "happy ever after",
+                "volume": 165000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.35203691293198924
+              },
+              {
+                "text": "absence",
+                "volume": 550000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.34849398939075976
+              },
+              {
+                "text": "after ever happy",
+                "volume": 135000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.34666363424689023
+              },
+              {
+                "text": "happy trails",
+                "volume": 110000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3446859020093077
+              },
+              {
+                "text": "happy music",
+                "volume": 135000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3441636342468902
+              },
+              {
+                "text": "happy home",
+                "volume": 165000,
+                "difficulty": 0.08,
+                "source": "seed",
+                "score": 0.3345369129319892
+              },
+              {
+                "text": "happy holiday",
+                "volume": 246000,
+                "difficulty": 0.14,
+                "source": "seed",
+                "score": 0.33404476538175654
+              },
+              {
+                "text": "happy go lucky",
+                "volume": 60500,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.33081999217889435
+              },
+              {
+                "text": "cleaved",
+                "volume": 450000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.33058306044042973
+              },
+              {
+                "text": "after ever happy netflix",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3250304485792156
+              },
+              {
+                "text": "after ever happy online",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3250304485792156
+              },
+              {
+                "text": "after ever happy watch online",
+                "volume": 140,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.32500895546447517
+              },
+              {
+                "text": "happy valley season 3",
+                "volume": 8100,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.3239346654089214
+              },
+              {
+                "text": "pop culture happy hour",
+                "volume": 4400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.32077196103775923
+              },
+              {
+                "text": "watch after ever happy",
+                "volume": 2400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3204137424587526
+              },
+              {
+                "text": "after ever happy where to watch",
+                "volume": 90,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.3125
+              },
+              {
+                "text": "mr happy",
+                "volume": 40500,
+                "difficulty": 0.28,
+                "source": "seed",
+                "score": 0.2622378063888283
+              },
+              {
+                "text": "interleaved",
+                "volume": 22200,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.253960106390918
+              },
+              {
+                "text": "encashment",
+                "volume": 9900,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25175706213002735
+              },
+              {
+                "text": "ate and left no crumbs",
+                "volume": 8100,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25143466540892145
+              },
+              {
+                "text": "leaf meaning in urdu",
+                "volume": 8100,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25143466540892145
+              },
+              {
+                "text": "get off work",
+                "volume": 3600,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2506286736061566
+              },
+              {
+                "text": "leaf stalk",
+                "volume": 3600,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2506286736061566
+              },
+              {
+                "text": "lanceolate leaf",
+                "volume": 2900,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2505032971035043
+              },
+              {
+                "text": "fig leaf meaning",
+                "volume": 2400,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25041374245875264
+              },
+              {
+                "text": "wayleave meaning",
+                "volume": 1900,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25032418781400095
+              },
+              {
+                "text": "coriander meaning in malayalam",
+                "volume": 880,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2501414963387076
+              },
+              {
+                "text": "leaf through",
+                "volume": 880,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2501414963387076
+              },
+              {
+                "text": "leaven",
+                "volume": 27100,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.24233774190948412
+              },
+              {
+                "text": "upbeat music",
+                "volume": 110000,
+                "difficulty": 0.11,
+                "source": "seed",
+                "score": 0.24218590200930773
+              },
+              {
+                "text": "play upbeat music",
+                "volume": 1900,
+                "difficulty": 0.04,
+                "source": "seed",
+                "score": 0.24032418781400097
+              },
+              {
+                "text": "pine leaf",
+                "volume": 5400,
+                "difficulty": 0.06,
+                "source": "seed",
+                "score": 0.2359510703272625
+              },
+              {
+                "text": "merry christmas and happy new year",
+                "volume": 135000,
+                "difficulty": 0.47,
+                "source": "seed",
+                "score": 0.23166363424689024
+              },
+              {
+                "text": "leaf fall",
+                "volume": 9900,
+                "difficulty": 0.12,
+                "source": "seed",
+                "score": 0.22175706213002738
+              },
+              {
+                "text": "pain is weakness leaving the body",
+                "volume": 5400,
+                "difficulty": 0.46,
+                "source": "seed",
+                "score": 0.2109510703272625
+              },
+              {
+                "text": "plant leaf",
+                "volume": 9900,
+                "difficulty": 0.33,
+                "source": "seed",
+                "score": 0.16925706213002736
+              },
+              {
+                "text": "leaving present",
+                "volume": 590,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.07508955464475164
+              }
+            ]
+          },
+          "timestamp": 1764586478313
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "secondary",
+            "candidates": [
+              {
+                "text": "encashed cheque",
+                "volume": 2400,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.26953441295546554
+              },
+              {
+                "text": "cash encashment",
+                "volume": 110,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.13046558704453443
+              },
+              {
+                "text": "encashment meaning in insurance",
+                "volume": 20,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.125
+              }
+            ]
+          },
+          "timestamp": 1764586744890
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "primary",
+            "candidates": [
+              {
+                "text": "happy",
+                "volume": 3350000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.9974999999999999
+              },
+              {
+                "text": "leaving",
+                "volume": 450000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.48058306044042975
+              },
+              {
+                "text": "happy days",
+                "volume": 550000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.41849398939075977
+              },
+              {
+                "text": "happy leaving",
+                "volume": 480,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3950698526229063
+              },
+              {
+                "text": "happy ever after",
+                "volume": 165000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.35203691293198924
+              },
+              {
+                "text": "absence",
+                "volume": 550000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.34849398939075976
+              },
+              {
+                "text": "after ever happy",
+                "volume": 135000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.34666363424689023
+              },
+              {
+                "text": "happy trails",
+                "volume": 110000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3446859020093077
+              },
+              {
+                "text": "happy music",
+                "volume": 135000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3441636342468902
+              },
+              {
+                "text": "happy home",
+                "volume": 165000,
+                "difficulty": 0.08,
+                "source": "seed",
+                "score": 0.3345369129319892
+              },
+              {
+                "text": "happy holiday",
+                "volume": 246000,
+                "difficulty": 0.14,
+                "source": "seed",
+                "score": 0.33404476538175654
+              },
+              {
+                "text": "happy go lucky",
+                "volume": 60500,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.33081999217889435
+              },
+              {
+                "text": "cleaved",
+                "volume": 450000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.33058306044042973
+              },
+              {
+                "text": "after ever happy netflix",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3250304485792156
+              },
+              {
+                "text": "after ever happy online",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3250304485792156
+              },
+              {
+                "text": "after ever happy watch online",
+                "volume": 140,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.32500895546447517
+              },
+              {
+                "text": "happy valley season 3",
+                "volume": 8100,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.3239346654089214
+              },
+              {
+                "text": "pop culture happy hour",
+                "volume": 4400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.32077196103775923
+              },
+              {
+                "text": "watch after ever happy",
+                "volume": 2400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3204137424587526
+              },
+              {
+                "text": "after ever happy where to watch",
+                "volume": 90,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.3125
+              },
+              {
+                "text": "mr happy",
+                "volume": 40500,
+                "difficulty": 0.28,
+                "source": "seed",
+                "score": 0.2622378063888283
+              },
+              {
+                "text": "interleaved",
+                "volume": 22200,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.253960106390918
+              },
+              {
+                "text": "encashment",
+                "volume": 9900,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25175706213002735
+              },
+              {
+                "text": "ate and left no crumbs",
+                "volume": 8100,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25143466540892145
+              },
+              {
+                "text": "leaf meaning in urdu",
+                "volume": 8100,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25143466540892145
+              },
+              {
+                "text": "get off work",
+                "volume": 3600,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2506286736061566
+              },
+              {
+                "text": "leaf stalk",
+                "volume": 3600,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2506286736061566
+              },
+              {
+                "text": "lanceolate leaf",
+                "volume": 2900,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2505032971035043
+              },
+              {
+                "text": "fig leaf meaning",
+                "volume": 2400,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25041374245875264
+              },
+              {
+                "text": "wayleave meaning",
+                "volume": 1900,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25032418781400095
+              },
+              {
+                "text": "coriander meaning in malayalam",
+                "volume": 880,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2501414963387076
+              },
+              {
+                "text": "leaf through",
+                "volume": 880,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2501414963387076
+              },
+              {
+                "text": "leaven",
+                "volume": 27100,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.24233774190948412
+              },
+              {
+                "text": "upbeat music",
+                "volume": 110000,
+                "difficulty": 0.11,
+                "source": "seed",
+                "score": 0.24218590200930773
+              },
+              {
+                "text": "play upbeat music",
+                "volume": 1900,
+                "difficulty": 0.04,
+                "source": "seed",
+                "score": 0.24032418781400097
+              },
+              {
+                "text": "pine leaf",
+                "volume": 5400,
+                "difficulty": 0.06,
+                "source": "seed",
+                "score": 0.2359510703272625
+              },
+              {
+                "text": "merry christmas and happy new year",
+                "volume": 135000,
+                "difficulty": 0.47,
+                "source": "seed",
+                "score": 0.23166363424689024
+              },
+              {
+                "text": "leaf fall",
+                "volume": 9900,
+                "difficulty": 0.12,
+                "source": "seed",
+                "score": 0.22175706213002738
+              },
+              {
+                "text": "pain is weakness leaving the body",
+                "volume": 5400,
+                "difficulty": 0.46,
+                "source": "seed",
+                "score": 0.2109510703272625
+              },
+              {
+                "text": "plant leaf",
+                "volume": 9900,
+                "difficulty": 0.33,
+                "source": "seed",
+                "score": 0.16925706213002736
+              },
+              {
+                "text": "leaving present",
+                "volume": 590,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.07508955464475164
+              }
+            ]
+          },
+          "timestamp": 1764586777073
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "secondary",
+            "candidates": [
+              {
+                "text": "happy leaving tutorial",
+                "volume": 5865,
+                "difficulty": -0.69,
+                "source": "seed",
+                "score": 0.8611013613252418
+              },
+              {
+                "text": "happy leaving checklist",
+                "volume": 7252,
+                "difficulty": 0.38,
+                "source": "seed",
+                "score": 0.8324175824175825
+              },
+              {
+                "text": "happy leaving benefits",
+                "volume": 2668,
+                "difficulty": -0.84,
+                "source": "seed",
+                "score": 0.609040511727079
+              },
+              {
+                "text": "happy leaving for beginners",
+                "volume": 217,
+                "difficulty": -0.66,
+                "source": "seed",
+                "score": 0.3752747252747253
+              },
+              {
+                "text": "happy leaving best practices",
+                "volume": 866,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.33996719698212235
+              },
+              {
+                "text": "happy leaving vs alternatives",
+                "volume": 336,
+                "difficulty": 0.64,
+                "source": "seed",
+                "score": 0.20685255043463996
+              },
+              {
+                "text": "happy leaving guide",
+                "volume": 409,
+                "difficulty": 0.89,
+                "source": "seed",
+                "score": 0.1787379038871576
+              }
+            ]
+          },
+          "timestamp": 1764586789020
+        },
+        {
+          "type": "title_options",
+          "data": {
+            "titles": [
+              "The Art of Happy Leaving: Making Your Next Move with Joy",
+              "Happy Leaving: How to Transition Smoothly and Positively",
+              "Embracing Change: Your Guide to a Happy Leaving Experience",
+              "Beyond Goodbyes: Cultivating a Happy Leaving Mindset",
+              "Why Happy Leaving is the Key to Your Next Big Adventure"
+            ]
+          },
+          "timestamp": 1764586803683
+        },
+        {
+          "type": "outline_generated",
+          "data": {
+            "outline": [
+              {
+                "id": "1",
+                "name": "Understanding 'Happy Leaving': More Than Just a Farewell",
+                "items": [
+                  {
+                    "id": "11",
+                    "name": "Defining 'Happy Leaving': A Deeper Perspective"
+                  },
+                  {
+                    "id": "12",
+                    "name": "The Distinction Between 'Happy' and 'Well' Leaving"
+                  },
+                  {
+                    "id": "13",
+                    "name": "Cultivating Positive Legacies Through Departure"
+                  },
+                  {
+                    "id": "14",
+                    "name": "The Psychological Impact of Intentional Goodbyes"
+                  }
+                ]
+              },
+              {
+                "id": "2",
+                "name": "The Psychology of Letting Go: Cultivating a Positive Mindset for Change",
+                "items": [
+                  {
+                    "id": "21",
+                    "name": "Understanding the Core Principles of Letting Go"
+                  },
+                  {
+                    "id": "22",
+                    "name": "Overcoming Emotional Barriers to Embracing Change"
+                  },
+                  {
+                    "id": "23",
+                    "name": "Practical Strategies for Cultivating a Positive Mindset"
+                  },
+                  {
+                    "id": "24",
+                    "name": "The Transformative Benefits of Embracing Release"
+                  }
+                ]
+              },
+              {
+                "id": "3",
+                "name": "Strategic Planning for a Joyful Transition: Preparing Your Next Move",
+                "items": [
+                  {
+                    "id": "31",
+                    "name": "Envisioning Your Ideal Future: Setting Clear Goals"
+                  },
+                  {
+                    "id": "32",
+                    "name": "Building Your Step-by-Step Transition Roadmap"
+                  },
+                  {
+                    "id": "33",
+                    "name": "Navigating Emotional Landscapes: Embracing Change with Confidence"
+                  },
+                  {
+                    "id": "34",
+                    "name": "The Art of a Thoughtful Farewell: Strengthening Bonds"
+                  }
+                ]
+              },
+              {
+                "id": "4",
+                "name": "Navigating the Departure: Practical Steps for a Smooth Exit",
+                "items": [
+                  {
+                    "id": "41",
+                    "name": "Strategic Communication for a Positive Departure"
+                  },
+                  {
+                    "id": "42",
+                    "name": "Seamless Handover and Knowledge Transfer"
+                  },
+                  {
+                    "id": "43",
+                    "name": "Preserving Professional Relationships and Your Reputation"
+                  },
+                  {
+                    "id": "44",
+                    "name": "Navigating Exit Interviews and Final Details"
+                  }
+                ]
+              },
+              {
+                "id": "5",
+                "name": "Embracing the New Beginning: Settling In with Optimism",
+                "items": [
+                  {
+                    "id": "51",
+                    "name": "Cultivating an Optimistic Outlook for Your Next Chapter"
+                  },
+                  {
+                    "id": "52",
+                    "name": "Strategic Settling: Making Your New Space Your Own"
+                  },
+                  {
+                    "id": "53",
+                    "name": "Building Connections: Finding Your Tribe in a New Place"
+                  },
+                  {
+                    "id": "54",
+                    "name": "Embracing Challenges as Stepping Stones to Joy"
+                  }
+                ]
+              },
+              {
+                "id": "6",
+                "name": "The Lasting Benefits of Mindful Transitions",
+                "items": [
+                  {
+                    "id": "61",
+                    "name": "Cultivating Emotional Resilience and Calm"
+                  },
+                  {
+                    "id": "62",
+                    "name": "Fostering Self-Awareness and Personal Growth"
+                  },
+                  {
+                    "id": "63",
+                    "name": "Building Adaptability for Future Changes"
+                  },
+                  {
+                    "id": "64",
+                    "name": "Enhancing Overall Well-being and Lasting Joy"
+                  }
+                ]
+              },
+              {
+                "id": "7",
+                "name": "Conclusion: Mastering the Art of Happy Leaving",
+                "items": [
+                  {
+                    "id": "71",
+                    "name": "Embracing the Power of Intentional Departure"
+                  },
+                  {
+                    "id": "72",
+                    "name": "The Lasting Legacy of a Graceful Exit"
+                  },
+                  {
+                    "id": "73",
+                    "name": "Cultivating Future Happiness Through Letting Go"
+                  },
+                  {
+                    "id": "74",
+                    "name": "Your Continuous Journey of Joyful Transitions"
+                  }
+                ]
+              }
+            ],
+            "sectionCount": 7
+          },
+          "timestamp": 1764586863383
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "primary",
+            "candidates": [
+              {
+                "text": "happy",
+                "volume": 3350000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.9974999999999999
+              },
+              {
+                "text": "leaving",
+                "volume": 450000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.48058306044042975
+              },
+              {
+                "text": "happy days",
+                "volume": 550000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.41849398939075977
+              },
+              {
+                "text": "happy leaving",
+                "volume": 480,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3950698526229063
+              },
+              {
+                "text": "happy ever after",
+                "volume": 165000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.35203691293198924
+              },
+              {
+                "text": "absence",
+                "volume": 550000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.34849398939075976
+              },
+              {
+                "text": "after ever happy",
+                "volume": 135000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.34666363424689023
+              },
+              {
+                "text": "happy trails",
+                "volume": 110000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3446859020093077
+              },
+              {
+                "text": "happy music",
+                "volume": 135000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3441636342468902
+              },
+              {
+                "text": "happy home",
+                "volume": 165000,
+                "difficulty": 0.08,
+                "source": "seed",
+                "score": 0.3345369129319892
+              },
+              {
+                "text": "happy holiday",
+                "volume": 246000,
+                "difficulty": 0.14,
+                "source": "seed",
+                "score": 0.33404476538175654
+              },
+              {
+                "text": "happy go lucky",
+                "volume": 60500,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.33081999217889435
+              },
+              {
+                "text": "cleaved",
+                "volume": 450000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.33058306044042973
+              },
+              {
+                "text": "after ever happy netflix",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3250304485792156
+              },
+              {
+                "text": "after ever happy online",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3250304485792156
+              },
+              {
+                "text": "after ever happy watch online",
+                "volume": 140,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.32500895546447517
+              },
+              {
+                "text": "happy valley season 3",
+                "volume": 8100,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.3239346654089214
+              },
+              {
+                "text": "pop culture happy hour",
+                "volume": 4400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.32077196103775923
+              },
+              {
+                "text": "watch after ever happy",
+                "volume": 2400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3204137424587526
+              },
+              {
+                "text": "after ever happy where to watch",
+                "volume": 90,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.3125
+              },
+              {
+                "text": "mr happy",
+                "volume": 40500,
+                "difficulty": 0.28,
+                "source": "seed",
+                "score": 0.2622378063888283
+              },
+              {
+                "text": "interleaved",
+                "volume": 22200,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.253960106390918
+              },
+              {
+                "text": "encashment",
+                "volume": 9900,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25175706213002735
+              },
+              {
+                "text": "ate and left no crumbs",
+                "volume": 8100,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25143466540892145
+              },
+              {
+                "text": "leaf meaning in urdu",
+                "volume": 8100,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25143466540892145
+              },
+              {
+                "text": "get off work",
+                "volume": 3600,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2506286736061566
+              },
+              {
+                "text": "leaf stalk",
+                "volume": 3600,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2506286736061566
+              },
+              {
+                "text": "lanceolate leaf",
+                "volume": 2900,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2505032971035043
+              },
+              {
+                "text": "fig leaf meaning",
+                "volume": 2400,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25041374245875264
+              },
+              {
+                "text": "wayleave meaning",
+                "volume": 1900,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25032418781400095
+              },
+              {
+                "text": "coriander meaning in malayalam",
+                "volume": 880,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2501414963387076
+              },
+              {
+                "text": "leaf through",
+                "volume": 880,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2501414963387076
+              },
+              {
+                "text": "leaven",
+                "volume": 27100,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.24233774190948412
+              },
+              {
+                "text": "upbeat music",
+                "volume": 110000,
+                "difficulty": 0.11,
+                "source": "seed",
+                "score": 0.24218590200930773
+              },
+              {
+                "text": "play upbeat music",
+                "volume": 1900,
+                "difficulty": 0.04,
+                "source": "seed",
+                "score": 0.24032418781400097
+              },
+              {
+                "text": "pine leaf",
+                "volume": 5400,
+                "difficulty": 0.06,
+                "source": "seed",
+                "score": 0.2359510703272625
+              },
+              {
+                "text": "merry christmas and happy new year",
+                "volume": 135000,
+                "difficulty": 0.47,
+                "source": "seed",
+                "score": 0.23166363424689024
+              },
+              {
+                "text": "leaf fall",
+                "volume": 9900,
+                "difficulty": 0.12,
+                "source": "seed",
+                "score": 0.22175706213002738
+              },
+              {
+                "text": "pain is weakness leaving the body",
+                "volume": 5400,
+                "difficulty": 0.46,
+                "source": "seed",
+                "score": 0.2109510703272625
+              },
+              {
+                "text": "plant leaf",
+                "volume": 9900,
+                "difficulty": 0.33,
+                "source": "seed",
+                "score": 0.16925706213002736
+              },
+              {
+                "text": "leaving present",
+                "volume": 590,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.07508955464475164
+              }
+            ]
+          },
+          "timestamp": 1764586478313
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "secondary",
+            "candidates": [
+              {
+                "text": "encashed cheque",
+                "volume": 2400,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.26953441295546554
+              },
+              {
+                "text": "cash encashment",
+                "volume": 110,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.13046558704453443
+              },
+              {
+                "text": "encashment meaning in insurance",
+                "volume": 20,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.125
+              }
+            ]
+          },
+          "timestamp": 1764586744890
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "primary",
+            "candidates": [
+              {
+                "text": "happy",
+                "volume": 3350000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.9974999999999999
+              },
+              {
+                "text": "leaving",
+                "volume": 450000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.48058306044042975
+              },
+              {
+                "text": "happy days",
+                "volume": 550000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.41849398939075977
+              },
+              {
+                "text": "happy leaving",
+                "volume": 480,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3950698526229063
+              },
+              {
+                "text": "happy ever after",
+                "volume": 165000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.35203691293198924
+              },
+              {
+                "text": "absence",
+                "volume": 550000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.34849398939075976
+              },
+              {
+                "text": "after ever happy",
+                "volume": 135000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.34666363424689023
+              },
+              {
+                "text": "happy trails",
+                "volume": 110000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3446859020093077
+              },
+              {
+                "text": "happy music",
+                "volume": 135000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3441636342468902
+              },
+              {
+                "text": "happy home",
+                "volume": 165000,
+                "difficulty": 0.08,
+                "source": "seed",
+                "score": 0.3345369129319892
+              },
+              {
+                "text": "happy holiday",
+                "volume": 246000,
+                "difficulty": 0.14,
+                "source": "seed",
+                "score": 0.33404476538175654
+              },
+              {
+                "text": "happy go lucky",
+                "volume": 60500,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.33081999217889435
+              },
+              {
+                "text": "cleaved",
+                "volume": 450000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.33058306044042973
+              },
+              {
+                "text": "after ever happy netflix",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3250304485792156
+              },
+              {
+                "text": "after ever happy online",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3250304485792156
+              },
+              {
+                "text": "after ever happy watch online",
+                "volume": 140,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.32500895546447517
+              },
+              {
+                "text": "happy valley season 3",
+                "volume": 8100,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.3239346654089214
+              },
+              {
+                "text": "pop culture happy hour",
+                "volume": 4400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.32077196103775923
+              },
+              {
+                "text": "watch after ever happy",
+                "volume": 2400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3204137424587526
+              },
+              {
+                "text": "after ever happy where to watch",
+                "volume": 90,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.3125
+              },
+              {
+                "text": "mr happy",
+                "volume": 40500,
+                "difficulty": 0.28,
+                "source": "seed",
+                "score": 0.2622378063888283
+              },
+              {
+                "text": "interleaved",
+                "volume": 22200,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.253960106390918
+              },
+              {
+                "text": "encashment",
+                "volume": 9900,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25175706213002735
+              },
+              {
+                "text": "ate and left no crumbs",
+                "volume": 8100,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25143466540892145
+              },
+              {
+                "text": "leaf meaning in urdu",
+                "volume": 8100,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25143466540892145
+              },
+              {
+                "text": "get off work",
+                "volume": 3600,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2506286736061566
+              },
+              {
+                "text": "leaf stalk",
+                "volume": 3600,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2506286736061566
+              },
+              {
+                "text": "lanceolate leaf",
+                "volume": 2900,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2505032971035043
+              },
+              {
+                "text": "fig leaf meaning",
+                "volume": 2400,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25041374245875264
+              },
+              {
+                "text": "wayleave meaning",
+                "volume": 1900,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25032418781400095
+              },
+              {
+                "text": "coriander meaning in malayalam",
+                "volume": 880,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2501414963387076
+              },
+              {
+                "text": "leaf through",
+                "volume": 880,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.2501414963387076
+              },
+              {
+                "text": "leaven",
+                "volume": 27100,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.24233774190948412
+              },
+              {
+                "text": "upbeat music",
+                "volume": 110000,
+                "difficulty": 0.11,
+                "source": "seed",
+                "score": 0.24218590200930773
+              },
+              {
+                "text": "play upbeat music",
+                "volume": 1900,
+                "difficulty": 0.04,
+                "source": "seed",
+                "score": 0.24032418781400097
+              },
+              {
+                "text": "pine leaf",
+                "volume": 5400,
+                "difficulty": 0.06,
+                "source": "seed",
+                "score": 0.2359510703272625
+              },
+              {
+                "text": "merry christmas and happy new year",
+                "volume": 135000,
+                "difficulty": 0.47,
+                "source": "seed",
+                "score": 0.23166363424689024
+              },
+              {
+                "text": "leaf fall",
+                "volume": 9900,
+                "difficulty": 0.12,
+                "source": "seed",
+                "score": 0.22175706213002738
+              },
+              {
+                "text": "pain is weakness leaving the body",
+                "volume": 5400,
+                "difficulty": 0.46,
+                "source": "seed",
+                "score": 0.2109510703272625
+              },
+              {
+                "text": "plant leaf",
+                "volume": 9900,
+                "difficulty": 0.33,
+                "source": "seed",
+                "score": 0.16925706213002736
+              },
+              {
+                "text": "leaving present",
+                "volume": 590,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.07508955464475164
+              }
+            ]
+          },
+          "timestamp": 1764586777073
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "secondary",
+            "candidates": [
+              {
+                "text": "happy leaving tutorial",
+                "volume": 5865,
+                "difficulty": -0.69,
+                "source": "seed",
+                "score": 0.8611013613252418
+              },
+              {
+                "text": "happy leaving checklist",
+                "volume": 7252,
+                "difficulty": 0.38,
+                "source": "seed",
+                "score": 0.8324175824175825
+              },
+              {
+                "text": "happy leaving benefits",
+                "volume": 2668,
+                "difficulty": -0.84,
+                "source": "seed",
+                "score": 0.609040511727079
+              },
+              {
+                "text": "happy leaving for beginners",
+                "volume": 217,
+                "difficulty": -0.66,
+                "source": "seed",
+                "score": 0.3752747252747253
+              },
+              {
+                "text": "happy leaving best practices",
+                "volume": 866,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.33996719698212235
+              },
+              {
+                "text": "happy leaving vs alternatives",
+                "volume": 336,
+                "difficulty": 0.64,
+                "source": "seed",
+                "score": 0.20685255043463996
+              },
+              {
+                "text": "happy leaving guide",
+                "volume": 409,
+                "difficulty": 0.89,
+                "source": "seed",
+                "score": 0.1787379038871576
+              }
+            ]
+          },
+          "timestamp": 1764586789020
+        },
+        {
+          "type": "title_options",
+          "data": {
+            "titles": [
+              "The Art of Happy Leaving: Making Your Next Move with Joy",
+              "Happy Leaving: How to Transition Smoothly and Positively",
+              "Embracing Change: Your Guide to a Happy Leaving Experience",
+              "Beyond Goodbyes: Cultivating a Happy Leaving Mindset",
+              "Why Happy Leaving is the Key to Your Next Big Adventure"
+            ]
+          },
+          "timestamp": 1764586803683
+        },
+        {
+          "type": "outline_generated",
+          "data": {
+            "outline": [
+              {
+                "id": "1",
+                "name": "Understanding 'Happy Leaving': More Than Just a Farewell",
+                "items": [
+                  {
+                    "id": "11",
+                    "name": "Defining 'Happy Leaving': A Deeper Perspective"
+                  },
+                  {
+                    "id": "12",
+                    "name": "The Distinction Between 'Happy' and 'Well' Leaving"
+                  },
+                  {
+                    "id": "13",
+                    "name": "Cultivating Positive Legacies Through Departure"
+                  },
+                  {
+                    "id": "14",
+                    "name": "The Psychological Impact of Intentional Goodbyes"
+                  }
+                ]
+              },
+              {
+                "id": "2",
+                "name": "The Psychology of Letting Go: Cultivating a Positive Mindset for Change",
+                "items": [
+                  {
+                    "id": "21",
+                    "name": "Understanding the Core Principles of Letting Go"
+                  },
+                  {
+                    "id": "22",
+                    "name": "Overcoming Emotional Barriers to Embracing Change"
+                  },
+                  {
+                    "id": "23",
+                    "name": "Practical Strategies for Cultivating a Positive Mindset"
+                  },
+                  {
+                    "id": "24",
+                    "name": "The Transformative Benefits of Embracing Release"
+                  }
+                ]
+              },
+              {
+                "id": "3",
+                "name": "Strategic Planning for a Joyful Transition: Preparing Your Next Move",
+                "items": [
+                  {
+                    "id": "31",
+                    "name": "Envisioning Your Ideal Future: Setting Clear Goals"
+                  },
+                  {
+                    "id": "32",
+                    "name": "Building Your Step-by-Step Transition Roadmap"
+                  },
+                  {
+                    "id": "33",
+                    "name": "Navigating Emotional Landscapes: Embracing Change with Confidence"
+                  },
+                  {
+                    "id": "34",
+                    "name": "The Art of a Thoughtful Farewell: Strengthening Bonds"
+                  }
+                ]
+              },
+              {
+                "id": "4",
+                "name": "Navigating the Departure: Practical Steps for a Smooth Exit",
+                "items": [
+                  {
+                    "id": "41",
+                    "name": "Strategic Communication for a Positive Departure"
+                  },
+                  {
+                    "id": "42",
+                    "name": "Seamless Handover and Knowledge Transfer"
+                  },
+                  {
+                    "id": "43",
+                    "name": "Preserving Professional Relationships and Your Reputation"
+                  },
+                  {
+                    "id": "44",
+                    "name": "Navigating Exit Interviews and Final Details"
+                  }
+                ]
+              },
+              {
+                "id": "5",
+                "name": "Embracing the New Beginning: Settling In with Optimism",
+                "items": [
+                  {
+                    "id": "51",
+                    "name": "Cultivating an Optimistic Outlook for Your Next Chapter"
+                  },
+                  {
+                    "id": "52",
+                    "name": "Strategic Settling: Making Your New Space Your Own"
+                  },
+                  {
+                    "id": "53",
+                    "name": "Building Connections: Finding Your Tribe in a New Place"
+                  },
+                  {
+                    "id": "54",
+                    "name": "Embracing Challenges as Stepping Stones to Joy"
+                  }
+                ]
+              },
+              {
+                "id": "6",
+                "name": "The Lasting Benefits of Mindful Transitions",
+                "items": [
+                  {
+                    "id": "61",
+                    "name": "Cultivating Emotional Resilience and Calm"
+                  },
+                  {
+                    "id": "62",
+                    "name": "Fostering Self-Awareness and Personal Growth"
+                  },
+                  {
+                    "id": "63",
+                    "name": "Building Adaptability for Future Changes"
+                  },
+                  {
+                    "id": "64",
+                    "name": "Enhancing Overall Well-being and Lasting Joy"
+                  }
+                ]
+              },
+              {
+                "id": "7",
+                "name": "Conclusion: Mastering the Art of Happy Leaving",
+                "items": [
+                  {
+                    "id": "71",
+                    "name": "Embracing the Power of Intentional Departure"
+                  },
+                  {
+                    "id": "72",
+                    "name": "The Lasting Legacy of a Graceful Exit"
+                  },
+                  {
+                    "id": "73",
+                    "name": "Cultivating Future Happiness Through Letting Go"
+                  },
+                  {
+                    "id": "74",
+                    "name": "Your Continuous Journey of Joyful Transitions"
+                  }
+                ]
+              }
+            ],
+            "sectionCount": 7
+          },
+          "timestamp": 1764586863383
+        }
+      ],
+      "__pregel_tasks": [
+        [],
+        []
+      ],
+      "branch:to:proposal": "proposal"
+    },
+    "channel_versions": {
+      "__start__": 24,
+      "messages": 24,
+      "data": 24,
+      "outline": 24,
+      "outlineApproved": 24,
+      "draft": 28,
+      "progress": 28,
+      "preferences": 24,
+      "trace": 28,
+      "halt": 24,
+      "userProvidedFields": 24,
+      "autoFillFields": 24,
+      "toolOutputs": 24,
+      "currentStep": 28,
+      "apiKey": 24,
+      "branch:to:research_primary": 9,
+      "keywordCandidates": 16,
+      "branch:to:research_secondary": 16,
+      "branch:to:title_generation": 19,
+      "titleCandidates": 19,
+      "branch:to:discovery": 22,
+      "branch:to:proposal": 28
+    },
+    "versions_seen": {
+      "__input__": {},
+      "__start__": {
+        "__start__": 23
+      },
+      "research_primary": {
+        "branch:to:research_primary": 8
+      },
+      "research_secondary": {
+        "branch:to:research_secondary": 15
+      },
+      "title_generation": {
+        "branch:to:title_generation": 18
+      },
+      "discovery": {
+        "branch:to:discovery": 21
+      },
+      "proposal": {
+        "branch:to:proposal": 27
+      }
+    }
+  },
+  "metadata": {
+    "source": "loop",
+    "step": 26,
+    "parents": {}
+  },
+  "parentCheckpointId": "1f0cea51-7e14-63d0-8019-6c43bda0d70e",
+  "updatedAt": 1764586910516
+}

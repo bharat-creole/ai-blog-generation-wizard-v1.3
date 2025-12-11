@@ -1,0 +1,3945 @@
+{
+  "checkpoint": {
+    "v": 4,
+    "id": "1f0ceb03-8f1c-64e0-8014-dd35b87c251f",
+    "ts": "2025-12-01T12:21:11.342Z",
+    "channel_values": {
+      "messages": [
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        }
+      ],
+      "apiKey": "AIzaSyCXtEUadPIwJrxvskOFbKHxSEzCJe2vjUs",
+      "data": {
+        "apiKey": "AIzaSyCXtEUadPIwJrxvskOFbKHxSEzCJe2vjUs",
+        "title": "A Good Life Is a Happy Life: Your Essential Guide to Joyful Living",
+        "topic": "happy living life",
+        "targetLocation": "United States",
+        "primaryKeyword": "a good life is a happy life",
+        "secondaryKeywords": [
+          "best way to live a happy life",
+          "i just want a happy life"
+        ],
+        "suggestedTitles": [],
+        "referenceUrls": [],
+        "referenceFiles": [],
+        "interlinks": [],
+        "brandVoice": "Default",
+        "blogGuideline": "Default",
+        "llmModel": "gemini-2.5-flash",
+        "language": "English",
+        "outline": [],
+        "blogContent": ""
+      },
+      "outline": [
+        {
+          "id": "1",
+          "name": "What Does \"A Good Life\" Truly Mean?",
+          "items": [
+            {
+              "id": "11",
+              "name": "The Ancient Roots: Philosophical Views on \"The Good Life\""
+            },
+            {
+              "id": "12",
+              "name": "Beyond Pleasure: Core Elements of a Fulfilled Existence"
+            },
+            {
+              "id": "13",
+              "name": "The Personal Pursuit: Defining Your Own Path to Well-being"
+            },
+            {
+              "id": "14",
+              "name": "Finding Balance: Integrating Key Aspects for Joyful Living"
+            }
+          ]
+        },
+        {
+          "id": "2",
+          "name": "The Foundation of Joy: Cultivating Strong Relationships",
+          "items": [
+            {
+              "id": "21",
+              "name": "The Indispensable Role of Connections in a Joyful Life"
+            },
+            {
+              "id": "22",
+              "name": "Building Blocks of Lasting Bonds: Trust, Communication, and Empathy"
+            },
+            {
+              "id": "23",
+              "name": "Nurturing Your Network: Practical Steps for Deeper Relationships"
+            }
+          ]
+        },
+        {
+          "id": "2",
+          "name": "Harnessing Inner Power: The Practice of Gratitude and Mindfulness",
+          "items": [
+            {
+              "id": "21",
+              "name": "Understanding Gratitude and Mindfulness: Definitions and Impact"
+            },
+            {
+              "id": "22",
+              "name": "Practical Steps to Integrate Gratitude and Mindfulness"
+            },
+            {
+              "id": "23",
+              "name": "The Combined Power: Cultivating Resilience and Inner Peace"
+            },
+            {
+              "id": "24",
+              "name": "Embracing a Joyful Life Through Present Moment Awareness"
+            }
+          ]
+        },
+        {
+          "id": "4",
+          "name": "Finding Your Purpose: Setting Meaningful Goals and Embracing Growth",
+          "items": [
+            {
+              "id": "41",
+              "name": "Uncovering Your Core Values and Passions"
+            },
+            {
+              "id": "42",
+              "name": "Crafting Purpose-Driven Goals"
+            },
+            {
+              "id": "43",
+              "name": "Cultivating a Growth Mindset for Continuous Evolution"
+            },
+            {
+              "id": "44",
+              "name": "Integrating Purpose into Daily Living"
+            }
+          ]
+        },
+        {
+          "id": "5",
+          "name": "Nourishing Your Body and Mind: Prioritizing Health and Well-being",
+          "items": [
+            {
+              "id": "51",
+              "name": "Fueling Your Body for Optimal Energy and Clarity"
+            },
+            {
+              "id": "52",
+              "name": "Mindful Movement: The Key to Physical and Mental Vitality"
+            },
+            {
+              "id": "53",
+              "name": "Cultivating a Positive Mindset: Strategies for Emotional Well-being"
+            },
+            {
+              "id": "54",
+              "name": "The Power of Rest and Recharge: Prioritizing Sleep and Self-Care"
+            }
+          ]
+        },
+        {
+          "id": "6",
+          "name": "Embracing Imperfection: The Art of Work-Life Balance and Resilience",
+          "items": [
+            {
+              "id": "61",
+              "name": "Understanding the Trap of Perfectionism"
+            },
+            {
+              "id": "62",
+              "name": "The Power of Self-Acceptance and Compassion"
+            },
+            {
+              "id": "63",
+              "name": "Strategies for Achieving Work-Life Harmony"
+            },
+            {
+              "id": "64",
+              "name": "Cultivating Resilience Through Imperfection"
+            },
+            {
+              "id": "65",
+              "name": "Embracing Growth and Learning from Mistakes"
+            }
+          ]
+        },
+        {
+          "id": "7",
+          "name": "Living in the Present: Appreciating Simple Pleasures and Moments",
+          "items": [
+            {
+              "id": "71",
+              "name": "The Power of Mindfulness: Being Fully Present"
+            },
+            {
+              "id": "72",
+              "name": "Cultivating Gratitude for Everyday Joys"
+            },
+            {
+              "id": "73",
+              "name": "Savoring the Small Moments: Practical Tips"
+            },
+            {
+              "id": "74",
+              "name": "Connecting with Nature and Others for Deeper Appreciation"
+            }
+          ]
+        },
+        {
+          "id": "conclusion",
+          "name": "Conclusion: Crafting Your Own Joyful Journey",
+          "items": [
+            {
+              "id": "conclusion1",
+              "name": "Embrace the Ongoing Journey of Joy"
+            },
+            {
+              "id": "conclusion2",
+              "name": "Cultivating Key Habits for Lasting Happiness"
+            },
+            {
+              "id": "conclusion3",
+              "name": "Your Personal Blueprint for a Fulfilling Life"
+            },
+            {
+              "id": "conclusion4",
+              "name": "The Power of Resilience and a Positive Mindset"
+            }
+          ]
+        }
+      ],
+      "outlineApproved": true,
+      "draft": "# A Good Life Is a Happy Life: Your Essential Guide to Joyful Living\n\n\n\n## What Does \"A Good Life\" Truly Mean?\n\nThe quest for \"a good life is a happy life\" is as old as humanity itself. While often used interchangeably, the concepts of \"good\" and \"happy\" in this context delve much deeper than fleeting pleasure. This section explores the profound meaning behind a truly fulfilling existence, moving from ancient wisdom to contemporary understanding, and guiding you towards defining your own path to well-being.\n\n### The Ancient Roots: Philosophical Views on \"The Good Life\"\n\nFor millennia, thinkers have pondered what it means to live well. Ancient Greek philosophers, in particular, laid foundational concepts. Aristotle, for instance, championed *Eudaimonia*, often translated as \"flourishing\" or \"living well,\" rather than mere happiness. He argued that Eudaimonia isn't a temporary emotional state, but a lifelong pursuit achieved through living virtuously and fulfilling one's potential. For him, a good life was one lived in accordance with reason and moral excellence, ultimately leading to a deep sense of contentment and purpose. This ancient perspective strongly suggests that \"a good life is a happy life\" when happiness is understood as a profound state of flourishing, not just momentary joy.\n\n### Beyond Pleasure: Core Elements of a Fulfilled Existence\n\nWhile pleasure certainly plays a role, a truly good life transcends simple hedonic gratification. Modern psychology and philosophy expand on ancient ideas, pointing to several core elements essential for a fulfilled existence:\n\n*   **Purpose and Meaning:** Having a sense of direction and understanding why you do what you do.\n*   **Strong Relationships:** Deep, meaningful connections with others that foster belonging and support.\n*   **Personal Growth:** Continuous learning, self-improvement, and developing one's capabilities.\n*   **Contribution:** Giving back to the community or making a positive impact on the world.\n*   **Engagement:** Being fully immersed and enthusiastic in activities that challenge and interest you.\n*   **Autonomy:** The freedom and capacity to make choices that align with your true self and values.\n\nThese elements collectively contribute to a robust sense of well-being, demonstrating that \"a good life is a happy life\" is built on more than just the absence of suffering or the presence of superficial delights.\n\n### The Personal Pursuit: Defining Your Own Path to Well-being\n\nGiven these broad frameworks, how do you define a good life for yourself? The answer is profoundly personal. What brings one person deep satisfaction might differ significantly for another. This journey involves introspection and honest self-assessment:\n\n1.  **Identify Your Core Values:** What principles truly matter to you? Integrity, compassion, creativity, security, adventure?\n2.  **Reflect on Your Passions:** What activities make you lose track of time? What ignites your enthusiasm?\n3.  **Assess Your Strengths:** What are you naturally good at? How can you leverage these talents?\n4.  **Envision Your Ideal Future:** What does a truly flourishing life look like for you in various domains (relationships, career, health, personal interests)?\n\nBy consciously defining these aspects, you begin to chart a unique course where \"a good life is a happy life\" on your own terms.\n\n### Finding Balance: Integrating Key Aspects for Joyful Living\n\nThe ultimate challenge lies in integrating these diverse elements into a harmonious whole. Life is dynamic, and achieving perfect equilibrium often feels elusive. Instead, focus on finding a dynamic balance, adapting as circumstances change. Consider these strategies:\n\n*   **Prioritize Consciously:** Allocate time and energy to what aligns with your defined values and purpose.\n*   **Cultivate Mindfulness:** Be present and engaged in each moment, whether it's work, family time, or personal hobbies.\n*   **Practice Self-Compassion:** Acknowledge that setbacks happen and treat yourself with kindness during challenging times.\n*   **Seek Support:** Lean on your relationships and don't hesitate to seek guidance when needed.\n\nUltimately, understanding that \"a good life is a happy life\" is an ongoing journey of growth, meaning-making, and connection empowers you to continuously refine your path toward a deeply joyful and fulfilling existence.\n\n## The Foundation of Joy: Cultivating Strong Relationships\n\nWhile often overlooked in the pursuit of material wealth or individual achievement, the bedrock of a truly fulfilling existence lies in the strength of our connections with others. Indeed, research overwhelmingly demonstrates that cultivating strong relationships is fundamental to experiencing what many truly seek: a good life is a happy life. These bonds enrich our emotional landscape and act as a powerful buffer against life's inevitable challenges, proving that our connections are not just pleasant additions, but essential components of our well-being.\n\n### The Indispensable Role of Connections in a Joyful Life\n\nFor decades, the Harvard Study of Adult Development has tracked lives, revealing a profound truth: good relationships and close friendships are the ultimate key to lifelong health and happiness. This extensive research highlights that strong social ties offer protection, not only for our mental well-being but also for our physical health, helping us live longer and healthier lives by mitigating the impact of stress. Individuals with robust social connections experience lower rates of anxiety and depression, higher self-esteem, and a greater sense of belonging. These relationships provide vital emotional support, reduce feelings of loneliness, and increase overall happiness, proving their indispensable role in making a good life a happy life.\n\n### Building Blocks of Lasting Bonds: Trust, Communication, and Empathy\n\nJust like a sturdy building, lasting relationships are constructed upon a few critical foundations. At the core are:\n\n*   **Trust:** This is paramount. Trust is built through reliability, honesty, and consistency, allowing both parties to feel secure and dependable on one another. Acknowledging and accepting differences is also a crucial starting point for building trust.\n*   **Communication:** Effective communication involves both openly expressing your thoughts and feelings and practicing active listening. It means truly hearing and understanding others without immediately formulating a response, and being able to discuss disagreements respectfully. Open dialogues help prevent misunderstandings and resentment from festering.\n*   **Empathy:** The ability to understand and share the feelings of another is vital for forging deeper connections. Empathy allows us to perceive and relate to another person's needs, offering support and fostering mutual understanding.\n\nBeyond these, respect, honesty, and shared values are also cornerstones of healthy relationships, ensuring that interactions are mutually beneficial and supportive.\n\n### Nurturing Your Network: Practical Steps for Deeper Relationships\n\nCultivating strong relationships is an ongoing process that requires deliberate effort and commitment. Here are practical steps to nurture your connections and enhance your journey towards a good life that is a happy life:\n\n*   **Invest Time:** Regularly dedicate quality time to your relationships, whether through daily interactions, planned outings, or simply being present when you are with someone.\n*   **Show Appreciation:** Small acts of kindness and consistent expressions of gratitude prevent relationships from being taken for granted and significantly strengthen bonds.\n*   **Set and Respect Boundaries:** Healthy relationships thrive when individuals understand and respect each other's boundaries. This involves communicating what you appreciate and what you don't, creating a safe and secure space for both parties.\n*   **Practice Forgiveness:** All relationships will encounter challenges. The ability to apologize when wrong and offer forgiveness is essential for healing and strengthening bonds.\n*   **Find Shared Interests:** Engaging in activities or hobbies together can reinforce connections and provide opportunities for shared experiences.\n*   **Give Personal Space:** Allowing partners and friends personal space without suspicion also contributes to trust and prevents feelings of suffocation.\n\nBy actively engaging in these practices, you can build and maintain the meaningful connections that are so crucial for a joyful and fulfilling existence.\n\n**Sources:**\n Researchers find strong relationships protect long-term health and happiness - PBS\n Scientists found the key to a healthy, happy life: relationships - The World Economic Forum\n Why Good Relationships are Key to a Happy Life - Erin Theodorou, M.Ed, LPC, ACS, NCC\n Strong relationships, strong health | Better Health Channel\n How To Build Healthy Relationships: 10 Effective Strategies - MindLAB Neuroscience\n\n## Harnessing Inner Power: The Practice of Gratitude and Mindfulness\n\nIn the pursuit of a fulfilling existence, recognizing that a good life is a happy life often hinges on our internal landscape. While external circumstances can certainly contribute to our well-being, true and lasting joy frequently blossoms from within. Two profoundly effective practices for cultivating this inner joy are gratitude and mindfulness. By consciously engaging with these disciplines, we unlock a powerful pathway to sustained happiness and resilience, transforming our everyday experiences into opportunities for peace and contentment.\n\n### Understanding Gratitude and Mindfulness: Definitions and Impact\n\nAt its core, **gratitude** is more than just saying \"thank you.\" It's a deep appreciation for what is valuable and meaningful to oneself; a general state of thankfulness and appreciation. It involves acknowledging the good things in our lives, whether big or small, and recognizing where that goodness comes from. The impact of gratitude is far-reaching. Research consistently shows that practicing gratitude can lead to increased positive emotions, improved relationships, better physical and psychological health, and greater overall life satisfaction. It shifts our focus from what we lack to what we have, fostering an abundance mindset crucial for a happy life.\n\n**Mindfulness**, on the other hand, is the practice of purposely bringing one's attention to the present moment, without judgment. It involves observing our thoughts, feelings, bodily sensations, and the surrounding environment with an open and accepting attitude. It’s about being fully present, rather than dwelling on the past or worrying about the future. The benefits of mindfulness are extensive, including reduced stress and anxiety, improved emotional regulation, enhanced cognitive function, and a deeper connection to our experiences. By grounding us in the here and now, mindfulness helps us savor joyful moments and navigate challenges with greater calm, reinforcing the idea that a good life is a happy life, often found in the present.\n\n### Practical Steps to Integrate Gratitude and Mindfulness\n\nIncorporating gratitude and mindfulness into your daily routine doesn't require drastic changes; small, consistent steps can yield significant results.\n\n**For Gratitude:**\n*   **Start a Gratitude Journal:** Dedicate a few minutes each day to write down 3-5 things you are grateful for. These can be simple, like a warm cup of coffee, or more profound, like supportive relationships.\n*   **Express Appreciation:** Make it a habit to genuinely thank others, whether verbally, through a note, or a small gesture.\n*   **Practice Gratitude Meditations:** Many guided meditations focus on cultivating thankfulness.\n*   **The \"Gratitude Pause\":** Before eating a meal, take a moment to acknowledge the effort and resources that went into providing it.\n\n**For Mindfulness:**\n*   **Mindful Breathing:** Take several deep breaths throughout the day, focusing solely on the sensation of your breath entering and leaving your body.\n*   **Mindful Eating:** Pay full attention to the taste, texture, and aroma of your food, eating slowly and without distraction.\n*   **Body Scan Meditation:** Lie down and systematically bring awareness to different parts of your body, noticing any sensations without judgment.\n*   **One-Minute Mindfulness:** Choose a routine activity, like walking or washing dishes, and commit to doing it with full awareness for just one minute. Notice every detail.\n\n### The Combined Power: Cultivating Resilience and Inner Peace\n\nWhen gratitude and mindfulness are practiced together, their combined power is truly transformative. Gratitude helps us recognize and appreciate the positive aspects of our lives, building a reservoir of positive emotion. Mindfulness then enables us to fully experience and savor these moments of appreciation, grounding us in the joy that gratitude uncovers. This synergy cultivates profound resilience, allowing us to face adversity not by denying difficulties, but by strengthening our internal resources. By consistently acknowledging the good and remaining present, we develop a greater capacity to bounce back from setbacks, finding lessons and growth even in challenging times. This steady foundation of inner peace and resilience is fundamental to leading a life that is not just good, but deeply, truly happy.\n\n### Embracing a Joyful Life Through Present Moment Awareness\n\nUltimately, the journey to discovering that a good life is a happy life is deeply intertwined with our ability to live in the present. Gratitude anchors us to the positive aspects of our current reality, while mindfulness ensures we fully experience and appreciate them. By continually bringing our awareness to the present moment, we step out of the endless cycle of worry about the future or regret about the past. This present moment awareness allows us to fully engage with life as it unfolds, savoring the small joys, connecting more deeply with others, and responding to challenges with greater clarity and calm. Embracing this mindful and grateful approach doesn't mean ignoring difficulties; it means cultivating the inner strength and perspective to navigate them while maintaining an underlying current of joy and appreciation for the precious gift of life itself.\n\n## Finding Your Purpose: Setting Meaningful Goals and Embracing Growth\n\nDiscovering and living your purpose is a cornerstone of true fulfillment, deeply contributing to the belief that a good life is a happy life. It’s not about grand, unattainable gestures, but rather about aligning your daily actions with what truly matters to you. When you understand your purpose, every step you take feels more meaningful, leading to a profound sense of satisfaction and joy. This section will guide you through the process of uncovering your core values, setting goals that resonate with your authentic self, and cultivating a mindset that embraces continuous personal evolution.\n\n### Uncovering Your Core Values and Passions\n\nBefore you can set meaningful goals, you must first understand the internal compass that guides you: your core values and passions. These are the fundamental beliefs and driving forces that dictate your sense of right and wrong, and what brings you genuine joy and engagement.\n\n*   **Reflect on Your Peak Experiences:** Think about times in your life when you felt most alive, most engaged, or most proud. What were you doing? What values were you upholding?\n*   **Identify Your Non-Negotiables:** What are the principles you would never compromise on? These often point directly to your deepest values, such as integrity, compassion, freedom, or creativity.\n*   **Explore What Ignites You:** What topics, activities, or causes make you lose track of time? These are often your passions, which can become powerful motivators for your purpose.\n*   **Journaling and Self-Assessment:** Dedicate time to journaling about your aspirations, fears, and what you envision for your ideal future. Utilize online quizzes or self-assessment tools focused on values and strengths to gain further clarity.\n\n### Crafting Purpose-Driven Goals\n\nOnce your core values and passions are clear, the next step is to translate them into actionable, purpose-driven goals. These aren't just arbitrary targets; they are milestones on your journey towards a more fulfilling existence, ensuring a good life is a happy life.\n\n*   **Align with Your Values:** Each goal should directly reflect one or more of your core values. If a goal doesn't resonate with what you deeply care about, it’s less likely to sustain your motivation.\n*   **Make Them SMART (Specific, Measurable, Achievable, Relevant, Time-bound):** While purpose-driven, your goals still need structure. Define exactly what you want to achieve, how you'll measure progress, ensure they are realistic yet challenging, confirm their relevance to your overall purpose, and set a deadline.\n*   **Break Down Big Goals:** Large, overarching purpose goals can be intimidating. Break them into smaller, manageable steps. This creates a clear roadmap and provides a sense of accomplishment as you tick off each mini-goal.\n*   **Envision the Impact:** Regularly remind yourself of the positive impact achieving these goals will have on your life and potentially the lives of others. This reinforces your purpose and fuels your drive.\n\n### Cultivating a Growth Mindset for Continuous Evolution\n\nEmbracing a growth mindset is essential for anyone on a journey of purpose. It’s the belief that your abilities and intelligence can be developed through dedication and hard work, rather than being fixed traits. This perspective is vital for navigating challenges and ensuring continuous evolution, making your path to a good life a happy life more resilient.\n\n*   **Embrace Challenges as Opportunities:** View obstacles not as roadblocks, but as chances to learn, adapt, and grow stronger. Each challenge overcome deepens your understanding of yourself and your capabilities.\n*   **Learn from Feedback and Criticism:** Instead of being defensive, see feedback as valuable information that can help you improve. It's a tool for refinement, not a judgment of your worth.\n*   **Celebrate Effort, Not Just Outcome:** Acknowledge and reward your persistence, hard work, and the learning process, regardless of the immediate result. This reinforces the value of the journey itself.\n*   **Practice Self-Compassion:** Understand that setbacks are a natural part of growth. Treat yourself with the same kindness and understanding you would offer a friend, fostering resilience.\n*   **Seek New Learning Experiences:** Actively pursue new knowledge, skills, and perspectives. This keeps your mind agile, opens up new possibilities for your purpose, and prevents stagnation.\n\n### Integrating Purpose into Daily Living\n\nFinding your purpose isn't just about grand aspirations; it’s about weaving that purpose into the fabric of your everyday life. This consistent integration is what truly transforms your existence and affirms that a good life is a happy life.\n\n*   **Start Your Day with Intention:** Before diving into tasks, take a few moments to connect with your purpose. Ask yourself: \"How can I align my actions today with what truly matters to me?\"\n*   **Align Small Choices with Big Values:** From how you spend your free time to how you interact with others, make conscious choices that reflect your core values. Even seemingly minor decisions can contribute to your larger purpose.\n*   **Mindful Work and Activities:** Whether it’s your professional role or a personal project, approach it with a sense of purpose. Find the \"why\" behind what you do and let that infuse your efforts with meaning.\n*   **Regular Reflection:** Set aside time weekly or monthly to review your progress, reassess your goals, and ensure your daily actions are still leading you towards your intended purpose. Adjust as needed.\n*   **Connect with Your Community:** Engage in activities or groups that align with your passions and values. Contributing to something larger than yourself can be an incredibly powerful way to live out your purpose.\n\nBy intentionally discovering your values, setting purpose-driven goals, embracing a growth mindset, and integrating these elements into your daily existence, you cultivate a life rich in meaning and fulfillment. This deliberate approach is the pathway to experiencing precisely what it means for a good life to be a happy life, filled with authentic joy and continuous evolution.\n\n## Nourishing Your Body and Mind: Prioritizing Health and Well-being\n\nTo truly embrace the notion that **a good life is a happy life**, we must recognize that genuine joy and lasting contentment are deeply rooted in our physical and mental well-being. Our bodies and minds are interconnected systems, and neglecting one inevitably impacts the other. Prioritizing health isn't just about avoiding illness; it's about actively cultivating a state of optimal energy, clarity, and emotional resilience that empowers us to live fully and joyfully every single day.\n\n### Fueling Your Body for Optimal Energy and Clarity\n\nWhat we put into our bodies directly influences how we feel, think, and interact with the world. Just as a high-performance vehicle requires premium fuel, your body thrives on nutrient-rich foods that provide sustained energy and support cognitive function. A balanced diet, rich in whole foods such as fruits, vegetables, lean proteins, and healthy fats, can significantly impact your mood, concentration, and physical vitality. Adequate hydration is equally crucial, as even mild dehydration can lead to fatigue and reduced mental clarity. By making conscious choices about your nutrition, you're not just feeding your body; you're nourishing the foundation upon which **a good life is a happy life** is built.\n\n### Mindful Movement: The Key to Physical and Mental Vitality\n\nPhysical activity is a powerful catalyst for both physical and mental well-being. Moving your body regularly boosts circulation, strengthens muscles, improves cardiovascular health, and releases endorphins—nature's own mood elevators. Mindful movement, however, goes beyond mere exercise; it involves engaging with your body and its sensations during activity. Whether it's a brisk walk in nature, a flowing yoga session, dancing, or strength training, connecting with your movement helps reduce stress, enhance focus, and foster a deeper appreciation for your body's capabilities. Incorporating regular, enjoyable movement into your routine is a cornerstone for experiencing a vibrant, happy life.\n\n### Cultivating a Positive Mindset: Strategies for Emotional Well-being\n\nWhile physical health provides the framework, emotional well-being colors our daily experience. Cultivating a positive mindset is a deliberate practice that involves strategies to manage stress, foster resilience, and promote inner peace. Practices like gratitude journaling, where you regularly reflect on things you appreciate, can shift your perspective towards positivity. Mindfulness meditation, focusing on the present moment, helps reduce rumination and anxiety. Learning to set healthy boundaries, practice self-compassion, and engage in positive self-talk are vital for building emotional strength. By actively nurturing your mind, you unlock greater capacity for joy and reinforce the belief that **a good life is a happy life**.\n\n### The Power of Rest and Recharge: Prioritizing Sleep and Self-Care\n\nIn our fast-paced world, the importance of rest is often overlooked, yet it's absolutely fundamental to overall health and happiness. Quality sleep allows your body to repair itself, consolidate memories, and regulate hormones crucial for mood and appetite. Chronic sleep deprivation can profoundly impact your physical health, cognitive function, and emotional stability. Beyond sleep, dedicating time to self-care activities is essential for recharging your mental and emotional batteries. This might include pursuing hobbies, spending time in nature, enjoying quiet moments with a book, or connecting with loved ones. Prioritizing rest and intentional self-care isn't a luxury; it's a non-negotiable component of sustaining your well-being and ensuring that your journey towards **a good life is a happy life** is sustainable and fulfilling.\n\n## Embracing Imperfection: The Art of Work-Life Balance and Resilience\n\nIn our quest for what society often deems an \"ideal\" existence, we frequently stumble into the trap of perfectionism. Yet, a truly **good life is a happy life** when we learn to embrace our imperfections and navigate the ebbs and flows with grace and strength. This section explores how letting go of the need for flawless execution can unlock greater work-life balance, foster deep resilience, and ultimately pave the way for a more joyful and authentic journey.\n\n### Understanding the Trap of Perfectionism\n\nThe relentless pursuit of perfection, while seemingly noble, often leads to a cycle of stress, anxiety, and dissatisfaction. Perfectionism isn't about striving for excellence; it's an unrealistic demand for flawlessness that can cripple productivity and erode self-worth. It manifests as procrastination, fear of failure, and an inability to delegate, creating an invisible burden that weighs heavily on our well-being. This constant striving can make us feel like we're never \"enough,\" preventing us from truly experiencing the joy and contentment inherent in a good life.\n\n### The Power of Self-Acceptance and Compassion\n\nBreaking free from the chains of perfectionism begins with cultivating self-acceptance and compassion. Self-acceptance means acknowledging and embracing all parts of ourselves – our strengths, our weaknesses, and our quirks – without judgment. When we treat ourselves with the same kindness and understanding we'd offer a dear friend, we build an internal sanctuary of peace. This practice of self-compassion allows us to weather setbacks, learn from our missteps, and recognize that our inherent worth is not contingent on flawless performance. It's a foundational step toward realizing that a good life is a happy life, not a perfect one.\n\n### Strategies for Achieving Work-Life Harmony\n\nAchieving work-life balance isn't about perfectly splitting your time 50/50; it's about creating harmony between your professional aspirations and personal well-being. This often requires conscious effort and strategic choices:\n\n*   **Set Clear Boundaries:** Define when work ends and personal time begins. This might mean turning off notifications after a certain hour or designating specific days for family and hobbies.\n*   **Prioritize Ruthlessly:** Not everything is urgent. Learn to identify high-impact tasks and focus on them, letting go of the need to accomplish every single item on your to-do list.\n*   **Practice Intentional Disengagement:** When you're not working, truly be present in your personal life. Engage in activities that recharge you, whether it's spending time in nature, pursuing a hobby, or connecting with loved ones.\n*   **Embrace \"Good Enough\":** Recognize that striving for \"good enough\" often yields excellent results without the exhaustive energy drain of perfectionism.\n\n### Cultivating Resilience Through Imperfection\n\nImperfection is the fertile ground from which resilience grows. When we accept that mistakes are inevitable parts of any endeavor, we stop fearing failure and start viewing it as valuable feedback. Each stumble, each missed mark, becomes an opportunity to learn, adapt, and grow stronger. This mindset shift empowers us to bounce back from adversity more quickly and effectively, knowing that our capacity for resilience is directly tied to our willingness to confront and learn from our less-than-perfect moments. It's in these moments of learning that we truly build the foundation for a good life that is a happy life.\n\n### Embracing Growth and Learning from Mistakes\n\nTo live a truly joyful life, we must adopt a growth mindset, understanding that our abilities and intelligence can be developed through dedication and hard work. Mistakes are not endpoints; they are signposts on the path of progress. By reflecting on what went wrong, identifying lessons learned, and adjusting our approach, we transform errors into stepping stones for future success. This continuous cycle of learning, adapting, and growing is not only essential for personal and professional development but also a key ingredient in sustaining a **good life that is a happy life**, full of continuous improvement and genuine satisfaction.\n\n## Living in the Present: Appreciating Simple Pleasures and Moments\n\nIn our fast-paced world, it's easy to get caught up in planning for the future or dwelling on the past. However, truly embracing the present moment is a cornerstone of living a fulfilling and joyful existence. When we learn to appreciate the simple pleasures and moments that make up our daily lives, we discover that **a good life is a happy life**, not one defined by constant striving, but by mindful engagement with what is right in front of us. This section explores how cultivating presence can unlock a deeper sense of contentment and joy.\n\n### The Power of Mindfulness: Being Fully Present\n\nMindfulness is the practice of being fully aware of the present moment, without judgment. It involves paying attention to your thoughts, feelings, bodily sensations, and the environment around you with an open and curious mind. By intentionally bringing your attention to the here and now, you can reduce stress, improve focus, and enhance your overall well-being. This practice helps us to truly *experience* life rather than just letting it pass by.\n\n### Cultivating Gratitude for Everyday Joys\n\nGratitude is more than just saying \"thank you\"; it's a profound appreciation for what is valuable and meaningful in your life. Regularly practicing gratitude shifts your perspective, helping you notice and appreciate the small, often overlooked, joys that contribute to a happier life. Whether it's the warmth of a morning coffee, a kind word from a stranger, or the beauty of a sunset, acknowledging these everyday blessings fosters a more positive outlook and reinforces the idea that **a good life is a happy life** built on appreciation.\n\n### Savoring the Small Moments: Practical Tips\n\nSavoring is the act of prolonging and intensifying positive emotions and experiences. It's about consciously lingering in pleasant moments to extract their full value. Here are some practical tips to help you savor the small moments:\n\n*   **Engage your senses:** Actively notice the sights, sounds, smells, tastes, and textures of an enjoyable experience.\n*   **Be present:** Turn off distractions and fully immerse yourself in the activity.\n*   **Share your joy:** Discussing positive experiences with others can amplify and extend your feelings of happiness.\n*   **Create mementos:** Take a photo, keep a journal, or collect a small souvenir to remember the moment.\n\n### Connecting with Nature and Others for Deeper Appreciation\n\nOur connection to the natural world and to other people significantly impacts our ability to live in the present and appreciate life more deeply. Spending time in nature, whether it's a walk in the park or a hike in the mountains, can ground us and remind us of the simple beauty that surrounds us. Similarly, fostering meaningful relationships allows us to share experiences, offer and receive support, and find joy in mutual connection. Both nature and human connections provide abundant opportunities to practice presence and recognize that truly, **a good life is a happy life** when shared and experienced mindfully.\n\n## Conclusion: Crafting Your Own Joyful Journey\n\nAs we've explored throughout this guide, the journey toward a truly fulfilling existence reveals a profound truth: a good life is a happy life. It's not about chasing fleeting moments of pleasure, but rather about intentionally crafting a life rich with purpose, connection, and inner contentment. This conclusion isn't an end point, but an invitation to embark on, or continue, your personal quest for sustained joy.\n\n### Embrace the Ongoing Journey of Joy\n\nThe pursuit of happiness is rarely a straight path; it's a dynamic, evolving journey with its own ebbs and flows. Understanding this allows us to release the pressure of constant euphoria and instead embrace the beautiful complexity of life. Joy is found not just in grand achievements, but in the small, everyday moments – a shared laugh, a quiet morning coffee, the beauty of nature. Recognizing these instances and allowing ourselves to fully experience them is crucial for affirming that a good life is a happy life, built one joyful moment at a time.\n\n### Cultivating Key Habits for Lasting Happiness\n\nTo truly foster a life of joy, cultivating intentional habits is paramount. These aren't rigid rules, but gentle practices that can significantly impact your well-being. Consider incorporating:\n\n*   **Mindfulness and Gratitude:** Regularly pausing to appreciate what you have can shift your perspective from lack to abundance.\n*   **Meaningful Connections:** Nurturing relationships with loved ones provides a vital sense of belonging and support.\n*   **Physical Well-being:** Adequate sleep, nutrition, and exercise are fundamental pillars for both physical and mental health.\n*   **Purposeful Engagement:** Engaging in activities that align with your values and bring you a sense of accomplishment contributes deeply to contentment.\n\nThese habits, consistently applied, reinforce the foundation upon which a good life is a happy life flourishes.\n\n### Your Personal Blueprint for a Fulfilling Life\n\nThere's no one-size-fits-all formula for happiness. Your journey is uniquely yours, and building a fulfilling life requires a personal blueprint. Reflect on what truly resonates with you: What brings you energy? What causes do you care about? What kind of legacy do you wish to create? By identifying your core values, passions, and strengths, you can design a life that authentically reflects who you are, making the aspiration that \"a good life is a happy life\" a lived reality rather than just a saying.\n\n### The Power of Resilience and a Positive Mindset\n\nLife will inevitably present challenges, but it's our response to these hurdles that often defines our happiness. Developing resilience – the ability to bounce back from adversity – is a cornerstone of a joyful existence. Coupled with a positive mindset, which isn't about ignoring difficulties but about approaching them with optimism and a belief in your capacity to overcome, you empower yourself to navigate life's storms. Remember, even in tough times, the underlying truth remains: a good life is a happy life, especially when faced with an indomitable spirit. Your ability to adapt, learn, and grow through experiences is a powerful testament to your capacity for enduring joy.",
+      "progress": {
+        "sectionIndex": 8
+      },
+      "preferences": {
+        "automationLevel": "guided",
+        "skipOptionalSteps": false,
+        "autoSelectBestOptions": false
+      },
+      "policy": {
+        "referencesUsage": "both",
+        "grounding": true
+      },
+      "userProvidedFields": {},
+      "autoFillFields": {},
+      "trace": [
+        {
+          "step": "KeywordResearch.primaryCandidates",
+          "info": {
+            "count": 66
+          },
+          "at": 1764591500125
+        },
+        {
+          "step": "KeywordResearch.primaryCandidates",
+          "info": {
+            "count": 66
+          },
+          "at": 1764591500125
+        },
+        {
+          "step": "KeywordResearch.secondaryCandidates",
+          "info": {
+            "count": 19
+          },
+          "at": 1764591510734
+        },
+        {
+          "step": "KeywordResearch.primaryCandidates",
+          "info": {
+            "count": 66
+          },
+          "at": 1764591500125
+        },
+        {
+          "step": "KeywordResearch.secondaryCandidates",
+          "info": {
+            "count": 19
+          },
+          "at": 1764591510734
+        },
+        {
+          "step": "TitleGeneration.generated",
+          "info": {
+            "count": 5
+          },
+          "at": 1764591524033
+        },
+        {
+          "step": "KeywordResearch.primaryCandidates",
+          "info": {
+            "count": 66
+          },
+          "at": 1764591500125
+        },
+        {
+          "step": "KeywordResearch.secondaryCandidates",
+          "info": {
+            "count": 19
+          },
+          "at": 1764591510734
+        },
+        {
+          "step": "TitleGeneration.generated",
+          "info": {
+            "count": 5
+          },
+          "at": 1764591524033
+        },
+        {
+          "step": "DiscoveryNode.generatedOutline",
+          "info": {
+            "h2Count": 8
+          },
+          "at": 1764591600666
+        },
+        {
+          "step": "KeywordResearch.primaryCandidates",
+          "info": {
+            "count": 66
+          },
+          "at": 1764591500125
+        },
+        {
+          "step": "KeywordResearch.secondaryCandidates",
+          "info": {
+            "count": 19
+          },
+          "at": 1764591510734
+        },
+        {
+          "step": "TitleGeneration.generated",
+          "info": {
+            "count": 5
+          },
+          "at": 1764591524033
+        },
+        {
+          "step": "DiscoveryNode.generatedOutline",
+          "info": {
+            "h2Count": 8
+          },
+          "at": 1764591600666
+        },
+        {
+          "step": "ProposalNode.generatedSection",
+          "info": {
+            "sectionIndex": 0,
+            "section": "What Does \"A Good Life\" Truly Mean?"
+          },
+          "at": 1764591615650
+        },
+        {
+          "step": "ProposalNode.generatedSection",
+          "info": {
+            "sectionIndex": 1,
+            "section": "The Foundation of Joy: Cultivating Strong Relationships"
+          },
+          "at": 1764591626038
+        },
+        {
+          "step": "ProposalNode.generatedSection",
+          "info": {
+            "sectionIndex": 2,
+            "section": "Harnessing Inner Power: The Practice of Gratitude and Mindfulness"
+          },
+          "at": 1764591633585
+        },
+        {
+          "step": "ProposalNode.generatedSection",
+          "info": {
+            "sectionIndex": 3,
+            "section": "Finding Your Purpose: Setting Meaningful Goals and Embracing Growth"
+          },
+          "at": 1764591643417
+        },
+        {
+          "step": "ProposalNode.generatedSection",
+          "info": {
+            "sectionIndex": 4,
+            "section": "Nourishing Your Body and Mind: Prioritizing Health and Well-being"
+          },
+          "at": 1764591651520
+        },
+        {
+          "step": "ProposalNode.generatedSection",
+          "info": {
+            "sectionIndex": 5,
+            "section": "Embracing Imperfection: The Art of Work-Life Balance and Resilience"
+          },
+          "at": 1764591660379
+        },
+        {
+          "step": "ProposalNode.generatedSection",
+          "info": {
+            "sectionIndex": 6,
+            "section": "Living in the Present: Appreciating Simple Pleasures and Moments"
+          },
+          "at": 1764591665762
+        },
+        {
+          "step": "ProposalNode.generatedSection",
+          "info": {
+            "sectionIndex": 7,
+            "section": "Conclusion: Crafting Your Own Joyful Journey"
+          },
+          "at": 1764591671341
+        }
+      ],
+      "halt": null,
+      "keywordCandidates": [
+        {
+          "text": "having a happy life",
+          "volume": 210,
+          "difficulty": 0.01,
+          "source": "seed",
+          "score": 0.9474999999999999
+        },
+        {
+          "text": "a simple life is a happy life",
+          "volume": 90,
+          "difficulty": 0,
+          "source": "seed",
+          "score": 0.59
+        },
+        {
+          "text": "best way to live a happy life",
+          "volume": 70,
+          "difficulty": 0.11,
+          "source": "seed",
+          "score": 0.5025
+        },
+        {
+          "text": "i just want a happy life",
+          "volume": 70,
+          "difficulty": 0.2,
+          "source": "seed",
+          "score": 0.48
+        },
+        {
+          "text": "i live a happy life",
+          "volume": 50,
+          "difficulty": 0,
+          "source": "seed",
+          "score": 0.47
+        },
+        {
+          "text": "a good life is when you assume nothing",
+          "volume": 50,
+          "difficulty": 0,
+          "source": "seed",
+          "score": 0.42
+        },
+        {
+          "text": "a good life is a happy life meaning",
+          "volume": 20,
+          "difficulty": 0,
+          "source": "seed",
+          "score": 0.38
+        },
+        {
+          "text": "a happy life is a life in which you are",
+          "volume": 20,
+          "difficulty": 0,
+          "source": "seed",
+          "score": 0.38
+        },
+        {
+          "text": "a healthy life is a happy life",
+          "volume": 20,
+          "difficulty": 0,
+          "source": "seed",
+          "score": 0.38
+        },
+        {
+          "text": "i have a good life why am i unhappy",
+          "volume": 40,
+          "difficulty": 0.05,
+          "source": "seed",
+          "score": 0.3775
+        },
+        {
+          "text": "i have a happy life",
+          "volume": 20,
+          "difficulty": 0.04,
+          "source": "seed",
+          "score": 0.37
+        },
+        {
+          "text": "a good life is when you smile often",
+          "volume": 30,
+          "difficulty": 0,
+          "source": "seed",
+          "score": 0.36
+        },
+        {
+          "text": "good life is a happy life",
+          "volume": 10,
+          "difficulty": 0,
+          "source": "seed",
+          "score": 0.35
+        },
+        {
+          "text": "i just want a simple happy life",
+          "volume": 10,
+          "difficulty": 0,
+          "source": "seed",
+          "score": 0.35
+        },
+        {
+          "text": "i just want to live a happy life",
+          "volume": 10,
+          "difficulty": 0,
+          "source": "seed",
+          "score": 0.35
+        },
+        {
+          "text": "a busy life is a happy life",
+          "volume": 10,
+          "difficulty": 0.13,
+          "source": "seed",
+          "score": 0.3175
+        },
+        {
+          "text": "a counterintuitive guide to happiness",
+          "volume": 10,
+          "difficulty": 0,
+          "source": "seed",
+          "score": 0.25
+        },
+        {
+          "text": "i have a great life why am i not happy",
+          "volume": 10,
+          "difficulty": 0.49,
+          "source": "seed",
+          "score": 0.22749999999999998
+        },
+        {
+          "text": "i have a great life so why am i unhappy",
+          "volume": 10,
+          "difficulty": 1,
+          "source": "seed",
+          "score": 0.049999999999999996
+        }
+      ],
+      "titleCandidates": [
+        "A Good Life Is a Happy Life: Your Essential Guide to Joyful Living",
+        "The American Dream of Happiness: Why a Good Life Is a Happy Life",
+        "Unlock Lasting Joy: The Transformative Power of a Good Life Is a Happy Life",
+        "Beyond Basics: Understanding Why a Good Life Is a Happy Life for Fulfillment",
+        "Cultivating Contentment: How Embracing a Good Life Is a Happy Life Changes Everything"
+      ],
+      "currentStep": "generation",
+      "toolOutputs": [
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "primary",
+            "candidates": [
+              {
+                "text": "happy",
+                "volume": 3350000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.8914285714285715
+              },
+              {
+                "text": "happy living life benefits",
+                "volume": 3731,
+                "difficulty": -0.75,
+                "source": "seed",
+                "score": 0.4006664497505963
+              },
+              {
+                "text": "happy living life checklist",
+                "volume": 5141,
+                "difficulty": -0.24,
+                "source": "seed",
+                "score": 0.3280618449607312
+              },
+              {
+                "text": "happy living life",
+                "volume": 2397,
+                "difficulty": -0.23,
+                "source": "seed",
+                "score": 0.32614180937853543
+              },
+              {
+                "text": "living life",
+                "volume": 2501,
+                "difficulty": -0.2,
+                "source": "seed",
+                "score": 0.32187472201409556
+              },
+              {
+                "text": "happy days",
+                "volume": 550000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.31350596568944983
+              },
+              {
+                "text": "living life vs alternatives",
+                "volume": 2625,
+                "difficulty": -0.48,
+                "source": "seed",
+                "score": 0.311896931035615
+              },
+              {
+                "text": "living",
+                "volume": 450000,
+                "difficulty": 0.55,
+                "source": "seed",
+                "score": 0.29488117874978725
+              },
+              {
+                "text": "living a happy life",
+                "volume": 1600,
+                "difficulty": 0.03,
+                "source": "seed",
+                "score": 0.28885620554091207
+              },
+              {
+                "text": "happy living",
+                "volume": 22200,
+                "difficulty": 0.06,
+                "source": "seed",
+                "score": 0.2882600545076254
+              },
+              {
+                "text": "happy life",
+                "volume": 74000,
+                "difficulty": 0.13,
+                "source": "seed",
+                "score": 0.28753769414237057
+              },
+              {
+                "text": "living life for beginners",
+                "volume": 5610,
+                "difficulty": -0.21,
+                "source": "seed",
+                "score": 0.27386013092576394
+              },
+              {
+                "text": "happy living life best practices",
+                "volume": 6049,
+                "difficulty": 0.15,
+                "source": "seed",
+                "score": 0.2725101865975719
+              },
+              {
+                "text": "happy living life guide",
+                "volume": 354,
+                "difficulty": 0.32,
+                "source": "seed",
+                "score": 0.24720446926707243
+              },
+              {
+                "text": "a simple life is a happy life",
+                "volume": 90,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.24287147125812314
+              },
+              {
+                "text": "a healthy life is a happy life",
+                "volume": 20,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.24285893390726537
+              },
+              {
+                "text": "a good life is a happy life",
+                "volume": 10,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.24285714285714283
+              },
+              {
+                "text": "a secret life is a happy life",
+                "volume": 10,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.24285714285714283
+              },
+              {
+                "text": "happy holiday",
+                "volume": 246000,
+                "difficulty": 0.14,
+                "source": "seed",
+                "score": 0.24191518482144725
+              },
+              {
+                "text": "happy music",
+                "volume": 135000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.23917738560413615
+              },
+              {
+                "text": "happy trails",
+                "volume": 110000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.23755690315493477
+              },
+              {
+                "text": "happy home",
+                "volume": 165000,
+                "difficulty": 0.08,
+                "source": "seed",
+                "score": 0.23597910740032063
+              },
+              {
+                "text": "happy living life tutorial",
+                "volume": 432,
+                "difficulty": 0.41,
+                "source": "seed",
+                "score": 0.2343612966008854
+              },
+              {
+                "text": "living life benefits",
+                "volume": 6435,
+                "difficulty": 0.07,
+                "source": "seed",
+                "score": 0.2340078925608733
+              },
+              {
+                "text": "happy living life vs alternatives",
+                "volume": 2377,
+                "difficulty": 0.42,
+                "source": "seed",
+                "score": 0.23328108442114753
+              },
+              {
+                "text": "a happy healthy life",
+                "volume": 70,
+                "difficulty": 0.08,
+                "source": "seed",
+                "score": 0.23143931772930665
+              },
+              {
+                "text": "secret to a happy life",
+                "volume": 590,
+                "difficulty": 0.1,
+                "source": "seed",
+                "score": 0.22867530947853576
+              },
+              {
+                "text": "slow living",
+                "volume": 60500,
+                "difficulty": 0.03,
+                "source": "seed",
+                "score": 0.22440549076265898
+              },
+              {
+                "text": "happy ever after",
+                "volume": 165000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.2209791074003206
+              },
+              {
+                "text": "slow life",
+                "volume": 27100,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.21985195478195457
+              },
+              {
+                "text": "after ever happy",
+                "volume": 135000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.21560595703270755
+              },
+              {
+                "text": "happier life",
+                "volume": 74000,
+                "difficulty": 0.13,
+                "source": "seed",
+                "score": 0.21253769414237056
+              },
+              {
+                "text": "living life tutorial",
+                "volume": 1832,
+                "difficulty": 0.22,
+                "source": "seed",
+                "score": 0.21175490076089779
+              },
+              {
+                "text": "happy go lucky",
+                "volume": 60500,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.20083406219123043
+              },
+              {
+                "text": "happy money happy life",
+                "volume": 30,
+                "difficulty": 0.33,
+                "source": "seed",
+                "score": 0.19571786781453077
+              },
+              {
+                "text": "after ever happy netflix",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.1929019191102063
+              },
+              {
+                "text": "after ever happy online",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.1929019191102063
+              },
+              {
+                "text": "after ever happy watch online",
+                "volume": 140,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.19288042650873582
+              },
+              {
+                "text": "happy valley season 3",
+                "volume": 8100,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.1928775309777044
+              },
+              {
+                "text": "pop culture happy hour",
+                "volume": 4400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.19078627100379406
+              },
+              {
+                "text": "watch after ever happy",
+                "volume": 2400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.1904280609792865
+              },
+              {
+                "text": "about happiness in life",
+                "volume": 40,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.1900053731503676
+              },
+              {
+                "text": "a happy life is",
+                "volume": 10,
+                "difficulty": 0.38,
+                "source": "seed",
+                "score": 0.18857142857142856
+              },
+              {
+                "text": "7 happiness of life",
+                "volume": 30,
+                "difficulty": 0.04,
+                "source": "seed",
+                "score": 0.18714643924310218
+              },
+              {
+                "text": "after ever happy where to watch",
+                "volume": 90,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.185728614115266
+              },
+              {
+                "text": "mr happy",
+                "volume": 40500,
+                "difficulty": 0.28,
+                "source": "seed",
+                "score": 0.1851091048032979
+              },
+              {
+                "text": "happy living life for beginners",
+                "volume": 6634,
+                "difficulty": 0.8,
+                "source": "seed",
+                "score": 0.1797578201725975
+              },
+              {
+                "text": "a happy life is a secret life",
+                "volume": 10,
+                "difficulty": 0.5,
+                "source": "seed",
+                "score": 0.17142857142857143
+              },
+              {
+                "text": "unhappy with my life",
+                "volume": 390,
+                "difficulty": 0.24,
+                "source": "seed",
+                "score": 0.158639488476085
+              },
+              {
+                "text": "a happier life",
+                "volume": 720,
+                "difficulty": 0.26,
+                "source": "seed",
+                "score": 0.15584145027298588
+              },
+              {
+                "text": "finding happiness in everyday life",
+                "volume": 70,
+                "difficulty": 0.28,
+                "source": "seed",
+                "score": 0.15286788915787805
+              },
+              {
+                "text": "live in",
+                "volume": 49500,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.1502924784850104
+              },
+              {
+                "text": "merry christmas and happy new year",
+                "volume": 135000,
+                "difficulty": 0.47,
+                "source": "seed",
+                "score": 0.14989167131842182
+              },
+              {
+                "text": "assisted",
+                "volume": 40500,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.14725196194615509
+              },
+              {
+                "text": "upbeat music",
+                "volume": 110000,
+                "difficulty": 0.11,
+                "source": "seed",
+                "score": 0.14684261744064908
+              },
+              {
+                "text": "live and let live",
+                "volume": 22200,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.14683148307905397
+              },
+              {
+                "text": "a counterintuitive guide to happiness",
+                "volume": 10,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.14285714285714285
+              },
+              {
+                "text": "living life guide",
+                "volume": 7674,
+                "difficulty": 0.71,
+                "source": "seed",
+                "score": 0.1428012322424843
+              },
+              {
+                "text": "revocable",
+                "volume": 14800,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.14264896313123324
+              },
+              {
+                "text": "play upbeat music",
+                "volume": 1900,
+                "difficulty": 0.04,
+                "source": "seed",
+                "score": 0.13748136561601673
+              },
+              {
+                "text": "living life checklist",
+                "volume": 4349,
+                "difficulty": 0.79,
+                "source": "seed",
+                "score": 0.1307771366481691
+              },
+              {
+                "text": "living life best practices",
+                "volume": 5553,
+                "difficulty": 0.8,
+                "source": "seed",
+                "score": 0.12956420765435117
+              },
+              {
+                "text": "liven",
+                "volume": 110000,
+                "difficulty": 0.25,
+                "source": "seed",
+                "score": 0.1268426174406491
+              },
+              {
+                "text": "the happiness trap how to stop struggling and start living",
+                "volume": 110,
+                "difficulty": 0.62,
+                "source": "seed",
+                "score": 0.10430362478693964
+              },
+              {
+                "text": "reclining",
+                "volume": 246000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.04405804196430437
+              },
+              {
+                "text": "live up",
+                "volume": 27100,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.004851954781954573
+              }
+            ]
+          },
+          "timestamp": 1764591500125
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "primary",
+            "candidates": [
+              {
+                "text": "happy",
+                "volume": 3350000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.8914285714285715
+              },
+              {
+                "text": "happy living life benefits",
+                "volume": 3731,
+                "difficulty": -0.75,
+                "source": "seed",
+                "score": 0.4006664497505963
+              },
+              {
+                "text": "happy living life checklist",
+                "volume": 5141,
+                "difficulty": -0.24,
+                "source": "seed",
+                "score": 0.3280618449607312
+              },
+              {
+                "text": "happy living life",
+                "volume": 2397,
+                "difficulty": -0.23,
+                "source": "seed",
+                "score": 0.32614180937853543
+              },
+              {
+                "text": "living life",
+                "volume": 2501,
+                "difficulty": -0.2,
+                "source": "seed",
+                "score": 0.32187472201409556
+              },
+              {
+                "text": "happy days",
+                "volume": 550000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.31350596568944983
+              },
+              {
+                "text": "living life vs alternatives",
+                "volume": 2625,
+                "difficulty": -0.48,
+                "source": "seed",
+                "score": 0.311896931035615
+              },
+              {
+                "text": "living",
+                "volume": 450000,
+                "difficulty": 0.55,
+                "source": "seed",
+                "score": 0.29488117874978725
+              },
+              {
+                "text": "living a happy life",
+                "volume": 1600,
+                "difficulty": 0.03,
+                "source": "seed",
+                "score": 0.28885620554091207
+              },
+              {
+                "text": "happy living",
+                "volume": 22200,
+                "difficulty": 0.06,
+                "source": "seed",
+                "score": 0.2882600545076254
+              },
+              {
+                "text": "happy life",
+                "volume": 74000,
+                "difficulty": 0.13,
+                "source": "seed",
+                "score": 0.28753769414237057
+              },
+              {
+                "text": "living life for beginners",
+                "volume": 5610,
+                "difficulty": -0.21,
+                "source": "seed",
+                "score": 0.27386013092576394
+              },
+              {
+                "text": "happy living life best practices",
+                "volume": 6049,
+                "difficulty": 0.15,
+                "source": "seed",
+                "score": 0.2725101865975719
+              },
+              {
+                "text": "happy living life guide",
+                "volume": 354,
+                "difficulty": 0.32,
+                "source": "seed",
+                "score": 0.24720446926707243
+              },
+              {
+                "text": "a simple life is a happy life",
+                "volume": 90,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.24287147125812314
+              },
+              {
+                "text": "a healthy life is a happy life",
+                "volume": 20,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.24285893390726537
+              },
+              {
+                "text": "a good life is a happy life",
+                "volume": 10,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.24285714285714283
+              },
+              {
+                "text": "a secret life is a happy life",
+                "volume": 10,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.24285714285714283
+              },
+              {
+                "text": "happy holiday",
+                "volume": 246000,
+                "difficulty": 0.14,
+                "source": "seed",
+                "score": 0.24191518482144725
+              },
+              {
+                "text": "happy music",
+                "volume": 135000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.23917738560413615
+              },
+              {
+                "text": "happy trails",
+                "volume": 110000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.23755690315493477
+              },
+              {
+                "text": "happy home",
+                "volume": 165000,
+                "difficulty": 0.08,
+                "source": "seed",
+                "score": 0.23597910740032063
+              },
+              {
+                "text": "happy living life tutorial",
+                "volume": 432,
+                "difficulty": 0.41,
+                "source": "seed",
+                "score": 0.2343612966008854
+              },
+              {
+                "text": "living life benefits",
+                "volume": 6435,
+                "difficulty": 0.07,
+                "source": "seed",
+                "score": 0.2340078925608733
+              },
+              {
+                "text": "happy living life vs alternatives",
+                "volume": 2377,
+                "difficulty": 0.42,
+                "source": "seed",
+                "score": 0.23328108442114753
+              },
+              {
+                "text": "a happy healthy life",
+                "volume": 70,
+                "difficulty": 0.08,
+                "source": "seed",
+                "score": 0.23143931772930665
+              },
+              {
+                "text": "secret to a happy life",
+                "volume": 590,
+                "difficulty": 0.1,
+                "source": "seed",
+                "score": 0.22867530947853576
+              },
+              {
+                "text": "slow living",
+                "volume": 60500,
+                "difficulty": 0.03,
+                "source": "seed",
+                "score": 0.22440549076265898
+              },
+              {
+                "text": "happy ever after",
+                "volume": 165000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.2209791074003206
+              },
+              {
+                "text": "slow life",
+                "volume": 27100,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.21985195478195457
+              },
+              {
+                "text": "after ever happy",
+                "volume": 135000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.21560595703270755
+              },
+              {
+                "text": "happier life",
+                "volume": 74000,
+                "difficulty": 0.13,
+                "source": "seed",
+                "score": 0.21253769414237056
+              },
+              {
+                "text": "living life tutorial",
+                "volume": 1832,
+                "difficulty": 0.22,
+                "source": "seed",
+                "score": 0.21175490076089779
+              },
+              {
+                "text": "happy go lucky",
+                "volume": 60500,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.20083406219123043
+              },
+              {
+                "text": "happy money happy life",
+                "volume": 30,
+                "difficulty": 0.33,
+                "source": "seed",
+                "score": 0.19571786781453077
+              },
+              {
+                "text": "after ever happy netflix",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.1929019191102063
+              },
+              {
+                "text": "after ever happy online",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.1929019191102063
+              },
+              {
+                "text": "after ever happy watch online",
+                "volume": 140,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.19288042650873582
+              },
+              {
+                "text": "happy valley season 3",
+                "volume": 8100,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.1928775309777044
+              },
+              {
+                "text": "pop culture happy hour",
+                "volume": 4400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.19078627100379406
+              },
+              {
+                "text": "watch after ever happy",
+                "volume": 2400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.1904280609792865
+              },
+              {
+                "text": "about happiness in life",
+                "volume": 40,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.1900053731503676
+              },
+              {
+                "text": "a happy life is",
+                "volume": 10,
+                "difficulty": 0.38,
+                "source": "seed",
+                "score": 0.18857142857142856
+              },
+              {
+                "text": "7 happiness of life",
+                "volume": 30,
+                "difficulty": 0.04,
+                "source": "seed",
+                "score": 0.18714643924310218
+              },
+              {
+                "text": "after ever happy where to watch",
+                "volume": 90,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.185728614115266
+              },
+              {
+                "text": "mr happy",
+                "volume": 40500,
+                "difficulty": 0.28,
+                "source": "seed",
+                "score": 0.1851091048032979
+              },
+              {
+                "text": "happy living life for beginners",
+                "volume": 6634,
+                "difficulty": 0.8,
+                "source": "seed",
+                "score": 0.1797578201725975
+              },
+              {
+                "text": "a happy life is a secret life",
+                "volume": 10,
+                "difficulty": 0.5,
+                "source": "seed",
+                "score": 0.17142857142857143
+              },
+              {
+                "text": "unhappy with my life",
+                "volume": 390,
+                "difficulty": 0.24,
+                "source": "seed",
+                "score": 0.158639488476085
+              },
+              {
+                "text": "a happier life",
+                "volume": 720,
+                "difficulty": 0.26,
+                "source": "seed",
+                "score": 0.15584145027298588
+              },
+              {
+                "text": "finding happiness in everyday life",
+                "volume": 70,
+                "difficulty": 0.28,
+                "source": "seed",
+                "score": 0.15286788915787805
+              },
+              {
+                "text": "live in",
+                "volume": 49500,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.1502924784850104
+              },
+              {
+                "text": "merry christmas and happy new year",
+                "volume": 135000,
+                "difficulty": 0.47,
+                "source": "seed",
+                "score": 0.14989167131842182
+              },
+              {
+                "text": "assisted",
+                "volume": 40500,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.14725196194615509
+              },
+              {
+                "text": "upbeat music",
+                "volume": 110000,
+                "difficulty": 0.11,
+                "source": "seed",
+                "score": 0.14684261744064908
+              },
+              {
+                "text": "live and let live",
+                "volume": 22200,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.14683148307905397
+              },
+              {
+                "text": "a counterintuitive guide to happiness",
+                "volume": 10,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.14285714285714285
+              },
+              {
+                "text": "living life guide",
+                "volume": 7674,
+                "difficulty": 0.71,
+                "source": "seed",
+                "score": 0.1428012322424843
+              },
+              {
+                "text": "revocable",
+                "volume": 14800,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.14264896313123324
+              },
+              {
+                "text": "play upbeat music",
+                "volume": 1900,
+                "difficulty": 0.04,
+                "source": "seed",
+                "score": 0.13748136561601673
+              },
+              {
+                "text": "living life checklist",
+                "volume": 4349,
+                "difficulty": 0.79,
+                "source": "seed",
+                "score": 0.1307771366481691
+              },
+              {
+                "text": "living life best practices",
+                "volume": 5553,
+                "difficulty": 0.8,
+                "source": "seed",
+                "score": 0.12956420765435117
+              },
+              {
+                "text": "liven",
+                "volume": 110000,
+                "difficulty": 0.25,
+                "source": "seed",
+                "score": 0.1268426174406491
+              },
+              {
+                "text": "the happiness trap how to stop struggling and start living",
+                "volume": 110,
+                "difficulty": 0.62,
+                "source": "seed",
+                "score": 0.10430362478693964
+              },
+              {
+                "text": "reclining",
+                "volume": 246000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.04405804196430437
+              },
+              {
+                "text": "live up",
+                "volume": 27100,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.004851954781954573
+              }
+            ]
+          },
+          "timestamp": 1764591500125
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "secondary",
+            "candidates": [
+              {
+                "text": "having a happy life",
+                "volume": 210,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.9474999999999999
+              },
+              {
+                "text": "a simple life is a happy life",
+                "volume": 90,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.59
+              },
+              {
+                "text": "best way to live a happy life",
+                "volume": 70,
+                "difficulty": 0.11,
+                "source": "seed",
+                "score": 0.5025
+              },
+              {
+                "text": "i just want a happy life",
+                "volume": 70,
+                "difficulty": 0.2,
+                "source": "seed",
+                "score": 0.48
+              },
+              {
+                "text": "i live a happy life",
+                "volume": 50,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.47
+              },
+              {
+                "text": "a good life is when you assume nothing",
+                "volume": 50,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.42
+              },
+              {
+                "text": "a good life is a happy life meaning",
+                "volume": 20,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.38
+              },
+              {
+                "text": "a happy life is a life in which you are",
+                "volume": 20,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.38
+              },
+              {
+                "text": "a healthy life is a happy life",
+                "volume": 20,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.38
+              },
+              {
+                "text": "i have a good life why am i unhappy",
+                "volume": 40,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.3775
+              },
+              {
+                "text": "i have a happy life",
+                "volume": 20,
+                "difficulty": 0.04,
+                "source": "seed",
+                "score": 0.37
+              },
+              {
+                "text": "a good life is when you smile often",
+                "volume": 30,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.36
+              },
+              {
+                "text": "good life is a happy life",
+                "volume": 10,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.35
+              },
+              {
+                "text": "i just want a simple happy life",
+                "volume": 10,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.35
+              },
+              {
+                "text": "i just want to live a happy life",
+                "volume": 10,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.35
+              },
+              {
+                "text": "a busy life is a happy life",
+                "volume": 10,
+                "difficulty": 0.13,
+                "source": "seed",
+                "score": 0.3175
+              },
+              {
+                "text": "a counterintuitive guide to happiness",
+                "volume": 10,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25
+              },
+              {
+                "text": "i have a great life why am i not happy",
+                "volume": 10,
+                "difficulty": 0.49,
+                "source": "seed",
+                "score": 0.22749999999999998
+              },
+              {
+                "text": "i have a great life so why am i unhappy",
+                "volume": 10,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.049999999999999996
+              }
+            ]
+          },
+          "timestamp": 1764591510734
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "primary",
+            "candidates": [
+              {
+                "text": "happy",
+                "volume": 3350000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.8914285714285715
+              },
+              {
+                "text": "happy living life benefits",
+                "volume": 3731,
+                "difficulty": -0.75,
+                "source": "seed",
+                "score": 0.4006664497505963
+              },
+              {
+                "text": "happy living life checklist",
+                "volume": 5141,
+                "difficulty": -0.24,
+                "source": "seed",
+                "score": 0.3280618449607312
+              },
+              {
+                "text": "happy living life",
+                "volume": 2397,
+                "difficulty": -0.23,
+                "source": "seed",
+                "score": 0.32614180937853543
+              },
+              {
+                "text": "living life",
+                "volume": 2501,
+                "difficulty": -0.2,
+                "source": "seed",
+                "score": 0.32187472201409556
+              },
+              {
+                "text": "happy days",
+                "volume": 550000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.31350596568944983
+              },
+              {
+                "text": "living life vs alternatives",
+                "volume": 2625,
+                "difficulty": -0.48,
+                "source": "seed",
+                "score": 0.311896931035615
+              },
+              {
+                "text": "living",
+                "volume": 450000,
+                "difficulty": 0.55,
+                "source": "seed",
+                "score": 0.29488117874978725
+              },
+              {
+                "text": "living a happy life",
+                "volume": 1600,
+                "difficulty": 0.03,
+                "source": "seed",
+                "score": 0.28885620554091207
+              },
+              {
+                "text": "happy living",
+                "volume": 22200,
+                "difficulty": 0.06,
+                "source": "seed",
+                "score": 0.2882600545076254
+              },
+              {
+                "text": "happy life",
+                "volume": 74000,
+                "difficulty": 0.13,
+                "source": "seed",
+                "score": 0.28753769414237057
+              },
+              {
+                "text": "living life for beginners",
+                "volume": 5610,
+                "difficulty": -0.21,
+                "source": "seed",
+                "score": 0.27386013092576394
+              },
+              {
+                "text": "happy living life best practices",
+                "volume": 6049,
+                "difficulty": 0.15,
+                "source": "seed",
+                "score": 0.2725101865975719
+              },
+              {
+                "text": "happy living life guide",
+                "volume": 354,
+                "difficulty": 0.32,
+                "source": "seed",
+                "score": 0.24720446926707243
+              },
+              {
+                "text": "a simple life is a happy life",
+                "volume": 90,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.24287147125812314
+              },
+              {
+                "text": "a healthy life is a happy life",
+                "volume": 20,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.24285893390726537
+              },
+              {
+                "text": "a good life is a happy life",
+                "volume": 10,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.24285714285714283
+              },
+              {
+                "text": "a secret life is a happy life",
+                "volume": 10,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.24285714285714283
+              },
+              {
+                "text": "happy holiday",
+                "volume": 246000,
+                "difficulty": 0.14,
+                "source": "seed",
+                "score": 0.24191518482144725
+              },
+              {
+                "text": "happy music",
+                "volume": 135000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.23917738560413615
+              },
+              {
+                "text": "happy trails",
+                "volume": 110000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.23755690315493477
+              },
+              {
+                "text": "happy home",
+                "volume": 165000,
+                "difficulty": 0.08,
+                "source": "seed",
+                "score": 0.23597910740032063
+              },
+              {
+                "text": "happy living life tutorial",
+                "volume": 432,
+                "difficulty": 0.41,
+                "source": "seed",
+                "score": 0.2343612966008854
+              },
+              {
+                "text": "living life benefits",
+                "volume": 6435,
+                "difficulty": 0.07,
+                "source": "seed",
+                "score": 0.2340078925608733
+              },
+              {
+                "text": "happy living life vs alternatives",
+                "volume": 2377,
+                "difficulty": 0.42,
+                "source": "seed",
+                "score": 0.23328108442114753
+              },
+              {
+                "text": "a happy healthy life",
+                "volume": 70,
+                "difficulty": 0.08,
+                "source": "seed",
+                "score": 0.23143931772930665
+              },
+              {
+                "text": "secret to a happy life",
+                "volume": 590,
+                "difficulty": 0.1,
+                "source": "seed",
+                "score": 0.22867530947853576
+              },
+              {
+                "text": "slow living",
+                "volume": 60500,
+                "difficulty": 0.03,
+                "source": "seed",
+                "score": 0.22440549076265898
+              },
+              {
+                "text": "happy ever after",
+                "volume": 165000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.2209791074003206
+              },
+              {
+                "text": "slow life",
+                "volume": 27100,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.21985195478195457
+              },
+              {
+                "text": "after ever happy",
+                "volume": 135000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.21560595703270755
+              },
+              {
+                "text": "happier life",
+                "volume": 74000,
+                "difficulty": 0.13,
+                "source": "seed",
+                "score": 0.21253769414237056
+              },
+              {
+                "text": "living life tutorial",
+                "volume": 1832,
+                "difficulty": 0.22,
+                "source": "seed",
+                "score": 0.21175490076089779
+              },
+              {
+                "text": "happy go lucky",
+                "volume": 60500,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.20083406219123043
+              },
+              {
+                "text": "happy money happy life",
+                "volume": 30,
+                "difficulty": 0.33,
+                "source": "seed",
+                "score": 0.19571786781453077
+              },
+              {
+                "text": "after ever happy netflix",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.1929019191102063
+              },
+              {
+                "text": "after ever happy online",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.1929019191102063
+              },
+              {
+                "text": "after ever happy watch online",
+                "volume": 140,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.19288042650873582
+              },
+              {
+                "text": "happy valley season 3",
+                "volume": 8100,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.1928775309777044
+              },
+              {
+                "text": "pop culture happy hour",
+                "volume": 4400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.19078627100379406
+              },
+              {
+                "text": "watch after ever happy",
+                "volume": 2400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.1904280609792865
+              },
+              {
+                "text": "about happiness in life",
+                "volume": 40,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.1900053731503676
+              },
+              {
+                "text": "a happy life is",
+                "volume": 10,
+                "difficulty": 0.38,
+                "source": "seed",
+                "score": 0.18857142857142856
+              },
+              {
+                "text": "7 happiness of life",
+                "volume": 30,
+                "difficulty": 0.04,
+                "source": "seed",
+                "score": 0.18714643924310218
+              },
+              {
+                "text": "after ever happy where to watch",
+                "volume": 90,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.185728614115266
+              },
+              {
+                "text": "mr happy",
+                "volume": 40500,
+                "difficulty": 0.28,
+                "source": "seed",
+                "score": 0.1851091048032979
+              },
+              {
+                "text": "happy living life for beginners",
+                "volume": 6634,
+                "difficulty": 0.8,
+                "source": "seed",
+                "score": 0.1797578201725975
+              },
+              {
+                "text": "a happy life is a secret life",
+                "volume": 10,
+                "difficulty": 0.5,
+                "source": "seed",
+                "score": 0.17142857142857143
+              },
+              {
+                "text": "unhappy with my life",
+                "volume": 390,
+                "difficulty": 0.24,
+                "source": "seed",
+                "score": 0.158639488476085
+              },
+              {
+                "text": "a happier life",
+                "volume": 720,
+                "difficulty": 0.26,
+                "source": "seed",
+                "score": 0.15584145027298588
+              },
+              {
+                "text": "finding happiness in everyday life",
+                "volume": 70,
+                "difficulty": 0.28,
+                "source": "seed",
+                "score": 0.15286788915787805
+              },
+              {
+                "text": "live in",
+                "volume": 49500,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.1502924784850104
+              },
+              {
+                "text": "merry christmas and happy new year",
+                "volume": 135000,
+                "difficulty": 0.47,
+                "source": "seed",
+                "score": 0.14989167131842182
+              },
+              {
+                "text": "assisted",
+                "volume": 40500,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.14725196194615509
+              },
+              {
+                "text": "upbeat music",
+                "volume": 110000,
+                "difficulty": 0.11,
+                "source": "seed",
+                "score": 0.14684261744064908
+              },
+              {
+                "text": "live and let live",
+                "volume": 22200,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.14683148307905397
+              },
+              {
+                "text": "a counterintuitive guide to happiness",
+                "volume": 10,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.14285714285714285
+              },
+              {
+                "text": "living life guide",
+                "volume": 7674,
+                "difficulty": 0.71,
+                "source": "seed",
+                "score": 0.1428012322424843
+              },
+              {
+                "text": "revocable",
+                "volume": 14800,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.14264896313123324
+              },
+              {
+                "text": "play upbeat music",
+                "volume": 1900,
+                "difficulty": 0.04,
+                "source": "seed",
+                "score": 0.13748136561601673
+              },
+              {
+                "text": "living life checklist",
+                "volume": 4349,
+                "difficulty": 0.79,
+                "source": "seed",
+                "score": 0.1307771366481691
+              },
+              {
+                "text": "living life best practices",
+                "volume": 5553,
+                "difficulty": 0.8,
+                "source": "seed",
+                "score": 0.12956420765435117
+              },
+              {
+                "text": "liven",
+                "volume": 110000,
+                "difficulty": 0.25,
+                "source": "seed",
+                "score": 0.1268426174406491
+              },
+              {
+                "text": "the happiness trap how to stop struggling and start living",
+                "volume": 110,
+                "difficulty": 0.62,
+                "source": "seed",
+                "score": 0.10430362478693964
+              },
+              {
+                "text": "reclining",
+                "volume": 246000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.04405804196430437
+              },
+              {
+                "text": "live up",
+                "volume": 27100,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.004851954781954573
+              }
+            ]
+          },
+          "timestamp": 1764591500125
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "secondary",
+            "candidates": [
+              {
+                "text": "having a happy life",
+                "volume": 210,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.9474999999999999
+              },
+              {
+                "text": "a simple life is a happy life",
+                "volume": 90,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.59
+              },
+              {
+                "text": "best way to live a happy life",
+                "volume": 70,
+                "difficulty": 0.11,
+                "source": "seed",
+                "score": 0.5025
+              },
+              {
+                "text": "i just want a happy life",
+                "volume": 70,
+                "difficulty": 0.2,
+                "source": "seed",
+                "score": 0.48
+              },
+              {
+                "text": "i live a happy life",
+                "volume": 50,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.47
+              },
+              {
+                "text": "a good life is when you assume nothing",
+                "volume": 50,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.42
+              },
+              {
+                "text": "a good life is a happy life meaning",
+                "volume": 20,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.38
+              },
+              {
+                "text": "a happy life is a life in which you are",
+                "volume": 20,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.38
+              },
+              {
+                "text": "a healthy life is a happy life",
+                "volume": 20,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.38
+              },
+              {
+                "text": "i have a good life why am i unhappy",
+                "volume": 40,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.3775
+              },
+              {
+                "text": "i have a happy life",
+                "volume": 20,
+                "difficulty": 0.04,
+                "source": "seed",
+                "score": 0.37
+              },
+              {
+                "text": "a good life is when you smile often",
+                "volume": 30,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.36
+              },
+              {
+                "text": "good life is a happy life",
+                "volume": 10,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.35
+              },
+              {
+                "text": "i just want a simple happy life",
+                "volume": 10,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.35
+              },
+              {
+                "text": "i just want to live a happy life",
+                "volume": 10,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.35
+              },
+              {
+                "text": "a busy life is a happy life",
+                "volume": 10,
+                "difficulty": 0.13,
+                "source": "seed",
+                "score": 0.3175
+              },
+              {
+                "text": "a counterintuitive guide to happiness",
+                "volume": 10,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25
+              },
+              {
+                "text": "i have a great life why am i not happy",
+                "volume": 10,
+                "difficulty": 0.49,
+                "source": "seed",
+                "score": 0.22749999999999998
+              },
+              {
+                "text": "i have a great life so why am i unhappy",
+                "volume": 10,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.049999999999999996
+              }
+            ]
+          },
+          "timestamp": 1764591510734
+        },
+        {
+          "type": "title_options",
+          "data": {
+            "titles": [
+              "A Good Life Is a Happy Life: Your Essential Guide to Joyful Living",
+              "The American Dream of Happiness: Why a Good Life Is a Happy Life",
+              "Unlock Lasting Joy: The Transformative Power of a Good Life Is a Happy Life",
+              "Beyond Basics: Understanding Why a Good Life Is a Happy Life for Fulfillment",
+              "Cultivating Contentment: How Embracing a Good Life Is a Happy Life Changes Everything"
+            ]
+          },
+          "timestamp": 1764591524033
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "primary",
+            "candidates": [
+              {
+                "text": "happy",
+                "volume": 3350000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.8914285714285715
+              },
+              {
+                "text": "happy living life benefits",
+                "volume": 3731,
+                "difficulty": -0.75,
+                "source": "seed",
+                "score": 0.4006664497505963
+              },
+              {
+                "text": "happy living life checklist",
+                "volume": 5141,
+                "difficulty": -0.24,
+                "source": "seed",
+                "score": 0.3280618449607312
+              },
+              {
+                "text": "happy living life",
+                "volume": 2397,
+                "difficulty": -0.23,
+                "source": "seed",
+                "score": 0.32614180937853543
+              },
+              {
+                "text": "living life",
+                "volume": 2501,
+                "difficulty": -0.2,
+                "source": "seed",
+                "score": 0.32187472201409556
+              },
+              {
+                "text": "happy days",
+                "volume": 550000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.31350596568944983
+              },
+              {
+                "text": "living life vs alternatives",
+                "volume": 2625,
+                "difficulty": -0.48,
+                "source": "seed",
+                "score": 0.311896931035615
+              },
+              {
+                "text": "living",
+                "volume": 450000,
+                "difficulty": 0.55,
+                "source": "seed",
+                "score": 0.29488117874978725
+              },
+              {
+                "text": "living a happy life",
+                "volume": 1600,
+                "difficulty": 0.03,
+                "source": "seed",
+                "score": 0.28885620554091207
+              },
+              {
+                "text": "happy living",
+                "volume": 22200,
+                "difficulty": 0.06,
+                "source": "seed",
+                "score": 0.2882600545076254
+              },
+              {
+                "text": "happy life",
+                "volume": 74000,
+                "difficulty": 0.13,
+                "source": "seed",
+                "score": 0.28753769414237057
+              },
+              {
+                "text": "living life for beginners",
+                "volume": 5610,
+                "difficulty": -0.21,
+                "source": "seed",
+                "score": 0.27386013092576394
+              },
+              {
+                "text": "happy living life best practices",
+                "volume": 6049,
+                "difficulty": 0.15,
+                "source": "seed",
+                "score": 0.2725101865975719
+              },
+              {
+                "text": "happy living life guide",
+                "volume": 354,
+                "difficulty": 0.32,
+                "source": "seed",
+                "score": 0.24720446926707243
+              },
+              {
+                "text": "a simple life is a happy life",
+                "volume": 90,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.24287147125812314
+              },
+              {
+                "text": "a healthy life is a happy life",
+                "volume": 20,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.24285893390726537
+              },
+              {
+                "text": "a good life is a happy life",
+                "volume": 10,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.24285714285714283
+              },
+              {
+                "text": "a secret life is a happy life",
+                "volume": 10,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.24285714285714283
+              },
+              {
+                "text": "happy holiday",
+                "volume": 246000,
+                "difficulty": 0.14,
+                "source": "seed",
+                "score": 0.24191518482144725
+              },
+              {
+                "text": "happy music",
+                "volume": 135000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.23917738560413615
+              },
+              {
+                "text": "happy trails",
+                "volume": 110000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.23755690315493477
+              },
+              {
+                "text": "happy home",
+                "volume": 165000,
+                "difficulty": 0.08,
+                "source": "seed",
+                "score": 0.23597910740032063
+              },
+              {
+                "text": "happy living life tutorial",
+                "volume": 432,
+                "difficulty": 0.41,
+                "source": "seed",
+                "score": 0.2343612966008854
+              },
+              {
+                "text": "living life benefits",
+                "volume": 6435,
+                "difficulty": 0.07,
+                "source": "seed",
+                "score": 0.2340078925608733
+              },
+              {
+                "text": "happy living life vs alternatives",
+                "volume": 2377,
+                "difficulty": 0.42,
+                "source": "seed",
+                "score": 0.23328108442114753
+              },
+              {
+                "text": "a happy healthy life",
+                "volume": 70,
+                "difficulty": 0.08,
+                "source": "seed",
+                "score": 0.23143931772930665
+              },
+              {
+                "text": "secret to a happy life",
+                "volume": 590,
+                "difficulty": 0.1,
+                "source": "seed",
+                "score": 0.22867530947853576
+              },
+              {
+                "text": "slow living",
+                "volume": 60500,
+                "difficulty": 0.03,
+                "source": "seed",
+                "score": 0.22440549076265898
+              },
+              {
+                "text": "happy ever after",
+                "volume": 165000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.2209791074003206
+              },
+              {
+                "text": "slow life",
+                "volume": 27100,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.21985195478195457
+              },
+              {
+                "text": "after ever happy",
+                "volume": 135000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.21560595703270755
+              },
+              {
+                "text": "happier life",
+                "volume": 74000,
+                "difficulty": 0.13,
+                "source": "seed",
+                "score": 0.21253769414237056
+              },
+              {
+                "text": "living life tutorial",
+                "volume": 1832,
+                "difficulty": 0.22,
+                "source": "seed",
+                "score": 0.21175490076089779
+              },
+              {
+                "text": "happy go lucky",
+                "volume": 60500,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.20083406219123043
+              },
+              {
+                "text": "happy money happy life",
+                "volume": 30,
+                "difficulty": 0.33,
+                "source": "seed",
+                "score": 0.19571786781453077
+              },
+              {
+                "text": "after ever happy netflix",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.1929019191102063
+              },
+              {
+                "text": "after ever happy online",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.1929019191102063
+              },
+              {
+                "text": "after ever happy watch online",
+                "volume": 140,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.19288042650873582
+              },
+              {
+                "text": "happy valley season 3",
+                "volume": 8100,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.1928775309777044
+              },
+              {
+                "text": "pop culture happy hour",
+                "volume": 4400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.19078627100379406
+              },
+              {
+                "text": "watch after ever happy",
+                "volume": 2400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.1904280609792865
+              },
+              {
+                "text": "about happiness in life",
+                "volume": 40,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.1900053731503676
+              },
+              {
+                "text": "a happy life is",
+                "volume": 10,
+                "difficulty": 0.38,
+                "source": "seed",
+                "score": 0.18857142857142856
+              },
+              {
+                "text": "7 happiness of life",
+                "volume": 30,
+                "difficulty": 0.04,
+                "source": "seed",
+                "score": 0.18714643924310218
+              },
+              {
+                "text": "after ever happy where to watch",
+                "volume": 90,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.185728614115266
+              },
+              {
+                "text": "mr happy",
+                "volume": 40500,
+                "difficulty": 0.28,
+                "source": "seed",
+                "score": 0.1851091048032979
+              },
+              {
+                "text": "happy living life for beginners",
+                "volume": 6634,
+                "difficulty": 0.8,
+                "source": "seed",
+                "score": 0.1797578201725975
+              },
+              {
+                "text": "a happy life is a secret life",
+                "volume": 10,
+                "difficulty": 0.5,
+                "source": "seed",
+                "score": 0.17142857142857143
+              },
+              {
+                "text": "unhappy with my life",
+                "volume": 390,
+                "difficulty": 0.24,
+                "source": "seed",
+                "score": 0.158639488476085
+              },
+              {
+                "text": "a happier life",
+                "volume": 720,
+                "difficulty": 0.26,
+                "source": "seed",
+                "score": 0.15584145027298588
+              },
+              {
+                "text": "finding happiness in everyday life",
+                "volume": 70,
+                "difficulty": 0.28,
+                "source": "seed",
+                "score": 0.15286788915787805
+              },
+              {
+                "text": "live in",
+                "volume": 49500,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.1502924784850104
+              },
+              {
+                "text": "merry christmas and happy new year",
+                "volume": 135000,
+                "difficulty": 0.47,
+                "source": "seed",
+                "score": 0.14989167131842182
+              },
+              {
+                "text": "assisted",
+                "volume": 40500,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.14725196194615509
+              },
+              {
+                "text": "upbeat music",
+                "volume": 110000,
+                "difficulty": 0.11,
+                "source": "seed",
+                "score": 0.14684261744064908
+              },
+              {
+                "text": "live and let live",
+                "volume": 22200,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.14683148307905397
+              },
+              {
+                "text": "a counterintuitive guide to happiness",
+                "volume": 10,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.14285714285714285
+              },
+              {
+                "text": "living life guide",
+                "volume": 7674,
+                "difficulty": 0.71,
+                "source": "seed",
+                "score": 0.1428012322424843
+              },
+              {
+                "text": "revocable",
+                "volume": 14800,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.14264896313123324
+              },
+              {
+                "text": "play upbeat music",
+                "volume": 1900,
+                "difficulty": 0.04,
+                "source": "seed",
+                "score": 0.13748136561601673
+              },
+              {
+                "text": "living life checklist",
+                "volume": 4349,
+                "difficulty": 0.79,
+                "source": "seed",
+                "score": 0.1307771366481691
+              },
+              {
+                "text": "living life best practices",
+                "volume": 5553,
+                "difficulty": 0.8,
+                "source": "seed",
+                "score": 0.12956420765435117
+              },
+              {
+                "text": "liven",
+                "volume": 110000,
+                "difficulty": 0.25,
+                "source": "seed",
+                "score": 0.1268426174406491
+              },
+              {
+                "text": "the happiness trap how to stop struggling and start living",
+                "volume": 110,
+                "difficulty": 0.62,
+                "source": "seed",
+                "score": 0.10430362478693964
+              },
+              {
+                "text": "reclining",
+                "volume": 246000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.04405804196430437
+              },
+              {
+                "text": "live up",
+                "volume": 27100,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.004851954781954573
+              }
+            ]
+          },
+          "timestamp": 1764591500125
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "secondary",
+            "candidates": [
+              {
+                "text": "having a happy life",
+                "volume": 210,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.9474999999999999
+              },
+              {
+                "text": "a simple life is a happy life",
+                "volume": 90,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.59
+              },
+              {
+                "text": "best way to live a happy life",
+                "volume": 70,
+                "difficulty": 0.11,
+                "source": "seed",
+                "score": 0.5025
+              },
+              {
+                "text": "i just want a happy life",
+                "volume": 70,
+                "difficulty": 0.2,
+                "source": "seed",
+                "score": 0.48
+              },
+              {
+                "text": "i live a happy life",
+                "volume": 50,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.47
+              },
+              {
+                "text": "a good life is when you assume nothing",
+                "volume": 50,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.42
+              },
+              {
+                "text": "a good life is a happy life meaning",
+                "volume": 20,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.38
+              },
+              {
+                "text": "a happy life is a life in which you are",
+                "volume": 20,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.38
+              },
+              {
+                "text": "a healthy life is a happy life",
+                "volume": 20,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.38
+              },
+              {
+                "text": "i have a good life why am i unhappy",
+                "volume": 40,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.3775
+              },
+              {
+                "text": "i have a happy life",
+                "volume": 20,
+                "difficulty": 0.04,
+                "source": "seed",
+                "score": 0.37
+              },
+              {
+                "text": "a good life is when you smile often",
+                "volume": 30,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.36
+              },
+              {
+                "text": "good life is a happy life",
+                "volume": 10,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.35
+              },
+              {
+                "text": "i just want a simple happy life",
+                "volume": 10,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.35
+              },
+              {
+                "text": "i just want to live a happy life",
+                "volume": 10,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.35
+              },
+              {
+                "text": "a busy life is a happy life",
+                "volume": 10,
+                "difficulty": 0.13,
+                "source": "seed",
+                "score": 0.3175
+              },
+              {
+                "text": "a counterintuitive guide to happiness",
+                "volume": 10,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25
+              },
+              {
+                "text": "i have a great life why am i not happy",
+                "volume": 10,
+                "difficulty": 0.49,
+                "source": "seed",
+                "score": 0.22749999999999998
+              },
+              {
+                "text": "i have a great life so why am i unhappy",
+                "volume": 10,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.049999999999999996
+              }
+            ]
+          },
+          "timestamp": 1764591510734
+        },
+        {
+          "type": "title_options",
+          "data": {
+            "titles": [
+              "A Good Life Is a Happy Life: Your Essential Guide to Joyful Living",
+              "The American Dream of Happiness: Why a Good Life Is a Happy Life",
+              "Unlock Lasting Joy: The Transformative Power of a Good Life Is a Happy Life",
+              "Beyond Basics: Understanding Why a Good Life Is a Happy Life for Fulfillment",
+              "Cultivating Contentment: How Embracing a Good Life Is a Happy Life Changes Everything"
+            ]
+          },
+          "timestamp": 1764591524033
+        },
+        {
+          "type": "outline_generated",
+          "data": {
+            "outline": [
+              {
+                "id": "1",
+                "name": "What Does \"A Good Life\" Truly Mean?",
+                "items": [
+                  {
+                    "id": "11",
+                    "name": "The Ancient Roots: Philosophical Views on \"The Good Life\""
+                  },
+                  {
+                    "id": "12",
+                    "name": "Beyond Pleasure: Core Elements of a Fulfilled Existence"
+                  },
+                  {
+                    "id": "13",
+                    "name": "The Personal Pursuit: Defining Your Own Path to Well-being"
+                  },
+                  {
+                    "id": "14",
+                    "name": "Finding Balance: Integrating Key Aspects for Joyful Living"
+                  }
+                ]
+              },
+              {
+                "id": "2",
+                "name": "The Foundation of Joy: Cultivating Strong Relationships",
+                "items": [
+                  {
+                    "id": "21",
+                    "name": "The Indispensable Role of Connections in a Joyful Life"
+                  },
+                  {
+                    "id": "22",
+                    "name": "Building Blocks of Lasting Bonds: Trust, Communication, and Empathy"
+                  },
+                  {
+                    "id": "23",
+                    "name": "Nurturing Your Network: Practical Steps for Deeper Relationships"
+                  }
+                ]
+              },
+              {
+                "id": "2",
+                "name": "Harnessing Inner Power: The Practice of Gratitude and Mindfulness",
+                "items": [
+                  {
+                    "id": "21",
+                    "name": "Understanding Gratitude and Mindfulness: Definitions and Impact"
+                  },
+                  {
+                    "id": "22",
+                    "name": "Practical Steps to Integrate Gratitude and Mindfulness"
+                  },
+                  {
+                    "id": "23",
+                    "name": "The Combined Power: Cultivating Resilience and Inner Peace"
+                  },
+                  {
+                    "id": "24",
+                    "name": "Embracing a Joyful Life Through Present Moment Awareness"
+                  }
+                ]
+              },
+              {
+                "id": "4",
+                "name": "Finding Your Purpose: Setting Meaningful Goals and Embracing Growth",
+                "items": [
+                  {
+                    "id": "41",
+                    "name": "Uncovering Your Core Values and Passions"
+                  },
+                  {
+                    "id": "42",
+                    "name": "Crafting Purpose-Driven Goals"
+                  },
+                  {
+                    "id": "43",
+                    "name": "Cultivating a Growth Mindset for Continuous Evolution"
+                  },
+                  {
+                    "id": "44",
+                    "name": "Integrating Purpose into Daily Living"
+                  }
+                ]
+              },
+              {
+                "id": "5",
+                "name": "Nourishing Your Body and Mind: Prioritizing Health and Well-being",
+                "items": [
+                  {
+                    "id": "51",
+                    "name": "Fueling Your Body for Optimal Energy and Clarity"
+                  },
+                  {
+                    "id": "52",
+                    "name": "Mindful Movement: The Key to Physical and Mental Vitality"
+                  },
+                  {
+                    "id": "53",
+                    "name": "Cultivating a Positive Mindset: Strategies for Emotional Well-being"
+                  },
+                  {
+                    "id": "54",
+                    "name": "The Power of Rest and Recharge: Prioritizing Sleep and Self-Care"
+                  }
+                ]
+              },
+              {
+                "id": "6",
+                "name": "Embracing Imperfection: The Art of Work-Life Balance and Resilience",
+                "items": [
+                  {
+                    "id": "61",
+                    "name": "Understanding the Trap of Perfectionism"
+                  },
+                  {
+                    "id": "62",
+                    "name": "The Power of Self-Acceptance and Compassion"
+                  },
+                  {
+                    "id": "63",
+                    "name": "Strategies for Achieving Work-Life Harmony"
+                  },
+                  {
+                    "id": "64",
+                    "name": "Cultivating Resilience Through Imperfection"
+                  },
+                  {
+                    "id": "65",
+                    "name": "Embracing Growth and Learning from Mistakes"
+                  }
+                ]
+              },
+              {
+                "id": "7",
+                "name": "Living in the Present: Appreciating Simple Pleasures and Moments",
+                "items": [
+                  {
+                    "id": "71",
+                    "name": "The Power of Mindfulness: Being Fully Present"
+                  },
+                  {
+                    "id": "72",
+                    "name": "Cultivating Gratitude for Everyday Joys"
+                  },
+                  {
+                    "id": "73",
+                    "name": "Savoring the Small Moments: Practical Tips"
+                  },
+                  {
+                    "id": "74",
+                    "name": "Connecting with Nature and Others for Deeper Appreciation"
+                  }
+                ]
+              },
+              {
+                "id": "conclusion",
+                "name": "Conclusion: Crafting Your Own Joyful Journey",
+                "items": [
+                  {
+                    "id": "conclusion1",
+                    "name": "Embrace the Ongoing Journey of Joy"
+                  },
+                  {
+                    "id": "conclusion2",
+                    "name": "Cultivating Key Habits for Lasting Happiness"
+                  },
+                  {
+                    "id": "conclusion3",
+                    "name": "Your Personal Blueprint for a Fulfilling Life"
+                  },
+                  {
+                    "id": "conclusion4",
+                    "name": "The Power of Resilience and a Positive Mindset"
+                  }
+                ]
+              }
+            ],
+            "sectionCount": 8
+          },
+          "timestamp": 1764591600666
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "primary",
+            "candidates": [
+              {
+                "text": "happy",
+                "volume": 3350000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.8914285714285715
+              },
+              {
+                "text": "happy living life benefits",
+                "volume": 3731,
+                "difficulty": -0.75,
+                "source": "seed",
+                "score": 0.4006664497505963
+              },
+              {
+                "text": "happy living life checklist",
+                "volume": 5141,
+                "difficulty": -0.24,
+                "source": "seed",
+                "score": 0.3280618449607312
+              },
+              {
+                "text": "happy living life",
+                "volume": 2397,
+                "difficulty": -0.23,
+                "source": "seed",
+                "score": 0.32614180937853543
+              },
+              {
+                "text": "living life",
+                "volume": 2501,
+                "difficulty": -0.2,
+                "source": "seed",
+                "score": 0.32187472201409556
+              },
+              {
+                "text": "happy days",
+                "volume": 550000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.31350596568944983
+              },
+              {
+                "text": "living life vs alternatives",
+                "volume": 2625,
+                "difficulty": -0.48,
+                "source": "seed",
+                "score": 0.311896931035615
+              },
+              {
+                "text": "living",
+                "volume": 450000,
+                "difficulty": 0.55,
+                "source": "seed",
+                "score": 0.29488117874978725
+              },
+              {
+                "text": "living a happy life",
+                "volume": 1600,
+                "difficulty": 0.03,
+                "source": "seed",
+                "score": 0.28885620554091207
+              },
+              {
+                "text": "happy living",
+                "volume": 22200,
+                "difficulty": 0.06,
+                "source": "seed",
+                "score": 0.2882600545076254
+              },
+              {
+                "text": "happy life",
+                "volume": 74000,
+                "difficulty": 0.13,
+                "source": "seed",
+                "score": 0.28753769414237057
+              },
+              {
+                "text": "living life for beginners",
+                "volume": 5610,
+                "difficulty": -0.21,
+                "source": "seed",
+                "score": 0.27386013092576394
+              },
+              {
+                "text": "happy living life best practices",
+                "volume": 6049,
+                "difficulty": 0.15,
+                "source": "seed",
+                "score": 0.2725101865975719
+              },
+              {
+                "text": "happy living life guide",
+                "volume": 354,
+                "difficulty": 0.32,
+                "source": "seed",
+                "score": 0.24720446926707243
+              },
+              {
+                "text": "a simple life is a happy life",
+                "volume": 90,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.24287147125812314
+              },
+              {
+                "text": "a healthy life is a happy life",
+                "volume": 20,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.24285893390726537
+              },
+              {
+                "text": "a good life is a happy life",
+                "volume": 10,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.24285714285714283
+              },
+              {
+                "text": "a secret life is a happy life",
+                "volume": 10,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.24285714285714283
+              },
+              {
+                "text": "happy holiday",
+                "volume": 246000,
+                "difficulty": 0.14,
+                "source": "seed",
+                "score": 0.24191518482144725
+              },
+              {
+                "text": "happy music",
+                "volume": 135000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.23917738560413615
+              },
+              {
+                "text": "happy trails",
+                "volume": 110000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.23755690315493477
+              },
+              {
+                "text": "happy home",
+                "volume": 165000,
+                "difficulty": 0.08,
+                "source": "seed",
+                "score": 0.23597910740032063
+              },
+              {
+                "text": "happy living life tutorial",
+                "volume": 432,
+                "difficulty": 0.41,
+                "source": "seed",
+                "score": 0.2343612966008854
+              },
+              {
+                "text": "living life benefits",
+                "volume": 6435,
+                "difficulty": 0.07,
+                "source": "seed",
+                "score": 0.2340078925608733
+              },
+              {
+                "text": "happy living life vs alternatives",
+                "volume": 2377,
+                "difficulty": 0.42,
+                "source": "seed",
+                "score": 0.23328108442114753
+              },
+              {
+                "text": "a happy healthy life",
+                "volume": 70,
+                "difficulty": 0.08,
+                "source": "seed",
+                "score": 0.23143931772930665
+              },
+              {
+                "text": "secret to a happy life",
+                "volume": 590,
+                "difficulty": 0.1,
+                "source": "seed",
+                "score": 0.22867530947853576
+              },
+              {
+                "text": "slow living",
+                "volume": 60500,
+                "difficulty": 0.03,
+                "source": "seed",
+                "score": 0.22440549076265898
+              },
+              {
+                "text": "happy ever after",
+                "volume": 165000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.2209791074003206
+              },
+              {
+                "text": "slow life",
+                "volume": 27100,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.21985195478195457
+              },
+              {
+                "text": "after ever happy",
+                "volume": 135000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.21560595703270755
+              },
+              {
+                "text": "happier life",
+                "volume": 74000,
+                "difficulty": 0.13,
+                "source": "seed",
+                "score": 0.21253769414237056
+              },
+              {
+                "text": "living life tutorial",
+                "volume": 1832,
+                "difficulty": 0.22,
+                "source": "seed",
+                "score": 0.21175490076089779
+              },
+              {
+                "text": "happy go lucky",
+                "volume": 60500,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.20083406219123043
+              },
+              {
+                "text": "happy money happy life",
+                "volume": 30,
+                "difficulty": 0.33,
+                "source": "seed",
+                "score": 0.19571786781453077
+              },
+              {
+                "text": "after ever happy netflix",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.1929019191102063
+              },
+              {
+                "text": "after ever happy online",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.1929019191102063
+              },
+              {
+                "text": "after ever happy watch online",
+                "volume": 140,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.19288042650873582
+              },
+              {
+                "text": "happy valley season 3",
+                "volume": 8100,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.1928775309777044
+              },
+              {
+                "text": "pop culture happy hour",
+                "volume": 4400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.19078627100379406
+              },
+              {
+                "text": "watch after ever happy",
+                "volume": 2400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.1904280609792865
+              },
+              {
+                "text": "about happiness in life",
+                "volume": 40,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.1900053731503676
+              },
+              {
+                "text": "a happy life is",
+                "volume": 10,
+                "difficulty": 0.38,
+                "source": "seed",
+                "score": 0.18857142857142856
+              },
+              {
+                "text": "7 happiness of life",
+                "volume": 30,
+                "difficulty": 0.04,
+                "source": "seed",
+                "score": 0.18714643924310218
+              },
+              {
+                "text": "after ever happy where to watch",
+                "volume": 90,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.185728614115266
+              },
+              {
+                "text": "mr happy",
+                "volume": 40500,
+                "difficulty": 0.28,
+                "source": "seed",
+                "score": 0.1851091048032979
+              },
+              {
+                "text": "happy living life for beginners",
+                "volume": 6634,
+                "difficulty": 0.8,
+                "source": "seed",
+                "score": 0.1797578201725975
+              },
+              {
+                "text": "a happy life is a secret life",
+                "volume": 10,
+                "difficulty": 0.5,
+                "source": "seed",
+                "score": 0.17142857142857143
+              },
+              {
+                "text": "unhappy with my life",
+                "volume": 390,
+                "difficulty": 0.24,
+                "source": "seed",
+                "score": 0.158639488476085
+              },
+              {
+                "text": "a happier life",
+                "volume": 720,
+                "difficulty": 0.26,
+                "source": "seed",
+                "score": 0.15584145027298588
+              },
+              {
+                "text": "finding happiness in everyday life",
+                "volume": 70,
+                "difficulty": 0.28,
+                "source": "seed",
+                "score": 0.15286788915787805
+              },
+              {
+                "text": "live in",
+                "volume": 49500,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.1502924784850104
+              },
+              {
+                "text": "merry christmas and happy new year",
+                "volume": 135000,
+                "difficulty": 0.47,
+                "source": "seed",
+                "score": 0.14989167131842182
+              },
+              {
+                "text": "assisted",
+                "volume": 40500,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.14725196194615509
+              },
+              {
+                "text": "upbeat music",
+                "volume": 110000,
+                "difficulty": 0.11,
+                "source": "seed",
+                "score": 0.14684261744064908
+              },
+              {
+                "text": "live and let live",
+                "volume": 22200,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.14683148307905397
+              },
+              {
+                "text": "a counterintuitive guide to happiness",
+                "volume": 10,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.14285714285714285
+              },
+              {
+                "text": "living life guide",
+                "volume": 7674,
+                "difficulty": 0.71,
+                "source": "seed",
+                "score": 0.1428012322424843
+              },
+              {
+                "text": "revocable",
+                "volume": 14800,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.14264896313123324
+              },
+              {
+                "text": "play upbeat music",
+                "volume": 1900,
+                "difficulty": 0.04,
+                "source": "seed",
+                "score": 0.13748136561601673
+              },
+              {
+                "text": "living life checklist",
+                "volume": 4349,
+                "difficulty": 0.79,
+                "source": "seed",
+                "score": 0.1307771366481691
+              },
+              {
+                "text": "living life best practices",
+                "volume": 5553,
+                "difficulty": 0.8,
+                "source": "seed",
+                "score": 0.12956420765435117
+              },
+              {
+                "text": "liven",
+                "volume": 110000,
+                "difficulty": 0.25,
+                "source": "seed",
+                "score": 0.1268426174406491
+              },
+              {
+                "text": "the happiness trap how to stop struggling and start living",
+                "volume": 110,
+                "difficulty": 0.62,
+                "source": "seed",
+                "score": 0.10430362478693964
+              },
+              {
+                "text": "reclining",
+                "volume": 246000,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.04405804196430437
+              },
+              {
+                "text": "live up",
+                "volume": 27100,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.004851954781954573
+              }
+            ]
+          },
+          "timestamp": 1764591500125
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "secondary",
+            "candidates": [
+              {
+                "text": "having a happy life",
+                "volume": 210,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.9474999999999999
+              },
+              {
+                "text": "a simple life is a happy life",
+                "volume": 90,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.59
+              },
+              {
+                "text": "best way to live a happy life",
+                "volume": 70,
+                "difficulty": 0.11,
+                "source": "seed",
+                "score": 0.5025
+              },
+              {
+                "text": "i just want a happy life",
+                "volume": 70,
+                "difficulty": 0.2,
+                "source": "seed",
+                "score": 0.48
+              },
+              {
+                "text": "i live a happy life",
+                "volume": 50,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.47
+              },
+              {
+                "text": "a good life is when you assume nothing",
+                "volume": 50,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.42
+              },
+              {
+                "text": "a good life is a happy life meaning",
+                "volume": 20,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.38
+              },
+              {
+                "text": "a happy life is a life in which you are",
+                "volume": 20,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.38
+              },
+              {
+                "text": "a healthy life is a happy life",
+                "volume": 20,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.38
+              },
+              {
+                "text": "i have a good life why am i unhappy",
+                "volume": 40,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.3775
+              },
+              {
+                "text": "i have a happy life",
+                "volume": 20,
+                "difficulty": 0.04,
+                "source": "seed",
+                "score": 0.37
+              },
+              {
+                "text": "a good life is when you smile often",
+                "volume": 30,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.36
+              },
+              {
+                "text": "good life is a happy life",
+                "volume": 10,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.35
+              },
+              {
+                "text": "i just want a simple happy life",
+                "volume": 10,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.35
+              },
+              {
+                "text": "i just want to live a happy life",
+                "volume": 10,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.35
+              },
+              {
+                "text": "a busy life is a happy life",
+                "volume": 10,
+                "difficulty": 0.13,
+                "source": "seed",
+                "score": 0.3175
+              },
+              {
+                "text": "a counterintuitive guide to happiness",
+                "volume": 10,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.25
+              },
+              {
+                "text": "i have a great life why am i not happy",
+                "volume": 10,
+                "difficulty": 0.49,
+                "source": "seed",
+                "score": 0.22749999999999998
+              },
+              {
+                "text": "i have a great life so why am i unhappy",
+                "volume": 10,
+                "difficulty": 1,
+                "source": "seed",
+                "score": 0.049999999999999996
+              }
+            ]
+          },
+          "timestamp": 1764591510734
+        },
+        {
+          "type": "title_options",
+          "data": {
+            "titles": [
+              "A Good Life Is a Happy Life: Your Essential Guide to Joyful Living",
+              "The American Dream of Happiness: Why a Good Life Is a Happy Life",
+              "Unlock Lasting Joy: The Transformative Power of a Good Life Is a Happy Life",
+              "Beyond Basics: Understanding Why a Good Life Is a Happy Life for Fulfillment",
+              "Cultivating Contentment: How Embracing a Good Life Is a Happy Life Changes Everything"
+            ]
+          },
+          "timestamp": 1764591524033
+        },
+        {
+          "type": "outline_generated",
+          "data": {
+            "outline": [
+              {
+                "id": "1",
+                "name": "What Does \"A Good Life\" Truly Mean?",
+                "items": [
+                  {
+                    "id": "11",
+                    "name": "The Ancient Roots: Philosophical Views on \"The Good Life\""
+                  },
+                  {
+                    "id": "12",
+                    "name": "Beyond Pleasure: Core Elements of a Fulfilled Existence"
+                  },
+                  {
+                    "id": "13",
+                    "name": "The Personal Pursuit: Defining Your Own Path to Well-being"
+                  },
+                  {
+                    "id": "14",
+                    "name": "Finding Balance: Integrating Key Aspects for Joyful Living"
+                  }
+                ]
+              },
+              {
+                "id": "2",
+                "name": "The Foundation of Joy: Cultivating Strong Relationships",
+                "items": [
+                  {
+                    "id": "21",
+                    "name": "The Indispensable Role of Connections in a Joyful Life"
+                  },
+                  {
+                    "id": "22",
+                    "name": "Building Blocks of Lasting Bonds: Trust, Communication, and Empathy"
+                  },
+                  {
+                    "id": "23",
+                    "name": "Nurturing Your Network: Practical Steps for Deeper Relationships"
+                  }
+                ]
+              },
+              {
+                "id": "2",
+                "name": "Harnessing Inner Power: The Practice of Gratitude and Mindfulness",
+                "items": [
+                  {
+                    "id": "21",
+                    "name": "Understanding Gratitude and Mindfulness: Definitions and Impact"
+                  },
+                  {
+                    "id": "22",
+                    "name": "Practical Steps to Integrate Gratitude and Mindfulness"
+                  },
+                  {
+                    "id": "23",
+                    "name": "The Combined Power: Cultivating Resilience and Inner Peace"
+                  },
+                  {
+                    "id": "24",
+                    "name": "Embracing a Joyful Life Through Present Moment Awareness"
+                  }
+                ]
+              },
+              {
+                "id": "4",
+                "name": "Finding Your Purpose: Setting Meaningful Goals and Embracing Growth",
+                "items": [
+                  {
+                    "id": "41",
+                    "name": "Uncovering Your Core Values and Passions"
+                  },
+                  {
+                    "id": "42",
+                    "name": "Crafting Purpose-Driven Goals"
+                  },
+                  {
+                    "id": "43",
+                    "name": "Cultivating a Growth Mindset for Continuous Evolution"
+                  },
+                  {
+                    "id": "44",
+                    "name": "Integrating Purpose into Daily Living"
+                  }
+                ]
+              },
+              {
+                "id": "5",
+                "name": "Nourishing Your Body and Mind: Prioritizing Health and Well-being",
+                "items": [
+                  {
+                    "id": "51",
+                    "name": "Fueling Your Body for Optimal Energy and Clarity"
+                  },
+                  {
+                    "id": "52",
+                    "name": "Mindful Movement: The Key to Physical and Mental Vitality"
+                  },
+                  {
+                    "id": "53",
+                    "name": "Cultivating a Positive Mindset: Strategies for Emotional Well-being"
+                  },
+                  {
+                    "id": "54",
+                    "name": "The Power of Rest and Recharge: Prioritizing Sleep and Self-Care"
+                  }
+                ]
+              },
+              {
+                "id": "6",
+                "name": "Embracing Imperfection: The Art of Work-Life Balance and Resilience",
+                "items": [
+                  {
+                    "id": "61",
+                    "name": "Understanding the Trap of Perfectionism"
+                  },
+                  {
+                    "id": "62",
+                    "name": "The Power of Self-Acceptance and Compassion"
+                  },
+                  {
+                    "id": "63",
+                    "name": "Strategies for Achieving Work-Life Harmony"
+                  },
+                  {
+                    "id": "64",
+                    "name": "Cultivating Resilience Through Imperfection"
+                  },
+                  {
+                    "id": "65",
+                    "name": "Embracing Growth and Learning from Mistakes"
+                  }
+                ]
+              },
+              {
+                "id": "7",
+                "name": "Living in the Present: Appreciating Simple Pleasures and Moments",
+                "items": [
+                  {
+                    "id": "71",
+                    "name": "The Power of Mindfulness: Being Fully Present"
+                  },
+                  {
+                    "id": "72",
+                    "name": "Cultivating Gratitude for Everyday Joys"
+                  },
+                  {
+                    "id": "73",
+                    "name": "Savoring the Small Moments: Practical Tips"
+                  },
+                  {
+                    "id": "74",
+                    "name": "Connecting with Nature and Others for Deeper Appreciation"
+                  }
+                ]
+              },
+              {
+                "id": "conclusion",
+                "name": "Conclusion: Crafting Your Own Joyful Journey",
+                "items": [
+                  {
+                    "id": "conclusion1",
+                    "name": "Embrace the Ongoing Journey of Joy"
+                  },
+                  {
+                    "id": "conclusion2",
+                    "name": "Cultivating Key Habits for Lasting Happiness"
+                  },
+                  {
+                    "id": "conclusion3",
+                    "name": "Your Personal Blueprint for a Fulfilling Life"
+                  },
+                  {
+                    "id": "conclusion4",
+                    "name": "The Power of Resilience and a Positive Mindset"
+                  }
+                ]
+              }
+            ],
+            "sectionCount": 8
+          },
+          "timestamp": 1764591600666
+        }
+      ],
+      "__pregel_tasks": [
+        [],
+        []
+      ]
+    },
+    "channel_versions": {
+      "__start__": 14,
+      "messages": 14,
+      "data": 14,
+      "outline": 14,
+      "outlineApproved": 14,
+      "draft": 22,
+      "progress": 22,
+      "preferences": 14,
+      "trace": 22,
+      "halt": 14,
+      "userProvidedFields": 14,
+      "autoFillFields": 14,
+      "toolOutputs": 14,
+      "currentStep": 22,
+      "apiKey": 14,
+      "branch:to:research_primary": 3,
+      "keywordCandidates": 6,
+      "branch:to:research_secondary": 6,
+      "branch:to:title_generation": 9,
+      "titleCandidates": 9,
+      "branch:to:discovery": 12,
+      "branch:to:proposal": 22
+    },
+    "versions_seen": {
+      "__input__": {},
+      "__start__": {
+        "__start__": 13
+      },
+      "research_primary": {
+        "branch:to:research_primary": 2
+      },
+      "research_secondary": {
+        "branch:to:research_secondary": 5
+      },
+      "title_generation": {
+        "branch:to:title_generation": 8
+      },
+      "discovery": {
+        "branch:to:discovery": 11
+      },
+      "proposal": {
+        "branch:to:proposal": 21
+      }
+    }
+  },
+  "metadata": {
+    "source": "loop",
+    "step": 20,
+    "parents": {}
+  },
+  "parentCheckpointId": "1f0ceb03-59ea-6240-8013-0f9ba434041f",
+  "updatedAt": 1764591671342
+}

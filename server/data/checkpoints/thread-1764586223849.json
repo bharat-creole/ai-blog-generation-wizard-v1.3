@@ -1,0 +1,2466 @@
+{
+  "checkpoint": {
+    "v": 4,
+    "id": "1f0cea3c-6e56-6980-8009-2d431eb9931e",
+    "ts": "2025-12-01T10:52:06.040Z",
+    "channel_values": {
+      "messages": [
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        },
+        {
+          "role": "assistant",
+          "content": "Hello! I'm your Blog Agent 🤖. "
+        }
+      ],
+      "apiKey": "AIzaSyCXtEUadPIwJrxvskOFbKHxSEzCJe2vjUs",
+      "data": {
+        "apiKey": "AIzaSyCXtEUadPIwJrxvskOFbKHxSEzCJe2vjUs",
+        "title": "The Pursuit of Joy: 7 Simple Steps to a Happy Life in America",
+        "topic": "happy life",
+        "targetLocation": "United States",
+        "primaryKeyword": "happy life",
+        "secondaryKeywords": [
+          "certified happiness coach",
+          "happy mind happy life",
+          "happy living"
+        ],
+        "suggestedTitles": [],
+        "referenceUrls": [],
+        "referenceFiles": [],
+        "interlinks": [],
+        "brandVoice": "Default",
+        "blogGuideline": "Default",
+        "llmModel": "gemini-2.5-flash",
+        "language": "English",
+        "outline": [],
+        "blogContent": ""
+      },
+      "outline": [],
+      "outlineApproved": false,
+      "draft": "",
+      "progress": {
+        "sectionIndex": 0
+      },
+      "preferences": {
+        "automationLevel": "guided",
+        "skipOptionalSteps": false,
+        "autoSelectBestOptions": false
+      },
+      "policy": {
+        "referencesUsage": "both",
+        "grounding": true
+      },
+      "userProvidedFields": {},
+      "autoFillFields": {},
+      "trace": [
+        {
+          "step": "KeywordResearch.primaryCandidates",
+          "info": {
+            "count": 59
+          },
+          "at": 1764586246702
+        },
+        {
+          "step": "KeywordResearch.primaryCandidates",
+          "info": {
+            "count": 59
+          },
+          "at": 1764586246702
+        },
+        {
+          "step": "KeywordResearch.secondaryCandidates",
+          "info": {
+            "count": 19
+          },
+          "at": 1764586300593
+        },
+        {
+          "step": "KeywordResearch.primaryCandidates",
+          "info": {
+            "count": 59
+          },
+          "at": 1764586246702
+        },
+        {
+          "step": "KeywordResearch.secondaryCandidates",
+          "info": {
+            "count": 19
+          },
+          "at": 1764586300593
+        },
+        {
+          "step": "TitleGeneration.generated",
+          "info": {
+            "count": 5
+          },
+          "at": 1764586316997
+        },
+        {
+          "step": "KeywordResearch.primaryCandidates",
+          "info": {
+            "count": 59
+          },
+          "at": 1764586246702
+        },
+        {
+          "step": "KeywordResearch.secondaryCandidates",
+          "info": {
+            "count": 19
+          },
+          "at": 1764586300593
+        },
+        {
+          "step": "TitleGeneration.generated",
+          "info": {
+            "count": 5
+          },
+          "at": 1764586316997
+        }
+      ],
+      "halt": null,
+      "keywordCandidates": [
+        {
+          "text": "happiness",
+          "volume": 1830000,
+          "difficulty": 0,
+          "source": "seed",
+          "score": 0.85
+        },
+        {
+          "text": "not happy with my life",
+          "volume": 720,
+          "difficulty": 0.15,
+          "source": "seed",
+          "score": 0.36232777965732044
+        },
+        {
+          "text": "not happy with life",
+          "volume": 880,
+          "difficulty": 0.23,
+          "source": "seed",
+          "score": 0.3421782210517722
+        },
+        {
+          "text": "happy mind happy life",
+          "volume": 1900,
+          "difficulty": 0.27,
+          "source": "seed",
+          "score": 0.33241165362827085
+        },
+        {
+          "text": "i am not happy with my life",
+          "volume": 720,
+          "difficulty": 0.27,
+          "source": "seed",
+          "score": 0.33202474935429016
+        },
+        {
+          "text": "happy living",
+          "volume": 22200,
+          "difficulty": 0.06,
+          "source": "seed",
+          "score": 0.3170980217109535
+        },
+        {
+          "text": "happiness in life",
+          "volume": 74000,
+          "difficulty": 0.13,
+          "source": "seed",
+          "score": 0.3164056958919821
+        },
+        {
+          "text": "psychology and the good life",
+          "volume": 170,
+          "difficulty": 0.13,
+          "source": "seed",
+          "score": 0.29219794796995313
+        },
+        {
+          "text": "i don t feel happy",
+          "volume": 590,
+          "difficulty": 0.24,
+          "source": "seed",
+          "score": 0.26455788188291424
+        },
+        {
+          "text": "ikigai the japanese secret to a long and happy life",
+          "volume": 12100,
+          "difficulty": 0.61,
+          "source": "seed",
+          "score": 0.24989749454477228
+        },
+        {
+          "text": "finding happiness in life",
+          "volume": 260,
+          "difficulty": 0.46,
+          "source": "seed",
+          "score": 0.20889412428463527
+        },
+        {
+          "text": "finding happiness in yourself",
+          "volume": 1600,
+          "difficulty": 0.4,
+          "source": "seed",
+          "score": 0.14948500530660308
+        },
+        {
+          "text": "tina turner happiness becomes you",
+          "volume": 90,
+          "difficulty": 0.69,
+          "source": "seed",
+          "score": 0.07575757575757577
+        },
+        {
+          "text": "happiness becomes you",
+          "volume": 260,
+          "difficulty": 0.74,
+          "source": "seed",
+          "score": 0.06318705357756457
+        },
+        {
+          "text": "certified happiness coach",
+          "volume": 260,
+          "difficulty": 0.76,
+          "source": "seed",
+          "score": 0.058136548527059524
+        },
+        {
+          "text": "ikigai hector garcia",
+          "volume": 1600,
+          "difficulty": 0.77,
+          "source": "seed",
+          "score": 0.056050661872259655
+        },
+        {
+          "text": "arthur brooks from strength to strength",
+          "volume": 320,
+          "difficulty": 0.79,
+          "source": "seed",
+          "score": 0.050580464049978936
+        },
+        {
+          "text": "arthur brooks strength to strength",
+          "volume": 320,
+          "difficulty": 0.85,
+          "source": "seed",
+          "score": 0.0354289488984638
+        },
+        {
+          "text": "simple gratitude journal",
+          "volume": 210,
+          "difficulty": 0.99,
+          "source": "seed",
+          "score": 0.00003934619735396822
+        }
+      ],
+      "titleCandidates": [
+        "Unlocking Your Best: A Guide to a Happy Life in the United States",
+        "The Pursuit of Joy: 7 Simple Steps to a Happy Life in America",
+        "Cultivating Contentment: How to Build a Happy Life in the US",
+        "Beyond the Daily Grind: Finding a Happy Life in the United States",
+        "Your Roadmap to Bliss: Achieving a Happy Life Across America"
+      ],
+      "currentStep": "title",
+      "toolOutputs": [
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "primary",
+            "candidates": [
+              {
+                "text": "happy",
+                "volume": 3350000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.9974747474747475
+              },
+              {
+                "text": "life",
+                "volume": 2240000,
+                "difficulty": 0.03,
+                "source": "seed",
+                "score": 0.7936129310755794
+              },
+              {
+                "text": "happiness",
+                "volume": 1830000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.5777538799549838
+              },
+              {
+                "text": "spiritual",
+                "volume": 1830000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.5752286274297314
+              },
+              {
+                "text": "thug life",
+                "volume": 1000000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.5040931696672447
+              },
+              {
+                "text": "happy days",
+                "volume": 550000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.4184434843402547
+              },
+              {
+                "text": "happy life",
+                "volume": 74000,
+                "difficulty": 0.13,
+                "source": "seed",
+                "score": 0.3804096847589061
+              },
+              {
+                "text": "lifestyle",
+                "volume": 1000000,
+                "difficulty": 0.25,
+                "source": "seed",
+                "score": 0.3659618565359316
+              },
+              {
+                "text": "not happy with my life",
+                "volume": 720,
+                "difficulty": 0.15,
+                "source": "seed",
+                "score": 0.3622340509735992
+              },
+              {
+                "text": "happy ever after",
+                "volume": 165000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.3520116604067367
+              },
+              {
+                "text": "after ever happy",
+                "volume": 135000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.3466383817216377
+              },
+              {
+                "text": "happy trails",
+                "volume": 110000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3446859020093077
+              },
+              {
+                "text": "happy music",
+                "volume": 135000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.34411312919638515
+              },
+              {
+                "text": "not happy with life",
+                "volume": 880,
+                "difficulty": 0.23,
+                "source": "seed",
+                "score": 0.3420606882578995
+              },
+              {
+                "text": "meaning of life",
+                "volume": 74000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.33823796758718894
+              },
+              {
+                "text": "happy home",
+                "volume": 165000,
+                "difficulty": 0.08,
+                "source": "seed",
+                "score": 0.334334892729969
+              },
+              {
+                "text": "life changing",
+                "volume": 49500,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.33384978999435805
+              },
+              {
+                "text": "happy holiday",
+                "volume": 246000,
+                "difficulty": 0.14,
+                "source": "seed",
+                "score": 0.33369123002822115
+              },
+              {
+                "text": "happy mind happy life",
+                "volume": 1900,
+                "difficulty": 0.27,
+                "source": "seed",
+                "score": 0.3321423696321828
+              },
+              {
+                "text": "i am not happy with my life",
+                "volume": 720,
+                "difficulty": 0.27,
+                "source": "seed",
+                "score": 0.3319310206705689
+              },
+              {
+                "text": "happy go lucky",
+                "volume": 60500,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.33076948712838933
+              },
+              {
+                "text": "pro life meaning",
+                "volume": 18100,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.32822575830395445
+              },
+              {
+                "text": "social life",
+                "volume": 12100,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.32715110256693464
+              },
+              {
+                "text": "after ever happy netflix",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3250304485792156
+              },
+              {
+                "text": "after ever happy online",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3250304485792156
+              },
+              {
+                "text": "after ever happy watch online",
+                "volume": 140,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.32500895546447517
+              },
+              {
+                "text": "slow life",
+                "volume": 27100,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3247872368589791
+              },
+              {
+                "text": "happy valley season 3",
+                "volume": 8100,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.3239094128836689
+              },
+              {
+                "text": "the life of riley",
+                "volume": 6600,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.32364074894941397
+              },
+              {
+                "text": "life of riley",
+                "volume": 18100,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.32317525325344937
+              },
+              {
+                "text": "work life balance meaning",
+                "volume": 18100,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.32317525325344937
+              },
+              {
+                "text": "pop culture happy hour",
+                "volume": 4400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.32072145598725416
+              },
+              {
+                "text": "watch after ever happy",
+                "volume": 2400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.32036323740824757
+              },
+              {
+                "text": "happy living",
+                "volume": 22200,
+                "difficulty": 0.06,
+                "source": "seed",
+                "score": 0.3138085912394028
+              },
+              {
+                "text": "after ever happy where to watch",
+                "volume": 90,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.31237373737373736
+              },
+              {
+                "text": "happiness in life",
+                "volume": 74000,
+                "difficulty": 0.13,
+                "source": "seed",
+                "score": 0.30540968475890606
+              },
+              {
+                "text": "psychology and the good life",
+                "volume": 170,
+                "difficulty": 0.13,
+                "source": "seed",
+                "score": 0.29218604591487746
+              },
+              {
+                "text": "home life",
+                "volume": 22200,
+                "difficulty": 0.2,
+                "source": "seed",
+                "score": 0.27845505588586744
+              },
+              {
+                "text": "i don t feel happy",
+                "volume": 590,
+                "difficulty": 0.24,
+                "source": "seed",
+                "score": 0.26448349403869104
+              },
+              {
+                "text": "lifelike",
+                "volume": 165000,
+                "difficulty": 0.07,
+                "source": "seed",
+                "score": 0.26186014525522155
+              },
+              {
+                "text": "mr happy",
+                "volume": 40500,
+                "difficulty": 0.28,
+                "source": "seed",
+                "score": 0.2615307356817576
+              },
+              {
+                "text": "slow living",
+                "volume": 60500,
+                "difficulty": 0.03,
+                "source": "seed",
+                "score": 0.2532442346031368
+              },
+              {
+                "text": "ikigai the japanese secret to a long and happy life",
+                "volume": 12100,
+                "difficulty": 0.61,
+                "source": "seed",
+                "score": 0.24811069852653062
+              },
+              {
+                "text": "annuities meaning",
+                "volume": 49500,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.24622352736809544
+              },
+              {
+                "text": "upbeat music",
+                "volume": 110000,
+                "difficulty": 0.11,
+                "source": "seed",
+                "score": 0.2419081242315299
+              },
+              {
+                "text": "play upbeat music",
+                "volume": 1900,
+                "difficulty": 0.04,
+                "source": "seed",
+                "score": 0.24022317771299087
+              },
+              {
+                "text": "merry christmas and happy new year",
+                "volume": 135000,
+                "difficulty": 0.47,
+                "source": "seed",
+                "score": 0.23047676556002156
+              },
+              {
+                "text": "pro life",
+                "volume": 90500,
+                "difficulty": 0.44,
+                "source": "seed",
+                "score": 0.23008215975288226
+              },
+              {
+                "text": "finding happiness in life",
+                "volume": 260,
+                "difficulty": 0.46,
+                "source": "seed",
+                "score": 0.20886883241759935
+              },
+              {
+                "text": "finding happiness in yourself",
+                "volume": 1600,
+                "difficulty": 0.4,
+                "source": "seed",
+                "score": 0.14926035401704896
+              },
+              {
+                "text": "shelf life",
+                "volume": 110000,
+                "difficulty": 0.83,
+                "source": "seed",
+                "score": 0.13508994241334812
+              },
+              {
+                "text": "lifework",
+                "volume": 27100,
+                "difficulty": 0.5,
+                "source": "seed",
+                "score": 0.12857511564685786
+              },
+              {
+                "text": "tina turner happiness becomes you",
+                "volume": 90,
+                "difficulty": 0.69,
+                "source": "seed",
+                "score": 0.07575757575757577
+              },
+              {
+                "text": "happiness becomes you",
+                "volume": 260,
+                "difficulty": 0.74,
+                "source": "seed",
+                "score": 0.06316176171052869
+              },
+              {
+                "text": "certified happiness coach",
+                "volume": 260,
+                "difficulty": 0.76,
+                "source": "seed",
+                "score": 0.058111256660023626
+              },
+              {
+                "text": "ikigai hector garcia",
+                "volume": 1600,
+                "difficulty": 0.77,
+                "source": "seed",
+                "score": 0.05582601058270554
+              },
+              {
+                "text": "arthur brooks from strength to strength",
+                "volume": 320,
+                "difficulty": 0.79,
+                "source": "seed",
+                "score": 0.050546245641636255
+              },
+              {
+                "text": "arthur brooks strength to strength",
+                "volume": 320,
+                "difficulty": 0.85,
+                "source": "seed",
+                "score": 0.03539473049012112
+              },
+              {
+                "text": "simple gratitude journal",
+                "volume": 210,
+                "difficulty": 0.99,
+                "source": "seed",
+                "score": 0.00002149311474039601
+              }
+            ]
+          },
+          "timestamp": 1764586246702
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "primary",
+            "candidates": [
+              {
+                "text": "happy",
+                "volume": 3350000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.9974747474747475
+              },
+              {
+                "text": "life",
+                "volume": 2240000,
+                "difficulty": 0.03,
+                "source": "seed",
+                "score": 0.7936129310755794
+              },
+              {
+                "text": "happiness",
+                "volume": 1830000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.5777538799549838
+              },
+              {
+                "text": "spiritual",
+                "volume": 1830000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.5752286274297314
+              },
+              {
+                "text": "thug life",
+                "volume": 1000000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.5040931696672447
+              },
+              {
+                "text": "happy days",
+                "volume": 550000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.4184434843402547
+              },
+              {
+                "text": "happy life",
+                "volume": 74000,
+                "difficulty": 0.13,
+                "source": "seed",
+                "score": 0.3804096847589061
+              },
+              {
+                "text": "lifestyle",
+                "volume": 1000000,
+                "difficulty": 0.25,
+                "source": "seed",
+                "score": 0.3659618565359316
+              },
+              {
+                "text": "not happy with my life",
+                "volume": 720,
+                "difficulty": 0.15,
+                "source": "seed",
+                "score": 0.3622340509735992
+              },
+              {
+                "text": "happy ever after",
+                "volume": 165000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.3520116604067367
+              },
+              {
+                "text": "after ever happy",
+                "volume": 135000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.3466383817216377
+              },
+              {
+                "text": "happy trails",
+                "volume": 110000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3446859020093077
+              },
+              {
+                "text": "happy music",
+                "volume": 135000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.34411312919638515
+              },
+              {
+                "text": "not happy with life",
+                "volume": 880,
+                "difficulty": 0.23,
+                "source": "seed",
+                "score": 0.3420606882578995
+              },
+              {
+                "text": "meaning of life",
+                "volume": 74000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.33823796758718894
+              },
+              {
+                "text": "happy home",
+                "volume": 165000,
+                "difficulty": 0.08,
+                "source": "seed",
+                "score": 0.334334892729969
+              },
+              {
+                "text": "life changing",
+                "volume": 49500,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.33384978999435805
+              },
+              {
+                "text": "happy holiday",
+                "volume": 246000,
+                "difficulty": 0.14,
+                "source": "seed",
+                "score": 0.33369123002822115
+              },
+              {
+                "text": "happy mind happy life",
+                "volume": 1900,
+                "difficulty": 0.27,
+                "source": "seed",
+                "score": 0.3321423696321828
+              },
+              {
+                "text": "i am not happy with my life",
+                "volume": 720,
+                "difficulty": 0.27,
+                "source": "seed",
+                "score": 0.3319310206705689
+              },
+              {
+                "text": "happy go lucky",
+                "volume": 60500,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.33076948712838933
+              },
+              {
+                "text": "pro life meaning",
+                "volume": 18100,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.32822575830395445
+              },
+              {
+                "text": "social life",
+                "volume": 12100,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.32715110256693464
+              },
+              {
+                "text": "after ever happy netflix",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3250304485792156
+              },
+              {
+                "text": "after ever happy online",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3250304485792156
+              },
+              {
+                "text": "after ever happy watch online",
+                "volume": 140,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.32500895546447517
+              },
+              {
+                "text": "slow life",
+                "volume": 27100,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3247872368589791
+              },
+              {
+                "text": "happy valley season 3",
+                "volume": 8100,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.3239094128836689
+              },
+              {
+                "text": "the life of riley",
+                "volume": 6600,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.32364074894941397
+              },
+              {
+                "text": "life of riley",
+                "volume": 18100,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.32317525325344937
+              },
+              {
+                "text": "work life balance meaning",
+                "volume": 18100,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.32317525325344937
+              },
+              {
+                "text": "pop culture happy hour",
+                "volume": 4400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.32072145598725416
+              },
+              {
+                "text": "watch after ever happy",
+                "volume": 2400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.32036323740824757
+              },
+              {
+                "text": "happy living",
+                "volume": 22200,
+                "difficulty": 0.06,
+                "source": "seed",
+                "score": 0.3138085912394028
+              },
+              {
+                "text": "after ever happy where to watch",
+                "volume": 90,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.31237373737373736
+              },
+              {
+                "text": "happiness in life",
+                "volume": 74000,
+                "difficulty": 0.13,
+                "source": "seed",
+                "score": 0.30540968475890606
+              },
+              {
+                "text": "psychology and the good life",
+                "volume": 170,
+                "difficulty": 0.13,
+                "source": "seed",
+                "score": 0.29218604591487746
+              },
+              {
+                "text": "home life",
+                "volume": 22200,
+                "difficulty": 0.2,
+                "source": "seed",
+                "score": 0.27845505588586744
+              },
+              {
+                "text": "i don t feel happy",
+                "volume": 590,
+                "difficulty": 0.24,
+                "source": "seed",
+                "score": 0.26448349403869104
+              },
+              {
+                "text": "lifelike",
+                "volume": 165000,
+                "difficulty": 0.07,
+                "source": "seed",
+                "score": 0.26186014525522155
+              },
+              {
+                "text": "mr happy",
+                "volume": 40500,
+                "difficulty": 0.28,
+                "source": "seed",
+                "score": 0.2615307356817576
+              },
+              {
+                "text": "slow living",
+                "volume": 60500,
+                "difficulty": 0.03,
+                "source": "seed",
+                "score": 0.2532442346031368
+              },
+              {
+                "text": "ikigai the japanese secret to a long and happy life",
+                "volume": 12100,
+                "difficulty": 0.61,
+                "source": "seed",
+                "score": 0.24811069852653062
+              },
+              {
+                "text": "annuities meaning",
+                "volume": 49500,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.24622352736809544
+              },
+              {
+                "text": "upbeat music",
+                "volume": 110000,
+                "difficulty": 0.11,
+                "source": "seed",
+                "score": 0.2419081242315299
+              },
+              {
+                "text": "play upbeat music",
+                "volume": 1900,
+                "difficulty": 0.04,
+                "source": "seed",
+                "score": 0.24022317771299087
+              },
+              {
+                "text": "merry christmas and happy new year",
+                "volume": 135000,
+                "difficulty": 0.47,
+                "source": "seed",
+                "score": 0.23047676556002156
+              },
+              {
+                "text": "pro life",
+                "volume": 90500,
+                "difficulty": 0.44,
+                "source": "seed",
+                "score": 0.23008215975288226
+              },
+              {
+                "text": "finding happiness in life",
+                "volume": 260,
+                "difficulty": 0.46,
+                "source": "seed",
+                "score": 0.20886883241759935
+              },
+              {
+                "text": "finding happiness in yourself",
+                "volume": 1600,
+                "difficulty": 0.4,
+                "source": "seed",
+                "score": 0.14926035401704896
+              },
+              {
+                "text": "shelf life",
+                "volume": 110000,
+                "difficulty": 0.83,
+                "source": "seed",
+                "score": 0.13508994241334812
+              },
+              {
+                "text": "lifework",
+                "volume": 27100,
+                "difficulty": 0.5,
+                "source": "seed",
+                "score": 0.12857511564685786
+              },
+              {
+                "text": "tina turner happiness becomes you",
+                "volume": 90,
+                "difficulty": 0.69,
+                "source": "seed",
+                "score": 0.07575757575757577
+              },
+              {
+                "text": "happiness becomes you",
+                "volume": 260,
+                "difficulty": 0.74,
+                "source": "seed",
+                "score": 0.06316176171052869
+              },
+              {
+                "text": "certified happiness coach",
+                "volume": 260,
+                "difficulty": 0.76,
+                "source": "seed",
+                "score": 0.058111256660023626
+              },
+              {
+                "text": "ikigai hector garcia",
+                "volume": 1600,
+                "difficulty": 0.77,
+                "source": "seed",
+                "score": 0.05582601058270554
+              },
+              {
+                "text": "arthur brooks from strength to strength",
+                "volume": 320,
+                "difficulty": 0.79,
+                "source": "seed",
+                "score": 0.050546245641636255
+              },
+              {
+                "text": "arthur brooks strength to strength",
+                "volume": 320,
+                "difficulty": 0.85,
+                "source": "seed",
+                "score": 0.03539473049012112
+              },
+              {
+                "text": "simple gratitude journal",
+                "volume": 210,
+                "difficulty": 0.99,
+                "source": "seed",
+                "score": 0.00002149311474039601
+              }
+            ]
+          },
+          "timestamp": 1764586246702
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "secondary",
+            "candidates": [
+              {
+                "text": "happiness",
+                "volume": 1830000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.85
+              },
+              {
+                "text": "not happy with my life",
+                "volume": 720,
+                "difficulty": 0.15,
+                "source": "seed",
+                "score": 0.36232777965732044
+              },
+              {
+                "text": "not happy with life",
+                "volume": 880,
+                "difficulty": 0.23,
+                "source": "seed",
+                "score": 0.3421782210517722
+              },
+              {
+                "text": "happy mind happy life",
+                "volume": 1900,
+                "difficulty": 0.27,
+                "source": "seed",
+                "score": 0.33241165362827085
+              },
+              {
+                "text": "i am not happy with my life",
+                "volume": 720,
+                "difficulty": 0.27,
+                "source": "seed",
+                "score": 0.33202474935429016
+              },
+              {
+                "text": "happy living",
+                "volume": 22200,
+                "difficulty": 0.06,
+                "source": "seed",
+                "score": 0.3170980217109535
+              },
+              {
+                "text": "happiness in life",
+                "volume": 74000,
+                "difficulty": 0.13,
+                "source": "seed",
+                "score": 0.3164056958919821
+              },
+              {
+                "text": "psychology and the good life",
+                "volume": 170,
+                "difficulty": 0.13,
+                "source": "seed",
+                "score": 0.29219794796995313
+              },
+              {
+                "text": "i don t feel happy",
+                "volume": 590,
+                "difficulty": 0.24,
+                "source": "seed",
+                "score": 0.26455788188291424
+              },
+              {
+                "text": "ikigai the japanese secret to a long and happy life",
+                "volume": 12100,
+                "difficulty": 0.61,
+                "source": "seed",
+                "score": 0.24989749454477228
+              },
+              {
+                "text": "finding happiness in life",
+                "volume": 260,
+                "difficulty": 0.46,
+                "source": "seed",
+                "score": 0.20889412428463527
+              },
+              {
+                "text": "finding happiness in yourself",
+                "volume": 1600,
+                "difficulty": 0.4,
+                "source": "seed",
+                "score": 0.14948500530660308
+              },
+              {
+                "text": "tina turner happiness becomes you",
+                "volume": 90,
+                "difficulty": 0.69,
+                "source": "seed",
+                "score": 0.07575757575757577
+              },
+              {
+                "text": "happiness becomes you",
+                "volume": 260,
+                "difficulty": 0.74,
+                "source": "seed",
+                "score": 0.06318705357756457
+              },
+              {
+                "text": "certified happiness coach",
+                "volume": 260,
+                "difficulty": 0.76,
+                "source": "seed",
+                "score": 0.058136548527059524
+              },
+              {
+                "text": "ikigai hector garcia",
+                "volume": 1600,
+                "difficulty": 0.77,
+                "source": "seed",
+                "score": 0.056050661872259655
+              },
+              {
+                "text": "arthur brooks from strength to strength",
+                "volume": 320,
+                "difficulty": 0.79,
+                "source": "seed",
+                "score": 0.050580464049978936
+              },
+              {
+                "text": "arthur brooks strength to strength",
+                "volume": 320,
+                "difficulty": 0.85,
+                "source": "seed",
+                "score": 0.0354289488984638
+              },
+              {
+                "text": "simple gratitude journal",
+                "volume": 210,
+                "difficulty": 0.99,
+                "source": "seed",
+                "score": 0.00003934619735396822
+              }
+            ]
+          },
+          "timestamp": 1764586300593
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "primary",
+            "candidates": [
+              {
+                "text": "happy",
+                "volume": 3350000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.9974747474747475
+              },
+              {
+                "text": "life",
+                "volume": 2240000,
+                "difficulty": 0.03,
+                "source": "seed",
+                "score": 0.7936129310755794
+              },
+              {
+                "text": "happiness",
+                "volume": 1830000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.5777538799549838
+              },
+              {
+                "text": "spiritual",
+                "volume": 1830000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.5752286274297314
+              },
+              {
+                "text": "thug life",
+                "volume": 1000000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.5040931696672447
+              },
+              {
+                "text": "happy days",
+                "volume": 550000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.4184434843402547
+              },
+              {
+                "text": "happy life",
+                "volume": 74000,
+                "difficulty": 0.13,
+                "source": "seed",
+                "score": 0.3804096847589061
+              },
+              {
+                "text": "lifestyle",
+                "volume": 1000000,
+                "difficulty": 0.25,
+                "source": "seed",
+                "score": 0.3659618565359316
+              },
+              {
+                "text": "not happy with my life",
+                "volume": 720,
+                "difficulty": 0.15,
+                "source": "seed",
+                "score": 0.3622340509735992
+              },
+              {
+                "text": "happy ever after",
+                "volume": 165000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.3520116604067367
+              },
+              {
+                "text": "after ever happy",
+                "volume": 135000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.3466383817216377
+              },
+              {
+                "text": "happy trails",
+                "volume": 110000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3446859020093077
+              },
+              {
+                "text": "happy music",
+                "volume": 135000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.34411312919638515
+              },
+              {
+                "text": "not happy with life",
+                "volume": 880,
+                "difficulty": 0.23,
+                "source": "seed",
+                "score": 0.3420606882578995
+              },
+              {
+                "text": "meaning of life",
+                "volume": 74000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.33823796758718894
+              },
+              {
+                "text": "happy home",
+                "volume": 165000,
+                "difficulty": 0.08,
+                "source": "seed",
+                "score": 0.334334892729969
+              },
+              {
+                "text": "life changing",
+                "volume": 49500,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.33384978999435805
+              },
+              {
+                "text": "happy holiday",
+                "volume": 246000,
+                "difficulty": 0.14,
+                "source": "seed",
+                "score": 0.33369123002822115
+              },
+              {
+                "text": "happy mind happy life",
+                "volume": 1900,
+                "difficulty": 0.27,
+                "source": "seed",
+                "score": 0.3321423696321828
+              },
+              {
+                "text": "i am not happy with my life",
+                "volume": 720,
+                "difficulty": 0.27,
+                "source": "seed",
+                "score": 0.3319310206705689
+              },
+              {
+                "text": "happy go lucky",
+                "volume": 60500,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.33076948712838933
+              },
+              {
+                "text": "pro life meaning",
+                "volume": 18100,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.32822575830395445
+              },
+              {
+                "text": "social life",
+                "volume": 12100,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.32715110256693464
+              },
+              {
+                "text": "after ever happy netflix",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3250304485792156
+              },
+              {
+                "text": "after ever happy online",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3250304485792156
+              },
+              {
+                "text": "after ever happy watch online",
+                "volume": 140,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.32500895546447517
+              },
+              {
+                "text": "slow life",
+                "volume": 27100,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3247872368589791
+              },
+              {
+                "text": "happy valley season 3",
+                "volume": 8100,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.3239094128836689
+              },
+              {
+                "text": "the life of riley",
+                "volume": 6600,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.32364074894941397
+              },
+              {
+                "text": "life of riley",
+                "volume": 18100,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.32317525325344937
+              },
+              {
+                "text": "work life balance meaning",
+                "volume": 18100,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.32317525325344937
+              },
+              {
+                "text": "pop culture happy hour",
+                "volume": 4400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.32072145598725416
+              },
+              {
+                "text": "watch after ever happy",
+                "volume": 2400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.32036323740824757
+              },
+              {
+                "text": "happy living",
+                "volume": 22200,
+                "difficulty": 0.06,
+                "source": "seed",
+                "score": 0.3138085912394028
+              },
+              {
+                "text": "after ever happy where to watch",
+                "volume": 90,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.31237373737373736
+              },
+              {
+                "text": "happiness in life",
+                "volume": 74000,
+                "difficulty": 0.13,
+                "source": "seed",
+                "score": 0.30540968475890606
+              },
+              {
+                "text": "psychology and the good life",
+                "volume": 170,
+                "difficulty": 0.13,
+                "source": "seed",
+                "score": 0.29218604591487746
+              },
+              {
+                "text": "home life",
+                "volume": 22200,
+                "difficulty": 0.2,
+                "source": "seed",
+                "score": 0.27845505588586744
+              },
+              {
+                "text": "i don t feel happy",
+                "volume": 590,
+                "difficulty": 0.24,
+                "source": "seed",
+                "score": 0.26448349403869104
+              },
+              {
+                "text": "lifelike",
+                "volume": 165000,
+                "difficulty": 0.07,
+                "source": "seed",
+                "score": 0.26186014525522155
+              },
+              {
+                "text": "mr happy",
+                "volume": 40500,
+                "difficulty": 0.28,
+                "source": "seed",
+                "score": 0.2615307356817576
+              },
+              {
+                "text": "slow living",
+                "volume": 60500,
+                "difficulty": 0.03,
+                "source": "seed",
+                "score": 0.2532442346031368
+              },
+              {
+                "text": "ikigai the japanese secret to a long and happy life",
+                "volume": 12100,
+                "difficulty": 0.61,
+                "source": "seed",
+                "score": 0.24811069852653062
+              },
+              {
+                "text": "annuities meaning",
+                "volume": 49500,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.24622352736809544
+              },
+              {
+                "text": "upbeat music",
+                "volume": 110000,
+                "difficulty": 0.11,
+                "source": "seed",
+                "score": 0.2419081242315299
+              },
+              {
+                "text": "play upbeat music",
+                "volume": 1900,
+                "difficulty": 0.04,
+                "source": "seed",
+                "score": 0.24022317771299087
+              },
+              {
+                "text": "merry christmas and happy new year",
+                "volume": 135000,
+                "difficulty": 0.47,
+                "source": "seed",
+                "score": 0.23047676556002156
+              },
+              {
+                "text": "pro life",
+                "volume": 90500,
+                "difficulty": 0.44,
+                "source": "seed",
+                "score": 0.23008215975288226
+              },
+              {
+                "text": "finding happiness in life",
+                "volume": 260,
+                "difficulty": 0.46,
+                "source": "seed",
+                "score": 0.20886883241759935
+              },
+              {
+                "text": "finding happiness in yourself",
+                "volume": 1600,
+                "difficulty": 0.4,
+                "source": "seed",
+                "score": 0.14926035401704896
+              },
+              {
+                "text": "shelf life",
+                "volume": 110000,
+                "difficulty": 0.83,
+                "source": "seed",
+                "score": 0.13508994241334812
+              },
+              {
+                "text": "lifework",
+                "volume": 27100,
+                "difficulty": 0.5,
+                "source": "seed",
+                "score": 0.12857511564685786
+              },
+              {
+                "text": "tina turner happiness becomes you",
+                "volume": 90,
+                "difficulty": 0.69,
+                "source": "seed",
+                "score": 0.07575757575757577
+              },
+              {
+                "text": "happiness becomes you",
+                "volume": 260,
+                "difficulty": 0.74,
+                "source": "seed",
+                "score": 0.06316176171052869
+              },
+              {
+                "text": "certified happiness coach",
+                "volume": 260,
+                "difficulty": 0.76,
+                "source": "seed",
+                "score": 0.058111256660023626
+              },
+              {
+                "text": "ikigai hector garcia",
+                "volume": 1600,
+                "difficulty": 0.77,
+                "source": "seed",
+                "score": 0.05582601058270554
+              },
+              {
+                "text": "arthur brooks from strength to strength",
+                "volume": 320,
+                "difficulty": 0.79,
+                "source": "seed",
+                "score": 0.050546245641636255
+              },
+              {
+                "text": "arthur brooks strength to strength",
+                "volume": 320,
+                "difficulty": 0.85,
+                "source": "seed",
+                "score": 0.03539473049012112
+              },
+              {
+                "text": "simple gratitude journal",
+                "volume": 210,
+                "difficulty": 0.99,
+                "source": "seed",
+                "score": 0.00002149311474039601
+              }
+            ]
+          },
+          "timestamp": 1764586246702
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "secondary",
+            "candidates": [
+              {
+                "text": "happiness",
+                "volume": 1830000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.85
+              },
+              {
+                "text": "not happy with my life",
+                "volume": 720,
+                "difficulty": 0.15,
+                "source": "seed",
+                "score": 0.36232777965732044
+              },
+              {
+                "text": "not happy with life",
+                "volume": 880,
+                "difficulty": 0.23,
+                "source": "seed",
+                "score": 0.3421782210517722
+              },
+              {
+                "text": "happy mind happy life",
+                "volume": 1900,
+                "difficulty": 0.27,
+                "source": "seed",
+                "score": 0.33241165362827085
+              },
+              {
+                "text": "i am not happy with my life",
+                "volume": 720,
+                "difficulty": 0.27,
+                "source": "seed",
+                "score": 0.33202474935429016
+              },
+              {
+                "text": "happy living",
+                "volume": 22200,
+                "difficulty": 0.06,
+                "source": "seed",
+                "score": 0.3170980217109535
+              },
+              {
+                "text": "happiness in life",
+                "volume": 74000,
+                "difficulty": 0.13,
+                "source": "seed",
+                "score": 0.3164056958919821
+              },
+              {
+                "text": "psychology and the good life",
+                "volume": 170,
+                "difficulty": 0.13,
+                "source": "seed",
+                "score": 0.29219794796995313
+              },
+              {
+                "text": "i don t feel happy",
+                "volume": 590,
+                "difficulty": 0.24,
+                "source": "seed",
+                "score": 0.26455788188291424
+              },
+              {
+                "text": "ikigai the japanese secret to a long and happy life",
+                "volume": 12100,
+                "difficulty": 0.61,
+                "source": "seed",
+                "score": 0.24989749454477228
+              },
+              {
+                "text": "finding happiness in life",
+                "volume": 260,
+                "difficulty": 0.46,
+                "source": "seed",
+                "score": 0.20889412428463527
+              },
+              {
+                "text": "finding happiness in yourself",
+                "volume": 1600,
+                "difficulty": 0.4,
+                "source": "seed",
+                "score": 0.14948500530660308
+              },
+              {
+                "text": "tina turner happiness becomes you",
+                "volume": 90,
+                "difficulty": 0.69,
+                "source": "seed",
+                "score": 0.07575757575757577
+              },
+              {
+                "text": "happiness becomes you",
+                "volume": 260,
+                "difficulty": 0.74,
+                "source": "seed",
+                "score": 0.06318705357756457
+              },
+              {
+                "text": "certified happiness coach",
+                "volume": 260,
+                "difficulty": 0.76,
+                "source": "seed",
+                "score": 0.058136548527059524
+              },
+              {
+                "text": "ikigai hector garcia",
+                "volume": 1600,
+                "difficulty": 0.77,
+                "source": "seed",
+                "score": 0.056050661872259655
+              },
+              {
+                "text": "arthur brooks from strength to strength",
+                "volume": 320,
+                "difficulty": 0.79,
+                "source": "seed",
+                "score": 0.050580464049978936
+              },
+              {
+                "text": "arthur brooks strength to strength",
+                "volume": 320,
+                "difficulty": 0.85,
+                "source": "seed",
+                "score": 0.0354289488984638
+              },
+              {
+                "text": "simple gratitude journal",
+                "volume": 210,
+                "difficulty": 0.99,
+                "source": "seed",
+                "score": 0.00003934619735396822
+              }
+            ]
+          },
+          "timestamp": 1764586300593
+        },
+        {
+          "type": "title_options",
+          "data": {
+            "titles": [
+              "Unlocking Your Best: A Guide to a Happy Life in the United States",
+              "The Pursuit of Joy: 7 Simple Steps to a Happy Life in America",
+              "Cultivating Contentment: How to Build a Happy Life in the US",
+              "Beyond the Daily Grind: Finding a Happy Life in the United States",
+              "Your Roadmap to Bliss: Achieving a Happy Life Across America"
+            ]
+          },
+          "timestamp": 1764586316997
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "primary",
+            "candidates": [
+              {
+                "text": "happy",
+                "volume": 3350000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.9974747474747475
+              },
+              {
+                "text": "life",
+                "volume": 2240000,
+                "difficulty": 0.03,
+                "source": "seed",
+                "score": 0.7936129310755794
+              },
+              {
+                "text": "happiness",
+                "volume": 1830000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.5777538799549838
+              },
+              {
+                "text": "spiritual",
+                "volume": 1830000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.5752286274297314
+              },
+              {
+                "text": "thug life",
+                "volume": 1000000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.5040931696672447
+              },
+              {
+                "text": "happy days",
+                "volume": 550000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.4184434843402547
+              },
+              {
+                "text": "happy life",
+                "volume": 74000,
+                "difficulty": 0.13,
+                "source": "seed",
+                "score": 0.3804096847589061
+              },
+              {
+                "text": "lifestyle",
+                "volume": 1000000,
+                "difficulty": 0.25,
+                "source": "seed",
+                "score": 0.3659618565359316
+              },
+              {
+                "text": "not happy with my life",
+                "volume": 720,
+                "difficulty": 0.15,
+                "source": "seed",
+                "score": 0.3622340509735992
+              },
+              {
+                "text": "happy ever after",
+                "volume": 165000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.3520116604067367
+              },
+              {
+                "text": "after ever happy",
+                "volume": 135000,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.3466383817216377
+              },
+              {
+                "text": "happy trails",
+                "volume": 110000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3446859020093077
+              },
+              {
+                "text": "happy music",
+                "volume": 135000,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.34411312919638515
+              },
+              {
+                "text": "not happy with life",
+                "volume": 880,
+                "difficulty": 0.23,
+                "source": "seed",
+                "score": 0.3420606882578995
+              },
+              {
+                "text": "meaning of life",
+                "volume": 74000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.33823796758718894
+              },
+              {
+                "text": "happy home",
+                "volume": 165000,
+                "difficulty": 0.08,
+                "source": "seed",
+                "score": 0.334334892729969
+              },
+              {
+                "text": "life changing",
+                "volume": 49500,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.33384978999435805
+              },
+              {
+                "text": "happy holiday",
+                "volume": 246000,
+                "difficulty": 0.14,
+                "source": "seed",
+                "score": 0.33369123002822115
+              },
+              {
+                "text": "happy mind happy life",
+                "volume": 1900,
+                "difficulty": 0.27,
+                "source": "seed",
+                "score": 0.3321423696321828
+              },
+              {
+                "text": "i am not happy with my life",
+                "volume": 720,
+                "difficulty": 0.27,
+                "source": "seed",
+                "score": 0.3319310206705689
+              },
+              {
+                "text": "happy go lucky",
+                "volume": 60500,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.33076948712838933
+              },
+              {
+                "text": "pro life meaning",
+                "volume": 18100,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.32822575830395445
+              },
+              {
+                "text": "social life",
+                "volume": 12100,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.32715110256693464
+              },
+              {
+                "text": "after ever happy netflix",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3250304485792156
+              },
+              {
+                "text": "after ever happy online",
+                "volume": 260,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.3250304485792156
+              },
+              {
+                "text": "after ever happy watch online",
+                "volume": 140,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.32500895546447517
+              },
+              {
+                "text": "slow life",
+                "volume": 27100,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.3247872368589791
+              },
+              {
+                "text": "happy valley season 3",
+                "volume": 8100,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.3239094128836689
+              },
+              {
+                "text": "the life of riley",
+                "volume": 6600,
+                "difficulty": 0.01,
+                "source": "seed",
+                "score": 0.32364074894941397
+              },
+              {
+                "text": "life of riley",
+                "volume": 18100,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.32317525325344937
+              },
+              {
+                "text": "work life balance meaning",
+                "volume": 18100,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.32317525325344937
+              },
+              {
+                "text": "pop culture happy hour",
+                "volume": 4400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.32072145598725416
+              },
+              {
+                "text": "watch after ever happy",
+                "volume": 2400,
+                "difficulty": 0.02,
+                "source": "seed",
+                "score": 0.32036323740824757
+              },
+              {
+                "text": "happy living",
+                "volume": 22200,
+                "difficulty": 0.06,
+                "source": "seed",
+                "score": 0.3138085912394028
+              },
+              {
+                "text": "after ever happy where to watch",
+                "volume": 90,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.31237373737373736
+              },
+              {
+                "text": "happiness in life",
+                "volume": 74000,
+                "difficulty": 0.13,
+                "source": "seed",
+                "score": 0.30540968475890606
+              },
+              {
+                "text": "psychology and the good life",
+                "volume": 170,
+                "difficulty": 0.13,
+                "source": "seed",
+                "score": 0.29218604591487746
+              },
+              {
+                "text": "home life",
+                "volume": 22200,
+                "difficulty": 0.2,
+                "source": "seed",
+                "score": 0.27845505588586744
+              },
+              {
+                "text": "i don t feel happy",
+                "volume": 590,
+                "difficulty": 0.24,
+                "source": "seed",
+                "score": 0.26448349403869104
+              },
+              {
+                "text": "lifelike",
+                "volume": 165000,
+                "difficulty": 0.07,
+                "source": "seed",
+                "score": 0.26186014525522155
+              },
+              {
+                "text": "mr happy",
+                "volume": 40500,
+                "difficulty": 0.28,
+                "source": "seed",
+                "score": 0.2615307356817576
+              },
+              {
+                "text": "slow living",
+                "volume": 60500,
+                "difficulty": 0.03,
+                "source": "seed",
+                "score": 0.2532442346031368
+              },
+              {
+                "text": "ikigai the japanese secret to a long and happy life",
+                "volume": 12100,
+                "difficulty": 0.61,
+                "source": "seed",
+                "score": 0.24811069852653062
+              },
+              {
+                "text": "annuities meaning",
+                "volume": 49500,
+                "difficulty": 0.05,
+                "source": "seed",
+                "score": 0.24622352736809544
+              },
+              {
+                "text": "upbeat music",
+                "volume": 110000,
+                "difficulty": 0.11,
+                "source": "seed",
+                "score": 0.2419081242315299
+              },
+              {
+                "text": "play upbeat music",
+                "volume": 1900,
+                "difficulty": 0.04,
+                "source": "seed",
+                "score": 0.24022317771299087
+              },
+              {
+                "text": "merry christmas and happy new year",
+                "volume": 135000,
+                "difficulty": 0.47,
+                "source": "seed",
+                "score": 0.23047676556002156
+              },
+              {
+                "text": "pro life",
+                "volume": 90500,
+                "difficulty": 0.44,
+                "source": "seed",
+                "score": 0.23008215975288226
+              },
+              {
+                "text": "finding happiness in life",
+                "volume": 260,
+                "difficulty": 0.46,
+                "source": "seed",
+                "score": 0.20886883241759935
+              },
+              {
+                "text": "finding happiness in yourself",
+                "volume": 1600,
+                "difficulty": 0.4,
+                "source": "seed",
+                "score": 0.14926035401704896
+              },
+              {
+                "text": "shelf life",
+                "volume": 110000,
+                "difficulty": 0.83,
+                "source": "seed",
+                "score": 0.13508994241334812
+              },
+              {
+                "text": "lifework",
+                "volume": 27100,
+                "difficulty": 0.5,
+                "source": "seed",
+                "score": 0.12857511564685786
+              },
+              {
+                "text": "tina turner happiness becomes you",
+                "volume": 90,
+                "difficulty": 0.69,
+                "source": "seed",
+                "score": 0.07575757575757577
+              },
+              {
+                "text": "happiness becomes you",
+                "volume": 260,
+                "difficulty": 0.74,
+                "source": "seed",
+                "score": 0.06316176171052869
+              },
+              {
+                "text": "certified happiness coach",
+                "volume": 260,
+                "difficulty": 0.76,
+                "source": "seed",
+                "score": 0.058111256660023626
+              },
+              {
+                "text": "ikigai hector garcia",
+                "volume": 1600,
+                "difficulty": 0.77,
+                "source": "seed",
+                "score": 0.05582601058270554
+              },
+              {
+                "text": "arthur brooks from strength to strength",
+                "volume": 320,
+                "difficulty": 0.79,
+                "source": "seed",
+                "score": 0.050546245641636255
+              },
+              {
+                "text": "arthur brooks strength to strength",
+                "volume": 320,
+                "difficulty": 0.85,
+                "source": "seed",
+                "score": 0.03539473049012112
+              },
+              {
+                "text": "simple gratitude journal",
+                "volume": 210,
+                "difficulty": 0.99,
+                "source": "seed",
+                "score": 0.00002149311474039601
+              }
+            ]
+          },
+          "timestamp": 1764586246702
+        },
+        {
+          "type": "keyword_options",
+          "data": {
+            "type": "secondary",
+            "candidates": [
+              {
+                "text": "happiness",
+                "volume": 1830000,
+                "difficulty": 0,
+                "source": "seed",
+                "score": 0.85
+              },
+              {
+                "text": "not happy with my life",
+                "volume": 720,
+                "difficulty": 0.15,
+                "source": "seed",
+                "score": 0.36232777965732044
+              },
+              {
+                "text": "not happy with life",
+                "volume": 880,
+                "difficulty": 0.23,
+                "source": "seed",
+                "score": 0.3421782210517722
+              },
+              {
+                "text": "happy mind happy life",
+                "volume": 1900,
+                "difficulty": 0.27,
+                "source": "seed",
+                "score": 0.33241165362827085
+              },
+              {
+                "text": "i am not happy with my life",
+                "volume": 720,
+                "difficulty": 0.27,
+                "source": "seed",
+                "score": 0.33202474935429016
+              },
+              {
+                "text": "happy living",
+                "volume": 22200,
+                "difficulty": 0.06,
+                "source": "seed",
+                "score": 0.3170980217109535
+              },
+              {
+                "text": "happiness in life",
+                "volume": 74000,
+                "difficulty": 0.13,
+                "source": "seed",
+                "score": 0.3164056958919821
+              },
+              {
+                "text": "psychology and the good life",
+                "volume": 170,
+                "difficulty": 0.13,
+                "source": "seed",
+                "score": 0.29219794796995313
+              },
+              {
+                "text": "i don t feel happy",
+                "volume": 590,
+                "difficulty": 0.24,
+                "source": "seed",
+                "score": 0.26455788188291424
+              },
+              {
+                "text": "ikigai the japanese secret to a long and happy life",
+                "volume": 12100,
+                "difficulty": 0.61,
+                "source": "seed",
+                "score": 0.24989749454477228
+              },
+              {
+                "text": "finding happiness in life",
+                "volume": 260,
+                "difficulty": 0.46,
+                "source": "seed",
+                "score": 0.20889412428463527
+              },
+              {
+                "text": "finding happiness in yourself",
+                "volume": 1600,
+                "difficulty": 0.4,
+                "source": "seed",
+                "score": 0.14948500530660308
+              },
+              {
+                "text": "tina turner happiness becomes you",
+                "volume": 90,
+                "difficulty": 0.69,
+                "source": "seed",
+                "score": 0.07575757575757577
+              },
+              {
+                "text": "happiness becomes you",
+                "volume": 260,
+                "difficulty": 0.74,
+                "source": "seed",
+                "score": 0.06318705357756457
+              },
+              {
+                "text": "certified happiness coach",
+                "volume": 260,
+                "difficulty": 0.76,
+                "source": "seed",
+                "score": 0.058136548527059524
+              },
+              {
+                "text": "ikigai hector garcia",
+                "volume": 1600,
+                "difficulty": 0.77,
+                "source": "seed",
+                "score": 0.056050661872259655
+              },
+              {
+                "text": "arthur brooks from strength to strength",
+                "volume": 320,
+                "difficulty": 0.79,
+                "source": "seed",
+                "score": 0.050580464049978936
+              },
+              {
+                "text": "arthur brooks strength to strength",
+                "volume": 320,
+                "difficulty": 0.85,
+                "source": "seed",
+                "score": 0.0354289488984638
+              },
+              {
+                "text": "simple gratitude journal",
+                "volume": 210,
+                "difficulty": 0.99,
+                "source": "seed",
+                "score": 0.00003934619735396822
+              }
+            ]
+          },
+          "timestamp": 1764586300593
+        },
+        {
+          "type": "title_options",
+          "data": {
+            "titles": [
+              "Unlocking Your Best: A Guide to a Happy Life in the United States",
+              "The Pursuit of Joy: 7 Simple Steps to a Happy Life in America",
+              "Cultivating Contentment: How to Build a Happy Life in the US",
+              "Beyond the Daily Grind: Finding a Happy Life in the United States",
+              "Your Roadmap to Bliss: Achieving a Happy Life Across America"
+            ]
+          },
+          "timestamp": 1764586316997
+        }
+      ],
+      "__pregel_tasks": [
+        [],
+        []
+      ]
+    },
+    "channel_versions": {
+      "__start__": 11,
+      "messages": 11,
+      "data": 11,
+      "outline": 11,
+      "outlineApproved": 11,
+      "draft": 11,
+      "progress": 11,
+      "preferences": 11,
+      "trace": 11,
+      "halt": 11,
+      "userProvidedFields": 11,
+      "autoFillFields": 11,
+      "toolOutputs": 11,
+      "currentStep": 11,
+      "apiKey": 11,
+      "branch:to:research_primary": 3,
+      "keywordCandidates": 6,
+      "branch:to:research_secondary": 6,
+      "branch:to:title_generation": 9,
+      "titleCandidates": 9
+    },
+    "versions_seen": {
+      "__input__": {},
+      "__start__": {
+        "__start__": 10
+      },
+      "research_primary": {
+        "branch:to:research_primary": 2
+      },
+      "research_secondary": {
+        "branch:to:research_secondary": 5
+      },
+      "title_generation": {
+        "branch:to:title_generation": 8
+      }
+    }
+  },
+  "metadata": {
+    "source": "loop",
+    "step": 9,
+    "parents": {}
+  },
+  "parentCheckpointId": "1f0cea3c-6e4f-6450-8008-4475ddb2c220",
+  "updatedAt": 1764586326041
+}
