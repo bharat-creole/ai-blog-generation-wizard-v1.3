@@ -1,6 +1,9 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { AppView, BlogData } from './types';
 import AgentMode from './components/AgentMode';
+import AppHeader from './components/AppHeader';
+import { getEnvironmentConfig } from './components/config';
+import { BlogGuidelineIcon, BrandVoiceIcon, MyBlogIcon } from './components/icons';
 
 const initialBlogData: BlogData = {
 	apiKey: '',
@@ -27,9 +30,20 @@ const App: React.FC = () => {
 	const [sidebarOpen, setSidebarOpen] = useState(false);
 	const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 	const [agentDropdownOpen, setAgentDropdownOpen] = useState(false);
+	const [toolsDropdownOpen, setToolsDropdownOpen] = useState(false);
 	const [showBlogInfo, setShowBlogInfo] = useState(false);
 	const [showTrace, setShowTrace] = useState(false);
 	const [showSettings, setShowSettings] = useState(false);
+  const config = getEnvironmentConfig();
+	const onMyBlogsClick = () => {
+		window.location.href = config.MY_BLOGS_URL;
+	};
+	const onBrandVoiceClick = () => {
+		window.location.href = config.BRAND_VOICE_URL;
+	};
+	const onBlogGuidelinesClick = () => {
+		window.location.href = config.BLOG_GUIDELINES_URL;
+	};
 
 	// Load state from localStorage on initial render
 	useEffect(() => {
@@ -86,55 +100,7 @@ const App: React.FC = () => {
 
 	return (
 		<div className='h-screen flex flex-col bg-gradient-to-br from-gray-50 via-orange-50 to-gray-50 font-sans overflow-hidden'>
-			{/* Compact Top Header - Logo Only */}
-			<header className='w-full bg-white/80 backdrop-blur-lg border-b border-gray-200/50 shadow-sm'>
-				<div className='px-6 py-2.5 flex items-center justify-between'>
-					<div className='flex items-center gap-3'>
-						<div className='w-8 h-8 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center shadow-lg'>
-							<span className='text-white font-bold text-lg'>
-								✍
-							</span>
-						</div>
-						<div>
-							<h1 className='text-base font-bold bg-gradient-to-r from-orange-600 to-orange-500 bg-clip-text text-transparent'>
-								Bloggr
-								<span className='text-orange-600'>
-									.AI
-								</span>
-							</h1>
-						</div>
-					</div>
-
-					{/* Mobile Menu Button */}
-					<button
-						onClick={() => setSidebarOpen(!sidebarOpen)}
-						className='lg:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100'
-					>
-						<svg
-							className='w-6 h-6'
-							fill='none'
-							stroke='currentColor'
-							viewBox='0 0 24 24'
-						>
-							{sidebarOpen ? (
-								<path
-									strokeLinecap='round'
-									strokeLinejoin='round'
-									strokeWidth={2}
-									d='M6 18L18 6M6 6l12 12'
-								/>
-							) : (
-								<path
-									strokeLinecap='round'
-									strokeLinejoin='round'
-									strokeWidth={2}
-									d='M4 6h16M4 12h16M4 18h16'
-								/>
-							)}
-						</svg>
-					</button>
-				</div>
-			</header>
+			<AppHeader/>
 
 			{/* Main Layout - Sidebar + Content */}
 			<div className='flex-1 flex overflow-hidden relative'>
@@ -208,66 +174,35 @@ const App: React.FC = () => {
 							<button
 								onClick={() => {
 									setView(AppView.Agent);
-									if (!sidebarCollapsed) {
-										setAgentDropdownOpen(
-											!agentDropdownOpen
-										);
+									if (sidebarCollapsed) {
+										setSidebarCollapsed(false);
+										setAgentDropdownOpen(true);
+									} else {
+										setAgentDropdownOpen(!agentDropdownOpen);
 									}
 									setSidebarOpen(false);
 								}}
-								className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-200 ${
-									view === AppView.Agent
-										? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg shadow-orange-500/30 scale-[1.02]'
-										: 'text-gray-700 hover:bg-gray-100 hover:shadow-md'
-								} ${
-									sidebarCollapsed
-										? 'justify-center'
-										: ''
-								}`}
-								title={
-									sidebarCollapsed
-										? 'Agent Mode'
-										: ''
-								}
+								className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center px-0' : 'px-[8px]'} gap-[10px] font-inter text-[14px] py-[14px] hover:bg-gray-100 rounded-[6px] font-semibold text-[#777777]`}
+								title={sidebarCollapsed ? 'Agent Mode' : ''}
 							>
-								<span className='text-xl flex-shrink-0'>
-									🤖
-								</span>
+								<span className='text-xl flex-shrink-0'>🤖</span>
 								{!sidebarCollapsed && (
 									<>
 										<div className='flex-1 text-left'>
-											<div className='font-semibold text-sm'>
-												Agent
-												Mode
-											</div>
-											<div
-												className={`text-xs ${
-													view ===
-													AppView.Agent
-														? 'text-orange-100'
-														: 'text-gray-500'
-												}`}
-											>
-												AI-powered
-												chat
+											<div className='font-inter text-[14px] font-medium text-[#777777]'>
+												Agent Mode
 											</div>
 										</div>
 										<svg
-											className={`w-4 h-4 transition-transform ${
-												agentDropdownOpen
-													? 'rotate-180'
-													: ''
-											}`}
+											className={`w-4 h-4 transition-transform ${agentDropdownOpen ? 'rotate-180' : ''}`}
 											fill='none'
-											stroke='currentColor'
+											stroke='#777777'
 											viewBox='0 0 24 24'
 										>
 											<path
 												strokeLinecap='round'
 												strokeLinejoin='round'
-												strokeWidth={
-													2
-												}
+												strokeWidth={2}
 												d='M19 9l-7 7-7-7'
 											/>
 										</svg>
@@ -277,14 +212,14 @@ const App: React.FC = () => {
 									view ===
 										AppView.Agent && (
 										<div className='absolute right-1 top-1 w-2 h-2 bg-white rounded-full animate-pulse' />
-									)}
+										)}
 							</button>
 
 							{/* Agent Sub-menu */}
 							{!sidebarCollapsed &&
 								agentDropdownOpen &&
 								view === AppView.Agent && (
-									<div className='mt-1 ml-4 space-y-1'>
+									<div className='mt-1 ml-4 space-y-1 border-l border-lightgray '>
 										<button
 											onClick={() =>
 												setShowBlogInfo(
@@ -302,7 +237,7 @@ const App: React.FC = () => {
 													? '📂'
 													: '📁'}
 											</span>
-											<span className='flex-1 text-left'>
+											<span className='flex-1 text-left font-inter text-[14px] font-normal text-black'>
 												{showBlogInfo
 													? 'Close'
 													: 'Open'}{' '}
@@ -327,7 +262,7 @@ const App: React.FC = () => {
 													? '🔍'
 													: '👁️'}
 											</span>
-											<span className='flex-1 text-left'>
+											<span className='flex-1 text-left font-inter text-[14px] font-normal text-black'>
 												{showTrace
 													? 'Hide'
 													: 'Show'}{' '}
@@ -351,7 +286,7 @@ const App: React.FC = () => {
 													? '⚙️'
 													: '⚙️'}
 											</span>
-											<span className='flex-1 text-left'>
+											<span className='flex-1 text-left font-inter text-[14px] font-normal text-black'>
 												{showSettings
 													? 'Close'
 													: 'Open'}{' '}
@@ -361,6 +296,36 @@ const App: React.FC = () => {
 									</div>
 								)}
 						</div>
+
+						 {/* My Blog, Brand Voice, Blog Guidelines as separate sidebar buttons */}
+						 <button
+							onClick={onMyBlogsClick}
+							className={`w-full flex items-center font-inter text-[14px] px-[8px] py-[14px] gap-[10px] hover:bg-gray-100 rounded-[6px] font-semibold text-[#777777] ${sidebarCollapsed ? 'justify-center' : ''}`}
+							title={sidebarCollapsed ? 'My Blog' : ''}
+						>
+							<span className='text-xl flex-shrink-0'>
+								<MyBlogIcon/>
+							</span>
+							{!sidebarCollapsed && <span className='flex-1 text-left'>My Blog</span>}
+						</button>
+						<button
+							onClick={onBrandVoiceClick}
+							className={`w-full flex items-center font-inter text-[14px] px-[8px] py-[14px] gap-[10px] hover:bg-gray-100 rounded-[6px] font-semibold text-[#777777] ${sidebarCollapsed ? 'justify-center' : ''}`}
+							title={sidebarCollapsed ? 'Brand Voice' : ''}
+						>
+							<span className='text-xl flex-shrink-0'>
+								<BrandVoiceIcon/>
+							</span>
+							{!sidebarCollapsed && <span className='flex-1 text-left'>Brand Voice</span>}
+						</button>
+						<button
+							onClick={onBlogGuidelinesClick}
+							className={`w-full flex items-center font-inter text-[14px] px-[8px] py-[14px] gap-[10px] hover:bg-gray-100 rounded-[6px] font-semibold text-[#777777] ${sidebarCollapsed ? 'justify-center' : ''}`}
+							title={sidebarCollapsed ? 'Blog Guidelines' : ''}
+						>
+							<BlogGuidelineIcon/>
+							{!sidebarCollapsed && <span className='flex-1 text-left'>Blog Guidelines</span>}
+						</button>
 					</nav>
 
 					{/* Sidebar Footer */}
