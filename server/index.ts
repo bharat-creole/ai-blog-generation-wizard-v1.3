@@ -3,7 +3,13 @@ import cors from 'cors';
 import { config as dotenvConfig } from 'dotenv';
 
 // Load env early (supports running via `npm run serve:api` from project root)
-dotenvConfig({ path: process.env.DOTENV_PATH || '.env.local' });
+// Load .env first, then .env.local (which will override .env values)
+if (process.env.DOTENV_PATH) {
+	dotenvConfig({ path: process.env.DOTENV_PATH });
+} else {
+	dotenvConfig({ path: '.env' }); // Load .env first
+	dotenvConfig({ path: '.env.local' }); // Then .env.local (overrides .env)
+}
 
 // Import token manager for Google Ads REST API
 import { tokenManager } from './tokenManager.js';
