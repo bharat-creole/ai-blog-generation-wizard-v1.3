@@ -127,20 +127,25 @@ const SecondaryKeywordSelection: React.FC<SecondaryKeywordSelectionProps> = ({
 	};
 
 	return (
-		<>
-			<div className='mt-3 grid grid-cols-1 md:grid-cols-2 gap-2'>
+		<div>
+			<div className='font-inter text-[16px] font-normal text-[#777777] mb-[12px]'>Tip: You can also type your own secondary keywords in the chat if you prefer.</div>
+			<div className='p-[16px] bg-[#FFFFFF] border border-offwhite rounded-[10px]'>
+			<div className=' grid grid-cols-1 md:grid-cols-2 gap-x-[8px] gap-y-[4px]'>
 				{candidates.map((kw, idx) => {
 					const checked = selectedSecondaries.includes(kw.text);
 					return (
 						<label
 							key={idx}
-							className={`relative flex items-center justify-between text-sm bg-white border rounded p-2 cursor-pointer transition-colors ${
+							className={`flex items-center  text-sm bg-white border border-offwhite rounded-[8px]   cursor-pointer transition-colors hover:border-primary hover:bg-[#FFF8F1] ${
 								checked
 									? 'border-primary bg-[#FFF4E8]'
-									: 'border-gray-200 hover:border-primary hover:bg-gray-50'
-							}`}
+									: 'border-offwhite'
+						}`}
 						>
-							<div className='flex items-center gap-2'>
+							<div className='flex items-center'>
+								<div className='px-[13px] py-[17px]'>
+
+								
 								<span className='relative'>
 									<input
 										type='checkbox'
@@ -158,9 +163,10 @@ const SecondaryKeywordSelection: React.FC<SecondaryKeywordSelectionProps> = ({
 										className={`w-4 h-4 text-primary focus:ring-primary border-primary rounded bg-white ${checked ? 'bg-primary' : ''}`}
 										/>
 								</span>
-								<div>
-									<div className='font-medium text-gray-800'>{kw.text}</div>
-									<div className='text-xs text-gray-500'>
+								</div>
+								<div className='px-[10px] py-[9px] gap-[2px]'>
+									<div className='font-inter text-[14px] font-medium text-black'>{kw.text}</div>
+									<div className='font-inter text-[12px] font-normal text-[#777777]'>
 										Vol: {kw.volume}
 									</div>
 								</div>
@@ -175,13 +181,14 @@ const SecondaryKeywordSelection: React.FC<SecondaryKeywordSelectionProps> = ({
 						completedSelections.has('secondaryKeywords') ||
 						selectedSecondaries.length === 0
 					}
-					className='px-4 py-2 text-sm bg-success text-white  transition-colors disabled:opacity-[60%] disabled:cursor-not-allowed rounded-[26px]'
+					className='px-[18px] py-[8px] font-inter text-regular text-[14px] bg-success text-white  transition-colors disabled:opacity-[60%] disabled:cursor-not-allowed rounded-[26px]'
 					onClick={handleConfirm}
 				>
 					Confirm Selection ({selectedSecondaries.length}/5)
 				</button>
 			</div>
-		</>
+			</div>
+		</div>
 	);
 };
 

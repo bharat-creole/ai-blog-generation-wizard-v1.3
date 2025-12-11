@@ -141,7 +141,7 @@ const PrimaryKeywordSelection: React.FC<PrimaryKeywordSelectionProps> = ({
 					return (
 						<label
 						key={idx}
-						className={`flex items-center  text-sm bg-white border border-primary rounded-[8px]   cursor-pointer transition-colors hover:border-primary hover:bg-[#FFF8F1] ${
+						className={`flex items-center  text-sm bg-white border border-offwhite rounded-[8px]   cursor-pointer transition-colors hover:border-primary hover:bg-[#FFF8F1] ${
 								isSelected
 									? 'border-primary bg-[#FFF4E8]'
 									: 'border-offwhite'
@@ -176,7 +176,7 @@ const PrimaryKeywordSelection: React.FC<PrimaryKeywordSelectionProps> = ({
 						completedSelections.has('primaryKeyword') ||
 						!selectedPrimary
 					}
-					className='px-4 py-2 text-sm bg-success text-white  transition-colors disabled:opacity-[60%] disabled:cursor-not-allowed rounded-[26px]'
+					className='px-[18px] py-[8px] font-inter text-regular text-[14px] bg-success text-white  transition-colors disabled:opacity-[60%] disabled:cursor-not-allowed rounded-[26px]'
 					onClick={handleConfirm}
 				>
 					Confirm Selection

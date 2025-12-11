@@ -3,7 +3,7 @@ import bloggrLogo from '../../assets/Bloggr-Logo.png'
 
 function ChatHeader() {
   return (
-    <div className="flex flex-col items-center justify-center pt-0 py-[44px] ">
+    <div className="flex flex-col items-center justify-center  py-[44px] ">
      
         <img src={bloggrLogo} alt="Bloggr Logo" className="" />
     
