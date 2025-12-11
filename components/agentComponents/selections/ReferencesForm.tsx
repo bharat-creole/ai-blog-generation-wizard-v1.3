@@ -18,7 +18,14 @@ interface ReferencesFormProps {
 	setOutline: React.Dispatch<React.SetStateAction<any[]>>;
 	setDraft: React.Dispatch<React.SetStateAction<string>>;
 	setTraceItems: React.Dispatch<React.SetStateAction<any[]>>;
-	sendUserMessage: (message: string, agentState: AgentState) => Promise<{ response: string; updatedState: AgentState; metadata?: any }>;
+	sendUserMessage: (
+		message: string,
+		agentState: AgentState
+	) => Promise<{
+		response: string;
+		updatedState: AgentState;
+		metadata?: any;
+	}>;
 }
 
 const ReferencesForm: React.FC<ReferencesFormProps> = ({
@@ -42,10 +49,16 @@ const ReferencesForm: React.FC<ReferencesFormProps> = ({
 	// Use data.referenceUrls and data.referenceFiles as source of truth
 	// If they're empty but currentUrls/currentFiles are provided, sync them on mount
 	useEffect(() => {
-		if ((!data.referenceUrls || data.referenceUrls.length === 0) && currentUrls.length > 0) {
+		if (
+			(!data.referenceUrls || data.referenceUrls.length === 0) &&
+			currentUrls.length > 0
+		) {
 			updateData({ referenceUrls: currentUrls });
 		}
-		if ((!data.referenceFiles || data.referenceFiles.length === 0) && currentFiles.length > 0) {
+		if (
+			(!data.referenceFiles || data.referenceFiles.length === 0) &&
+			currentFiles.length > 0
+		) {
 			updateData({ referenceFiles: currentFiles });
 		}
 	}, []); // Only run on mount
@@ -62,8 +75,14 @@ const ReferencesForm: React.FC<ReferencesFormProps> = ({
 		const userMsg = {
 			role: 'user' as const,
 			content:
-				(data.referenceUrls?.length || 0) + (data.referenceFiles?.length || 0) > 0
-					? `Added ${data.referenceUrls?.length || 0} URL(s) and ${data.referenceFiles?.length || 0} file(s). Continue.`
+				(data.referenceUrls?.length || 0) +
+					(data.referenceFiles?.length || 0) >
+				0
+					? `Added ${
+							data.referenceUrls?.length || 0
+					  } URL(s) and ${
+							data.referenceFiles?.length || 0
+					  } file(s). Continue.`
 					: 'Skip references',
 		};
 
@@ -73,8 +92,14 @@ const ReferencesForm: React.FC<ReferencesFormProps> = ({
 		try {
 			// Send to backend
 			const result = await sendUserMessage(
-				(data.referenceUrls?.length || 0) + (data.referenceFiles?.length || 0) > 0
-					? `Added ${data.referenceUrls?.length || 0} URL(s) and ${data.referenceFiles?.length || 0} file(s). Continue.`
+				(data.referenceUrls?.length || 0) +
+					(data.referenceFiles?.length || 0) >
+					0
+					? `Added ${
+							data.referenceUrls?.length || 0
+					  } URL(s) and ${
+							data.referenceFiles?.length || 0
+					  } file(s). Continue.`
 					: 'Skip references',
 				agent
 			);
@@ -85,7 +110,12 @@ const ReferencesForm: React.FC<ReferencesFormProps> = ({
 			setDraft(result.updatedState.draft);
 
 			if (result.updatedState.trace) {
-				setTraceItems(result.updatedState.trace.map((t) => ({ step: t.step, at: t.at })));
+				setTraceItems(
+					result.updatedState.trace.map((t) => ({
+						step: t.step,
+						at: t.at,
+					}))
+				);
 			}
 
 			// Update parent data
@@ -100,10 +130,9 @@ const ReferencesForm: React.FC<ReferencesFormProps> = ({
 				{
 					role: 'assistant',
 					content: result.response,
-					...result.metadata
+					...result.metadata,
 				},
 			]);
-
 		} catch (error) {
 			console.error('Error processing references:', error);
 			// Revert on error
@@ -130,7 +159,9 @@ const ReferencesForm: React.FC<ReferencesFormProps> = ({
 		}
 	};
 
-	const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleFileUpload = async (
+		e: React.ChangeEvent<HTMLInputElement>
+	) => {
 		const file = e.target.files?.[0];
 		if (file) {
 			try {
@@ -141,7 +172,10 @@ const ReferencesForm: React.FC<ReferencesFormProps> = ({
 					base64: base64,
 				};
 				updateData({
-					referenceFiles: [...(data.referenceFiles || []), newFile],
+					referenceFiles: [
+						...(data.referenceFiles || []),
+						newFile,
+					],
 				});
 				e.target.value = '';
 			} catch (err) {
@@ -173,9 +207,19 @@ const ReferencesForm: React.FC<ReferencesFormProps> = ({
 									<button
 										className='w-[84px] flex justify-center items-center text-white bg-alert_error rounded-[8px] p-[14.5px] disabled:bg-opacity-60 disabled:cursor-not-allowed'
 										onClick={() => {
-											const currentUrls = data.referenceUrls || [];
+											const currentUrls =
+												data.referenceUrls ||
+												[];
 											updateData({
-												referenceUrls: currentUrls.filter((_, i) => i !== idx),
+												referenceUrls:
+													currentUrls.filter(
+														(
+															_,
+															i
+														) =>
+															i !==
+															idx
+													),
 											});
 											}}
 										>
@@ -189,9 +233,16 @@ const ReferencesForm: React.FC<ReferencesFormProps> = ({
 						<input
 							type='text'
 							value={currentReferenceUrl}
-							onChange={(e) => setCurrentReferenceUrl(e.target.value)}
+							onChange={(e) =>
+								setCurrentReferenceUrl(
+									e.target.value
+								)
+							}
 							onKeyDown={(e) => {
-								if (e.key === 'Enter' && currentReferenceUrl.trim()) {
+								if (
+									e.key === 'Enter' &&
+									currentReferenceUrl.trim()
+								) {
 									handleAddUrl();
 								}
 							}}
@@ -231,9 +282,19 @@ const ReferencesForm: React.FC<ReferencesFormProps> = ({
 									<button
 										className='w-[84px] flex justify-center items-center text-white bg-alert_error  rounded-[8px]  p-[14.5px] disabled:bg-opacity-60 disabled:cursor-not-allowed'
 										onClick={() => {
-											const currentFiles = data.referenceFiles || [];
+											const currentFiles =
+												data.referenceFiles ||
+												[];
 											updateData({
-												referenceFiles: currentFiles.filter((_, i) => i !== idx),
+												referenceFiles:
+													currentFiles.filter(
+														(
+															_,
+															i
+														) =>
+															i !==
+															idx
+													),
 											});
 										}}
 										>
@@ -306,4 +367,3 @@ const ReferencesForm: React.FC<ReferencesFormProps> = ({
 };
 
 export default ReferencesForm;
-

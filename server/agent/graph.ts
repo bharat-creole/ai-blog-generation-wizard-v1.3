@@ -38,6 +38,18 @@ const isGibberish = (text: string): boolean => {
 
 // Define the routing logic - NOW SUPPORTS BIDIRECTIONAL NAVIGATION
 const route = (state: AgentState) => {
+	// ✨ PRIORITY: Check for regeneration requests in conversation context
+	// This allows direct routing to specific nodes for regeneration
+	if (state.conversationContext?.primaryKeywordFeedback) {
+		console.log(`   🔄 [ROUTE] Primary keyword regeneration detected, routing to research_primary`);
+		return 'research_primary';
+	}
+	
+	if (state.conversationContext?.secondaryKeywordFeedback) {
+		console.log(`   🔄 [ROUTE] Secondary keyword regeneration detected, routing to research_secondary`);
+		return 'research_secondary';
+	}
+
 	// CRITICAL: If there's a halt, stop immediately
 	if (state.halt) {
 		console.log(`   🛑 Graph halted: ${state.halt.reason}`);
@@ -102,11 +114,24 @@ const route = (state: AgentState) => {
 				console.log(`   → Route: discovery (full automation)`);
 				return 'discovery';
 			}
-			// Guided mode - halt for optional steps (conversationHandler will handle)
-			console.log(
-				`   → Route: __end__ (title set, awaiting next step)`
-			);
+			// Guided mode - move to references step (optional)
+			// Check if references are already provided
+			if (state.data.referenceUrls && state.data.referenceUrls.length > 0) {
+				// References provided, check interlinking
+				if (state.data.interlinks && state.data.interlinks.length > 0) {
+					// Both optional steps done, go to outline
+					console.log(`   → Route: discovery (optional steps complete)`);
+					return 'discovery';
+				} else {
+					// Move to interlinking
+					console.log(`   → Route: __end__ (awaiting interlinking)`);
+					return '__end__';
+				}
+			} else {
+				// Move to references step
+				console.log(`   → Route: __end__ (awaiting references)`);
 			return '__end__';
+			}
 
 		case 'references':
 			// Optional step - halt for user input

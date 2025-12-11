@@ -27,4 +27,8 @@ dist-ssr
 .env
 
 # Data and checkpoints
-server/data/checkpoints
+server/data/checkpoints/
+server/data/checkpoints/**
+# Thread checkpoint files
+**/thread-*.json
+server/data/checkpoints/*.json

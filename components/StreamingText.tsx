@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface StreamingTextProps {
 	text: string;
@@ -35,9 +36,10 @@ const StreamingText: React.FC<StreamingTextProps> = ({
 	}, [text]);
 
 	return (
-		<div className="prose prose-sm max-w-none">
-			<ReactMarkdown>
-				{displayedText + (currentIndex < text.length ? '▍' : '')}
+		<div className='prose prose-sm max-w-none'>
+			<ReactMarkdown remarkPlugins={[remarkGfm]}>
+				{displayedText +
+					(currentIndex < text.length ? '▍' : '')}
 			</ReactMarkdown>
 		</div>
 	);

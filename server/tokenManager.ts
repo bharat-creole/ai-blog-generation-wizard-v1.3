@@ -10,12 +10,29 @@ class TokenManager {
 	 */
 	async getValidToken(): Promise<string> {
 		// Check if token exists and is still valid (with 5-minute buffer)
-		if (this.accessToken && this.tokenExpiry && Date.now() < this.tokenExpiry - 300000) {
-			console.log('✅ [TokenManager] Using cached access token');
-			return this.accessToken;
+		if (this.accessToken && this.tokenExpiry) {
+			const timeUntilExpiry = this.tokenExpiry - Date.now();
+			const minutesUntilExpiry = Math.floor(
+				timeUntilExpiry / 60000
+			);
+
+			if (timeUntilExpiry > 300000) {
+				// More than 5 minutes left
+				console.log(
+					`✅ [TokenManager] Using cached access token (expires in ${minutesUntilExpiry} minutes)`
+				);
+				return this.accessToken;
+			} else {
+				console.log(
+					`🔄 [TokenManager] Token expires soon (${minutesUntilExpiry} minutes), refreshing...`
+				);
+			}
+		} else {
+			console.log(
+				'🔄 [TokenManager] Access token expired or missing, refreshing...'
+			);
 		}
 
-		console.log('🔄 [TokenManager] Access token expired or missing, refreshing...');
 		return await this.refreshToken();
 	}
 
@@ -28,33 +45,43 @@ class TokenManager {
 			client_id: process.env.CLIENT_ID,
 			client_secret: process.env.CLIENT_SECRET,
 			refresh_token: process.env.REFRESH_TOKEN,
-			grant_type: 'refresh_token'
+			grant_type: 'refresh_token',
 		};
 
 		try {
 			const response = await fetch(url, {
 				method: 'POST',
 				headers: {
-					'Content-Type': 'application/json'
+					'Content-Type': 'application/json',
 				},
-				body: JSON.stringify(body)
+				body: JSON.stringify(body),
 			});
 
 			if (!response.ok) {
 				const errorData = await response.json();
-				throw new Error(`Token refresh failed: ${JSON.stringify(errorData)}`);
+				throw new Error(
+					`Token refresh failed: ${JSON.stringify(
+						errorData
+					)}`
+				);
 			}
 
 			const data: any = await response.json();
 			this.accessToken = data.access_token;
 			// Set expiry (typically 3600 seconds/1 hour)
-			this.tokenExpiry = Date.now() + (data.expires_in * 1000);
+			this.tokenExpiry = Date.now() + data.expires_in * 1000;
 
-			console.log(`✅ [TokenManager] New access token obtained (expires in ${data.expires_in} seconds)`);
+			console.log(
+				`✅ [TokenManager] New access token obtained (expires in ${data.expires_in} seconds)`
+			);
 			return this.accessToken;
 		} catch (error) {
-			const errorMessage = error instanceof Error ? error.message : String(error);
-			console.error('❌ [TokenManager] Error refreshing access token:', errorMessage);
+			const errorMessage =
+				error instanceof Error ? error.message : String(error);
+			console.error(
+				'❌ [TokenManager] Error refreshing access token:',
+				errorMessage
+			);
 			throw error;
 		}
 	}
@@ -64,8 +91,10 @@ class TokenManager {
 	 */
 	setToken(token: string, expiresIn: number = 3600): void {
 		this.accessToken = token;
-		this.tokenExpiry = Date.now() + (expiresIn * 1000);
-		console.log(`✅ [TokenManager] Access token manually set (expires in ${expiresIn} seconds)`);
+		this.tokenExpiry = Date.now() + expiresIn * 1000;
+		console.log(
+			`✅ [TokenManager] Access token manually set (expires in ${expiresIn} seconds)`
+		);
 	}
 
 	/**
@@ -80,5 +109,3 @@ class TokenManager {
 
 // Create and export singleton instance
 export const tokenManager = new TokenManager();
-
-

@@ -129,7 +129,7 @@ export const useAgentState = (
 		pendingModificationRequest: null,
 	});
 
-	// Messages
+	// Messages - Start with initial greeting
 	const [messages, setMessages] = useState<ChatMessage[]>([
 		{
 			role: 'assistant',

@@ -141,7 +141,233 @@ export const processMessage = async (
 		}`
 	);
 
-	// Step 1: Classify intent
+	// ✨ PRIORITY 1: Check for modification requests BEFORE halt reasons
+	// This ensures modification requests are handled even when at a halt state
+	const fieldToStepMap: Record<
+		string,
+		'topic' | 'primary_keyword' | 'secondary_keywords' | 'title'
+	> = {
+		topic: 'topic',
+		primaryKeyword: 'primary_keyword',
+		secondaryKeywords: 'secondary_keywords',
+		title: 'title',
+	};
+
+	const modificationRequest = detectModificationRequest(userMessage);
+	if (modificationRequest) {
+		const targetStep = fieldToStepMap[modificationRequest];
+		console.log(
+			`🔄 [MODIFICATION REQUEST - PRIORITY] User wants to modify ${modificationRequest}, jumping to ${targetStep}`
+		);
+
+		// Clear the field being modified so the router will trigger the appropriate node
+		const stateUpdates: Partial<AgentState> = {
+			currentStep: targetStep,
+			halt: null, // CRITICAL: Clear halt to allow modification to proceed
+		};
+
+		// Clear the specific field to trigger regeneration
+		if (modificationRequest === 'title') {
+			stateUpdates.data = {
+				...currentState.data,
+				title: undefined,
+			} as any;
+			stateUpdates.outline = []; // Clear outline since it depends on title
+			stateUpdates.outlineApproved = false;
+			stateUpdates.titleOptions = [];
+			stateUpdates.titleSelected = false;
+		} else if (modificationRequest === 'primaryKeyword') {
+			stateUpdates.data = {
+				...currentState.data,
+				primaryKeyword: null, // Use null instead of undefined to ensure it's cleared
+				secondaryKeywords: [],
+				title: undefined,
+			} as any;
+			stateUpdates.outline = [];
+			stateUpdates.outlineApproved = false;
+			stateUpdates.keywordResearch = {
+				...currentState.keywordResearch,
+				primaryCandidates: [],
+				secondaryCandidates: [],
+			};
+		} else if (modificationRequest === 'secondaryKeywords') {
+			stateUpdates.data = {
+				...currentState.data,
+				secondaryKeywords: [],
+				title: undefined,
+			} as any;
+			stateUpdates.outline = [];
+			stateUpdates.outlineApproved = false;
+			stateUpdates.keywordResearch = {
+				...currentState.keywordResearch,
+				secondaryCandidates: [],
+			};
+		} else if (modificationRequest === 'topic') {
+			stateUpdates.data = {
+				...currentState.data,
+				topic: undefined,
+				primaryKeyword: null,
+				secondaryKeywords: [],
+				title: undefined,
+			} as any;
+			stateUpdates.outline = [];
+			stateUpdates.outlineApproved = false;
+			stateUpdates.keywordResearch = undefined;
+			stateUpdates.titleOptions = [];
+		}
+
+		return {
+			assistantMessage: `Sure, I'll help you do that. You will have to redo some steps again for better blog generation.`,
+			stateUpdates,
+			shouldRunAgent: true,
+		};
+	}
+
+	// ✨ CRITICAL: Handle halt reasons AFTER modification request check
+	// This ensures direct user input (like keyword selections) is processed correctly
+	// BUT modification requests take priority over halt states
+	if (currentState.halt?.reason === 'await_keyword_selection') {
+		console.log('📝 [DIRECT INPUT] Handling primary keyword selection');
+
+		// ✨ CRITICAL: Clean the primary keyword to remove any prefixes
+		let cleanedKeyword = userMessage.trim();
+
+		// Remove "primary keyword:" prefix (case insensitive, with or without colon)
+		cleanedKeyword = cleanedKeyword.replace(
+			/^primary\s+keyword\s*:?\s*/i,
+			''
+		);
+
+		// Remove "keyword:" prefix (case insensitive, with or without colon)
+		cleanedKeyword = cleanedKeyword.replace(/^keyword\s*:?\s*/i, '');
+
+		// Remove "primary keyword" phrase at the start (without colon)
+		// This handles cases like "primary keyword ai agent"
+		if (cleanedKeyword.toLowerCase().startsWith('primary keyword ')) {
+			cleanedKeyword = cleanedKeyword.substring(
+				'primary keyword '.length
+			);
+		}
+
+		// Remove any leading/trailing whitespace
+		cleanedKeyword = cleanedKeyword.trim();
+
+		console.log(
+			`   🧹 Cleaned keyword: "${cleanedKeyword}" (from: "${userMessage.trim()}")`
+		);
+
+		// Mark keyword as user-provided so research node skips research
+		const userProvidedFields = new Set(
+			currentState.userProvidedFields || []
+		);
+		userProvidedFields.add('primaryKeyword');
+
+		const stateUpdates: Partial<AgentState> = {
+			data: {
+				...currentState.data,
+				primaryKeyword: cleanedKeyword, // Use cleaned keyword
+			} as BlogData,
+			halt: null, // Clear halt to allow agent to proceed
+			currentStep: 'secondary_keywords', // Move to next step
+			userProvidedFields, // Mark as user-provided
+		};
+		return {
+			assistantMessage: `✅ Got it! I've updated the primary keyword to "${cleanedKeyword}".`,
+			stateUpdates,
+			shouldRunAgent: true,
+		};
+	}
+
+	if (currentState.halt?.reason === 'await_title_selection') {
+		console.log('📝 [DIRECT INPUT] Handling title selection');
+		// Extract title from user message (e.g., "Select 'Title' as title" or just the title)
+		let selectedTitle = userMessage.trim();
+		// Try to extract title from patterns like "Select 'Title' as title" or "Title"
+		const titleMatch =
+			userMessage.match(/Select\s+"([^"]+)"\s+as\s+title/i) ||
+			userMessage.match(/Select\s+'([^']+)'\s+as\s+title/i) ||
+			userMessage.match(/title:\s*(.+)/i);
+		if (titleMatch && titleMatch[1]) {
+			selectedTitle = titleMatch[1].trim();
+		}
+
+		// Mark title as user-provided so title generation node skips regeneration
+		const userProvidedFields = new Set(
+			currentState.userProvidedFields || []
+		);
+		userProvidedFields.add('title');
+
+		const stateUpdates: Partial<AgentState> = {
+			data: {
+				...currentState.data,
+				title: selectedTitle,
+			} as BlogData,
+			halt: { reason: 'await_references_selection' }, // Halt for references step
+			currentStep: 'references', // Move to next step (references)
+			userProvidedFields, // Mark as user-provided
+			titleSelected: true, // Mark title as selected
+		};
+		return {
+			assistantMessage: `✅ Perfect! I've selected "${selectedTitle}" as your blog title.`,
+			stateUpdates,
+			shouldRunAgent: false, // Don't run agent yet, wait for references/interlinking
+		};
+	}
+
+	if (currentState.halt?.reason === 'await_secondary_selection') {
+		console.log(
+			'📝 [DIRECT INPUT] Handling secondary keyword selection'
+		);
+		// Extract keywords from message - handle both "Secondary keywords: ..." format and comma-separated
+		let keywordText = userMessage.trim();
+		// Remove "Secondary keywords:" prefix if present
+		if (keywordText.toLowerCase().startsWith('secondary keywords:')) {
+			keywordText = keywordText
+				.substring('secondary keywords:'.length)
+				.trim();
+		}
+		// Split by comma and clean up
+		const secondaryKeywords = keywordText
+			.split(',')
+			.map((k) => k.trim())
+			.filter((k) => k.length > 0);
+
+		if (secondaryKeywords.length === 0) {
+			return {
+				assistantMessage:
+					'❌ No keywords detected. Please provide at least one secondary keyword.',
+				stateUpdates: {},
+				shouldRunAgent: false,
+			};
+		}
+
+		// Mark keywords as user-provided so research node skips research
+		const userProvidedFields = new Set(
+			currentState.userProvidedFields || []
+		);
+		userProvidedFields.add('secondaryKeywords');
+
+		const stateUpdates: Partial<AgentState> = {
+			data: {
+				...currentState.data,
+				secondaryKeywords,
+			} as BlogData,
+			halt: null, // Clear halt to allow agent to proceed
+			currentStep: 'title', // Move to next step
+			userProvidedFields, // Mark as user-provided
+		};
+		return {
+			assistantMessage: `✅ Got it! I've captured ${
+				secondaryKeywords.length
+			} secondary keyword${
+				secondaryKeywords.length > 1 ? 's' : ''
+			}: ${secondaryKeywords.join(', ')}.`,
+			stateUpdates,
+			shouldRunAgent: true,
+		};
+	}
+
+	// Step 1: Classify intent (only if not handling halt reasons)
 	const intent: UserIntent = await classifyIntent(
 		userMessage,
 		currentState,
@@ -389,19 +615,39 @@ const handlePartialInfo = (
 	}
 
 	// ✨ STEP 1: Update ALL provided fields in state first
+	// CRITICAL: If Primary Agent cleared fields (set to null/empty), respect those clears
+	// This happens when user confirms a modification - Primary Agent clears fields in stateUpdates
+	// IMPORTANT: currentState.data may already have been updated by Primary Agent's stateUpdates
+	// So we need to check if fields are null/empty in currentState.data (which means they were cleared)
 	const updatedData = {
 		...currentState.data,
-		...(extractedData.topic && { topic: extractedData.topic }),
-		...(extractedData.primaryKeyword && {
+		// If extractedData has a field, use it (even if null - this means clear it)
+		...(extractedData.topic !== undefined && {
+			topic: extractedData.topic,
+		}),
+		...(extractedData.primaryKeyword !== undefined && {
 			primaryKeyword: extractedData.primaryKeyword,
 		}),
-		...(extractedData.secondaryKeywords && {
+		...(extractedData.secondaryKeywords !== undefined && {
 			secondaryKeywords: extractedData.secondaryKeywords,
 		}),
-		...(extractedData.title && { title: extractedData.title }),
-		...(extractedData.targetLocation && {
+		...(extractedData.title !== undefined && {
+			title: extractedData.title,
+		}),
+		...(extractedData.targetLocation !== undefined && {
 			targetLocation: extractedData.targetLocation,
 		}),
+		// CRITICAL: If Primary Agent cleared fields (set to null/empty in currentState.data),
+		// respect those clears - don't override with undefined from extractedData
+		// This ensures that when user confirms modification, cleared fields stay cleared
+		...(currentState.data?.primaryKeyword === null && {
+			primaryKeyword: null,
+		}),
+		...(currentState.data?.secondaryKeywords === null && {
+			secondaryKeywords: null,
+		}),
+		...(currentState.data?.title === null && { title: null }),
+		...(currentState.data?.topic === null && { topic: null }),
 	};
 
 	const capturedItems: string[] = [];
@@ -417,11 +663,19 @@ const handlePartialInfo = (
 		capturedItems.push(`title: "${extractedData.title}"`);
 
 	// Create base capture message with better formatting
+	// BUT: If we're about to research (no primary keyword yet), don't include the capture message
+	// The Primary Agent will send a "researching..." message instead
+	const isAboutToResearch =
+		!currentState.data?.primaryKeyword &&
+		updatedData.topic &&
+		!updatedData.primaryKeyword;
 	const baseMessage =
-		capturedItems.length > 0
+		capturedItems.length > 0 && !isAboutToResearch
 			? `✅ **Information captured!**\n\nI've saved: ${capturedItems.join(
 					', '
 			  )}.`
+			: isAboutToResearch
+			? '' // Empty - Primary Agent will send the message
 			: `✅ **Ready to proceed!**`;
 
 	// ✨ CRITICAL: Reset flags if critical fields changed
@@ -570,11 +824,24 @@ const handlePartialInfo = (
 	}
 
 	// Create assistant messages
-	const assistantMessages: string[] = [baseMessage];
-	if (nextStep.message && nextStep.message !== baseMessage) {
+	// If baseMessage is empty (because Primary Agent will handle it), only use nextStep.message
+	const assistantMessages: string[] = [];
+	if (baseMessage && baseMessage.trim()) {
+		assistantMessages.push(baseMessage);
+	}
+	// Only add nextStep.message if it's different and not empty
+	// BUT: If we're about to research, don't add nextStep.message - Primary Agent will send it
+	if (
+		nextStep.message &&
+		nextStep.message !== baseMessage &&
+		nextStep.message.trim() &&
+		!isAboutToResearch
+	) {
 		assistantMessages.push(nextStep.message);
 	}
-	const assistantMessage = assistantMessages.join(' ');
+	// If no messages (Primary Agent handling it), use empty string
+	const assistantMessage =
+		assistantMessages.length > 0 ? assistantMessages.join(' ') : ''; // Empty - Primary Agent will send the message
 
 	return {
 		assistantMessage: assistantMessage,
@@ -825,14 +1092,18 @@ const detectModificationRequest = (message: string): string | null => {
 		primaryKeyword: [
 			/(?:change|modify|update)\s+(?:the\s+)?(?:primary\s+)?keyword/i,
 			/(?:want|need)\s+(?:a\s+)?(?:new|different)\s+keyword/i,
+			/(?:want|need)\s+to\s+(?:change|modify|update)\s+(?:the\s+)?(?:primary\s+)?keyword/i,
+			/(?:change|modify|update)\s+(?:the\s+)?primary\s+keyword/i,
 		],
 		secondaryKeywords: [
 			/(?:change|modify|update)\s+(?:the\s+)?secondary\s+keywords/i,
 			/(?:want|need)\s+(?:new|different)\s+secondary\s+keywords/i,
+			/(?:want|need)\s+to\s+(?:change|modify|update)\s+(?:the\s+)?secondary\s+keywords/i,
 		],
 		topic: [
 			/(?:change|modify|update)\s+(?:the\s+)?topic/i,
 			/(?:want|need)\s+(?:a\s+)?(?:new|different)\s+topic/i,
+			/(?:want|need)\s+to\s+(?:change|modify|update)\s+(?:the\s+)?topic/i,
 		],
 	};
 
@@ -869,10 +1140,10 @@ const handleApproval = (currentState: AgentState): ConversationResponse => {
 	}
 
 	if (currentState.halt?.reason === 'awaiting_approval') {
-		// User approved the outline
+		// User approved the outline - message will be shown when proposal node starts
 		return {
 			assistantMessage:
-				"✍️ **Starting blog generation...**\n\nI'll now create your blog post section by section, incorporating all your keywords and following the approved outline.",
+				'✅ **Outline approved!**\n\nStarting blog generation...',
 			stateUpdates: {
 				outlineApproved: true,
 				halt: null,

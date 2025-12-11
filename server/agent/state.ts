@@ -1,188 +1,453 @@
+/**
+ * AgentState
+ *
+ * This is the single source of truth for:
+ * - Conversation history (messages[])
+ * - Blog data (topic, keywords, title)
+ * - LangGraph state machine (currentStep)
+ * - Halt mechanism (halt reason)
+ * - Generation progress (section index)
+ * - Outline + Draft content
+ *
+ * This state flows through:
+ * PrimaryAgent → IntentClassifier → ConversationHandler → LangGraph
+ */
+
 import { Annotation } from '@langchain/langgraph';
 import { BaseMessage } from '@langchain/core/messages';
-import { BlogData, OutlineSection, AgentPreferences, ConversationContext, ToolOutput } from '../../types';
-import { KwRow } from '../keywordService';
+import { OutlineSection, ConversationContext, ToolOutput } from '../../types';
+
+// Keyword research row type (from keyword service)
+export interface KwRow {
+	text: string;
+	volume: number;
+	difficulty: number;
+	[key: string]: any;
+}
 
 export type ReferencesUsage = 'both' | 'outline-only' | 'content-only';
 
 /**
- * Defines the state schema for the Blog Agent using LangGraph's Annotation system.
- * 
- * Channels:
- * - messages: Stores the conversation history (appended).
- * - blogData: Stores the core blog data (overwritten).
- * - outline: Stores the generated outline (overwritten).
- * - draft: Stores the current blog draft (overwritten).
- * - progress: Tracks execution progress (overwritten).
- * - preferences: Stores user automation preferences (overwritten).
+ * Core blog information.
  */
-export const AgentStateAnnotation = Annotation.Root({
-    // Chat history - appends new messages
-    messages: Annotation<BaseMessage[]>({
-        reducer: (x, y) => x.concat(y),
-        default: () => [],
-    }),
+export interface BlogData {
+	topic?: string;
+	primaryKeyword?: string;
+	secondaryKeywords?: string[];
+	title?: string;
+	targetLocation?: string;
+	interlinks?: string[];
+	referenceUrls?: string[];
+	referenceFiles?: any[];
+	brandVoice?: string;
+	blogGuideline?: string;
+	llmModel?: string;
+	language?: string;
+	blogContent?: string;
+	suggestedTitles?: string[];
+	extractedHeadings?: string[];
+	extractedHeadingsByFile?: { name: string; headings: string[] }[];
+	[key: string]: any; // Allow additional fields for flexibility
+}
 
-    // API Key - overwrites
-    apiKey: Annotation<string>({
-        reducer: (x, y) => y,
-        default: () => '',
-    }),
+/**
+ * Halt state - when agent is waiting for user input.
+ */
+export interface HaltState {
+	reason:
+		| 'await_keyword_selection'
+		| 'await_secondary_selection'
+		| 'await_title_selection'
+		| 'await_interlinking_selection'
+		| 'await_references_selection'
+		| 'await_outline_start_confirmation'
+		| 'awaiting_approval'
+		| 'awaiting_automation_level_selection'
+		| 'awaiting_blog_draft_approval'
+		| string; // Allow custom reasons
+	metadata?: any; // UI helpers or extra info
+}
 
-    // Blog data - overwrites with new data
-    data: Annotation<BlogData>({
-        reducer: (x, y) => ({ ...x, ...y }),
-        default: () => ({} as BlogData),
-    }),
+/**
+ * Progress state for section-by-section generation.
+ */
+export interface ProgressState {
+	sectionIndex: number; // for section-by-section generation
+}
 
-    // Outline - overwrites
-    outline: Annotation<OutlineSection[]>({
-        reducer: (x, y) => y,
-        default: () => [],
-    }),
+/**
+ * Behavior preferences for automation.
+ */
+export interface AgentPreferences {
+	automationLevel?: 'guided' | 'full' | 'manual';
+	skipOptionalSteps?: boolean;
+	autoSelectBestOptions?: boolean;
+}
 
-    // Outline approval status
-    outlineApproved: Annotation<boolean>({
-        reducer: (x, y) => y,
-        default: () => false,
-    }),
+/**
+ * Policy for agent behavior (references usage, grounding).
+ */
+export interface AgentPolicy {
+	referencesUsage: ReferencesUsage;
+	grounding: boolean;
+}
 
-    // Current draft content
-    draft: Annotation<string>({
-        reducer: (x, y) => y,
-        default: () => '',
-    }),
+/**
+ * Keyword research data structure.
+ */
+export interface KeywordResearch {
+	primaryCandidates?: KwRow[];
+	secondaryCandidates?: KwRow[];
+	snapshot?: Record<string, any>;
+}
 
-    // Execution progress
-    progress: Annotation<{ sectionIndex: number }>({
-        reducer: (x, y) => y,
-        default: () => ({ sectionIndex: 0 }),
-    }),
+/**
+ * AgentState Interface
+ *
+ * This is the TypeScript interface definition for AgentState.
+ * The actual runtime state is managed by LangGraph's Annotation system below.
+ *
+ * NOTE: This interface serves as documentation and type reference.
+ * The actual runtime type is AgentStateType (derived from AgentStateAnnotation).
+ */
+export interface AgentStateInterface {
+	/**
+	 * Conversation history.
+	 * Used heavily by:
+	 * - ContextManagerAgent
+	 * - LLM for contextual responses
+	 * - Debugging & trace
+	 */
+	messages: BaseMessage[];
 
-    // User preferences
-    preferences: Annotation<AgentPreferences>({
-        reducer: (x, y) => ({ ...x, ...y }),
-        default: () => ({
-            automationLevel: 'guided',
-            skipOptionalSteps: false,
-            autoSelectBestOptions: false,
-        }),
-    }),
+	/**
+	 * API Key for LLM calls (not persisted in checkpointer).
+	 */
+	apiKey?: string;
 
-    // Policy for agent behavior (e.g., references usage, grounding)
-    policy: Annotation<{ referencesUsage: ReferencesUsage; grounding: boolean }>({
-        reducer: (x, y) => ({ ...x, ...y }),
-        default: () => ({ referencesUsage: 'both', grounding: true }),
-    }),
+	/**
+	 * Core blog information.
+	 */
+	data: BlogData;
 
-    // User provided fields tracking
-    userProvidedFields: Annotation<Set<string>>({
-        reducer: (x, y) => {
-            // Handle cases where x or y might be undefined or not Sets
-            const xSet = x instanceof Set ? x : new Set();
-            const ySet = y instanceof Set ? y : new Set();
-            return new Set([...xSet, ...ySet]);
-        },
-        default: () => new Set(),
-    }),
+	/**
+	 * Blog outline generated by LangGraph (array of H2 sections).
+	 */
+	outline: OutlineSection[];
 
-    // Auto-filled fields tracking
-    autoFillFields: Annotation<Set<string>>({
-        reducer: (x, y) => {
-            // Handle cases where x or y might be undefined or not Sets
-            const xSet = x instanceof Set ? x : new Set();
-            const ySet = y instanceof Set ? y : new Set();
-            return new Set([...xSet, ...ySet]);
-        },
-        default: () => new Set(),
-    }),
+	/**
+	 * Draft content (combined generated sections).
+	 */
+	draft: string;
 
-    // Trace for debugging/UI
-    trace: Annotation<{ step: string; info?: any; at: number }[]>({
-        reducer: (x, y) => x.concat(y),
-        default: () => [],
-    }),
+	/**
+	 * Current step of the flow.
+	 *
+	 * Used by Router + LangGraph.
+	 */
+	currentStep:
+		| 'topic'
+		| 'primary_keyword'
+		| 'secondary_keywords'
+		| 'title'
+		| 'interlinking'
+		| 'references'
+		| 'outline'
+		| 'outline_confirmation'
+		| 'generation'
+		| 'complete';
 
-    // Halt reason (if paused for user input)
-    halt: Annotation<{ reason: 'await_keyword_selection' | 'await_secondary_selection' | 'await_title_selection' | 'await_interlinking_selection' | 'await_references_selection' | 'await_outline_start_confirmation' | 'awaiting_approval' | 'awaiting_automation_level_selection' | 'awaiting_blog_draft_approval' | string } | null>({
-        reducer: (x, y) => y,
-        default: () => null,
-    }),
+	/**
+	 * Whether agent has halted and is waiting for user input.
+	 */
+	halt: HaltState | null;
 
-    // Keyword research data
-    keywordResearch: Annotation<{
-        primaryCandidates?: KwRow[];
-        secondaryCandidates?: KwRow[];
-        snapshot?: Record<string, any>;
-    } | undefined>({
-        reducer: (x, y) => ({ ...x, ...y }),
-        default: () => undefined,
-    }),
+	/**
+	 * Internal flags used by LangGraph.
+	 */
+	outlineApproved: boolean;
+	progress: ProgressState;
 
-    // Title generation options
-    titleOptions: Annotation<string[] | undefined>({
-        reducer: (x, y) => y,
-        default: () => undefined,
-    }),
+	/**
+	 * Dynamic UI helpers (keyword options, title options)
+	 */
+	keywordCandidates: any[];
+	titleCandidates: string[];
+	keywordResearch?: KeywordResearch;
+	titleOptions?: string[];
 
-    // Flag if title has been explicitly selected/provided
-    titleSelected: Annotation<boolean | undefined>({
-        reducer: (x, y) => y,
-        default: () => undefined,
-    }),
+	/**
+	 * Behavior preferences for automation.
+	 */
+	preferences: AgentPreferences;
 
-    // Flag if interlinking step is completed
-    interlinkingCompleted: Annotation<boolean | undefined>({
-        reducer: (x, y) => y,
-        default: () => undefined,
-    }),
+	/**
+	 * Policy for agent behavior.
+	 */
+	policy: AgentPolicy;
 
-    // Flag if references collection step is completed
-    referencesCollected: Annotation<boolean | undefined>({
-        reducer: (x, y) => y,
-        default: () => undefined,
-    }),
+	/**
+	 * Tracks what user explicitly gave vs. auto-filled.
+	 */
+	userProvidedFields: Set<string>;
+	autoFillFields: Set<string>;
 
-    // Flag if final blog generation is done
-    finalBlogGenerated: Annotation<boolean | undefined>({
-        reducer: (x, y) => y,
-        default: () => undefined,
-    }),
+	/**
+	 * Execution trace for debugging & UI progress.
+	 */
+	trace: {
+		step: string;
+		info?: any;
+		at: number;
+	}[];
 
-    // User feedback for outline regeneration
-    outlineFeedback: Annotation<string | undefined>({
-        reducer: (x, y) => y,
-        default: () => undefined,
-    }),
+	/**
+	 * Status flags
+	 */
+	titleSelected?: boolean;
+	interlinkingCompleted?: boolean;
+	referencesCollected?: boolean;
+	finalBlogGenerated?: boolean;
 
-    // Conversation context (e.g., for intent classification)
-    conversationContext: Annotation<ConversationContext | undefined>({
-        reducer: (x, y) => ({ ...x, ...y }),
-        default: () => undefined,
-    }),
+	/**
+	 * User feedback for outline regeneration
+	 */
+	outlineFeedback?: string;
 
-    // Store candidates for UI selection
-    keywordCandidates: Annotation<any[]>({
-        reducer: (x, y) => y,
-        default: () => [],
-    }),
+	/**
+	 * Conversation context (e.g., for intent classification)
+	 */
+	conversationContext?: ConversationContext;
 
-    titleCandidates: Annotation<string[]>({
-        reducer: (x, y) => y,
-        default: () => [],
-    }),
+	/**
+	 * Store tool outputs for UI visibility
+	 */
+	toolOutputs: ToolOutput[];
+}
 
-    // Track current step for bidirectional navigation
-    currentStep: Annotation<'topic' | 'primary_keyword' | 'secondary_keywords' | 'title' | 'interlinking' | 'references' | 'outline_confirmation' | 'outline' | 'generation'>({
-        reducer: (x, y) => y,
-        default: () => 'topic',
-    }),
-
-    // Store tool outputs for UI visibility
-    toolOutputs: Annotation<ToolOutput[]>({
-        reducer: (x, y) => x.concat(y),
-        default: () => [],
-    }),
+/**
+ * Initial default state (used when restarting flow or creating thread)
+ */
+export const defaultAgentState = (): Partial<AgentStateInterface> => ({
+	messages: [],
+	data: {},
+	outline: [],
+	draft: '',
+	currentStep: 'topic',
+	halt: null,
+	outlineApproved: false,
+	progress: { sectionIndex: 0 },
+	keywordCandidates: [],
+	titleCandidates: [],
+	keywordResearch: undefined,
+	titleOptions: undefined,
+	preferences: {
+		automationLevel: 'guided',
+		skipOptionalSteps: false,
+		autoSelectBestOptions: false,
+	},
+	policy: {
+		referencesUsage: 'both',
+		grounding: true,
+	},
+	userProvidedFields: new Set(),
+	autoFillFields: new Set(),
+	trace: [],
+	titleSelected: undefined,
+	interlinkingCompleted: undefined,
+	referencesCollected: undefined,
+	finalBlogGenerated: false,
+	outlineFeedback: undefined,
+	conversationContext: undefined,
+	toolOutputs: [],
 });
 
+/**
+ * LangGraph Annotation System
+ *
+ * This defines the runtime state schema for LangGraph.
+ * It uses reducers to merge state updates from different nodes.
+ */
+export const AgentStateAnnotation = Annotation.Root({
+	// Chat history - appends new messages
+	messages: Annotation<BaseMessage[]>({
+		reducer: (x, y) => x.concat(y),
+		default: () => [],
+	}),
+
+	// API Key - overwrites (not persisted in checkpointer)
+	apiKey: Annotation<string>({
+		reducer: (x, y) => y,
+		default: () => '',
+	}),
+
+	// Blog data - overwrites with new data
+	data: Annotation<BlogData>({
+		reducer: (x, y) => ({ ...x, ...y }),
+		default: () => ({} as BlogData),
+	}),
+
+	// Outline - overwrites
+	outline: Annotation<OutlineSection[]>({
+		reducer: (x, y) => y,
+		default: () => [],
+	}),
+
+	// Outline approval status
+	outlineApproved: Annotation<boolean>({
+		reducer: (x, y) => y,
+		default: () => false,
+	}),
+
+	// Current draft content
+	draft: Annotation<string>({
+		reducer: (x, y) => y,
+		default: () => '',
+	}),
+
+	// Execution progress
+	progress: Annotation<ProgressState>({
+		reducer: (x, y) => y,
+		default: () => ({ sectionIndex: 0 }),
+	}),
+
+	// User preferences
+	preferences: Annotation<AgentPreferences>({
+		reducer: (x, y) => ({ ...x, ...y }),
+		default: () => ({
+			automationLevel: 'guided',
+			skipOptionalSteps: false,
+			autoSelectBestOptions: false,
+		}),
+	}),
+
+	// Policy for agent behavior (e.g., references usage, grounding)
+	policy: Annotation<AgentPolicy>({
+		reducer: (x, y) => ({ ...x, ...y }),
+		default: () => ({ referencesUsage: 'both', grounding: true }),
+	}),
+
+	// User provided fields tracking
+	userProvidedFields: Annotation<Set<string>>({
+		reducer: (x, y) => {
+			// Handle cases where x or y might be undefined or not Sets
+			const xSet = x instanceof Set ? x : new Set<string>();
+			const ySet = y instanceof Set ? y : new Set<string>();
+			return new Set<string>([...xSet, ...ySet]);
+		},
+		default: () => new Set<string>(),
+	}),
+
+	// Auto-filled fields tracking
+	autoFillFields: Annotation<Set<string>>({
+		reducer: (x, y) => {
+			// Handle cases where x or y might be undefined or not Sets
+			const xSet = x instanceof Set ? x : new Set<string>();
+			const ySet = y instanceof Set ? y : new Set<string>();
+			return new Set<string>([...xSet, ...ySet]);
+		},
+		default: () => new Set<string>(),
+	}),
+
+	// Trace for debugging/UI
+	trace: Annotation<{ step: string; info?: any; at: number }[]>({
+		reducer: (x, y) => x.concat(y),
+		default: () => [],
+	}),
+
+	// Halt reason (if paused for user input)
+	halt: Annotation<HaltState | null>({
+		reducer: (x, y) => y,
+		default: () => null,
+	}),
+
+	// Keyword research data
+	keywordResearch: Annotation<KeywordResearch | undefined>({
+		reducer: (x, y) => ({ ...x, ...y }),
+		default: () => undefined,
+	}),
+
+	// Title generation options
+	titleOptions: Annotation<string[] | undefined>({
+		reducer: (x, y) => y,
+		default: () => undefined,
+	}),
+
+	// Flag if title has been explicitly selected/provided
+	titleSelected: Annotation<boolean | undefined>({
+		reducer: (x, y) => y,
+		default: () => undefined,
+	}),
+
+	// Flag if interlinking step is completed
+	interlinkingCompleted: Annotation<boolean | undefined>({
+		reducer: (x, y) => y,
+		default: () => undefined,
+	}),
+
+	// Flag if references collection step is completed
+	referencesCollected: Annotation<boolean | undefined>({
+		reducer: (x, y) => y,
+		default: () => undefined,
+	}),
+
+	// Flag if final blog generation is done
+	finalBlogGenerated: Annotation<boolean | undefined>({
+		reducer: (x, y) => y,
+		default: () => undefined,
+	}),
+
+	// User feedback for outline regeneration
+	outlineFeedback: Annotation<string | undefined>({
+		reducer: (x, y) => y,
+		default: () => undefined,
+	}),
+
+	// Conversation context (e.g., for intent classification)
+	conversationContext: Annotation<ConversationContext | undefined>({
+		reducer: (x, y) => ({ ...x, ...y }),
+		default: () => undefined,
+	}),
+
+	// Store candidates for UI selection
+	keywordCandidates: Annotation<any[]>({
+		reducer: (x, y) => y,
+		default: () => [],
+	}),
+
+	titleCandidates: Annotation<string[]>({
+		reducer: (x, y) => y,
+		default: () => [],
+	}),
+
+	// Track current step for bidirectional navigation
+	currentStep: Annotation<
+		| 'topic'
+		| 'primary_keyword'
+		| 'secondary_keywords'
+		| 'title'
+		| 'interlinking'
+		| 'references'
+		| 'outline_confirmation'
+		| 'outline'
+		| 'generation'
+	>({
+		reducer: (x, y) => y,
+		default: () => 'topic',
+	}),
+
+	// Store tool outputs for UI visibility
+	toolOutputs: Annotation<ToolOutput[]>({
+		reducer: (x, y) => x.concat(y),
+		default: () => [],
+	}),
+});
+
+/**
+ * Type alias for LangGraph state
+ * This matches the AgentStateInterface but is derived from the Annotation system
+ *
+ * This is the actual runtime type used throughout the codebase.
+ * It's derived from LangGraph's Annotation system and matches AgentStateInterface.
+ */
 export type AgentState = typeof AgentStateAnnotation.State;

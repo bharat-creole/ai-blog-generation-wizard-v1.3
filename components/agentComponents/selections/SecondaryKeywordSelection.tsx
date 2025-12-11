@@ -16,7 +16,14 @@ interface SecondaryKeywordSelectionProps {
 	setOutline: React.Dispatch<React.SetStateAction<any[]>>;
 	setDraft: React.Dispatch<React.SetStateAction<string>>;
 	setTraceItems: React.Dispatch<React.SetStateAction<any[]>>;
-	sendUserMessage: (message: string, agentState: AgentState) => Promise<{ response: string; updatedState: AgentState; metadata?: any }>;
+	sendUserMessage: (
+		message: string,
+		agentState: AgentState
+	) => Promise<{
+		response: string;
+		updatedState: AgentState;
+		metadata?: any;
+	}>;
 }
 
 const SecondaryKeywordSelection: React.FC<SecondaryKeywordSelectionProps> = ({
@@ -35,9 +42,19 @@ const SecondaryKeywordSelection: React.FC<SecondaryKeywordSelectionProps> = ({
 	setTraceItems,
 	sendUserMessage,
 }) => {
+	// Sort candidates by volume (descending - highest volume first)
+	const sortedCandidates = useMemo(() => {
+		return [...candidates].sort(
+			(a, b) => (b.volume || 0) - (a.volume || 0)
+		);
+	}, [candidates]);
+
 	// Create a stable key from candidates to detect actual changes
 	const candidatesKey = useMemo(() => {
-		return candidates.map(c => c.text).sort().join('|');
+		return candidates
+			.map((c) => c.text)
+			.sort()
+			.join('|');
 	}, [candidates]);
 
 	// Track previous candidates to detect when they change
@@ -47,32 +64,41 @@ const SecondaryKeywordSelection: React.FC<SecondaryKeywordSelectionProps> = ({
 	// This ensures a fresh start every time the component is shown
 	useEffect(() => {
 		const isCompleted = completedSelections.has('secondaryKeywords');
-		
+
 		// Reset if:
 		// 1. Candidates changed (different set of keywords)
 		// 2. Component is shown with candidates and selection is not completed
-		const shouldReset = 
+		const shouldReset =
 			candidatesKey !== prevCandidatesRef.current &&
 			candidates.length > 0 &&
 			!isCompleted;
-		
+
 		if (shouldReset) {
 			setSelectedSecondaries([]);
 		}
-		
+
 		// Always update ref to track current candidates
 		prevCandidatesRef.current = candidatesKey;
-	}, [candidatesKey, candidates.length, completedSelections, setSelectedSecondaries]);
+	}, [
+		candidatesKey,
+		candidates.length,
+		completedSelections,
+		setSelectedSecondaries,
+	]);
 
 	const handleConfirm = async () => {
 		if (!agent) return;
 
-		setCompletedSelections((prev) => new Set(prev).add('secondaryKeywords'));
+		setCompletedSelections((prev) =>
+			new Set(prev).add('secondaryKeywords')
+		);
 
 		// Add user message immediately for UI feedback
 		const userMsg = {
 			role: 'user' as const,
-			content: `Secondary keywords: ${selectedSecondaries.join(', ')}`,
+			content: `Secondary keywords: ${selectedSecondaries.join(
+				', '
+			)}`,
 		};
 
 		setMessages((prev) => [...prev, userMsg]);
@@ -92,12 +118,18 @@ const SecondaryKeywordSelection: React.FC<SecondaryKeywordSelectionProps> = ({
 
 			// Update trace items if available
 			if (result.updatedState.trace) {
-				setTraceItems(result.updatedState.trace.map((t) => ({ step: t.step, at: t.at })));
+				setTraceItems(
+					result.updatedState.trace.map((t) => ({
+						step: t.step,
+						at: t.at,
+					}))
+				);
 			}
 
 			// Update parent data
 			updateData({
-				secondaryKeywords: result.updatedState.data.secondaryKeywords,
+				secondaryKeywords:
+					result.updatedState.data.secondaryKeywords,
 				outline: result.updatedState.outline,
 				blogContent: result.updatedState.draft,
 				title: result.updatedState.data.title,
@@ -109,10 +141,9 @@ const SecondaryKeywordSelection: React.FC<SecondaryKeywordSelectionProps> = ({
 				{
 					role: 'assistant',
 					content: result.response,
-					...result.metadata
+					...result.metadata,
 				},
 			]);
-
 		} catch (error) {
 			console.error('Error selecting secondary keywords:', error);
 			// Revert selection on error
@@ -178,8 +209,9 @@ const SecondaryKeywordSelection: React.FC<SecondaryKeywordSelectionProps> = ({
 			<div className='mt-3 text-left'>
 				<button
 					disabled={
-						completedSelections.has('secondaryKeywords') ||
-						selectedSecondaries.length === 0
+						completedSelections.has(
+							'secondaryKeywords'
+						) || selectedSecondaries.length === 0
 					}
 					className='px-[18px] py-[8px] font-inter text-regular text-[14px] bg-success text-white  transition-colors disabled:opacity-[60%] disabled:cursor-not-allowed rounded-[26px]'
 					onClick={handleConfirm}
@@ -193,4 +225,3 @@ const SecondaryKeywordSelection: React.FC<SecondaryKeywordSelectionProps> = ({
 };
 
 export default SecondaryKeywordSelection;
-

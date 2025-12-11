@@ -48,7 +48,9 @@ const deduplicateToolOutputs = (toolOutputs: any[]): any[] => {
 	if (!toolOutputs || !Array.isArray(toolOutputs)) return [];
 	const seen = new Set<string>();
 	return toolOutputs.filter((item) => {
-		const key = `${item.type}-${item.timestamp}-${JSON.stringify(item.data)}`;
+		const key = `${item.type}-${item.timestamp}-${JSON.stringify(
+			item.data
+		)}`;
 		if (seen.has(key)) return false;
 		seen.add(key);
 		return true;
@@ -158,17 +160,25 @@ export const useAgentExecutionV3 = (
 			// Get apiKey from environment variable as fallback
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore
-			const envApiKey = import.meta.env?.VITE_GEMINI_API_KEY || import.meta.env?.GEMINI_API_KEY;
-			
+			const envApiKey =
+				import.meta.env?.VITE_GEMINI_API_KEY ||
+				import.meta.env?.GEMINI_API_KEY;
+
 			// Extract apiKey from parameter, state, or environment variable (in that order)
-			const apiKeyToUse = apiKey || currentState?.apiKey || envApiKey;
+			const apiKeyToUse =
+				apiKey || currentState?.apiKey || envApiKey;
 			if (!apiKeyToUse) {
-				throw new Error('apiKey is required. Please provide apiKey as a parameter, in state, or set VITE_GEMINI_API_KEY in your .env.local file.');
+				throw new Error(
+					'apiKey is required. Please provide apiKey as a parameter, in state, or set VITE_GEMINI_API_KEY in your .env.local file.'
+				);
 			}
 			// Remove apiKey from state before mapping
 			const stateWithoutApiKey = { ...currentState };
 			delete stateWithoutApiKey.apiKey;
-			const backendState = mapV1ToBackend(stateWithoutApiKey, apiKeyToUse);
+			const backendState = mapV1ToBackend(
+				stateWithoutApiKey,
+				apiKeyToUse
+			);
 			// Use existing threadId or create a new one for the session
 			if (!threadIdRef.current) {
 				threadIdRef.current = `thread-${Date.now()}`;
@@ -189,116 +199,183 @@ export const useAgentExecutionV3 = (
 					let lastShownSectionIndex = -1; // Track last section index we've shown a message for
 					let shownPreMessages = new Set<string>(); // Track which pre-messages we've shown
 					let writingSectionNumber: number | null = null; // Track which section's "Writing" message is currently streaming
-					let pendingCompletionMessages: Map<number, string> = new Map(); // Store completion messages waiting for "Writing" to finish
-					
+					let pendingCompletionMessages: Map<
+						number,
+						string
+					> = new Map(); // Store completion messages waiting for "Writing" to finish
+
 					// Helper function to check if two arrays are equal
-					const arraysEqual = (a: any[] | undefined, b: any[] | undefined): boolean => {
+					const arraysEqual = (
+						a: any[] | undefined,
+						b: any[] | undefined
+					): boolean => {
 						if (!a || !b) return false;
 						if (a.length !== b.length) return false;
-						return a.every((val, idx) => val === b[idx]);
+						return a.every(
+							(val, idx) => val === b[idx]
+						);
 					};
 
 					// ✨ Message queue system - ensures messages are displayed one at a time
 					// Messages wait for the previous message to finish streaming before displaying
-					const messageQueue: Array<{ 
-						content: string; 
+					const messageQueue: Array<{
+						content: string;
 						metadata?: any;
 						onStreamingComplete?: () => void;
 					}> = [];
 					let isProcessingQueue = false;
 					let currentMessageStreaming = false;
-					let currentMessageCompleteCallback: (() => void) | null = null;
+					let currentMessageCompleteCallback:
+						| (() => void)
+						| null = null;
 
 					const processMessageQueue = () => {
 						// Don't process if already processing or queue is empty
-						if (isProcessingQueue || messageQueue.length === 0) {
+						if (
+							isProcessingQueue ||
+							messageQueue.length === 0
+						) {
 							return;
 						}
-						
+
 						// Don't process if current message is still streaming
 						if (currentMessageStreaming) {
 							return;
 						}
-						
+
 						isProcessingQueue = true;
 						const message = messageQueue.shift();
-						
+
 						if (message) {
 							// Mark that we're starting to stream this message
 							currentMessageStreaming = true;
-							
+
 							// Create a unique ID for this message to track completion
 							const messageId = `msg_${Date.now()}_${Math.random()}`;
-							
+
 							// Add onStreamingComplete callback to metadata
 							// Check if this is a "Writing section" message - add extra pause after it
-							const isWritingSectionMessage = message.content.includes('✍️ Writing section');
-							const pauseAfterStreaming = isWritingSectionMessage ? 800 : 0; // 800ms pause after "Writing section" messages
-							
+							const isWritingSectionMessage =
+								message.content.includes(
+									'✍️ Writing section'
+								);
+							const pauseAfterStreaming =
+								isWritingSectionMessage
+									? 800
+									: 0; // 800ms pause after "Writing section" messages
+
 							// Extract section number from "Writing section X..." message
 							if (isWritingSectionMessage) {
-								const match = message.content.match(/Writing section (\d+)/);
+								const match =
+									message.content.match(
+										/Writing section (\d+)/
+									);
 								if (match) {
-									writingSectionNumber = parseInt(match[1], 10);
+									writingSectionNumber =
+										parseInt(
+											match[1],
+											10
+										);
 								}
 							}
-							
+
 							// Create a unique identifier for this message to prevent duplicates
-							const messageUniqueId = message.metadata 
-								? `msg_${JSON.stringify(message.metadata).substring(0, 100)}_${Date.now()}`
-								: `msg_${Date.now()}_${Math.random()}`;
+							const messageUniqueId =
+								message.metadata
+									? `msg_${JSON.stringify(
+											message.metadata
+									  ).substring(
+											0,
+											100
+									  )}_${Date.now()}`
+									: `msg_${Date.now()}_${Math.random()}`;
 
 							const messageMetadata = {
 								...(message.metadata || {}),
-								_messageUniqueId: messageUniqueId, // Add unique ID to track duplicates
-								_streamingCompleteCallback: () => {
-									// Add pause after "Writing section" messages complete
-									if (pauseAfterStreaming > 0 && writingSectionNumber !== null) {
-										setTimeout(() => {
-											// Check if there's a pending completion message for this section
-											const pendingMessage = pendingCompletionMessages.get(writingSectionNumber!);
-											if (pendingMessage) {
-												pendingCompletionMessages.delete(writingSectionNumber!);
-												// Keep thinking indicator on until completion message is displayed
-												// It will be turned off when completion message is queued
-												queueMessage(pendingMessage);
-											}
-											// Note: Keep thinking indicator on if no completion message yet
-											// It will be turned off when completion message arrives
-											
-											writingSectionNumber = null;
-											currentMessageStreaming = false;
-											currentMessageCompleteCallback = null;
-											isProcessingQueue = false;
-											// Process next message after pause
+								_messageUniqueId:
+									messageUniqueId, // Add unique ID to track duplicates
+								_streamingCompleteCallback:
+									() => {
+										// Add pause after "Writing section" messages complete
+										if (
+											pauseAfterStreaming >
+												0 &&
+											writingSectionNumber !==
+												null
+										) {
+											setTimeout(
+												() => {
+													// Check if there's a pending completion message for this section
+													const pendingMessage =
+														pendingCompletionMessages.get(
+															writingSectionNumber!
+														);
+													if (
+														pendingMessage
+													) {
+														pendingCompletionMessages.delete(
+															writingSectionNumber!
+														);
+														// Keep thinking indicator on until completion message is displayed
+														// It will be turned off when completion message is queued
+														queueMessage(
+															pendingMessage
+														);
+													}
+													// Note: Keep thinking indicator on if no completion message yet
+													// It will be turned off when completion message arrives
+
+													writingSectionNumber =
+														null;
+													currentMessageStreaming =
+														false;
+													currentMessageCompleteCallback =
+														null;
+													isProcessingQueue =
+														false;
+													// Process next message after pause
+													processMessageQueue();
+												},
+												pauseAfterStreaming
+											);
+										} else {
+											currentMessageStreaming =
+												false;
+											currentMessageCompleteCallback =
+												null;
+											isProcessingQueue =
+												false;
+											// Process next message after current one completes streaming
 											processMessageQueue();
-										}, pauseAfterStreaming);
-									} else {
-										currentMessageStreaming = false;
-										currentMessageCompleteCallback = null;
-										isProcessingQueue = false;
-										// Process next message after current one completes streaming
-										processMessageQueue();
-									}
-								},
+										}
+									},
 								_messageId: messageId,
 							};
-							
+
 							// Store callback for this message
-							currentMessageCompleteCallback = messageMetadata._streamingCompleteCallback;
-							
+							currentMessageCompleteCallback =
+								messageMetadata._streamingCompleteCallback;
+
 							// Only add message if it has content or metadata for UI components
-							const hasContent = message.content && message.content.trim();
-							const hasMetadata = messageMetadata.keywordSelection || messageMetadata.titleSelection ||
-								messageMetadata.interlinkingForm || messageMetadata.referencesForm || messageMetadata.outlineApproval;
-							
+							const hasContent =
+								message.content &&
+								message.content.trim();
+							const hasMetadata =
+								messageMetadata.keywordSelection ||
+								messageMetadata.titleSelection ||
+								messageMetadata.interlinkingForm ||
+								messageMetadata.referencesForm ||
+								messageMetadata.outlineApproval;
+
 							if (hasContent || hasMetadata) {
 								setMessages((prev) => {
 									const newMessages = [
 										...prev,
 										{
 											role: 'assistant',
-											content: message.content || '', // Ensure content is at least empty string
+											content:
+												message.content ||
+												'', // Ensure content is at least empty string
 											...messageMetadata,
 										},
 									];
@@ -307,7 +384,8 @@ export const useAgentExecutionV3 = (
 							} else {
 								// Message is empty and has no metadata - skip it but still process queue
 								currentMessageStreaming = false;
-								currentMessageCompleteCallback = null;
+								currentMessageCompleteCallback =
+									null;
 								isProcessingQueue = false;
 								processMessageQueue();
 							}
@@ -316,12 +394,21 @@ export const useAgentExecutionV3 = (
 						}
 					};
 
-					const queueMessage = (content: string, metadata?: any) => {
+					const queueMessage = (
+						content: string,
+						metadata?: any
+					) => {
 						// Don't queue empty messages (unless they have metadata for UI components)
 						if (!content || !content.trim()) {
 							// Only queue if there's metadata (for UI components like keyword selection)
-							if (!metadata || (!metadata.keywordSelection && !metadata.titleSelection && 
-								!metadata.interlinkingForm && !metadata.referencesForm && !metadata.outlineApproval)) {
+							if (
+								!metadata ||
+								(!metadata.keywordSelection &&
+									!metadata.titleSelection &&
+									!metadata.interlinkingForm &&
+									!metadata.referencesForm &&
+									!metadata.outlineApproval)
+							) {
 								return; // Skip empty messages without metadata
 							}
 						}
@@ -329,10 +416,16 @@ export const useAgentExecutionV3 = (
 						processMessageQueue();
 					};
 
-					const waitForQueueToComplete = (callback: () => void) => {
+					const waitForQueueToComplete = (
+						callback: () => void
+					) => {
 						const checkQueue = () => {
 							// Wait until queue is empty AND no message is currently streaming
-							if (messageQueue.length === 0 && !isProcessingQueue && !currentMessageStreaming) {
+							if (
+								messageQueue.length === 0 &&
+								!isProcessingQueue &&
+								!currentMessageStreaming
+							) {
 								callback();
 							} else {
 								setTimeout(checkQueue, 100);
@@ -342,7 +435,9 @@ export const useAgentExecutionV3 = (
 					};
 
 					// Helper to get pre-execution message based on current step
-					const getPreExecutionMessage = (state: any): string | null => {
+					const getPreExecutionMessage = (
+						state: any
+					): string | null => {
 						const currentStep = state.currentStep;
 						const haltReason = state.halt?.reason;
 
@@ -350,25 +445,54 @@ export const useAgentExecutionV3 = (
 						if (haltReason) return null; // Don't show if halted
 
 						// Determine which node will execute next based on currentStep
-						if (currentStep === 'topic' && !state.data?.primaryKeyword) {
+						if (
+							currentStep === 'topic' &&
+							!state.data?.primaryKeyword
+						) {
 							return '🔍 Generating primary keywords...';
 						}
-						if (currentStep === 'primary_keyword' && !state.data?.primaryKeyword) {
+						if (
+							currentStep === 'primary_keyword' &&
+							!state.data?.primaryKeyword
+						) {
 							return '🔍 Generating primary keywords...';
 						}
-						if (currentStep === 'secondary_keywords' && (!state.data?.secondaryKeywords || state.data.secondaryKeywords.length === 0)) {
+						if (
+							currentStep ===
+								'secondary_keywords' &&
+							(!state.data?.secondaryKeywords ||
+								state.data.secondaryKeywords
+									.length === 0)
+						) {
 							return '🔍 Generating secondary keywords...';
 						}
-						if (currentStep === 'title' && !state.data?.title) {
+						if (
+							currentStep === 'title' &&
+							!state.data?.title
+						) {
 							return '📝 Generating title options...';
 						}
-						if (currentStep === 'outline' && (!state.outline || state.outline.length === 0)) {
+						if (
+							currentStep === 'outline' &&
+							(!state.outline ||
+								state.outline.length === 0)
+						) {
 							return '📋 Generating outline...';
 						}
-						if (currentStep === 'generation' && state.outlineApproved) {
-							const sectionIndex = state.progress?.sectionIndex || 0;
-							if (sectionIndex < (state.outline?.length || 0)) {
-								return `✍️ Writing section ${sectionIndex + 1}...`;
+						if (
+							currentStep === 'generation' &&
+							state.outlineApproved
+						) {
+							const sectionIndex =
+								state.progress?.sectionIndex ||
+								0;
+							if (
+								sectionIndex <
+								(state.outline?.length || 0)
+							) {
+								return `✍️ Writing section ${
+									sectionIndex + 1
+								}...`;
 							}
 						}
 
@@ -377,523 +501,1274 @@ export const useAgentExecutionV3 = (
 
 					// Track messages from backend to prevent duplicates
 					const backendMessages = new Set<string>();
-					
-					streamMessage(message, threadId, backendState, apiKeyToUse, {
-						onIntent: (data) => {
-							// Initial assistant response (e.g. "I'll handle that...")
-							finalResponse = data.assistantMessage;
 
-							// ✨ NEW: If multiple messages are provided, queue them one at a time
-							// This allows separate messages for different steps (e.g., "Got it! I've captured..." + "Let me research keywords...")
-							if (data.assistantMessages && Array.isArray(data.assistantMessages) && data.assistantMessages.length > 1) {
-								console.log(`📨 [INTENT] Queueing ${data.assistantMessages.length} separate messages:`, data.assistantMessages);
-								// Queue each message to be displayed one at a time
-								data.assistantMessages.forEach((msg) => {
-									// Track backend messages to prevent frontend duplicates
-									const msgKey = msg.substring(0, 50); // Use first 50 chars as key
-									backendMessages.add(msgKey);
-									queueMessage(msg);
-								});
-								// Mark that messages were already added, so AgentMode.tsx won't add the single message
-								finalResponse = ''; // Clear finalResponse to prevent duplicate
-							} else if (finalResponse) {
-								// Track single message too
-								const msgKey = finalResponse.substring(0, 50);
-								backendMessages.add(msgKey);
-							}
-							// If single message, don't add here - it will be added in AgentMode.tsx with metadata
-							// This prevents duplicate messages
-						},
-						onProgress: (chunk) => {
-							// Debug: Log chunk structure
-							console.log('[PROGRESS CHUNK]', {
-								chunkKeys: Object.keys(chunk),
-								chunkStructure: chunk
-							});
-
-							// Extract state from chunk (chunk is usually { nodeName: { ...state } })
-							const nodeName = Object.keys(chunk)[0];
-							const stateUpdate = nodeName
-								? chunk[nodeName]
-								: chunk;
-
-							console.log('[PROGRESS] Node detected:', nodeName, {
-								hasStateUpdate: !!stateUpdate,
-								stateUpdateKeys: stateUpdate ? Object.keys(stateUpdate) : []
-							});
-
-							// Check if we're transitioning from title to outline in full automation - show skipped steps
-							const isFullAutomation = accumulatedState.preferences?.automationLevel === 'full';
-							const wasAtTitle = accumulatedState.currentStep === 'title' || accumulatedState.currentStep === 'title_generation';
-							const isMovingToOutline = stateUpdate.currentStep === 'outline' || nodeName === 'discovery';
-							
-							if (isFullAutomation && wasAtTitle && isMovingToOutline) {
-								// Show skipped interlinking message FIRST
-								const interlinkingSkippedKey = 'interlinking_skipped';
-								if (!shownPreMessages.has(interlinkingSkippedKey)) {
-									shownPreMessages.add(interlinkingSkippedKey);
-									queueMessage('⏭️ **Skipped interlinking step**');
-								}
-								// Show skipped references message SECOND
-								const referencesSkippedKey = 'references_skipped';
-								if (!shownPreMessages.has(referencesSkippedKey)) {
-									shownPreMessages.add(referencesSkippedKey);
-									queueMessage('⏭️ **Skipped references step**');
-								}
-							}
-
-							// Show pre-execution message when we first detect a node is executing
-							// Show it immediately when we see the node name, before merging state
-							// For proposal node, track per section to show message for each section
-							if (nodeName) {
-								// For proposal node, use section-specific key to show message for each section
-								let messageKey: string;
-								if (nodeName === 'proposal') {
-									const sectionIndex = accumulatedState.progress?.sectionIndex ?? 0;
-									messageKey = `pre_${nodeName}_${sectionIndex}`;
-								} else {
-									messageKey = `pre_${nodeName}`;
+					streamMessage(
+						message,
+						threadId,
+						backendState,
+						apiKeyToUse,
+						{
+							onIntent: (data) => {
+								// ✨ NEW: Handle Primary Agent "before execution" messages
+								// These are sent BEFORE LangGraph execution starts
+								if (
+									data.fromPrimaryAgent &&
+									data.isBeforeExecution
+								) {
+									console.log(
+										`📨 [INTENT] Primary Agent before-execution message: "${data.assistantMessage?.substring(
+											0,
+											50
+										)}..."`
+									);
+									if (
+										data.assistantMessage &&
+										data.assistantMessage.trim()
+									) {
+										// Track and queue the Primary Agent message immediately
+										const msgKey =
+											data.assistantMessage.substring(
+												0,
+												50
+											);
+										backendMessages.add(
+											msgKey
+										);
+										queueMessage(
+											data.assistantMessage
+										);
+										// Clear finalResponse since we've already queued this message
+										finalResponse = '';
+									}
+									return; // Don't process further - Primary Agent message is handled
 								}
 
-								if (!shownPreMessages.has(messageKey)) {
-									// Check if this chunk already contains results (if it does, node already completed)
-									// Only check chunk, not accumulated state, to allow showing message for new executions
-									const hasResultsInChunk = 
-										stateUpdate.toolOutputs?.length > 0 ||
-										stateUpdate.keywordCandidates?.length > 0 ||
-										stateUpdate.titleCandidates?.length > 0 ||
-										stateUpdate.halt?.reason === 'await_keyword_selection' ||
-										stateUpdate.halt?.reason === 'await_secondary_selection' ||
-										stateUpdate.halt?.reason === 'await_title_selection';
+								// Initial assistant response (e.g. "I'll handle that...")
+								finalResponse =
+									data.assistantMessage;
 
-									// Only show pre-message if this chunk doesn't already have results
-									// This means the node just started executing, not completed
-									if (!hasResultsInChunk) {
-										let preMessage: string | null = null;
-										
-										if (nodeName === 'research_primary') {
-											// Check if backend already sent this message to prevent duplicate
-											const researchMsg = '🔍 **Researching primary keywords...**';
-											const msgKey = researchMsg.substring(0, 50);
-											if (!backendMessages.has(msgKey)) {
-												preMessage = '🔍 **Researching primary keywords...**\n\nI\'m analyzing your topic to find the best primary keyword options for SEO optimization.';
-											}
-										} else if (nodeName === 'research_secondary') {
-											preMessage = '🔍 **Generating secondary keywords...**\n\nI\'m finding related keywords that complement your primary keyword to expand your content\'s reach.';
-										} else if (nodeName === 'title_generation') {
-											preMessage = '📝 **Generating title options...**\n\nI\'m creating engaging title options that incorporate your keywords and appeal to your target audience.';
-										} else if (nodeName === 'discovery') {
-											preMessage = '📋 **Generating outline...**\n\nI\'m creating a comprehensive outline structure for your blog post.';
-									} else if (nodeName === 'proposal') {
-										// When proposal node starts, sectionIndex is the section that will be generated (0-based)
-										// So we show sectionIndex + 1 for user-friendly display
-										const sectionIndex = accumulatedState.progress?.sectionIndex ?? 0;
-										const sectionNumber = sectionIndex + 1;
-										preMessage = `✍️ **Writing section ${sectionNumber}...**\n\nI'm generating the content for this section.`;
+								// ✨ NEW: If multiple messages are provided, queue them one at a time
+								// This allows separate messages for different steps (e.g., "Got it! I've captured..." + "Let me research keywords...")
+								if (
+									data.assistantMessages &&
+									Array.isArray(
+										data.assistantMessages
+									) &&
+									data.assistantMessages
+										.length > 1
+								) {
+									console.log(
+										`📨 [INTENT] Queueing ${data.assistantMessages.length} separate messages:`,
+										data.assistantMessages
+									);
+									// Queue each message to be displayed one at a time
+									data.assistantMessages.forEach(
+										(msg) => {
+											// Track backend messages to prevent frontend duplicates
+											const msgKey =
+												msg.substring(
+													0,
+													50
+												); // Use first 50 chars as key
+											backendMessages.add(
+												msgKey
+											);
+											queueMessage(
+												msg
+											);
+										}
+									);
+									// Mark that messages were already added, so AgentMode.tsx won't add the single message
+									finalResponse = ''; // Clear finalResponse to prevent duplicate
+								} else if (finalResponse) {
+									// Track single message too
+									const msgKey =
+										finalResponse.substring(
+											0,
+											50
+										);
+									backendMessages.add(
+										msgKey
+									);
+
+									// ✨ FIX: If shouldRunAgent is false, queue the message immediately
+									// This handles cases where onComplete might not be called or message won't be displayed
+									if (
+										data.shouldRunAgent ===
+											false &&
+										finalResponse.trim()
+									) {
+										console.log(
+											`📨 [INTENT] Queueing blocked response immediately: "${finalResponse.substring(
+												0,
+												50
+											)}..."`
+										);
+										queueMessage(
+											finalResponse
+										);
+										finalResponse = ''; // Clear to prevent duplicate
+									}
+								}
+								// If single message and shouldRunAgent is true, don't add here - it will be added in AgentMode.tsx with metadata
+								// This prevents duplicate messages
+							},
+							onProgress: (chunk) => {
+								// Debug: Log chunk structure
+								console.log(
+									'[PROGRESS CHUNK]',
+									{
+										chunkKeys:
+											Object.keys(
+												chunk
+											),
+										chunkStructure:
+											chunk,
+									}
+								);
+
+								// Extract state from chunk (chunk is usually { nodeName: { ...state } })
+								const nodeName =
+									Object.keys(chunk)[0];
+								const stateUpdate = nodeName
+									? chunk[nodeName]
+									: chunk;
+
+								console.log(
+									'[PROGRESS] Node detected:',
+									nodeName,
+									{
+										hasStateUpdate:
+											!!stateUpdate,
+										stateUpdateKeys:
+											stateUpdate
+												? Object.keys(
+														stateUpdate
+												  )
+												: [],
+									}
+								);
+
+								// Check if we're transitioning from title to outline in full automation - show skipped steps
+								const isFullAutomation =
+									accumulatedState
+										.preferences
+										?.automationLevel ===
+									'full';
+								const wasAtTitle =
+									accumulatedState.currentStep ===
+										'title' ||
+									accumulatedState.currentStep ===
+										'title_generation';
+								const isMovingToOutline =
+									stateUpdate.currentStep ===
+										'outline' ||
+									nodeName === 'discovery';
+
+								if (
+									isFullAutomation &&
+									wasAtTitle &&
+									isMovingToOutline
+								) {
+									// Show skipped interlinking message FIRST
+									const interlinkingSkippedKey =
+										'interlinking_skipped';
+									if (
+										!shownPreMessages.has(
+											interlinkingSkippedKey
+										)
+									) {
+										shownPreMessages.add(
+											interlinkingSkippedKey
+										);
+										queueMessage(
+											'⏭️ **Skipped interlinking step**'
+										);
+									}
+									// Show skipped references message SECOND
+									const referencesSkippedKey =
+										'references_skipped';
+									if (
+										!shownPreMessages.has(
+											referencesSkippedKey
+										)
+									) {
+										shownPreMessages.add(
+											referencesSkippedKey
+										);
+										queueMessage(
+											'⏭️ **Skipped references step**'
+										);
+									}
+								}
+
+								// Show pre-execution message when we first detect a node is executing
+								// Show it immediately when we see the node name, before merging state
+								// For proposal node, track per section to show message for each section
+								if (nodeName) {
+									// For proposal node, use section-specific key to show message for each section
+									let messageKey: string;
+									if (
+										nodeName ===
+										'proposal'
+									) {
+										const sectionIndex =
+											accumulatedState
+												.progress
+												?.sectionIndex ??
+											0;
+										messageKey = `pre_${nodeName}_${sectionIndex}`;
+									} else {
+										messageKey = `pre_${nodeName}`;
 									}
 
-									if (preMessage) {
-										shownPreMessages.add(messageKey);
-										// Keep thinking indicator on during automation - don't turn it off here
-										// It will be turned off when trace messages arrive or when complete
-											
-											// Log when message is being queued
-											console.log(`🚀 [PRE-MESSAGE] Queueing: "${preMessage}"`, {
-												node: nodeName,
-												messageKey,
-												timestamp: new Date().toISOString(),
-												chunkKeys: Object.keys(chunk),
-												stateUpdateKeys: Object.keys(stateUpdate),
-												hasResults: hasResultsInChunk
-											});
-											
-											// Queue message to be displayed one at a time
-											queueMessage(preMessage);
+									if (
+										!shownPreMessages.has(
+											messageKey
+										)
+									) {
+										// Check if this chunk already contains results (if it does, node already completed)
+										// Only check chunk, not accumulated state, to allow showing message for new executions
+										const hasResultsInChunk =
+											stateUpdate
+												.toolOutputs
+												?.length >
+												0 ||
+											stateUpdate
+												.keywordCandidates
+												?.length >
+												0 ||
+											stateUpdate
+												.titleCandidates
+												?.length >
+												0 ||
+											stateUpdate
+												.halt
+												?.reason ===
+												'await_keyword_selection' ||
+											stateUpdate
+												.halt
+												?.reason ===
+												'await_secondary_selection' ||
+											stateUpdate
+												.halt
+												?.reason ===
+												'await_title_selection';
+
+										// Only show pre-message if this chunk doesn't already have results
+										// This means the node just started executing, not completed
+										if (
+											!hasResultsInChunk
+										) {
+											let preMessage:
+												| string
+												| null =
+												null;
+
+											if (
+												nodeName ===
+												'research_primary'
+											) {
+												// Check if backend already sent this message to prevent duplicate
+												const researchMsg =
+													'🔍 **Researching primary keywords...**';
+												const msgKey =
+													researchMsg.substring(
+														0,
+														50
+													);
+												if (
+													!backendMessages.has(
+														msgKey
+													)
+												) {
+													preMessage =
+														"🔍 **Researching primary keywords...**\n\nI'm analyzing your topic to find the best primary keyword options for SEO optimization.";
+												}
+											} else if (
+												nodeName ===
+												'research_secondary'
+											) {
+												preMessage =
+													"🔍 **Generating secondary keywords...**\n\nI'm finding related keywords that complement your primary keyword to expand your content's reach.";
+											} else if (
+												nodeName ===
+												'title_generation'
+											) {
+												preMessage =
+													"📝 **Generating title options...**\n\nI'm creating engaging title options that incorporate your keywords and appeal to your target audience.";
+											} else if (
+												nodeName ===
+												'discovery'
+											) {
+												preMessage =
+													"📋 **Generating outline...**\n\nI'm creating a comprehensive outline structure for your blog post.";
+											} else if (
+												nodeName ===
+												'proposal'
+											) {
+												// When proposal node starts, sectionIndex is the section that will be generated (0-based)
+												// So we show sectionIndex + 1 for user-friendly display
+												const sectionIndex =
+													accumulatedState
+														.progress
+														?.sectionIndex ??
+													0;
+												const sectionNumber =
+													sectionIndex +
+													1;
+
+												// If this is the first section (sectionIndex === 0) and outline is approved, show starting message
+												if (
+													sectionIndex ===
+														0 &&
+													accumulatedState.outlineApproved &&
+													accumulatedState.outline &&
+													accumulatedState
+														.outline
+														.length >
+														0
+												) {
+													preMessage =
+														"✍️ **Starting blog generation...**\n\nI'll now create your blog post section by section, incorporating all your keywords and following the approved outline.";
+												} else {
+													preMessage = `✍️ **Writing section ${sectionNumber}...**\n\nI'm generating the content for this section.`;
+												}
+											}
+
+											if (
+												preMessage
+											) {
+												shownPreMessages.add(
+													messageKey
+												);
+
+												// Keep thinking indicator ON during blog generation
+												// Check if we're in blog generation phase
+												const isBlogGenerationPhase =
+													accumulatedState.outlineApproved &&
+													accumulatedState.outline &&
+													accumulatedState
+														.outline
+														.length >
+														0 &&
+													(nodeName ===
+														'proposal' ||
+														(accumulatedState
+															.progress
+															?.sectionIndex ??
+															0) <
+															accumulatedState
+																.outline
+																.length);
+
+												if (
+													isBlogGenerationPhase &&
+													setIsThinking
+												) {
+													setIsThinking(
+														true
+													);
+												}
+
+												// Log when message is being queued
+												console.log(
+													`🚀 [PRE-MESSAGE] Queueing: "${preMessage}"`,
+													{
+														node: nodeName,
+														messageKey,
+														timestamp:
+															new Date().toISOString(),
+														chunkKeys:
+															Object.keys(
+																chunk
+															),
+														stateUpdateKeys:
+															Object.keys(
+																stateUpdate
+															),
+														hasResults:
+															hasResultsInChunk,
+													}
+												);
+
+												// Queue message to be displayed one at a time
+												queueMessage(
+													preMessage
+												);
+											}
+										} else {
+											// Mark as shown even if we don't show the message (to prevent duplicates)
+											shownPreMessages.add(
+												messageKey
+											);
+											console.log(
+												`[PRE-MESSAGE] Skipped for ${nodeName}: Results already in chunk`,
+												{
+													messageKey,
+													toolOutputs:
+														stateUpdate
+															.toolOutputs
+															?.length,
+													keywordCandidates:
+														stateUpdate
+															.keywordCandidates
+															?.length,
+													haltReason:
+														stateUpdate
+															.halt
+															?.reason,
+												}
+											);
 										}
-									} else {
-										// Mark as shown even if we don't show the message (to prevent duplicates)
-										shownPreMessages.add(messageKey);
-										console.log(`[PRE-MESSAGE] Skipped for ${nodeName}: Results already in chunk`, {
-											messageKey,
-											toolOutputs: stateUpdate.toolOutputs?.length,
-											keywordCandidates: stateUpdate.keywordCandidates?.length,
-											haltReason: stateUpdate.halt?.reason
+									}
+								}
+
+								// Merge state update into accumulated state first
+								// If trace exists, merge it properly (trace is usually appended, not replaced)
+								const existingTrace =
+									accumulatedState.trace ||
+									[];
+								if (
+									stateUpdate.trace &&
+									Array.isArray(
+										stateUpdate.trace
+									)
+								) {
+									// Merge traces - keep existing ones and add new ones
+									const newTrace =
+										stateUpdate.trace;
+									// Combine and deduplicate by step and timestamp
+									const combinedTrace = [
+										...existingTrace,
+									];
+									for (const newEntry of newTrace) {
+										const exists =
+											combinedTrace.some(
+												(
+													existing
+												) =>
+													existing.step ===
+														newEntry.step &&
+													existing.at ===
+														newEntry.at
+											);
+										if (!exists) {
+											combinedTrace.push(
+												newEntry
+											);
+										}
+									}
+									accumulatedState.trace =
+										combinedTrace;
+								}
+								accumulatedState = {
+									...accumulatedState,
+									...stateUpdate,
+									// Preserve merged trace
+									trace:
+										accumulatedState.trace ||
+										existingTrace,
+								};
+
+								// ✨ Update draft in real-time if it exists in the state update
+								// Use the merged accumulatedState to get the latest draft
+								const latestDraft =
+									accumulatedState.draft;
+								if (
+									latestDraft &&
+									options?.setDraft
+								) {
+									// Map draft to V1 format if needed
+									const draftValue =
+										typeof latestDraft ===
+										'string'
+											? latestDraft
+											: latestDraft;
+									options.setDraft(
+										draftValue
+									);
+
+									// Also update parent data if available
+									if (options.updateData) {
+										options.updateData({
+											blogContent:
+												draftValue,
 										});
 									}
-								}
-							}
 
-							// Merge state update into accumulated state first
-							// If trace exists, merge it properly (trace is usually appended, not replaced)
-							const existingTrace = accumulatedState.trace || [];
-							if (
-								stateUpdate.trace &&
-								Array.isArray(stateUpdate.trace)
-							) {
-								// Merge traces - keep existing ones and add new ones
-								const newTrace = stateUpdate.trace;
-								// Combine and deduplicate by step and timestamp
-								const combinedTrace = [...existingTrace];
-								for (const newEntry of newTrace) {
-									const exists = combinedTrace.some(
-										(existing) =>
-											existing.step === newEntry.step &&
-											existing.at === newEntry.at
+									// Show progress message for section generation completion
+									// Check if we have a trace entry indicating a section was just generated
+									const latestTrace =
+										accumulatedState
+											.trace?.[
+											accumulatedState
+												.trace
+												.length -
+												1
+										];
+									if (
+										latestTrace?.step ===
+											'ProposalNode.generatedSection' &&
+										accumulatedState
+											.progress
+											?.sectionIndex !==
+											undefined
+									) {
+										// Trace has 0-based sectionIndex, progress has incremented (1-based) sectionIndex
+										// Use progress.sectionIndex as it represents the completed section number
+										const completedSectionNumber =
+											accumulatedState
+												.progress
+												.sectionIndex;
+										const sectionName =
+											latestTrace
+												.info
+												?.section ||
+											`Section ${completedSectionNumber}`;
+										const completionMessage = `✅ Section ${completedSectionNumber} completed: "${sectionName}"`;
+
+										// Only show message if this is a new section (not duplicate)
+										if (
+											completedSectionNumber >
+											lastShownSectionIndex
+										) {
+											// Check if the "Writing section" message for this section is still streaming
+											if (
+												writingSectionNumber ===
+												completedSectionNumber
+											) {
+												// "Writing section" message is still active for this section
+												// Store the completion message to be queued after "Writing" finishes
+												pendingCompletionMessages.set(
+													completedSectionNumber,
+													completionMessage
+												);
+												console.log(
+													`⏳ [SECTION] Storing completion message for section ${completedSectionNumber}, waiting for "Writing" to finish`
+												);
+											} else {
+												// "Writing section" message has finished or wasn't shown
+												// Queue completion message immediately
+												lastShownSectionIndex =
+													completedSectionNumber;
+
+												// Check if blog generation is still in progress
+												const isBlogGenerationInProgress =
+													accumulatedState.outlineApproved &&
+													accumulatedState.outline &&
+													accumulatedState
+														.outline
+														.length >
+														0 &&
+													(accumulatedState
+														.progress
+														?.sectionIndex ??
+														0) <
+														accumulatedState
+															.outline
+															.length;
+
+												// Keep thinking indicator ON during blog generation (regardless of automation level)
+												// Only turn off if blog generation is complete
+												if (
+													isBlogGenerationInProgress
+												) {
+													if (
+														setIsThinking
+													)
+														setIsThinking(
+															true
+														);
+												} else {
+													// Blog generation complete, turn off loader
+													if (
+														setIsThinking
+													)
+														setIsThinking(
+															false
+														);
+												}
+
+												queueMessage(
+													completionMessage
+												);
+											}
+										}
+									}
+								}
+
+								// ✨ Update agent state in real-time if available
+								if (
+									stateUpdate &&
+									options?.setAgent
+								) {
+									const mappedState =
+										mapBackendToV1(
+											accumulatedState,
+											currentState
+										);
+									options.setAgent(
+										mappedState
 									);
-									if (!exists) {
-										combinedTrace.push(newEntry);
-									}
-								}
-								accumulatedState.trace = combinedTrace;
-							}
-							accumulatedState = {
-								...accumulatedState,
-								...stateUpdate,
-								// Preserve merged trace
-								trace: accumulatedState.trace || existingTrace,
-							};
-
-							// ✨ Update draft in real-time if it exists in the state update
-							// Use the merged accumulatedState to get the latest draft
-							const latestDraft = accumulatedState.draft;
-							if (latestDraft && options?.setDraft) {
-								// Map draft to V1 format if needed
-								const draftValue = typeof latestDraft === 'string' 
-									? latestDraft 
-									: latestDraft;
-								options.setDraft(draftValue);
-								
-								// Also update parent data if available
-								if (options.updateData) {
-									options.updateData({ blogContent: draftValue });
 								}
 
-								// Show progress message for section generation completion
-								// Check if we have a trace entry indicating a section was just generated
-								const latestTrace = accumulatedState.trace?.[accumulatedState.trace.length - 1];
+								// ✨ Update outline in real-time if it exists
 								if (
-									latestTrace?.step === 'ProposalNode.generatedSection' &&
-									accumulatedState.progress?.sectionIndex !== undefined
+									stateUpdate.outline &&
+									options?.setOutline
 								) {
-									// Trace has 0-based sectionIndex, progress has incremented (1-based) sectionIndex
-									// Use progress.sectionIndex as it represents the completed section number
-									const completedSectionNumber = accumulatedState.progress.sectionIndex;
-									const sectionName = latestTrace.info?.section || `Section ${completedSectionNumber}`;
-									const completionMessage = `✅ Section ${completedSectionNumber} completed: "${sectionName}"`;
-									
-									// Only show message if this is a new section (not duplicate)
-									if (completedSectionNumber > lastShownSectionIndex) {
-										// Check if the "Writing section" message for this section is still streaming
-										if (writingSectionNumber === completedSectionNumber) {
-											// "Writing section" message is still active for this section
-											// Store the completion message to be queued after "Writing" finishes
-											pendingCompletionMessages.set(completedSectionNumber, completionMessage);
-											console.log(`⏳ [SECTION] Storing completion message for section ${completedSectionNumber}, waiting for "Writing" to finish`);
-										} else {
-											// "Writing section" message has finished or wasn't shown
-											// Queue completion message immediately
-											lastShownSectionIndex = completedSectionNumber;
-											// Turn off thinking indicator when section completes
-											if (setIsThinking) setIsThinking(false);
-											queueMessage(completionMessage);
+									options.setOutline(
+										stateUpdate.outline
+									);
+								}
+
+								// Check for trace-based progress messages
+								// Use the accumulated state's trace to get the full trace array
+								const currentTrace =
+									accumulatedState.trace ||
+									[];
+								const currentTraceLength =
+									currentTrace.length;
+
+								if (
+									shouldShowProgressMessage(
+										currentTraceLength,
+										lastTraceLength
+									)
+								) {
+									// Process all new trace entries since last check
+									const newTraces =
+										currentTrace.slice(
+											lastTraceLength
+										);
+									for (const traceEntry of newTraces) {
+										if (traceEntry) {
+											const stepMessage =
+												getStepMessage(
+													traceEntry.step,
+													traceEntry.info
+												);
+
+											if (
+												stepMessage
+											) {
+												console.log(
+													`📨 [TRACE MESSAGE] Queueing: "${stepMessage}"`,
+													{
+														step: traceEntry.step,
+														info: traceEntry.info,
+														traceLength:
+															currentTraceLength,
+														lastTraceLength,
+													}
+												);
+												// Queue step message
+												queueMessage(
+													stepMessage
+												);
+											}
 										}
 									}
+									lastTraceLength =
+										currentTraceLength;
 								}
-							}
 
-							// ✨ Update agent state in real-time if available
-							if (stateUpdate && options?.setAgent) {
-								const mappedState = mapBackendToV1(
-									accumulatedState,
-									currentState
-								);
-								options.setAgent(mappedState);
-							}
+								// ✨ CRITICAL: Check for keyword candidates in progress event
+								// This happens when research completes and keyword list is ready
+								if (
+									stateUpdate.keywordCandidates &&
+									Array.isArray(
+										stateUpdate.keywordCandidates
+									) &&
+									stateUpdate
+										.keywordCandidates
+										.length > 0
+								) {
+									// Determine if this is primary or secondary based on halt reason or current step
+									const isPrimary =
+										stateUpdate.halt
+											?.reason ===
+											'await_keyword_selection' ||
+										nodeName ===
+											'research_primary' ||
+										accumulatedState.currentStep ===
+											'primary_keyword';
+									const isSecondary =
+										stateUpdate.halt
+											?.reason ===
+											'await_secondary_selection' ||
+										nodeName ===
+											'research_secondary' ||
+										accumulatedState.currentStep ===
+											'secondary_keywords';
 
-							// ✨ Update outline in real-time if it exists
-							if (stateUpdate.outline && options?.setOutline) {
-								options.setOutline(stateUpdate.outline);
-							}
+									// Check if we've already shown this keyword list
+									const keywordListKey = `${
+										isPrimary
+											? 'primary'
+											: 'secondary'
+									}_keywords_${
+										stateUpdate
+											.keywordCandidates
+											.length
+									}`;
+									if (
+										!shownPreMessages.has(
+											keywordListKey
+										)
+									) {
+										shownPreMessages.add(
+											keywordListKey
+										);
 
-							// Check for trace-based progress messages
-							// Use the accumulated state's trace to get the full trace array
-							const currentTrace =
-								accumulatedState.trace || [];
-							const currentTraceLength =
-								currentTrace.length;
+										// Queue a message with keyword selection metadata
+										// This will trigger the keyword selection UI component
+										const keywordMessage =
+											isPrimary
+												? `🎯 **What main keyword should this article rank for?**\n\nSelect the primary keyword that best represents your target search term. This will be the main focus keyword for SEO optimization.`
+												: `✨ **Secondary Keywords Ready!**\n\nI've found ${stateUpdate.keywordCandidates.length} secondary keywords that will help boost your SEO. Here they are:`;
 
-							if (
-								shouldShowProgressMessage(
-									currentTraceLength,
-									lastTraceLength
-								)
-							) {
-								// Process all new trace entries since last check
-								const newTraces = currentTrace.slice(lastTraceLength);
-								for (const traceEntry of newTraces) {
-									if (traceEntry) {
-										const stepMessage =
-											getStepMessage(
-												traceEntry.step,
-												traceEntry.info
+										queueMessage(
+											keywordMessage,
+											{
+												keywordSelection:
+													{
+														type: isPrimary
+															? 'primary'
+															: 'secondary',
+														candidates:
+															stateUpdate.keywordCandidates,
+													},
+											}
+										);
+
+										console.log(
+											`📨 [PROGRESS] Keyword candidates detected and queued:`,
+											{
+												type: isPrimary
+													? 'primary'
+													: 'secondary',
+												count: stateUpdate
+													.keywordCandidates
+													.length,
+												haltReason:
+													stateUpdate
+														.halt
+														?.reason,
+											}
+										);
+									}
+								}
+
+								// Also check for other progress indicators
+								// Only show progress messages if they're not already shown via trace messages
+								let progressMsg = '';
+								const hasTraceMessage =
+									stateUpdate.trace &&
+									Array.isArray(
+										stateUpdate.trace
+									) &&
+									stateUpdate.trace.length >
+										0;
+
+								// Check for secondary keywords FIRST - must check this BEFORE primary keyword to avoid conflicts
+								if (
+									stateUpdate.data
+										?.secondaryKeywords &&
+									Array.isArray(
+										stateUpdate.data
+											.secondaryKeywords
+									) &&
+									stateUpdate.data
+										.secondaryKeywords
+										.length > 0
+								) {
+									// Check if this is a new addition (different from accumulated state)
+									const isNew =
+										!accumulatedState
+											.data
+											?.secondaryKeywords ||
+										accumulatedState
+											.data
+											.secondaryKeywords
+											.length !==
+											stateUpdate
+												.data
+												.secondaryKeywords
+												.length ||
+										!arraysEqual(
+											accumulatedState
+												.data
+												.secondaryKeywords,
+											stateUpdate
+												.data
+												.secondaryKeywords
+										);
+
+									if (isNew) {
+										// Show secondary keywords with full list
+										const keywordsList =
+											stateUpdate.data.secondaryKeywords.join(
+												', '
 											);
+										progressMsg = `✅ Selected ${stateUpdate.data.secondaryKeywords.length} secondary keywords: ${keywordsList}`;
+										console.log(
+											`📨 [PROGRESS] Secondary keywords detected:`,
+											{
+												keywords: stateUpdate
+													.data
+													.secondaryKeywords,
+												isNew,
+												progressMsg,
+											}
+										);
+									}
+								} else if (
+									stateUpdate.data?.title &&
+									// Only show if title is newly added
+									(!accumulatedState.data
+										?.title ||
+										accumulatedState
+											.data
+											.title !==
+											stateUpdate
+												.data
+												.title)
+								) {
+									progressMsg = `📝 Generated title: "${stateUpdate.data.title}"`;
+								} else if (
+									stateUpdate.data
+										?.primaryKeyword &&
+									// Only show if primary keyword is newly added
+									(!accumulatedState.data
+										?.primaryKeyword ||
+										accumulatedState
+											.data
+											.primaryKeyword !==
+											stateUpdate
+												.data
+												.primaryKeyword) &&
+									// Don't show if we're currently processing secondary keywords
+									!(
+										stateUpdate.data
+											?.secondaryKeywords &&
+										stateUpdate.data
+											.secondaryKeywords
+											.length > 0
+									)
+								) {
+									progressMsg = `✅ Selected primary keyword: "${stateUpdate.data.primaryKeyword}"`;
+								} else if (
+									stateUpdate.outline &&
+									!hasTraceMessage
+								) {
+									// Only show this if we don't have a trace message (to avoid duplicates)
+									progressMsg = `📋 Generated outline with ${stateUpdate.outline.length} sections`;
+								}
 
-										if (stepMessage) {
-											console.log(`📨 [TRACE MESSAGE] Queueing: "${stepMessage}"`, {
-												step: traceEntry.step,
-												info: traceEntry.info,
-												traceLength: currentTraceLength,
-												lastTraceLength
-											});
-											// Queue step message
-											queueMessage(stepMessage);
+								if (progressMsg) {
+									// Keep thinking indicator on during automation
+									// Queue progress message
+									queueMessage(progressMsg);
+								}
+							},
+							onComplete: (data) => {
+								if (hasResolved) return;
+								hasResolved = true;
+								setIsStreaming(false);
+
+								// Map response back to V1 format
+								// Remove apiKey from returned state if present
+								const stateWithoutApiKey = {
+									...data.state,
+								};
+								delete stateWithoutApiKey.apiKey;
+								const updatedState =
+									mapBackendToV1(
+										stateWithoutApiKey,
+										currentState
+									);
+								// Ensure apiKey is not in final state
+								delete updatedState.apiKey;
+								finalState = updatedState;
+
+								// Check if blog generation is in progress (regardless of automation level)
+								const isBlogGenerationInProgress =
+									updatedState.outlineApproved &&
+									updatedState.outline &&
+									updatedState.outline
+										.length > 0 &&
+									(updatedState.progress
+										?.sectionIndex ??
+										0) <
+										updatedState.outline
+											.length;
+
+								// Keep loader ON during blog generation
+								// Also keep it on if there's a halt (waiting for user input) or if in full automation with pending steps
+								const isFullAutomation =
+									updatedState.preferences
+										?.automationLevel ===
+									'full';
+								const hasPendingSteps =
+									updatedState.halt ||
+									(isFullAutomation &&
+										isBlogGenerationInProgress);
+
+								if (
+									isBlogGenerationInProgress ||
+									hasPendingSteps
+								) {
+									// Still processing, keep loader on
+									if (setIsThinking)
+										setIsThinking(true);
+								} else {
+									// All processing complete
+									if (setIsThinking)
+										setIsThinking(
+											false
+										);
+								}
+
+								console.log(
+									'✅ Message processed:',
+									{
+										executed: data.executed,
+										response:
+											data.assistantMessage.substring(
+												0,
+												50
+											) + '...',
+									}
+								);
+
+								// Construct UI metadata based on state
+								// First, check if backend provided metadata in response
+								const backendMetadata =
+									(data as any).metadata ||
+									{};
+								const metadata: Partial<ChatMessage> =
+									{
+										...backendMetadata, // Use backend metadata if available
+									};
+
+								// ✨ CRITICAL: Check if we already showed keyword list from progress event
+								// If we did, don't show it again in done event to prevent duplicates
+								const hasPrimaryKeywords =
+									updatedState
+										.keywordResearch
+										?.primaryCandidates
+										?.length > 0;
+								const hasSecondaryKeywords =
+									updatedState
+										.keywordResearch
+										?.secondaryCandidates
+										?.length > 0;
+								const primaryKeywordListKey =
+									hasPrimaryKeywords
+										? `primary_keywords_${updatedState.keywordResearch.primaryCandidates.length}`
+										: null;
+								const secondaryKeywordListKey =
+									hasSecondaryKeywords
+										? `secondary_keywords_${updatedState.keywordResearch.secondaryCandidates.length}`
+										: null;
+								const alreadyShownPrimary =
+									primaryKeywordListKey &&
+									shownPreMessages.has(
+										primaryKeywordListKey
+									);
+								const alreadyShownSecondary =
+									secondaryKeywordListKey &&
+									shownPreMessages.has(
+										secondaryKeywordListKey
+									);
+
+								// If no backend metadata, construct from state
+								// BUT: Skip if we already showed it from progress event
+								if (
+									!backendMetadata.keywordSelection &&
+									!backendMetadata.titleSelection &&
+									!backendMetadata.outlineApproval
+								) {
+									if (updatedState.halt) {
+										const reason =
+											updatedState
+												.halt
+												.reason;
+
+										if (
+											reason ===
+												'await_keyword_selection' &&
+											!alreadyShownPrimary // Only add if not already shown
+										) {
+											metadata.keywordSelection =
+												{
+													type: 'primary',
+													candidates:
+														updatedState
+															.keywordResearch
+															?.primaryCandidates ||
+														[],
+												};
+										} else if (
+											reason ===
+												'await_secondary_selection' &&
+											!alreadyShownSecondary // Only add if not already shown
+										) {
+											metadata.keywordSelection =
+												{
+													type: 'secondary',
+													candidates:
+														updatedState
+															.keywordResearch
+															?.secondaryCandidates ||
+														[],
+												};
+										} else if (
+											reason ===
+											'await_title_selection'
+										) {
+											metadata.titleSelection =
+												{
+													titles:
+														updatedState.titleOptions ||
+														[],
+												};
+										} else if (
+											reason ===
+												'await_interlinking' ||
+											reason ===
+												'await_interlinking_selection'
+										) {
+											metadata.interlinkingForm =
+												{
+													currentLinks:
+														updatedState
+															.data
+															.interlinks ||
+														[],
+												};
+										} else if (
+											reason ===
+												'await_references' ||
+											reason ===
+												'await_references_selection'
+										) {
+											metadata.referencesForm =
+												{
+													currentUrls:
+														updatedState
+															.data
+															.referenceUrls ||
+														[],
+													currentFiles:
+														updatedState
+															.data
+															.referenceFiles ||
+														[],
+												};
+										} else if (
+											reason ===
+											'awaiting_approval'
+										) {
+											metadata.outlineApproval =
+												{
+													outline:
+														updatedState.outline ||
+														[],
+												};
+										}
+									}
+								} else {
+									// Backend provided metadata, use it
+									// Still check state for any additional metadata
+									// ✨ CRITICAL: Check if we already showed keyword list from progress event
+									const hasPrimaryKeywords =
+										updatedState
+											.keywordResearch
+											?.primaryCandidates
+											?.length > 0;
+									const hasSecondaryKeywords =
+										updatedState
+											.keywordResearch
+											?.secondaryCandidates
+											?.length > 0;
+									const primaryKeywordListKey =
+										hasPrimaryKeywords
+											? `primary_keywords_${updatedState.keywordResearch.primaryCandidates.length}`
+											: null;
+									const secondaryKeywordListKey =
+										hasSecondaryKeywords
+											? `secondary_keywords_${updatedState.keywordResearch.secondaryCandidates.length}`
+											: null;
+									const alreadyShownPrimary =
+										primaryKeywordListKey &&
+										shownPreMessages.has(
+											primaryKeywordListKey
+										);
+									const alreadyShownSecondary =
+										secondaryKeywordListKey &&
+										shownPreMessages.has(
+											secondaryKeywordListKey
+										);
+
+									if (updatedState.halt) {
+										const reason =
+											updatedState
+												.halt
+												.reason;
+										// Only add metadata if not already provided by backend AND not already shown from progress
+										if (
+											!metadata.keywordSelection &&
+											reason ===
+												'await_keyword_selection' &&
+											!alreadyShownPrimary
+										) {
+											metadata.keywordSelection =
+												{
+													type: 'primary',
+													candidates:
+														updatedState
+															.keywordResearch
+															?.primaryCandidates ||
+														[],
+												};
+										} else if (
+											!metadata.keywordSelection &&
+											reason ===
+												'await_secondary_selection' &&
+											!alreadyShownSecondary
+										) {
+											metadata.keywordSelection =
+												{
+													type: 'secondary',
+													candidates:
+														updatedState
+															.keywordResearch
+															?.secondaryCandidates ||
+														[],
+												};
+										} else if (
+											!metadata.titleSelection &&
+											reason ===
+												'await_title_selection'
+										) {
+											metadata.titleSelection =
+												{
+													titles:
+														updatedState.titleOptions ||
+														[],
+												};
+										} else if (
+											!metadata.outlineApproval &&
+											reason ===
+												'awaiting_approval'
+										) {
+											metadata.outlineApproval =
+												{
+													outline:
+														updatedState.outline ||
+														[],
+												};
 										}
 									}
 								}
-								lastTraceLength =
-									currentTraceLength;
-							}
 
-							// Also check for other progress indicators
-							// Only show progress messages if they're not already shown via trace messages
-							let progressMsg = '';
-							const hasTraceMessage = stateUpdate.trace && Array.isArray(stateUpdate.trace) && stateUpdate.trace.length > 0;
+								// Track if we queued a message with metadata to prevent duplicates
+								let messageWithMetadataQueued =
+									false;
 
-							// Check for secondary keywords FIRST - must check this BEFORE primary keyword to avoid conflicts
-							if (
-								stateUpdate.data?.secondaryKeywords &&
-								Array.isArray(stateUpdate.data.secondaryKeywords) &&
-								stateUpdate.data.secondaryKeywords.length > 0
-							) {
-								// Check if this is a new addition (different from accumulated state)
-								const isNew = !accumulatedState.data?.secondaryKeywords || 
-									accumulatedState.data.secondaryKeywords.length !== stateUpdate.data.secondaryKeywords.length ||
-									!arraysEqual(accumulatedState.data.secondaryKeywords, stateUpdate.data.secondaryKeywords);
-								
-								if (isNew) {
-									// Show secondary keywords with full list
-									const keywordsList = stateUpdate.data.secondaryKeywords.join(', ');
-									progressMsg = `✅ Selected ${stateUpdate.data.secondaryKeywords.length} secondary keywords: ${keywordsList}`;
-									console.log(`📨 [PROGRESS] Secondary keywords detected:`, {
-										keywords: stateUpdate.data.secondaryKeywords,
-										isNew,
-										progressMsg
-									});
+								// ✨ CRITICAL: If keyword list was already shown from progress event,
+								// don't include it in metadata to prevent duplicates
+								if (metadata.keywordSelection) {
+									const keywordType =
+										metadata
+											.keywordSelection
+											.type;
+									const keywordCount =
+										metadata
+											.keywordSelection
+											.candidates
+											?.length || 0;
+									const keywordListKey = `${keywordType}_keywords_${keywordCount}`;
+									if (
+										shownPreMessages.has(
+											keywordListKey
+										)
+									) {
+										// Already shown from progress event, remove from metadata to prevent duplicate
+										console.log(
+											`📨 [DONE] Skipping keyword metadata (already shown from progress): ${keywordListKey}`
+										);
+										delete metadata.keywordSelection;
+									}
 								}
-							} else if (chunk.keywordResearch) {
-								const candidates =
-									chunk.keywordResearch
-										.primaryCandidates ||
-									chunk.keywordResearch
-										.secondaryCandidates;
-								if (candidates?.length) {
-									progressMsg = `🔍 Found ${candidates.length} keywords...`;
-								}
-							} else if (
-								stateUpdate.data?.title &&
-								// Only show if title is newly added
-								(!accumulatedState.data?.title || accumulatedState.data.title !== stateUpdate.data.title)
-							) {
-								progressMsg = `📝 Generated title: "${stateUpdate.data.title}"`;
-							} else if (
-								stateUpdate.data?.primaryKeyword &&
-								// Only show if primary keyword is newly added
-								(!accumulatedState.data?.primaryKeyword || accumulatedState.data.primaryKeyword !== stateUpdate.data.primaryKeyword) &&
-								// Don't show if we're currently processing secondary keywords
-								!(stateUpdate.data?.secondaryKeywords && stateUpdate.data.secondaryKeywords.length > 0)
-							) {
-								progressMsg = `✅ Selected primary keyword: "${stateUpdate.data.primaryKeyword}"`;
-							} else if (
-								stateUpdate.outline &&
-								!hasTraceMessage
-							) {
-								// Only show this if we don't have a trace message (to avoid duplicates)
-								progressMsg = `📋 Generated outline with ${stateUpdate.outline.length} sections`;
-							}
 
-							if (progressMsg) {
-								// Keep thinking indicator on during automation
-								// Queue progress message
-								queueMessage(progressMsg);
-							}
-						},
-						onComplete: (data) => {
-							if (hasResolved) return;
-							hasResolved = true;
-							setIsStreaming(false);
-
-							// Map response back to V1 format
-							// Remove apiKey from returned state if present
-							const stateWithoutApiKey = { ...data.state };
-							delete stateWithoutApiKey.apiKey;
-							const updatedState = mapBackendToV1(
-								stateWithoutApiKey,
-								currentState
-							);
-							// Ensure apiKey is not in final state
-							delete updatedState.apiKey;
-							finalState = updatedState;
-							
-							// Only turn off thinking indicator when automation is complete
-							// Check if we're in full automation mode
-							const isFullAutomation = updatedState.preferences?.automationLevel === 'full';
-							// If in automation and still have steps to complete, keep loader on
-							if (isFullAutomation && updatedState.halt && !updatedState.outlineApproved) {
-								// Still processing, keep loader on
-							} else {
-								// Automation complete or not in automation mode
-								if (setIsThinking) setIsThinking(false);
-							}
-
-							console.log('✅ Message processed:', {
-								executed: data.executed,
-								response:
-									data.assistantMessage.substring(
-										0,
-										50
-									) + '...',
-							});
-
-							// Construct UI metadata based on state
-							const metadata: Partial<ChatMessage> =
-								{};
-
-							if (updatedState.halt) {
-								const reason =
-									updatedState.halt.reason;
-
+								// Queue final response if it exists and wasn't already queued
+								// If we queue it, clear finalResponse so AgentMode won't add it again
 								if (
-									reason ===
-									'await_keyword_selection'
+									finalResponse &&
+									finalResponse.trim()
 								) {
-									metadata.keywordSelection =
-										{
-											type: 'primary',
-											candidates:
-												updatedState
-													.keywordResearch
-													?.primaryCandidates ||
-												[],
-										};
-								} else if (
-									reason ===
-									'await_secondary_selection'
-								) {
-									metadata.keywordSelection =
-										{
-											type: 'secondary',
-											candidates:
-												updatedState
-													.keywordResearch
-													?.secondaryCandidates ||
-												[],
-										};
-								} else if (
-									reason ===
-									'await_title_selection'
-								) {
-									metadata.titleSelection =
-										{
-											titles:
-												updatedState.titleOptions ||
-												[],
-										};
-								} else if (
-									reason ===
-										'await_interlinking' ||
-									reason ===
-										'await_interlinking_selection'
-								) {
-									metadata.interlinkingForm =
-										{
-											currentLinks:
-												updatedState
-													.data
-													.interlinks ||
-												[],
-										};
-								} else if (
-									reason ===
-										'await_references' ||
-									reason ===
-										'await_references_selection'
-								) {
-									metadata.referencesForm =
-										{
-											currentUrls:
-												updatedState
-													.data
-													.referenceUrls ||
-												[],
-											currentFiles:
-												updatedState
-													.data
-													.referenceFiles ||
-												[],
-										};
-								} else if (
-									reason ===
-									'awaiting_approval'
-								) {
-									metadata.outlineApproval =
-										{
-											outline:
-												updatedState.outline ||
-												[],
-										};
+									queueMessage(
+										finalResponse,
+										metadata
+									);
+									finalResponse = ''; // Clear to prevent duplicate in AgentMode
+									messageWithMetadataQueued =
+										true;
 								}
-							}
 
-							// Track if we queued a message with metadata to prevent duplicates
-							let messageWithMetadataQueued = false;
-
-							// Queue final response if it exists and wasn't already queued
-							// If we queue it, clear finalResponse so AgentMode won't add it again
-							if (finalResponse && finalResponse.trim()) {
-								queueMessage(finalResponse, metadata);
-								finalResponse = ''; // Clear to prevent duplicate in AgentMode
-								messageWithMetadataQueued = true;
-							}
-
-							// Wait for queue to finish processing before resolving
-							waitForQueueToComplete(() => {
-								resolve({
-									response: '', // Empty since we queued it
-									updatedState,
-									// Only return metadata if we didn't already queue a message with it
-									// This prevents AgentMode from adding a duplicate message
-									metadata: messageWithMetadataQueued ? undefined : metadata,
+								// Wait for queue to finish processing before resolving
+								waitForQueueToComplete(() => {
+									resolve({
+										response: '', // Empty since we queued it
+										updatedState,
+										// Only return metadata if we didn't already queue a message with it
+										// This prevents AgentMode from adding a duplicate message
+										metadata: messageWithMetadataQueued
+											? undefined
+											: metadata,
+									});
 								});
-							});
-						},
-						onError: (error) => {
-							if (hasResolved) return;
-							hasResolved = true;
-							setIsStreaming(false);
-							if (setIsThinking)
-								setIsThinking(false);
+							},
+							onError: (error) => {
+								if (hasResolved) return;
+								hasResolved = true;
+								setIsStreaming(false);
+								if (setIsThinking)
+									setIsThinking(false);
 
-							// Check if it's a rate limit error
-							const errorMessage =
-								error.message ||
-								'An error occurred';
-							const isRateLimit =
-								/rate limit|quota|429/i.test(
-									errorMessage
+								// Check if it's a rate limit error
+								const errorMessage =
+									error.message ||
+									'An error occurred';
+								const isRateLimit =
+									/rate limit|quota|429/i.test(
+										errorMessage
+									);
+
+								if (isRateLimit) {
+									// Queue user-friendly rate limit message
+									queueMessage(
+										`⚠️ **Rate Limit Exceeded**\n\n${errorMessage}\n\nThe system will automatically retry. Please wait a moment.`
+									);
+								} else {
+									// Queue general error message
+									queueMessage(
+										`❌ **Error**\n\n${errorMessage}`
+									);
+								}
+
+								console.error(
+									'Stream Error:',
+									error
 								);
-
-							if (isRateLimit) {
-								// Queue user-friendly rate limit message
-								queueMessage(`⚠️ **Rate Limit Exceeded**\n\n${errorMessage}\n\nThe system will automatically retry. Please wait a moment.`);
-							} else {
-								// Queue general error message
-								queueMessage(`❌ **Error**\n\n${errorMessage}`);
-							}
-
-							console.error('Stream Error:', error);
-							reject(error);
-						},
-					});
+								reject(error);
+							},
+						}
+					);
 				});
 			} catch (error) {
 				setIsStreaming(false);
