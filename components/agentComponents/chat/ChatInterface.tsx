@@ -109,7 +109,6 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 				}`}
 		>
 			<div className='flex-1 overflow-y-auto py-3 px-4'>
-				<ChatHeader/>
 				{messages
 					.filter((m) => {
 						// Filter out empty messages unless they have metadata for UI components
