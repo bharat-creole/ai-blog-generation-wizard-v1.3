@@ -550,6 +550,15 @@ export const useAgentExecutionV3 = (
 								finalResponse =
 									data.assistantMessage;
 
+								// ✨ FIX: Add logging to track intent events in production
+								console.log('📨 [INTENT] Received intent event:', {
+									hasAssistantMessage: !!data.assistantMessage,
+									assistantMessageLength: data.assistantMessage?.length || 0,
+									shouldRunAgent: data.shouldRunAgent,
+									fromPrimaryAgent: data.fromPrimaryAgent,
+									hasMultipleMessages: !!(data.assistantMessages && Array.isArray(data.assistantMessages) && data.assistantMessages.length > 1)
+								});
+
 								// ✨ NEW: If multiple messages are provided, queue them one at a time
 								// This allows separate messages for different steps (e.g., "Got it! I've captured..." + "Let me research keywords...")
 								if (
@@ -583,7 +592,7 @@ export const useAgentExecutionV3 = (
 									);
 									// Mark that messages were already added, so AgentMode.tsx won't add the single message
 									finalResponse = ''; // Clear finalResponse to prevent duplicate
-								} else if (finalResponse) {
+								} else if (finalResponse && finalResponse.trim()) {
 									// Track single message too
 									const msgKey =
 										finalResponse.substring(
@@ -596,6 +605,7 @@ export const useAgentExecutionV3 = (
 
 									// ✨ FIX: If shouldRunAgent is false, queue the message immediately
 									// This handles cases where onComplete might not be called or message won't be displayed
+									// This is critical for production where network timing can cause messages to be skipped
 									if (
 										data.shouldRunAgent ===
 											false &&
@@ -612,6 +622,13 @@ export const useAgentExecutionV3 = (
 										);
 										finalResponse = ''; // Clear to prevent duplicate
 									}
+								} else if (!finalResponse || !finalResponse.trim()) {
+									// ✨ FIX: Log warning if we receive intent event without a message
+									console.warn('⚠️ [INTENT] Received intent event without assistantMessage:', {
+										shouldRunAgent: data.shouldRunAgent,
+										fromPrimaryAgent: data.fromPrimaryAgent,
+										stateUpdates: data.stateUpdates
+									});
 								}
 								// If single message and shouldRunAgent is true, don't add here - it will be added in AgentMode.tsx with metadata
 								// This prevents duplicate messages

@@ -258,6 +258,9 @@ export async function streamMessage(
 	let lastKeepaliveTime = Date.now();
 	const KEEPALIVE_TIMEOUT = 60000; // 60 seconds
 	let keepaliveTimer: NodeJS.Timeout | null = null;
+	// ✨ FIX: Preserve event type across chunks to handle network buffering in production
+	let currentEvent: string | null = null;
+	let pendingData: string | null = null;
 
 	// Set up keepalive timeout check
 	const resetKeepaliveTimer = () => {
@@ -298,8 +301,6 @@ export async function streamMessage(
 			const lines = buffer.split('\n');
 			buffer = lines.pop() || '';
 
-			let currentEvent: string | null = null;
-
 			for (const line of lines) {
 				const trimmedLine = line.trim();
 
@@ -311,74 +312,159 @@ export async function streamMessage(
 					continue;
 				}
 
+				// ✨ FIX: Blank line indicates end of event - process pending data if any, then reset
 				if (!trimmedLine) {
+					// Process any pending data before resetting event type
+					if (pendingData && currentEvent) {
+						try {
+							const data = JSON.parse(pendingData);
+							if (currentEvent === 'intent') {
+								console.log('📨 [SSE] Processing intent event:', {
+									hasAssistantMessage: !!data.assistantMessage,
+									shouldRunAgent: data.shouldRunAgent,
+									fromPrimaryAgent: data.fromPrimaryAgent
+								});
+								actualCallbacks?.onIntent?.(data);
+							} else if (currentEvent === 'progress') {
+								actualCallbacks?.onProgress?.(data);
+							} else if (currentEvent === 'done') {
+								actualCallbacks?.onComplete?.(data);
+								if (keepaliveTimer)
+									clearTimeout(keepaliveTimer);
+								return;
+							} else if (currentEvent === 'error') {
+								actualCallbacks?.onError?.(
+									new Error(
+										data.error ||
+											'Unknown error'
+									)
+								);
+								if (keepaliveTimer)
+									clearTimeout(keepaliveTimer);
+								return;
+							}
+						} catch (e) {
+							console.error(
+								'❌ Failed to parse pending SSE data:',
+								e,
+								'Data:',
+								pendingData.substring(0, 100)
+							);
+						}
+						pendingData = null;
+					}
+					// Reset event type after processing complete event
 					currentEvent = null;
 					continue;
 				}
 
 				if (trimmedLine.startsWith('event: ')) {
 					currentEvent = trimmedLine.slice(7).trim();
+					// Clear any pending data when new event starts
+					pendingData = null;
 				} else if (trimmedLine.startsWith('data: ')) {
 					const dataStr = trimmedLine.slice(6);
-					try {
-						// Handle incomplete JSON by checking if buffer has more data
-						let data: any;
+					
+					// ✨ FIX: Store data for processing when event is complete (on blank line)
+					// This handles cases where event and data arrive in separate chunks (common in production)
+					// The buffer already handles incomplete lines, so if we get here, the line is complete
+					pendingData = dataStr;
+					
+					// ✨ FIX: Try to process immediately if we have event type (for backward compatibility)
+					// This handles the normal case where event and data are in the same chunk
+					if (currentEvent && pendingData) {
 						try {
-							data = JSON.parse(dataStr);
-						} catch (parseError) {
-							// If JSON is incomplete, it might be in the buffer
-							// Wait for next chunk
+							const data = JSON.parse(pendingData);
+							if (currentEvent === 'intent') {
+								console.log('📨 [SSE] Processing intent event:', {
+									hasAssistantMessage: !!data.assistantMessage,
+									shouldRunAgent: data.shouldRunAgent,
+									fromPrimaryAgent: data.fromPrimaryAgent
+								});
+								actualCallbacks?.onIntent?.(data);
+								pendingData = null; // Clear after processing
+							} else if (currentEvent === 'progress') {
+								actualCallbacks?.onProgress?.(data);
+								pendingData = null;
+							} else if (currentEvent === 'done') {
+								actualCallbacks?.onComplete?.(data);
+								pendingData = null;
+								if (keepaliveTimer)
+									clearTimeout(keepaliveTimer);
+								return;
+							} else if (currentEvent === 'error') {
+								actualCallbacks?.onError?.(
+									new Error(
+										data.error ||
+											'Unknown error'
+									)
+								);
+								pendingData = null;
+								if (keepaliveTimer)
+									clearTimeout(keepaliveTimer);
+								return;
+							}
+						} catch (e) {
+							// JSON parse failed - might be incomplete, keep pendingData for processing on blank line
 							console.warn(
-								'⚠️ Incomplete JSON chunk, waiting for more data'
+								'⚠️ [SSE] Failed to parse data immediately, will retry on blank line:',
+								e instanceof Error ? e.message : String(e)
 							);
-							continue;
+							// Don't clear pendingData - let it be processed on blank line
 						}
-
-						if (currentEvent === 'intent') {
-							actualCallbacks?.onIntent?.(data);
-						} else if (currentEvent === 'progress') {
-							actualCallbacks?.onProgress?.(data);
-						} else if (currentEvent === 'done') {
-							actualCallbacks?.onComplete?.(data);
-							if (keepaliveTimer)
-								clearTimeout(keepaliveTimer);
-							return;
-						} else if (currentEvent === 'error') {
-							actualCallbacks?.onError?.(
-								new Error(
-									data.error ||
-										'Unknown error'
-								)
-							);
-							if (keepaliveTimer)
-								clearTimeout(keepaliveTimer);
-							return;
-						} else if (!currentEvent && data) {
-							// Handle data without explicit event (fallback)
+					} else if (!currentEvent && pendingData) {
+						// ✨ FIX: Fallback - handle data without explicit event (shouldn't happen but handle gracefully)
+						try {
+							const data = JSON.parse(pendingData);
 							if (
 								data.assistantMessage ||
 								data.state
 							) {
+								console.warn('⚠️ [SSE] Received data without event type, inferring as done event');
 								// Looks like a done event
 								actualCallbacks?.onComplete?.(
 									data
 								);
+								pendingData = null;
 								if (keepaliveTimer)
 									clearTimeout(
 										keepaliveTimer
 									);
 								return;
 							}
+						} catch (e) {
+							// Can't parse - might be incomplete, keep for later
+							console.warn(
+								'⚠️ [SSE] Cannot parse data without event type, keeping for later:',
+								e instanceof Error ? e.message : String(e)
+							);
 						}
-					} catch (e) {
-						console.error(
-							'❌ Failed to parse SSE chunk:',
-							e,
-							'Data:',
-							dataStr.substring(0, 100)
-						);
 					}
 				}
+			}
+		}
+		
+		// ✨ FIX: Process any remaining pending data when stream ends
+		if (pendingData && currentEvent) {
+			try {
+				const data = JSON.parse(pendingData);
+				console.log('📨 [SSE] Processing final pending event:', currentEvent);
+				if (currentEvent === 'intent') {
+					actualCallbacks?.onIntent?.(data);
+				} else if (currentEvent === 'progress') {
+					actualCallbacks?.onProgress?.(data);
+				} else if (currentEvent === 'done') {
+					actualCallbacks?.onComplete?.(data);
+				} else if (currentEvent === 'error') {
+					actualCallbacks?.onError?.(
+						new Error(data.error || 'Unknown error')
+					);
+				}
+			} catch (e) {
+				console.error(
+					'❌ Failed to parse final pending SSE data:',
+					e
+				);
 			}
 		}
 	} catch (error: any) {
