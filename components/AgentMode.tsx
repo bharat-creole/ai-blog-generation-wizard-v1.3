@@ -47,6 +47,7 @@ interface Props {
 	showTrace: boolean;
 	showSettings: boolean;
 	onCollapseSidebar?: () => void;
+	loadedThreadId?: string | null;
 }
 
 const AgentMode: React.FC<Props> = ({
@@ -56,6 +57,7 @@ const AgentMode: React.FC<Props> = ({
 	showTrace,
 	showSettings,
 	onCollapseSidebar,
+	loadedThreadId,
 }) => {
 	const apiKey = data.apiKey;
 	const interlinks: Interlink[] = data.interlinks;
@@ -151,6 +153,7 @@ const AgentMode: React.FC<Props> = ({
 			metadata?: any;
 		}> => {
 			// Get apiKey from props, state, or environment variable
+			// API key is optional - backend will use GEMINI_API_KEY from .env if not provided
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore
 			const envApiKey =
@@ -158,11 +161,7 @@ const AgentMode: React.FC<Props> = ({
 				import.meta.env?.GEMINI_API_KEY;
 			const apiKeyToUse = apiKey || agentState?.apiKey || envApiKey;
 
-			if (!apiKeyToUse) {
-				throw new Error(
-					'API Key is required. Please set your Gemini API Key in Settings or set VITE_GEMINI_API_KEY in your .env.local file.'
-				);
-			}
+			// API key is optional - backend will use GEMINI_API_KEY from .env if not provided
 			return sendUserMessageBase(message, agentState, apiKeyToUse);
 		},
 		[sendUserMessageBase, apiKey]
@@ -216,14 +215,56 @@ const AgentMode: React.FC<Props> = ({
 		}
 	}, [agent?.halt?.reason, completedSelections, setCompletedSelections]);
 
+	// ✨ Load messages from history when thread is selected
+	useEffect(() => {
+		if (!loadedThreadId) return;
+
+		const loadThreadMessages = async () => {
+			try {
+				// @ts-ignore
+				const API_BASE = import.meta.env?.VITE_AGENT_API_BASE || 'http://localhost:3001';
+				const token = localStorage.getItem('accessToken');
+
+				const response = await fetch(`${API_BASE}/api/agent/history/${loadedThreadId}`, {
+					headers: {
+						'Content-Type': 'application/json',
+						...(token && { 'Authorization': `Bearer ${token}` })
+					}
+				});
+
+				if (response.ok) {
+					const { thread } = await response.json();
+
+					if (thread.messages && thread.messages.length > 0) {
+						console.log('📜 [History] Loading', thread.messages.length, 'messages');
+						setMessages(thread.messages);
+					}
+
+					if (thread.agentState) {
+						setAgent(thread.agentState);
+						setOutline(thread.agentState.outline || []);
+						setDraft(thread.agentState.draft || '');
+						setOutlineApproved(thread.agentState.outlineApproved || false);
+						setUserTopic(thread.agentState.data?.topic || '');
+
+						if (thread.agentState.draft) {
+							setShowBlogContent(true);
+						}
+					}
+				}
+			} catch (error) {
+				console.error('❌ [History] Failed to load messages:', error);
+			}
+		};
+
+		loadThreadMessages();
+	}, [loadedThreadId]);
+
 	// Removed SEO ranking feature
 
 	const handleSend = useCallback(async () => {
 		if (!canSend) return;
-		if (!apiKey) {
-			setError('Please set your Gemini API Key in Settings.');
-			return;
-		}
+		// API key is optional - backend will use GEMINI_API_KEY from .env if not provided
 		setError(null);
 
 		// ✨ Capture input value and clear input immediately

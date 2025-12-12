@@ -9,6 +9,7 @@ interface ReferencesFormProps {
 	currentFiles: ReferenceFile[];
 	agent: AgentState | null;
 	data: BlogData;
+	showBlogContent: boolean;
 	completedSelections: Set<string>;
 	setCompletedSelections: React.Dispatch<React.SetStateAction<Set<string>>>;
 	setMessages: React.Dispatch<React.SetStateAction<ChatMessage[]>>;
@@ -43,6 +44,7 @@ const ReferencesForm: React.FC<ReferencesFormProps> = ({
 	setDraft,
 	setTraceItems,
 	sendUserMessage,
+	showBlogContent
 }) => {
 	const [currentReferenceUrl, setCurrentReferenceUrl] = useState('');
 
@@ -184,9 +186,14 @@ const ReferencesForm: React.FC<ReferencesFormProps> = ({
 		}
 	};
 
+	// Ensure showBlogContent is always boolean
+	const safeShowBlogContent = !!showBlogContent;
+
+	console.log("showBlogContent in ReferencesForm:", safeShowBlogContent);
+
 	return (
 		<div className=''>
-			<div className='grid grid-cols-1 md:grid-cols-2 gap-[12px] mb-[12px]'>
+			<div className={`grid gap-[12px] mb-[12px] ${safeShowBlogContent ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2'}`}>
 				{/* URLs Section */}
 				<div className=''>
 					<div className='font-inter text-[16px] font-medium text-black mb-[4px]'>
@@ -195,17 +202,17 @@ const ReferencesForm: React.FC<ReferencesFormProps> = ({
 					{displayUrls.length > 0 && (
 						<div className='space-y-[4px] mb-[4px] max-h-32 overflow-y-auto'>
 							{displayUrls.map((url, idx) => (
-								<div className='flex gap-[10px]'>
+								<div className='flex flex-wrap gap-[10px]'>
 									<div
 										key={idx}
-										className='flex-grow px-[14px] py-[14.5px] text-regular bg-offwhite rounded-[8px] border border-offwhite outline-none'
+										className='flex-grow px-[14px] py-[10px] h-[46px] text-regular bg-offwhite rounded-[8px] border border-offwhite outline-none'
 									>
 										<span className='text-[14px] text-[#3330E4] truncate block max-w-[220px]' title={url}>
 											{url}
 										</span>
 									</div>
 									<button
-										className='w-[84px] flex justify-center items-center text-white bg-alert_error rounded-[8px] p-[14.5px] disabled:bg-opacity-60 disabled:cursor-not-allowed'
+										className='min-w-[84px] flex justify-center items-center text-white bg-alert_error rounded-[8px] p-[10px] min-h-[46px] disabled:bg-opacity-60 disabled:cursor-not-allowed'
 										onClick={() => {
 											const currentUrls =
 												data.referenceUrls ||
@@ -229,7 +236,7 @@ const ReferencesForm: React.FC<ReferencesFormProps> = ({
 							))}
 						</div>
 					)}
-					<div className='flex gap-[10px]'>
+					<div className='flex flex-wrap gap-[10px]'>
 						<input
 							type='text'
 							value={currentReferenceUrl}
@@ -247,11 +254,11 @@ const ReferencesForm: React.FC<ReferencesFormProps> = ({
 								}
 							}}
 							placeholder='https://example.com/article'
-							className='flex-grow px-[14px]  py-[14.5px] font-inter text-black text-regular bg-white rounded-[8px] border border-offwhite outline-none placeholder:text-[14px] placeholder:text-[#777777]'
+							className='flex-grow flex-1 w-full px-[14px] py-[10px] h-[46px] font-inter text-black text-regular bg-white rounded-[8px] border border-offwhite outline-none placeholder:text-[14px] placeholder:text-[#777777]'
 						/>
 						<button
 							onClick={handleAddUrl}
-							className='w-[84px] flex justify-center items-center text-white bg-success  rounded-[8px]  p-[14.5px] disabled:bg-opacity-60 disabled:cursor-not-allowed'
+							className='min-w-[84px] flex justify-center items-center text-white bg-success  rounded-[8px]  p-[10px] min-h-[46px] disabled:bg-opacity-60 disabled:cursor-not-allowed'
 						>
 							<div className='flex gap-[8px] items-center'>
 												<WhitePlusIcon/>
@@ -269,18 +276,18 @@ const ReferencesForm: React.FC<ReferencesFormProps> = ({
 					{displayFiles.length > 0 && (
 						<div className='space-y-[4px] mb-[4px] max-h-32 overflow-y-auto'>
 							{displayFiles.map((file, idx) => (
-								<div className='flex gap-[10px] '>
+								<div className='flex flex-wrap gap-[10px] '>
 
 								<div
 									key={idx}
-									className='flex-grow px-[14px]  py-[14.5px] text-regular bg-offwhite rounded-[8px] border border-offwhite outline-none '
+									className='flex-grow px-[14px]  py-[10px] h-[46px] text-regular bg-offwhite rounded-[8px] border border-offwhite outline-none '
 									>
 									<span className='truncate block max-w-[220px]' title={file.name}>
 										{file.name}
 									</span>
 									</div>
 									<button
-										className='w-[84px] flex justify-center items-center text-white bg-alert_error  rounded-[8px]  p-[14.5px] disabled:bg-opacity-60 disabled:cursor-not-allowed'
+										className='min-w-[84px] flex justify-center items-center text-white bg-alert_error  rounded-[8px]  p-[10px] min-h-[46px] disabled:bg-opacity-60 disabled:cursor-not-allowed'
 										onClick={() => {
 											const currentFiles =
 												data.referenceFiles ||
@@ -294,7 +301,7 @@ const ReferencesForm: React.FC<ReferencesFormProps> = ({
 														) =>
 															i !==
 															idx
-													),
+														),
 											});
 										}}
 										>
@@ -305,15 +312,15 @@ const ReferencesForm: React.FC<ReferencesFormProps> = ({
 						</div>
 					)}
 					{/* Custom file input and Add button */}
-					<div className='flex gap-[10px] items-center'>
-						<label className='flex-grow relative'>
+					<div className='flex flex-wrap gap-[10px] items-center'>
+						<label className='flex-1 w-full relative h-[46px]'>
 							<input
 								type='file'
 								accept='.pdf,.docx'
 								onChange={handleFileUpload}
-								className='absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10'
+								className='absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 h-full'
 							/>
-							<div className='flex items-center px-[14px] py-[14.5px] bg-white border border-offwhite rounded-[8px] font-inter text-regular text-[14px] text-gray pointer-events-none'>
+							<div className='w-full flex items-center px-[14px] py-[10px] bg-white border border-offwhite rounded-[8px] font-inter text-regular text-[14px] text-gray pointer-events-none'>
 								{(() => {
 									// Show selected file name or placeholder
 									const input = document.querySelector("input[type='file']") as HTMLInputElement;
@@ -323,7 +330,7 @@ const ReferencesForm: React.FC<ReferencesFormProps> = ({
 						</label>
 						<button
 							type='button'
-							className='w-[84px] flex justify-center items-center text-white bg-success rounded-[8px]  p-[14.5px] disabled:bg-opacity-60 disabled:cursor-not-allowed'
+							className='min-w-[84px] flex justify-center items-center text-white bg-success rounded-[8px]  p-[10px] min-h-[46px] disabled:bg-opacity-60 disabled:cursor-not-allowed'
 							onClick={() => {
 								// Trigger file input click
 								const input = document.querySelector("input[type='file']") as HTMLInputElement;

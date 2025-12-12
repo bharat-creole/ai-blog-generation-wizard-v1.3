@@ -126,6 +126,11 @@ export interface AgentStateInterface {
 	apiKey?: string;
 
 	/**
+	 * User ID for fetching user preferences (e.g., language).
+	 */
+	userId?: string;
+
+	/**
 	 * Core blog information.
 	 */
 	data: BlogData;
@@ -277,6 +282,12 @@ export const AgentStateAnnotation = Annotation.Root({
 
 	// API Key - overwrites (not persisted in checkpointer)
 	apiKey: Annotation<string>({
+		reducer: (x, y) => y,
+		default: () => '',
+	}),
+
+	// User ID - overwrites (for fetching user preferences)
+	userId: Annotation<string>({
 		reducer: (x, y) => y,
 		default: () => '',
 	}),

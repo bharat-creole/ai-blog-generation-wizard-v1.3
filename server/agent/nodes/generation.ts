@@ -3,6 +3,7 @@ import * as agentService from '../../../services/agentService';
 import * as geminiService from '../../../services/geminiService';
 import * as automationEngine from '../../../services/automationEngine';
 import { Interlink } from '../../../types';
+import { getUserLanguage } from '../../../server/db/userService';
 
 export const proposalNode = async (state: AgentState): Promise<Partial<AgentState>> => {
     if (!state.outlineApproved) return {};
@@ -17,11 +18,16 @@ export const proposalNode = async (state: AgentState): Promise<Partial<AgentStat
 
     const section = state.outline[idx];
 
-    // Get apiKey from state or environment variable
-    const apiKeyForSection = state.apiKey || process.env.GEMINI_API_KEY;
+    // Get apiKey from environment variable first (preferred), then state
+    // This allows the API key to be configured server-side via .env
+    const apiKeyForSection = process.env.GEMINI_API_KEY || state.apiKey;
     if (!apiKeyForSection) {
-        throw new Error('API Key is required. Please provide apiKey in state or set GEMINI_API_KEY in your .env.local file.');
+        throw new Error('API Key is required. Please set GEMINI_API_KEY in your .env file or provide apiKey in state.');
     }
+
+    // ✨ Fetch user language with fallback to English
+    const userLanguage = await getUserLanguage(state.userId);
+
     const sectionMd = await agentService.generateSectionContent(
         state.data,
         section,
@@ -30,6 +36,7 @@ export const proposalNode = async (state: AgentState): Promise<Partial<AgentStat
             targetKeyword: state.data.primaryKeyword,
             interlinks: state.data.interlinks as Interlink[],
             referenceUrls: [],
+            language: userLanguage, // ✨ Pass language parameter
         }
     );
 
@@ -52,10 +59,11 @@ export const finalBlogGenerationNode = async (state: AgentState): Promise<Partia
     // However, `geminiService.generateBlogPost` might do a final polish pass.
     // Let's stick to the original logic for now but be aware of the redundancy.
 
-    // Get apiKey from state or environment variable
-    const apiKeyForBlog = state.apiKey || process.env.GEMINI_API_KEY;
+    // Get apiKey from environment variable first (preferred), then state
+    // This allows the API key to be configured server-side via .env
+    const apiKeyForBlog = process.env.GEMINI_API_KEY || state.apiKey;
     if (!apiKeyForBlog) {
-        throw new Error('API Key is required. Please provide apiKey in state or set GEMINI_API_KEY in your .env.local file.');
+        throw new Error('API Key is required. Please set GEMINI_API_KEY in your .env file or provide apiKey in state.');
     }
     const fullBlog = await geminiService.generateBlogPost(
         state.data,

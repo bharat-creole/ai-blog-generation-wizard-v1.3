@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { sendMessage, streamMessage } from '../../../services/agentApiClient';
 import { AgentState as AgentStateV1 } from '../../../../server/agent/state';
 import { ChatMessage } from '../../../types';
@@ -145,6 +145,8 @@ export const useAgentExecutionV3 = (
 ): UseAgentExecutionReturn => {
 	// Store threadId in a ref to persist across calls
 	const threadIdRef = useRef<string | null>(null);
+	// Store abort controller to cancel streams on unmount
+	const abortControllerRef = useRef<AbortController | null>(null);
 
 	// Direct message sending (new API)
 	const sendUserMessage = useCallback(
@@ -165,13 +167,10 @@ export const useAgentExecutionV3 = (
 				import.meta.env?.GEMINI_API_KEY;
 
 			// Extract apiKey from parameter, state, or environment variable (in that order)
+			// API key is optional - backend will use GEMINI_API_KEY from .env if not provided
 			const apiKeyToUse =
 				apiKey || currentState?.apiKey || envApiKey;
-			if (!apiKeyToUse) {
-				throw new Error(
-					'apiKey is required. Please provide apiKey as a parameter, in state, or set VITE_GEMINI_API_KEY in your .env.local file.'
-				);
-			}
+			// No error if apiKey is not provided - backend will use GEMINI_API_KEY from .env
 			// Remove apiKey from state before mapping
 			const stateWithoutApiKey = { ...currentState };
 			delete stateWithoutApiKey.apiKey;
@@ -187,6 +186,10 @@ export const useAgentExecutionV3 = (
 
 			setIsStreaming(true);
 			if (setIsThinking) setIsThinking(true);
+
+			// Create new AbortController for this request
+			const abortController = new AbortController();
+			abortControllerRef.current = abortController;
 
 			try {
 				return new Promise((resolve, reject) => {
@@ -1767,17 +1770,32 @@ export const useAgentExecutionV3 = (
 								);
 								reject(error);
 							},
-						}
+						},
+						abortController // Pass abort controller for cancellation
 					);
 				});
 			} catch (error) {
 				setIsStreaming(false);
+				if (setIsThinking) setIsThinking(false);
 				console.error('V3 Message Error:', error);
 				throw error;
 			}
 		},
 		[]
 	);
+
+	// Cleanup: Cancel any ongoing streams when component unmounts
+	useEffect(() => {
+		return () => {
+			if (abortControllerRef.current) {
+				console.log(
+					'🧹 Cleaning up: Cancelling ongoing stream'
+				);
+				abortControllerRef.current.abort();
+				abortControllerRef.current = null;
+			}
+		};
+	}, []);
 
 	// Backward compatible wrapper for AgentMode
 	const runAgentLoop = useCallback(

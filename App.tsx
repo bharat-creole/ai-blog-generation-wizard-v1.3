@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AppView, BlogData } from './types';
 import AgentMode from './components/AgentMode';
+import SidebarHistory from './components/common/SidebarHistory';
 import AppHeader from './components/AppHeader';
 import { getEnvironmentConfig } from './components/config';
 import { BlogGuidelineIcon, BrandVoiceIcon, MyBlogIcon } from './components/icons';
@@ -282,17 +283,78 @@ const App: React.FC = () => {
 	const [showBlogInfo, setShowBlogInfo] = useState(false);
 	const [showTrace, setShowTrace] = useState(false);
 	const [showSettings, setShowSettings] = useState(false);
-  const config = getEnvironmentConfig();
-	const onMyBlogsClick = () => {
-		window.location.href = config.MY_BLOGS_URL;
-	};
-	const onBrandVoiceClick = () => {
-		window.location.href = config.BRAND_VOICE_URL;
-	};
-	const onBlogGuidelinesClick = () => {
-		window.location.href = config.BLOG_GUIDELINES_URL;
-	};
+	const [currentThreadId, setCurrentThreadId] = useState<string | null>(null);
 
+
+	useEffect(() => {
+		try {
+			console.log('🔍 [Auth] Checking URL for token...');
+			console.log('   Full URL:', window.location.href);
+			console.log('   Search:', window.location.search);
+			console.log('   Hash:', window.location.hash);
+
+			const urlParams = new URLSearchParams(window.location.search);
+			const hashParams = new URLSearchParams(window.location.hash.substring(1));
+
+			// Check query parameters first, then hash
+			const token = urlParams.get('token') || hashParams.get('token');
+			const userId = urlParams.get('userId') || hashParams.get('userId');
+
+			console.log('   Token found:', token ? 'Yes' : 'No');
+			console.log('   UserId found:', userId ? 'Yes' : 'No');
+
+			if (token) {
+				// Store token in localStorage
+				localStorage.setItem('accessToken', token);
+				console.log('✅ [Auth] Token stored in localStorage as "accessToken"');
+				console.log('   Token length:', token.length);
+
+				// Verify it was stored
+				const stored = localStorage.getItem('accessToken');
+				if (stored === token) {
+					console.log('✅ [Auth] Token verification: SUCCESS');
+				} else {
+					console.error('❌ [Auth] Token verification: FAILED');
+				}
+
+				// Also store userId if provided
+				if (userId) {
+					localStorage.setItem('userId', userId);
+					console.log('✅ [Auth] UserId stored:', userId);
+				}
+
+				// Clean up URL by removing token and userId from query/hash
+				const newUrl = new URL(window.location.href);
+				newUrl.searchParams.delete('token');
+				newUrl.searchParams.delete('userId');
+
+				// Remove from hash if present
+				if (window.location.hash.includes('token') || window.location.hash.includes('userId')) {
+					const hashParams = new URLSearchParams(window.location.hash.substring(1));
+					hashParams.delete('token');
+					hashParams.delete('userId');
+					const newHash = hashParams.toString();
+					newUrl.hash = newHash ? `#${newHash}` : '';
+				}
+
+				// Update URL without reload (clean URL)
+				window.history.replaceState({}, '', newUrl.toString());
+				console.log('✅ [Auth] URL cleaned, new URL:', newUrl.toString());
+			} else {
+				// Check if token already exists in localStorage
+				const existingToken = localStorage.getItem('accessToken') ||
+					localStorage.getItem('token') ||
+					localStorage.getItem('authToken');
+				if (existingToken) {
+					console.log('ℹ️  [Auth] No token in URL, but found existing token in localStorage');
+				} else {
+					console.warn('⚠️  [Auth] No token found in URL or localStorage');
+				}
+			}
+		} catch (e) {
+			console.error('❌ [Auth] Failed to extract token from URL:', e);
+		}
+	}, []);
 	// Load state from localStorage on initial render
 	useEffect(() => {
 		try {
@@ -333,6 +395,53 @@ const App: React.FC = () => {
 		setBlogData((prev) => ({ ...prev, ...data }));
 	}, []);
 
+	// Handle selecting a conversation from history to resume
+	const handleSelectThread = useCallback(async (threadId: string) => {
+		console.log('📂 [History] Loading thread:', threadId);
+		setCurrentThreadId(threadId);
+
+		try {
+			// @ts-ignore
+			const API_BASE = import.meta.env?.VITE_AGENT_API_BASE || 'http://localhost:3001';
+			const token = localStorage.getItem('accessToken');
+
+			const response = await fetch(`${API_BASE}/api/agent/history/${threadId}`, {
+				headers: {
+					'Content-Type': 'application/json',
+					...(token && { 'Authorization': `Bearer ${token}` })
+				}
+			});
+
+			if (response.ok) {
+				const { thread } = await response.json();
+
+				// Load the agent state from history
+				if (thread.agentState) {
+					const state = thread.agentState;
+
+					// Update blog data with the conversation state
+					setBlogData({
+						...blogData,
+						topic: state.data?.topic || '',
+						title: state.data?.title || '',
+						primaryKeyword: state.data?.primaryKeyword || '',
+						secondaryKeywords: state.data?.secondaryKeywords || [],
+						outline: state.outline || [],
+						blogContent: state.draft || '',
+						targetLocation: state.data?.targetLocation || 'United States',
+						referenceUrls: state.data?.referenceUrls || [],
+						interlinks: state.data?.interlinks || [],
+					});
+
+					console.log('✅ [History] Thread loaded successfully');
+					console.log('   Messages count:', thread.messages?.length || 0);
+				}
+			}
+		} catch (error) {
+			console.error('❌ [History] Failed to load thread:', error);
+		}
+	}, [blogData]);
+
 	return (
 		<BrowserRouter>
 			<Routes>
@@ -354,9 +463,7 @@ const App: React.FC = () => {
 							setShowTrace={setShowTrace}
 							showSettings={showSettings}
 							setShowSettings={setShowSettings}
-							onMyBlogsClick={onMyBlogsClick}
-							onBrandVoiceClick={onBrandVoiceClick}
-							onBlogGuidelinesClick={onBlogGuidelinesClick}
+							
 						>
 							<main className='flex-1 overflow-hidden p-6 bg-[#FFFFFF]'>
 								<AgentMode
@@ -366,6 +473,7 @@ const App: React.FC = () => {
 									showTrace={showTrace}
 									showSettings={showSettings}
 									onCollapseSidebar={() => setSidebarCollapsed(true)}
+									loadedThreadId={currentThreadId}
 								/>
 							</main>
 						</MainLayout>
@@ -378,6 +486,7 @@ const App: React.FC = () => {
 									showTrace={showTrace}
 									showSettings={showSettings}
 									onCollapseSidebar={() => setSidebarCollapsed(true)}
+									loadedThreadId={currentThreadId}
 								/>} />
 				
 			</Routes>

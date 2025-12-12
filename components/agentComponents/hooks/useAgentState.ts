@@ -195,11 +195,12 @@ export const useAgentState = (
 
 	// Computed values
 	const canSend = useMemo(() => {
-		if (!input.trim() || !apiKey) return false;
+		// API key check removed - backend will use GEMINI_API_KEY from .env if not provided
+		if (!input.trim()) return false;
 		if (outlineApproved) return false;
 		if (isThinking || isStreaming) return false;
 		return true;
-	}, [input, apiKey, outlineApproved, isThinking, isStreaming]);
+	}, [input, outlineApproved, isThinking, isStreaming]);
 
 	const isInputLocked = outlineApproved || isThinking || isStreaming;
 

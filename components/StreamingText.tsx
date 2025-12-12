@@ -16,24 +16,29 @@ const StreamingText: React.FC<StreamingTextProps> = ({
 	const [displayedText, setDisplayedText] = useState('');
 	const [currentIndex, setCurrentIndex] = useState(0);
 
+	// Handle undefined or null text
+	const safeText = text || '';
+
 	useEffect(() => {
-		if (currentIndex < text.length) {
+		if (currentIndex < safeText.length) {
 			const timeout = setTimeout(() => {
-				setDisplayedText((prev) => prev + text[currentIndex]);
+				setDisplayedText(
+					(prev) => prev + safeText[currentIndex]
+				);
 				setCurrentIndex((prev) => prev + 1);
 			}, speed);
 
 			return () => clearTimeout(timeout);
-		} else if (currentIndex === text.length && onComplete) {
+		} else if (currentIndex === safeText.length && onComplete) {
 			onComplete();
 		}
-	}, [currentIndex, text, speed, onComplete]);
+	}, [currentIndex, safeText, speed, onComplete]);
 
 	// Reset when text changes
 	useEffect(() => {
 		setDisplayedText('');
 		setCurrentIndex(0);
-	}, [text]);
+	}, [safeText]);
 
 	return (
 		<div className='prose prose-sm max-w-none'>

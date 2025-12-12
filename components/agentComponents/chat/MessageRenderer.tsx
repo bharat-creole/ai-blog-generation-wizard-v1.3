@@ -262,6 +262,7 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({
 					setDraft={setDraft}
 					setTraceItems={setTraceItems}
 					sendUserMessage={sendUserMessage}
+					showBlogContent={showBlogContent}
 				/>
 			)}
 

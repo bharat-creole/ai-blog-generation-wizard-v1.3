@@ -3,7 +3,13 @@ import cors from 'cors';
 import { config as dotenvConfig } from 'dotenv';
 
 // Load env early (supports running via `npm run serve:api` from project root)
-dotenvConfig({ path: process.env.DOTENV_PATH || '.env.local' });
+// Load .env first, then .env.local (which will override .env values)
+if (process.env.DOTENV_PATH) {
+	dotenvConfig({ path: process.env.DOTENV_PATH });
+} else {
+	dotenvConfig({ path: '.env' }); // Load .env first
+	dotenvConfig({ path: '.env.local' }); // Then .env.local (overrides .env)
+}
 
 // Import token manager for Google Ads REST API
 import { tokenManager } from './tokenManager.js';
@@ -58,6 +64,57 @@ const app = express();
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use(cors());
+
+/**
+ * Helper function to write SSE events and immediately flush to prevent buffering issues
+ * This is critical for production environments with proxies/nginx
+ */
+const writeSSE = (res: express.Response, data: string): void => {
+	try {
+		res.write(data);
+		// Flush immediately to prevent buffering - critical for production
+		if (typeof (res as any).flush === 'function') {
+			(res as any).flush();
+		}
+	} catch (error) {
+		console.error('❌ [SSE WRITE ERROR]', error);
+		// Don't throw - let the stream error handler deal with it
+	}
+};
+
+/**
+ * Send SSE keepalive ping to prevent connection timeouts
+ * Should be called periodically during long-running streams
+ */
+const sendSSEKeepalive = (res: express.Response): void => {
+	try {
+		writeSSE(res, ': keepalive\n\n');
+	} catch (error) {
+		console.error('❌ [SSE KEEPALIVE ERROR]', error);
+	}
+};
+
+app.get('/', (req, res) => {
+	const { token, userId } = req.query;
+	const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3002';
+
+	if (token) {
+		// Redirect to frontend with token preserved
+		const redirectUrl = new URL(frontendUrl);
+		redirectUrl.searchParams.set('token', token as string);
+		if (userId) {
+			redirectUrl.searchParams.set('userId', userId as string);
+		}
+		console.log(
+			`🔄 [Redirect] Redirecting to frontend: ${redirectUrl.toString()}`
+		);
+		return res.redirect(redirectUrl.toString());
+	}
+
+	// No token, just redirect to frontend
+	console.log(`🔄 [Redirect] Redirecting to frontend: ${frontendUrl}`);
+	res.redirect(frontendUrl);
+});
 
 app.post('/api/getKeywords', async (req, res) => {
 	const { seed, location } = req.body || {};
@@ -704,6 +761,9 @@ app.post('/api/getKeywordsGoogleAds', async (req, res) => {
 import { graph, checkpointer } from './agent/graph.js';
 import { HumanMessage, AIMessage } from '@langchain/core/messages';
 import { processMessage } from './agent/conversationHandler.js';
+import { saveBlogIfComplete } from './hooks/blogCompletionHook.js';
+import { authenticateToken, optionalAuth } from './middleware/auth.js';
+import { saveAgentHistory } from './db/agentHistoryService.js';
 import { PrimaryAgent } from './agent/primaryAgent.js';
 import { ContextManagerAgent } from './agent/contextManagerAgent.js';
 import { AgentState } from './agent/state.js';
@@ -905,7 +965,8 @@ const persistMessagesToCheckpointer = async (
 };
 
 // NEW: Main conversation endpoint - handles user messages with intent classification
-app.post('/api/agent/message', async (req, res) => {
+// ✨ Added optionalAuth middleware to extract userId from JWT token
+app.post('/api/agent/message', optionalAuth, async (req, res) => {
 	const {
 		message,
 		threadId,
@@ -913,13 +974,14 @@ app.post('/api/agent/message', async (req, res) => {
 		apiKey, // Extract apiKey from request body, not from state
 		stream = false,
 	} = req.body || {};
-
+	const userId = req.userId; // ✨ Extracted from JWT token by optionalAuth middleware
 	console.log(`\n${'═'.repeat(70)}`);
 	console.log(
 		`💬 [AGENT] Message Request Received ${stream ? '(Streaming)' : ''}`
 	);
 	console.log(`${'═'.repeat(70)}`);
 	console.log(`   Thread ID: ${threadId}`);
+	console.log(`   User ID: ${userId || 'Not authenticated'}`); // ✨ Log userId
 	console.log(`   Message: "${message}"`);
 
 	if (!threadId || !message) {
@@ -928,12 +990,13 @@ app.post('/api/agent/message', async (req, res) => {
 		});
 	}
 
-	// Get apiKey from request body, state, or environment variable (in that order)
+	// Get apiKey from environment variable first (preferred), then request body, then state
+	// This allows the API key to be configured server-side via .env
 	const apiKeyToUse =
-		apiKey || currentState?.apiKey || process.env.GEMINI_API_KEY;
+		process.env.GEMINI_API_KEY || apiKey || currentState?.apiKey;
 	if (!apiKeyToUse) {
 		return res.status(400).json({
-			error: 'apiKey is required. Please provide apiKey in request, state, or set GEMINI_API_KEY in your .env.local file.',
+			error: 'apiKey is required. Please set GEMINI_API_KEY in your .env file or provide apiKey in request.',
 		});
 	}
 
@@ -1149,13 +1212,15 @@ app.post('/api/agent/message', async (req, res) => {
 			if (stream) {
 				try {
 					// Send intent event with the response
-					res.write(
+					writeSSE(
+						res,
 						`event: intent\ndata: ${JSON.stringify(
 							blockedResponse
 						)}\n\n`
 					);
 					// Send done event with state (frontend expects state in onComplete)
-					res.write(
+					writeSSE(
+						res,
 						`event: done\ndata: ${JSON.stringify({
 							assistantMessage:
 								blockedResponse.assistantMessage,
@@ -1209,13 +1274,15 @@ app.post('/api/agent/message', async (req, res) => {
 			if (stream) {
 				try {
 					// Send intent event with the response
-					res.write(
+					writeSSE(
+						res,
 						`event: intent\ndata: ${JSON.stringify(
 							restartResponse
 						)}\n\n`
 					);
 					// Send done event with state (frontend expects state in onComplete)
-					res.write(
+					writeSSE(
+						res,
 						`event: done\ndata: ${JSON.stringify({
 							assistantMessage:
 								restartResponse.assistantMessage,
@@ -1272,13 +1339,15 @@ app.post('/api/agent/message', async (req, res) => {
 			if (stream) {
 				try {
 					// Send intent event with the response
-					res.write(
+					writeSSE(
+						res,
 						`event: intent\ndata: ${JSON.stringify(
 							contextResponse
 						)}\n\n`
 					);
 					// Send done event with state (frontend expects state in onComplete)
-					res.write(
+					writeSSE(
+						res,
 						`event: done\ndata: ${JSON.stringify({
 							assistantMessage:
 								ctxResponse.assistantMessage,
@@ -1333,7 +1402,8 @@ app.post('/api/agent/message', async (req, res) => {
 
 			// Emit intent event with regeneration message
 			if (stream) {
-				res.write(
+				writeSSE(
+					res,
 					`event: intent\ndata: ${JSON.stringify({
 						assistantMessage: regenerationMessage,
 						shouldRunAgent: true,
@@ -1352,13 +1422,20 @@ app.post('/api/agent/message', async (req, res) => {
 					config
 				);
 				let lastNodeName = '';
+				let chunkCount = 0;
 				for await (const chunk of streamIterator) {
+					// Send keepalive every 10 chunks to prevent timeout
+					if (chunkCount > 0 && chunkCount % 10 === 0) {
+						sendSSEKeepalive(res);
+					}
 					// Send progress events
-					res.write(
+					writeSSE(
+						res,
 						`event: progress\ndata: ${JSON.stringify(
 							chunk
 						)}\n\n`
 					);
+					chunkCount++;
 
 					// Track last executed node
 					const nodeName = Object.keys(chunk)[0];
@@ -1399,7 +1476,8 @@ app.post('/api/agent/message', async (req, res) => {
 			delete serializedState.apiKey;
 
 			if (stream) {
-				res.write(
+				writeSSE(
+					res,
 					`event: done\ndata: ${JSON.stringify({
 						assistantMessage: reframed.message,
 						state: serializedState,
@@ -1438,7 +1516,8 @@ app.post('/api/agent/message', async (req, res) => {
 		if (routing.directResponse && stream && routing.shouldProceed) {
 			// Send Primary Agent message as a separate intent event BEFORE processing
 			// This message appears immediately while LangGraph is executing
-			res.write(
+			writeSSE(
+				res,
 				`event: intent\ndata: ${JSON.stringify({
 					assistantMessage: routing.directResponse,
 					shouldRunAgent: true, // Will proceed to LangGraph
@@ -1453,8 +1532,6 @@ app.post('/api/agent/message', async (req, res) => {
 					50
 				)}..."`
 			);
-			// Flush the response to ensure it's sent immediately
-			res.flushHeaders?.();
 		}
 
 		// If Primary Agent blocked (shouldProceed = false), stop here
@@ -1468,7 +1545,8 @@ app.post('/api/agent/message', async (req, res) => {
 			);
 
 			if (stream) {
-				res.write(
+				writeSSE(
+					res,
 					`event: done\ndata: ${JSON.stringify({
 						assistantMessage:
 							routing.directResponse ||
@@ -1512,6 +1590,7 @@ app.post('/api/agent/message', async (req, res) => {
 			...stateForProcessing,
 			...response.stateUpdates,
 			apiKey: apiKeyToUse, // Ensure apiKey is available for nodes during execution
+			userId: userId || stateForProcessing.userId || '', // ✨ Ensure userId is available for fetching language
 		};
 
 		// Emit intent event (only if Primary Agent didn't already send a "before execution" message)
@@ -1528,7 +1607,8 @@ app.post('/api/agent/message', async (req, res) => {
 			!primaryAgentSentBeforeMessage &&
 			hasConversationHandlerMessage
 		) {
-			res.write(
+			writeSSE(
+				res,
 				`event: intent\ndata: ${JSON.stringify({
 					assistantMessage: response.assistantMessage,
 					assistantMessages: response.assistantMessages, // Include separate messages if available
@@ -1559,13 +1639,20 @@ app.post('/api/agent/message', async (req, res) => {
 					updatedState,
 					config
 				);
+				let chunkCount = 0;
 				for await (const chunk of streamIterator) {
+					// Send keepalive every 10 chunks to prevent timeout
+					if (chunkCount > 0 && chunkCount % 10 === 0) {
+						sendSSEKeepalive(res);
+					}
 					// Send each state update as progress event
-					res.write(
+					writeSSE(
+						res,
 						`event: progress\ndata: ${JSON.stringify(
 							chunk
 						)}\n\n`
 					);
+					chunkCount++;
 
 					// Update local state tracker
 					// Note: chunk is a partial state update, usually keyed by node name
@@ -1650,7 +1737,8 @@ app.post('/api/agent/message', async (req, res) => {
 			) {
 				// First, send the text message (if any) without metadata
 				if (finalMessage && finalMessage.trim()) {
-					res.write(
+					writeSSE(
+						res,
 						`event: intent\ndata: ${JSON.stringify({
 							assistantMessage: finalMessage,
 							shouldRunAgent: false,
@@ -1662,7 +1750,8 @@ app.post('/api/agent/message', async (req, res) => {
 
 				// Then, send a separate message with JUST the keyword list metadata
 				// This ensures keyword list appears as a separate UI component
-				res.write(
+				writeSSE(
+					res,
 					`event: done\ndata: ${JSON.stringify({
 						assistantMessage: '', // Empty message - keyword list will be shown via metadata
 						state: serializedState,
@@ -1672,7 +1761,8 @@ app.post('/api/agent/message', async (req, res) => {
 				);
 			} else {
 				// Normal flow - send message with metadata together
-				res.write(
+				writeSSE(
+					res,
 					`event: done\ndata: ${JSON.stringify({
 						assistantMessage: finalMessage,
 						state: serializedState,
@@ -1690,6 +1780,60 @@ app.post('/api/agent/message', async (req, res) => {
 				metadata: finalMetadata, // Include metadata for UI components
 			});
 		}
+
+		// ✨ Save agent history to database
+		if (userId) {
+			// Convert LangChain messages to simple format
+			const langchainMessages = (updatedState.messages || []).map(
+				(msg: any) => ({
+					role: msg._getType
+						? msg._getType()
+						: msg.role || 'assistant',
+					content:
+						typeof msg.content === 'string'
+							? msg.content
+							: JSON.stringify(msg.content),
+					timestamp: Date.now(),
+				})
+			);
+
+			// Build complete message history including current exchange
+			const completeMessages = [
+				...langchainMessages,
+				// Add current user message
+				{
+					role: 'user',
+					content: message,
+					timestamp: Date.now(),
+				},
+				// Add assistant response if available
+				...(response.assistantMessage
+					? [
+							{
+								role: 'assistant',
+								content: response.assistantMessage,
+								timestamp: Date.now(),
+							},
+					  ]
+					: []),
+			];
+
+			console.log(
+				`💾 [History] Saving ${completeMessages.length} messages for thread: ${threadId}`
+			);
+
+			await saveAgentHistory({
+				threadId,
+				userId,
+				messages: completeMessages,
+				agentState: updatedState,
+				topic: updatedState.data?.topic,
+				blogGenerated: updatedState.finalBlogGenerated,
+			});
+		}
+
+		// Save blog if complete
+		await saveBlogIfComplete(updatedState, threadId, userId);
 	} catch (error: any) {
 		console.error(`   ❌ Message processing failed:`, error);
 		console.log(`${'═'.repeat(70)}\n`);
@@ -1734,7 +1878,8 @@ app.post('/api/agent/message', async (req, res) => {
 		}
 
 		if (stream) {
-			res.write(
+			writeSSE(
+				res,
 				`event: error\ndata: ${JSON.stringify({
 					error: errorMessage,
 					isRateLimit,
@@ -1806,25 +1951,32 @@ app.post('/api/agent/stream', async (req, res) => {
 		const config = { configurable: { thread_id: threadId } };
 		const stream = await graph.stream(state, config);
 
+		let chunkCount = 0;
 		for await (const chunk of stream) {
+			// Send keepalive every 10 chunks to prevent timeout
+			if (chunkCount > 0 && chunkCount % 10 === 0) {
+				sendSSEKeepalive(res);
+			}
 			// Send each state update as SSE event
-			res.write(`data: ${JSON.stringify(chunk)}\\n\\n`);
+			writeSSE(res, `data: ${JSON.stringify(chunk)}\n\n`);
+			chunkCount++;
 		}
 
-		res.write('event: done\\ndata: {}\\n\\n');
+		writeSSE(res, 'event: done\ndata: {}\n\n');
 		res.end();
 
 		console.log(`   ✅ Stream complete`);
-		console.log(`${'═'.repeat(70)}\\n`);
+		console.log(`${'═'.repeat(70)}\n`);
 	} catch (error: any) {
 		console.error(`   ❌ Stream failed:`, error);
-		res.write(
-			`event: error\\ndata: ${JSON.stringify({
+		writeSSE(
+			res,
+			`event: error\ndata: ${JSON.stringify({
 				error: error.message,
-			})}\\n\\n`
+			})}\n\n`
 		);
 		res.end();
-		console.log(`${'═'.repeat(70)}\\n`);
+		console.log(`${'═'.repeat(70)}\n`);
 	}
 });
 
@@ -1853,6 +2005,91 @@ app.delete('/api/agent/state/:threadId', async (req, res) => {
 	} catch (error: any) {
 		console.error(`Failed to delete thread ${threadId}:`, error);
 		return res.status(500).json({ error: error.message });
+	}
+});
+
+// ═══════════════════════════════════════════════════════════════════════
+// 📜 Agent History API Endpoints
+// ═══════════════════════════════════════════════════════════════════════
+
+import {
+	getUserHistory,
+	getHistoryThread,
+	deleteHistory,
+} from './db/agentHistoryService.js';
+
+// Get user's conversation history list
+app.get('/api/agent/history', optionalAuth, async (req, res) => {
+	const userId = req.userId;
+	if (!userId) {
+		return res.status(401).json({ error: 'Authentication required' });
+	}
+
+	const { limit, offset, status } = req.query;
+
+	try {
+		const history = await getUserHistory(userId, {
+			limit: limit ? parseInt(limit as string) : 20,
+			offset: offset ? parseInt(offset as string) : 0,
+			status: status as string,
+		});
+
+		res.json({ history, count: history.length });
+	} catch (error: any) {
+		console.error('Failed to get history:', error);
+		res.status(500).json({ error: error.message });
+	}
+});
+
+// Get full conversation thread
+app.get('/api/agent/history/:threadId', optionalAuth, async (req, res) => {
+	const { threadId } = req.params;
+	const userId = req.userId;
+
+	if (!userId) {
+		return res.status(401).json({ error: 'Authentication required' });
+	}
+
+	try {
+		const thread = await getHistoryThread(threadId);
+
+		if (!thread) {
+			return res.status(404).json({ error: 'Thread not found' });
+		}
+
+		// Check ownership
+		if (thread.userId !== userId) {
+			return res.status(403).json({ error: 'Access denied' });
+		}
+
+		res.json({ thread });
+	} catch (error: any) {
+		console.error('Failed to get thread:', error);
+		res.status(500).json({ error: error.message });
+	}
+});
+
+// Delete conversation history
+app.delete('/api/agent/history/:threadId', optionalAuth, async (req, res) => {
+	const { threadId } = req.params;
+	const userId = req.userId;
+
+	if (!userId) {
+		return res.status(401).json({ error: 'Authentication required' });
+	}
+
+	try {
+		const thread = await getHistoryThread(threadId);
+
+		if (!thread || thread.userId !== userId) {
+			return res.status(403).json({ error: 'Access denied' });
+		}
+
+		await deleteHistory(threadId);
+		res.json({ success: true });
+	} catch (error: any) {
+		console.error('Failed to delete history:', error);
+		res.status(500).json({ error: error.message });
 	}
 });
 

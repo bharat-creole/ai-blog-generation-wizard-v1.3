@@ -343,9 +343,39 @@ function hash(s: string): number {
 }
 
 const USE_SERVER = (import.meta as any).env?.VITE_KEYWORD_API_MODE === 'server';
-const API_BASE = (
-	((import.meta as any).env?.VITE_KEYWORD_API_BASE as string) || ''
-).replace(/\/$/, '');
+
+// Get API base URL - works both client-side and server-side
+const getApiBase = (): string => {
+	// Check if we're running in Node.js (server-side)
+	const isNode = typeof process !== 'undefined' && process.versions?.node;
+
+	if (isNode) {
+		// Server-side: use process.env
+		const envBase =
+			process.env.VITE_KEYWORD_API_BASE ||
+			process.env.VITE_AGENT_API_BASE ||
+			process.env.KEYWORD_API_BASE ||
+			'';
+
+		if (envBase) {
+			return envBase.replace(/\/$/, '');
+		}
+
+		// Construct from PORT if available
+		const port = process.env.PORT || '3001';
+		const host = process.env.HOST || 'localhost';
+		return `http://${host}:${port}`;
+	} else {
+		// Client-side: use import.meta.env
+		const envBase =
+			((import.meta as any).env?.VITE_KEYWORD_API_BASE as string) ||
+			((import.meta as any).env?.VITE_AGENT_API_BASE as string) ||
+			'';
+		return envBase.replace(/\/$/, '');
+	}
+};
+
+const API_BASE = getApiBase();
 
 // ✨ Primary API - bloggr.ai keyword service
 // ⚠️  NOTE: This API has CORS restrictions and will fail when called from localhost
@@ -391,7 +421,7 @@ async function getKeywordIdeasViaGoogleAdsServer(
 	location: string,
 	urls?: string[] // Optional URLs to pass via urlSeed
 ): Promise<KwRow[]> {
-	// Default to localhost:3001 if not set
+	// Use API_BASE which now handles both client and server-side
 	const baseUrl = API_BASE || 'http://localhost:3001';
 	const apiUrl = `${baseUrl}/api/getKeywordsGoogleAds`;
 
