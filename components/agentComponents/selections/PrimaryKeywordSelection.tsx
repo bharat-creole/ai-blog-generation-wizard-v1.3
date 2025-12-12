@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useMemo } from 'react';
+import React, { useEffect, useRef, useMemo, useState } from 'react';
 import { AgentState } from '../../../../server/agent/state';
 import { KeywordCandidate, ChatMessage } from '../../../types';
 
@@ -48,7 +48,8 @@ const PrimaryKeywordSelection: React.FC<PrimaryKeywordSelectionProps> = ({
 			(a, b) => (b.volume || 0) - (a.volume || 0)
 		);
 	}, [candidates]);
-
+const str = Date.now().toString();
+console.log("str", str);
 	// Create a stable key from candidates to detect actual changes
 	const candidatesKey = useMemo(() => {
 		return candidates
@@ -59,6 +60,9 @@ const PrimaryKeywordSelection: React.FC<PrimaryKeywordSelectionProps> = ({
 
 	// Track previous candidates to detect when they change
 	const prevCandidatesRef = useRef<string>('');
+	
+	// Track if submit button is being processed
+	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	// Reset selection whenever component loads with new candidates
 	useEffect(() => {
@@ -88,6 +92,7 @@ const PrimaryKeywordSelection: React.FC<PrimaryKeywordSelectionProps> = ({
 	const handleConfirm = async () => {
 		if (!agent || !selectedPrimary) return;
 
+		setIsSubmitting(true);
 		setCompletedSelections((prev) =>
 			new Set(prev).add('primaryKeyword')
 		);
@@ -167,10 +172,15 @@ const PrimaryKeywordSelection: React.FC<PrimaryKeywordSelectionProps> = ({
 			<div className=' grid grid-cols-1 md:grid-cols-2 gap-x-[8px] gap-y-[4px] '>
 				{candidates.map((kw, idx) => {
 					const isSelected = selectedPrimary === kw.text;
+					const isDisabled = completedSelections.has('primaryKeyword') || isSubmitting;
 					return (
 						<label
 						key={idx}
-						className={`flex items-center  text-sm bg-white border border-offwhite rounded-[8px]   cursor-pointer transition-colors hover:border-primary hover:bg-[#FFF8F1] ${
+						className={`flex items-center  text-sm bg-white border border-offwhite rounded-[8px] transition-colors ${
+								isDisabled
+									? 'cursor-not-allowed opacity-60'
+									: 'cursor-pointer hover:border-primary hover:bg-[#FFF8F1]'
+						} ${
 								isSelected
 									? 'border-primary bg-[#FFF4E8]'
 									: 'border-offwhite'
@@ -181,9 +191,7 @@ const PrimaryKeywordSelection: React.FC<PrimaryKeywordSelectionProps> = ({
 								<input
 									type='radio'
 									name='primaryKeyword'
-									disabled={completedSelections.has(
-										'primaryKeyword'
-									)}
+									disabled={isDisabled}
 									checked={isSelected}
 									onChange={() => setSelectedPrimary(kw.text)}
 									className='w-4 h-4 text-primary focus:ring-primary border-primary'
@@ -205,7 +213,8 @@ const PrimaryKeywordSelection: React.FC<PrimaryKeywordSelectionProps> = ({
 				<button
 					disabled={
 						completedSelections.has('primaryKeyword') ||
-						!selectedPrimary
+						!selectedPrimary ||
+						isSubmitting
 					}
 					className='px-[18px] py-[8px] font-inter text-regular text-[14px] bg-success text-white  transition-colors disabled:opacity-[60%] disabled:cursor-not-allowed rounded-[26px]'
 					onClick={handleConfirm}

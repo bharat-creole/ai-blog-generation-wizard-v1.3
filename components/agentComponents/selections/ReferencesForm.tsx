@@ -47,6 +47,9 @@ const ReferencesForm: React.FC<ReferencesFormProps> = ({
 	showBlogContent
 }) => {
 	const [currentReferenceUrl, setCurrentReferenceUrl] = useState('');
+	
+	// Track if submit/skip button is being processed
+	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	// Use data.referenceUrls and data.referenceFiles as source of truth
 	// If they're empty but currentUrls/currentFiles are provided, sync them on mount
@@ -72,6 +75,7 @@ const ReferencesForm: React.FC<ReferencesFormProps> = ({
 	const handleContinue = async () => {
 		if (!agent) return;
 
+		setIsSubmitting(true);
 		setCompletedSelections((prev) => new Set(prev).add('references'));
 
 		const userMsg = {
@@ -187,7 +191,7 @@ const ReferencesForm: React.FC<ReferencesFormProps> = ({
 	};
 
 	// Ensure showBlogContent is always boolean
-	const safeShowBlogContent = !!showBlogContent;
+	const safeShowBlogContent = showBlogContent ? true : false;
 
 	console.log("showBlogContent in ReferencesForm:", safeShowBlogContent);
 
@@ -212,6 +216,7 @@ const ReferencesForm: React.FC<ReferencesFormProps> = ({
 										</span>
 									</div>
 									<button
+										disabled={completedSelections.has('references') || isSubmitting}
 										className='min-w-[84px] flex justify-center items-center text-white bg-alert_error rounded-[8px] p-[10px] min-h-[46px] disabled:bg-opacity-60 disabled:cursor-not-allowed'
 										onClick={() => {
 											const currentUrls =
@@ -253,10 +258,12 @@ const ReferencesForm: React.FC<ReferencesFormProps> = ({
 									handleAddUrl();
 								}
 							}}
+							disabled={completedSelections.has('references') || isSubmitting}
 							placeholder='https://example.com/article'
-							className='flex-grow flex-1 w-full px-[14px] py-[10px] h-[46px] font-inter text-black text-regular bg-white rounded-[8px] border border-offwhite outline-none placeholder:text-[14px] placeholder:text-[#777777]'
+							className='flex-grow flex-1 w-full px-[14px] py-[10px] h-[46px] font-inter text-black text-regular bg-white rounded-[8px] border border-offwhite outline-none placeholder:text-[14px] placeholder:text-[#777777] disabled:opacity-60 disabled:cursor-not-allowed'
 						/>
 						<button
+							disabled={completedSelections.has('references') || isSubmitting}
 							onClick={handleAddUrl}
 							className='min-w-[84px] flex justify-center items-center text-white bg-success  rounded-[8px]  p-[10px] min-h-[46px] disabled:bg-opacity-60 disabled:cursor-not-allowed'
 						>
@@ -287,6 +294,7 @@ const ReferencesForm: React.FC<ReferencesFormProps> = ({
 									</span>
 									</div>
 									<button
+										disabled={completedSelections.has('references') || isSubmitting}
 										className='min-w-[84px] flex justify-center items-center text-white bg-alert_error  rounded-[8px]  p-[10px] min-h-[46px] disabled:bg-opacity-60 disabled:cursor-not-allowed'
 										onClick={() => {
 											const currentFiles =
@@ -313,12 +321,13 @@ const ReferencesForm: React.FC<ReferencesFormProps> = ({
 					)}
 					{/* Custom file input and Add button */}
 					<div className='flex flex-wrap gap-[10px] items-center'>
-						<label className='flex-1 w-full relative h-[46px]'>
+						<label className={`flex-1 w-full relative h-[46px] ${(completedSelections.has('references') || isSubmitting) ? 'opacity-60 cursor-not-allowed' : ''}`}>
 							<input
 								type='file'
 								accept='.pdf,.docx'
 								onChange={handleFileUpload}
-								className='absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 h-full'
+								disabled={completedSelections.has('references') || isSubmitting}
+								className='absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 h-full disabled:cursor-not-allowed'
 							/>
 							<div className='w-full flex items-center px-[14px] py-[10px] bg-white border border-offwhite rounded-[8px] font-inter text-regular text-[14px] text-gray pointer-events-none'>
 								{(() => {
@@ -330,6 +339,7 @@ const ReferencesForm: React.FC<ReferencesFormProps> = ({
 						</label>
 						<button
 							type='button'
+							disabled={completedSelections.has('references') || isSubmitting}
 							className='min-w-[84px] flex justify-center items-center text-white bg-success rounded-[8px]  p-[10px] min-h-[46px] disabled:bg-opacity-60 disabled:cursor-not-allowed'
 							onClick={() => {
 								// Trigger file input click
@@ -349,9 +359,9 @@ const ReferencesForm: React.FC<ReferencesFormProps> = ({
 			<div className='text-left flex gap-[10px]'>
 				
 				<button
-					disabled={completedSelections.has('references')}
-					className={` bg-primary text-white px-[18px] py-[8px] text-regular text-[14px] rounded-[26px] ${completedSelections.has('references')
-							? 'cursor-not-allowed'
+					disabled={completedSelections.has('references') || isSubmitting}
+					className={` bg-primary text-white px-[18px] py-[8px] text-regular text-[14px] rounded-[26px] ${completedSelections.has('references') || isSubmitting
+							? 'cursor-not-allowed opacity-60'
 							: ' hover:bg-primary'
 						}`}
 					onClick={handleContinue}
@@ -359,9 +369,9 @@ const ReferencesForm: React.FC<ReferencesFormProps> = ({
 					Continue
 				</button>
 				<button
-					disabled={completedSelections.has('references')}
-					className={` bg-lightgray text-black px-[18px] py-[8px] text-regular text-[14px] rounded-[26px] ${completedSelections.has('references')
-							? 'cursor-not-allowed'
+					disabled={completedSelections.has('references') || isSubmitting}
+					className={` bg-lightgray text-black px-[18px] py-[8px] text-regular text-[14px] rounded-[26px] ${completedSelections.has('references') || isSubmitting
+							? 'cursor-not-allowed opacity-60'
 							: ' hover:bg-lightgray'
 						}`}
 					onClick={handleContinue}

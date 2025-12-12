@@ -42,6 +42,7 @@ interface MessageRendererProps {
 	messages: ChatMessage[];
 	isStreaming: boolean;
 	setIsStreaming: React.Dispatch<React.SetStateAction<boolean>>;
+	showBlogContent: boolean;
 	setShowBlogContent: React.Dispatch<React.SetStateAction<boolean>>;
 	onCollapseSidebar?: () => void;
 	sendUserMessage: (message: string, agentState: AgentState) => Promise<{ response: string; updatedState: AgentState; metadata?: any }>;
@@ -75,6 +76,7 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({
 	messages,
 	isStreaming,
 	setIsStreaming,
+	showBlogContent,
 	setShowBlogContent,
 	onCollapseSidebar,
 	sendUserMessage,

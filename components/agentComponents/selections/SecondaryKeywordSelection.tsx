@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useMemo } from 'react';
+import React, { useEffect, useRef, useMemo, useState } from 'react';
 import { AgentState } from '../../../../server/agent/state';
 import { KeywordCandidate, ChatMessage } from '../../../types';
 
@@ -59,6 +59,9 @@ const SecondaryKeywordSelection: React.FC<SecondaryKeywordSelectionProps> = ({
 
 	// Track previous candidates to detect when they change
 	const prevCandidatesRef = useRef<string>('');
+	
+	// Track if submit button is being processed
+	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	// Reset selections whenever component loads with new candidates
 	// This ensures a fresh start every time the component is shown
@@ -89,6 +92,7 @@ const SecondaryKeywordSelection: React.FC<SecondaryKeywordSelectionProps> = ({
 	const handleConfirm = async () => {
 		if (!agent) return;
 
+		setIsSubmitting(true);
 		setCompletedSelections((prev) =>
 			new Set(prev).add('secondaryKeywords')
 		);
@@ -164,14 +168,19 @@ const SecondaryKeywordSelection: React.FC<SecondaryKeywordSelectionProps> = ({
 			<div className=' grid grid-cols-1 md:grid-cols-2 gap-x-[8px] gap-y-[4px]'>
 				{candidates.map((kw, idx) => {
 					const checked = selectedSecondaries.includes(kw.text);
+					const isDisabled = completedSelections.has('secondaryKeywords') || isSubmitting;
 					return (
 						<label
 							key={idx}
-							className={`flex items-center  text-sm bg-white border border-offwhite rounded-[8px]   cursor-pointer transition-colors hover:border-primary hover:bg-[#FFF8F1] ${
+							className={`flex items-center  text-sm bg-white border border-offwhite rounded-[8px] transition-colors ${
+								isDisabled
+									? 'cursor-not-allowed opacity-60'
+									: 'cursor-pointer hover:border-primary hover:bg-[#FFF8F1]'
+							} ${
 								checked
 									? 'border-primary bg-[#FFF4E8]'
 									: 'border-offwhite'
-						}`}
+							}`}
 						>
 							<div className='flex items-center'>
 								<div className='px-[13px] py-[17px]'>
@@ -179,8 +188,9 @@ const SecondaryKeywordSelection: React.FC<SecondaryKeywordSelectionProps> = ({
 								
 								<span className='relative'>
 									<input
+									
 										type='checkbox'
-										disabled={completedSelections.has('secondaryKeywords')}
+										disabled={isDisabled}
 										checked={checked}
 										onChange={(e) => {
 											setSelectedSecondaries((prev) => {
@@ -211,7 +221,7 @@ const SecondaryKeywordSelection: React.FC<SecondaryKeywordSelectionProps> = ({
 					disabled={
 						completedSelections.has(
 							'secondaryKeywords'
-						) || selectedSecondaries.length === 0
+						) || selectedSecondaries.length === 0 || isSubmitting
 					}
 					className='px-[18px] py-[8px] font-inter text-regular text-[14px] bg-success text-white  transition-colors disabled:opacity-[60%] disabled:cursor-not-allowed rounded-[26px]'
 					onClick={handleConfirm}

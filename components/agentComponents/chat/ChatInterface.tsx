@@ -152,6 +152,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 							messages={messages}
 							isStreaming={isStreaming}
 							setIsStreaming={setIsStreaming}
+							showBlogContent={showBlogContent}
 							setShowBlogContent={setShowBlogContent}
 							onCollapseSidebar={onCollapseSidebar}
 							sendUserMessage={sendUserMessage}

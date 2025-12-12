@@ -186,6 +186,7 @@ const OutlineApproval: React.FC<OutlineApprovalProps> = ({
 			<DraggableOutline
 				outline={outline}
 				onOutlineChange={handleOutlineChange}
+			
 			/>
 
 			<div className='flex gap-[10px] border-t border-lightgray p-[10px] mt-[14px]'>

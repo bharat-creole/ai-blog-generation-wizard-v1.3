@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useMemo } from 'react';
+import React, { useEffect, useRef, useMemo, useState } from 'react';
 import { AgentState } from '../../../../server/agent/state';
 import { ChatMessage } from '../../../types';
 
@@ -49,6 +49,9 @@ const TitleSelection: React.FC<TitleSelectionProps> = ({
 
 	// Track previous titles to detect when they change
 	const prevTitlesRef = useRef<string>('');
+	
+	// Track if submit button is being processed
+	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	// Reset selection whenever component loads with new titles
 	useEffect(() => {
@@ -73,6 +76,7 @@ const TitleSelection: React.FC<TitleSelectionProps> = ({
 	const handleConfirm = async () => {
 		if (!agent || !selectedTitle) return;
 
+		setIsSubmitting(true);
 		setCompletedSelections((prev) => new Set(prev).add('title'));
 
 		// Add user message immediately for UI feedback
@@ -143,10 +147,15 @@ const TitleSelection: React.FC<TitleSelectionProps> = ({
 			<div className='space-y-[3px] bg-[#FFFFFF] p-[16px] rounded-[10px] border border-offwhite'>
 				{titles.map((title, idx) => {
 					const isSelected = selectedTitle === title;
+					const isDisabled = completedSelections.has('title') || isSubmitting;
 					return (
 						<label
 							key={idx}
-							className={`relative flex items-center justify-between text-sm bg-white border  rounded-[8px]   cursor-pointer transition-colors hover:border-primary hover:bg-[#FFF8F1] ${
+							className={`relative flex items-center justify-between text-sm bg-white border  rounded-[8px] transition-colors ${
+								isDisabled
+									? 'cursor-not-allowed opacity-60'
+									: 'cursor-pointer hover:border-primary hover:bg-[#FFF8F1]'
+							} ${
 								isSelected
 									? 'border-primary bg-[#FFF4E8]'
 									: 'border-offwhite'
@@ -157,9 +166,7 @@ const TitleSelection: React.FC<TitleSelectionProps> = ({
 								<input
 									type='radio'
 									name='title'
-									disabled={completedSelections.has(
-										'title'
-									)}
+									disabled={isDisabled}
 									checked={isSelected}
 									onChange={() => setSelectedTitle(title)}
 									className='w-4 h-4  text-primary focus:ring-primary border-primary'
@@ -175,7 +182,8 @@ const TitleSelection: React.FC<TitleSelectionProps> = ({
 				<button
 					disabled={
 						completedSelections.has('title') ||
-						!selectedTitle
+						!selectedTitle ||
+						isSubmitting
 					}
 					className='px-[18px] py-[8px] text-sm bg-success text-white  transition-colors disabled:opacity-[60%] disabled:cursor-not-allowed rounded-[26px]'
 					onClick={handleConfirm}
