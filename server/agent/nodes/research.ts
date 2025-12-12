@@ -134,9 +134,11 @@ export const researchPrimaryNode = async (
 			console.log(`   🔍 Modified search query: "${searchQuery}"`);
 		}
 
-		const apiKey = state.apiKey || process.env.GEMINI_API_KEY;
+		// Get apiKey from environment variable first (preferred), then state
+		// This allows the API key to be configured server-side via .env
+		const apiKey = process.env.GEMINI_API_KEY || state.apiKey;
 		if (!apiKey) {
-			throw new Error('API Key is required for web search.');
+			throw new Error('API Key is required for web search. Please set GEMINI_API_KEY in your .env file.');
 		}
 
 		const webUrls = await geminiService.searchWebForUrls(

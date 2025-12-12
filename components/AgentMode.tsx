@@ -153,6 +153,7 @@ const AgentMode: React.FC<Props> = ({
 			metadata?: any;
 		}> => {
 			// Get apiKey from props, state, or environment variable
+			// API key is optional - backend will use GEMINI_API_KEY from .env if not provided
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore
 			const envApiKey =
@@ -160,11 +161,7 @@ const AgentMode: React.FC<Props> = ({
 				import.meta.env?.GEMINI_API_KEY;
 			const apiKeyToUse = apiKey || agentState?.apiKey || envApiKey;
 
-			if (!apiKeyToUse) {
-				throw new Error(
-					'API Key is required. Please set your Gemini API Key in Settings or set VITE_GEMINI_API_KEY in your .env.local file.'
-				);
-			}
+			// API key is optional - backend will use GEMINI_API_KEY from .env if not provided
 			return sendUserMessageBase(message, agentState, apiKeyToUse);
 		},
 		[sendUserMessageBase, apiKey]
@@ -267,10 +264,7 @@ const AgentMode: React.FC<Props> = ({
 
 	const handleSend = useCallback(async () => {
 		if (!canSend) return;
-		if (!apiKey) {
-			setError('Please set your Gemini API Key in Settings.');
-			return;
-		}
+		// API key is optional - backend will use GEMINI_API_KEY from .env if not provided
 		setError(null);
 
 		// ✨ Capture input value and clear input immediately

@@ -322,16 +322,11 @@ const App: React.FC = () => {
 					</div>
 
 					<nav className='flex-1 p-3 space-y-2'>
-						{/* Agent Mode Button with Dropdown */}
+						{/* Agent Mode Button - Dropdown disabled for now */}
 						<div>
 							<button
 								onClick={() => {
 									setView(AppView.Agent);
-									if (!sidebarCollapsed) {
-										setAgentDropdownOpen(
-											!agentDropdownOpen
-										);
-									}
 									setSidebarOpen(false);
 								}}
 								className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-200 ${view === AppView.Agent
@@ -351,43 +346,44 @@ const App: React.FC = () => {
 									🤖
 								</span>
 								{!sidebarCollapsed && (
-									<>
-										<div className='flex-1 text-left'>
-											<div className='font-semibold text-sm'>
-												Agent
-												Mode
-											</div>
-											<div
-												className={`text-xs ${view ===
-													AppView.Agent
-													? 'text-orange-100'
-													: 'text-gray-500'
-													}`}
-											>
-												AI-powered
-												chat
-											</div>
+									<div className='flex-1 text-left'>
+										<div className='font-semibold text-sm'>
+											Agent
+											Mode
 										</div>
-										<svg
-											className={`w-4 h-4 transition-transform ${agentDropdownOpen
-												? 'rotate-180'
-												: ''
+										<div
+											className={`text-xs ${view ===
+												AppView.Agent
+												? 'text-orange-100'
+												: 'text-gray-500'
 												}`}
-											fill='none'
-											stroke='currentColor'
-											viewBox='0 0 24 24'
 										>
-											<path
-												strokeLinecap='round'
-												strokeLinejoin='round'
-												strokeWidth={
-													2
-												}
-												d='M19 9l-7 7-7-7'
-											/>
-										</svg>
-									</>
+											AI-powered
+											chat
+										</div>
+									</div>
 								)}
+								{/* Dropdown arrow commented out */}
+								{/* {!sidebarCollapsed && (
+									<svg
+										className={`w-4 h-4 transition-transform ${agentDropdownOpen
+											? 'rotate-180'
+											: ''
+											}`}
+										fill='none'
+										stroke='currentColor'
+										viewBox='0 0 24 24'
+									>
+										<path
+											strokeLinecap='round'
+											strokeLinejoin='round'
+											strokeWidth={
+												2
+											}
+											d='M19 9l-7 7-7-7'
+										/>
+									</svg>
+								)} */}
 								{sidebarCollapsed &&
 									view ===
 									AppView.Agent && (
@@ -395,8 +391,8 @@ const App: React.FC = () => {
 									)}
 							</button>
 
-							{/* Agent Sub-menu */}
-							{!sidebarCollapsed &&
+							{/* Agent Sub-menu - Commented out for now */}
+							{/* {!sidebarCollapsed &&
 								agentDropdownOpen &&
 								view === AppView.Agent && (
 									<div className='mt-1 ml-4 space-y-1'>
@@ -471,7 +467,7 @@ const App: React.FC = () => {
 											</span>
 										</button>
 									</div>
-								)}
+								)} */}
 						</div>
 					</nav>
 

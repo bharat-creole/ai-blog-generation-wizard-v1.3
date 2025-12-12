@@ -44,13 +44,34 @@ export const generateSectionContent = async (
 		targetKeyword: string;
 		interlinks: Interlink[];
 		referenceUrls: string[];
+		language?: string; // Language code (e.g., 'en', 'es', 'zh', 'de')
 	}
 ): Promise<string> => {
 	if (!apiKey) throw new Error('API Key is required.');
 	const ai = new GoogleGenAI({ apiKey });
 
+	// Map language codes to human-readable names
+	const languageMap: Record<string, string> = {
+		en: 'English',
+		es: 'Spanish',
+		zh: 'Chinese (Simplified)',
+		'zh-HK': 'Chinese (Traditional - Hong Kong)',
+		zh_HK: 'Chinese (Traditional - Hong Kong)',
+		de: 'German',
+	};
+
+	// Default to English if language not provided or invalid
+	const languageCode = opts.language || 'en';
+	const languageName = languageMap[languageCode] || 'English';
+
 	const prompt = `ROLE: You are an expert SEO Content Writer specializing in original, valuable, and SEO-friendly content.
 TASK: Write the content for one H2 section of a blog, including its H3 items if any.
+
+LANGUAGE REQUIREMENT (CRITICAL):
+- Write ALL content in ${languageName} (${languageCode})
+- This includes headings, paragraphs, lists, and all text
+- Ensure proper grammar, spelling, and natural phrasing in ${languageName}
+- Maintain cultural appropriateness for ${languageName} readers
 
 CONTENT QUALITY GUIDELINES (CRITICAL):
 1. **Originality & Value:**
@@ -104,6 +125,7 @@ SECTION DETAILS:
 
 OUTPUT:
 - Output Markdown for ONLY this section
+- Write ALL content in ${languageName} (${languageCode})
 - Start with the H2 heading: ## ${section.name}
 - Then write content for each H3 subheading in order
 - Ensure smooth transitions between H3 subheadings

@@ -3,6 +3,7 @@ import * as agentService from '../../agentService';
 import * as geminiService from '../../geminiService';
 import * as automationEngine from '../../automationEngine';
 import { Interlink } from '../../../types';
+import { getUserLanguage } from '../../../server/db/userService';
 
 export const proposalNode = async (state: AgentState): Promise<Partial<AgentState>> => {
     if (!state.outlineApproved) return {};
@@ -27,6 +28,9 @@ export const proposalNode = async (state: AgentState): Promise<Partial<AgentStat
         console.log(`   Files: ${state.data.referenceFiles?.length || 0}`);
     }
 
+    // ✨ Fetch user language with fallback to English
+    const userLanguage = await getUserLanguage((state as any).userId);
+
     const sectionMd = await agentService.generateSectionContent(
         state.data,
         section,
@@ -35,6 +39,7 @@ export const proposalNode = async (state: AgentState): Promise<Partial<AgentStat
             targetKeyword: state.data.primaryKeyword,
             interlinks: state.data.interlinks as Interlink[],
             referenceUrls: useRefs ? state.data.referenceUrls : [],
+            language: userLanguage, // ✨ Pass language parameter
         }
     );
 

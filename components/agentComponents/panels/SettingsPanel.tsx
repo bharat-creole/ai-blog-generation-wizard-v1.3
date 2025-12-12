@@ -19,7 +19,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ show, data, updateData })
                         <div className='space-y-3'>
                             <div>
                                 <label htmlFor='agent-apiKey' className='block text-sm font-medium text-gray-700 mb-1'>
-                                    Gemini API Key *
+                                    Gemini API Key (Optional)
                                 </label>
                                 <input
                                     type='password'
@@ -27,20 +27,20 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ show, data, updateData })
                                     value={data.apiKey}
                                     onChange={(e) => updateData({ apiKey: e.target.value })}
                                     className='w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500 text-sm'
-                                    placeholder='Enter your Gemini API key'
+                                    placeholder='Enter your Gemini API key (optional)'
                                 />
                                 <p className='text-xs text-gray-500 mt-1'>
-                                    Your API key is stored only in your browser for this session.
+                                    Your API key is stored only in your browser for this session. If not provided, the server will use GEMINI_API_KEY from .env file.
                                 </p>
                             </div>
                             {data.apiKey && (
                                 <div className='text-xs text-green-600'>
-                                    ✓ API key is configured
+                                    ✓ API key is configured (will override server .env setting)
                                 </div>
                             )}
                             {!data.apiKey && (
-                                <div className='text-xs text-orange-600'>
-                                    ⚠ Please enter your API key to use the agent
+                                <div className='text-xs text-gray-600'>
+                                    ℹ️ Using server-configured API key from .env file
                                 </div>
                             )}
                         </div>

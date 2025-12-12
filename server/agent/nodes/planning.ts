@@ -101,10 +101,11 @@ export const discoveryNode = async (state: AgentState): Promise<Partial<AgentSta
     // We assume feedback comes in via state updates before this node runs
 
     console.log('📝 [OUTLINE GENERATION] Creating initial outline...');
-    // Get apiKey from state or environment variable
-    const apiKeyForOutline = state.apiKey || process.env.GEMINI_API_KEY;
+    // Get apiKey from environment variable first (preferred), then state
+    // This allows the API key to be configured server-side via .env
+    const apiKeyForOutline = process.env.GEMINI_API_KEY || state.apiKey;
     if (!apiKeyForOutline) {
-        throw new Error('API Key is required. Please provide apiKey in state or set GEMINI_API_KEY in your .env.local file.');
+        throw new Error('API Key is required. Please set GEMINI_API_KEY in your .env file or provide apiKey in state.');
     }
     const outline = await geminiService.generateOutline(input, apiKeyForOutline);
 

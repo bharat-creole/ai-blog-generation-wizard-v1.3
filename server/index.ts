@@ -65,6 +65,35 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use(cors());
 
+/**
+ * Helper function to write SSE events and immediately flush to prevent buffering issues
+ * This is critical for production environments with proxies/nginx
+ */
+const writeSSE = (res: express.Response, data: string): void => {
+	try {
+		res.write(data);
+		// Flush immediately to prevent buffering - critical for production
+		if (typeof (res as any).flush === 'function') {
+			(res as any).flush();
+		}
+	} catch (error) {
+		console.error('❌ [SSE WRITE ERROR]', error);
+		// Don't throw - let the stream error handler deal with it
+	}
+};
+
+/**
+ * Send SSE keepalive ping to prevent connection timeouts
+ * Should be called periodically during long-running streams
+ */
+const sendSSEKeepalive = (res: express.Response): void => {
+	try {
+		writeSSE(res, ': keepalive\n\n');
+	} catch (error) {
+		console.error('❌ [SSE KEEPALIVE ERROR]', error);
+	}
+};
+
 app.get('/', (req, res) => {
 	const { token, userId } = req.query;
 	const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3002';
@@ -961,12 +990,13 @@ app.post('/api/agent/message', optionalAuth, async (req, res) => {
 		});
 	}
 
-	// Get apiKey from request body, state, or environment variable (in that order)
+	// Get apiKey from environment variable first (preferred), then request body, then state
+	// This allows the API key to be configured server-side via .env
 	const apiKeyToUse =
-		apiKey || currentState?.apiKey || process.env.GEMINI_API_KEY;
+		process.env.GEMINI_API_KEY || apiKey || currentState?.apiKey;
 	if (!apiKeyToUse) {
 		return res.status(400).json({
-			error: 'apiKey is required. Please provide apiKey in request, state, or set GEMINI_API_KEY in your .env.local file.',
+			error: 'apiKey is required. Please set GEMINI_API_KEY in your .env file or provide apiKey in request.',
 		});
 	}
 
@@ -1182,13 +1212,15 @@ app.post('/api/agent/message', optionalAuth, async (req, res) => {
 			if (stream) {
 				try {
 					// Send intent event with the response
-					res.write(
+					writeSSE(
+						res,
 						`event: intent\ndata: ${JSON.stringify(
 							blockedResponse
 						)}\n\n`
 					);
 					// Send done event with state (frontend expects state in onComplete)
-					res.write(
+					writeSSE(
+						res,
 						`event: done\ndata: ${JSON.stringify({
 							assistantMessage:
 								blockedResponse.assistantMessage,
@@ -1242,13 +1274,15 @@ app.post('/api/agent/message', optionalAuth, async (req, res) => {
 			if (stream) {
 				try {
 					// Send intent event with the response
-					res.write(
+					writeSSE(
+						res,
 						`event: intent\ndata: ${JSON.stringify(
 							restartResponse
 						)}\n\n`
 					);
 					// Send done event with state (frontend expects state in onComplete)
-					res.write(
+					writeSSE(
+						res,
 						`event: done\ndata: ${JSON.stringify({
 							assistantMessage:
 								restartResponse.assistantMessage,
@@ -1305,13 +1339,15 @@ app.post('/api/agent/message', optionalAuth, async (req, res) => {
 			if (stream) {
 				try {
 					// Send intent event with the response
-					res.write(
+					writeSSE(
+						res,
 						`event: intent\ndata: ${JSON.stringify(
 							contextResponse
 						)}\n\n`
 					);
 					// Send done event with state (frontend expects state in onComplete)
-					res.write(
+					writeSSE(
+						res,
 						`event: done\ndata: ${JSON.stringify({
 							assistantMessage:
 								ctxResponse.assistantMessage,
@@ -1366,7 +1402,8 @@ app.post('/api/agent/message', optionalAuth, async (req, res) => {
 
 			// Emit intent event with regeneration message
 			if (stream) {
-				res.write(
+				writeSSE(
+					res,
 					`event: intent\ndata: ${JSON.stringify({
 						assistantMessage: regenerationMessage,
 						shouldRunAgent: true,
@@ -1385,13 +1422,20 @@ app.post('/api/agent/message', optionalAuth, async (req, res) => {
 					config
 				);
 				let lastNodeName = '';
+				let chunkCount = 0;
 				for await (const chunk of streamIterator) {
+					// Send keepalive every 10 chunks to prevent timeout
+					if (chunkCount > 0 && chunkCount % 10 === 0) {
+						sendSSEKeepalive(res);
+					}
 					// Send progress events
-					res.write(
+					writeSSE(
+						res,
 						`event: progress\ndata: ${JSON.stringify(
 							chunk
 						)}\n\n`
 					);
+					chunkCount++;
 
 					// Track last executed node
 					const nodeName = Object.keys(chunk)[0];
@@ -1432,7 +1476,8 @@ app.post('/api/agent/message', optionalAuth, async (req, res) => {
 			delete serializedState.apiKey;
 
 			if (stream) {
-				res.write(
+				writeSSE(
+					res,
 					`event: done\ndata: ${JSON.stringify({
 						assistantMessage: reframed.message,
 						state: serializedState,
@@ -1471,7 +1516,8 @@ app.post('/api/agent/message', optionalAuth, async (req, res) => {
 		if (routing.directResponse && stream && routing.shouldProceed) {
 			// Send Primary Agent message as a separate intent event BEFORE processing
 			// This message appears immediately while LangGraph is executing
-			res.write(
+			writeSSE(
+				res,
 				`event: intent\ndata: ${JSON.stringify({
 					assistantMessage: routing.directResponse,
 					shouldRunAgent: true, // Will proceed to LangGraph
@@ -1486,8 +1532,6 @@ app.post('/api/agent/message', optionalAuth, async (req, res) => {
 					50
 				)}..."`
 			);
-			// Flush the response to ensure it's sent immediately
-			res.flushHeaders?.();
 		}
 
 		// If Primary Agent blocked (shouldProceed = false), stop here
@@ -1501,7 +1545,8 @@ app.post('/api/agent/message', optionalAuth, async (req, res) => {
 			);
 
 			if (stream) {
-				res.write(
+				writeSSE(
+					res,
 					`event: done\ndata: ${JSON.stringify({
 						assistantMessage:
 							routing.directResponse ||
@@ -1545,6 +1590,7 @@ app.post('/api/agent/message', optionalAuth, async (req, res) => {
 			...stateForProcessing,
 			...response.stateUpdates,
 			apiKey: apiKeyToUse, // Ensure apiKey is available for nodes during execution
+			userId: userId || stateForProcessing.userId || '', // ✨ Ensure userId is available for fetching language
 		};
 
 		// Emit intent event (only if Primary Agent didn't already send a "before execution" message)
@@ -1561,7 +1607,8 @@ app.post('/api/agent/message', optionalAuth, async (req, res) => {
 			!primaryAgentSentBeforeMessage &&
 			hasConversationHandlerMessage
 		) {
-			res.write(
+			writeSSE(
+				res,
 				`event: intent\ndata: ${JSON.stringify({
 					assistantMessage: response.assistantMessage,
 					assistantMessages: response.assistantMessages, // Include separate messages if available
@@ -1592,13 +1639,20 @@ app.post('/api/agent/message', optionalAuth, async (req, res) => {
 					updatedState,
 					config
 				);
+				let chunkCount = 0;
 				for await (const chunk of streamIterator) {
+					// Send keepalive every 10 chunks to prevent timeout
+					if (chunkCount > 0 && chunkCount % 10 === 0) {
+						sendSSEKeepalive(res);
+					}
 					// Send each state update as progress event
-					res.write(
+					writeSSE(
+						res,
 						`event: progress\ndata: ${JSON.stringify(
 							chunk
 						)}\n\n`
 					);
+					chunkCount++;
 
 					// Update local state tracker
 					// Note: chunk is a partial state update, usually keyed by node name
@@ -1683,7 +1737,8 @@ app.post('/api/agent/message', optionalAuth, async (req, res) => {
 			) {
 				// First, send the text message (if any) without metadata
 				if (finalMessage && finalMessage.trim()) {
-					res.write(
+					writeSSE(
+						res,
 						`event: intent\ndata: ${JSON.stringify({
 							assistantMessage: finalMessage,
 							shouldRunAgent: false,
@@ -1695,7 +1750,8 @@ app.post('/api/agent/message', optionalAuth, async (req, res) => {
 
 				// Then, send a separate message with JUST the keyword list metadata
 				// This ensures keyword list appears as a separate UI component
-				res.write(
+				writeSSE(
+					res,
 					`event: done\ndata: ${JSON.stringify({
 						assistantMessage: '', // Empty message - keyword list will be shown via metadata
 						state: serializedState,
@@ -1705,7 +1761,8 @@ app.post('/api/agent/message', optionalAuth, async (req, res) => {
 				);
 			} else {
 				// Normal flow - send message with metadata together
-				res.write(
+				writeSSE(
+					res,
 					`event: done\ndata: ${JSON.stringify({
 						assistantMessage: finalMessage,
 						state: serializedState,
@@ -1821,7 +1878,8 @@ app.post('/api/agent/message', optionalAuth, async (req, res) => {
 		}
 
 		if (stream) {
-			res.write(
+			writeSSE(
+				res,
 				`event: error\ndata: ${JSON.stringify({
 					error: errorMessage,
 					isRateLimit,
@@ -1893,25 +1951,32 @@ app.post('/api/agent/stream', async (req, res) => {
 		const config = { configurable: { thread_id: threadId } };
 		const stream = await graph.stream(state, config);
 
+		let chunkCount = 0;
 		for await (const chunk of stream) {
+			// Send keepalive every 10 chunks to prevent timeout
+			if (chunkCount > 0 && chunkCount % 10 === 0) {
+				sendSSEKeepalive(res);
+			}
 			// Send each state update as SSE event
-			res.write(`data: ${JSON.stringify(chunk)}\\n\\n`);
+			writeSSE(res, `data: ${JSON.stringify(chunk)}\n\n`);
+			chunkCount++;
 		}
 
-		res.write('event: done\\ndata: {}\\n\\n');
+		writeSSE(res, 'event: done\ndata: {}\n\n');
 		res.end();
 
 		console.log(`   ✅ Stream complete`);
-		console.log(`${'═'.repeat(70)}\\n`);
+		console.log(`${'═'.repeat(70)}\n`);
 	} catch (error: any) {
 		console.error(`   ❌ Stream failed:`, error);
-		res.write(
-			`event: error\\ndata: ${JSON.stringify({
+		writeSSE(
+			res,
+			`event: error\ndata: ${JSON.stringify({
 				error: error.message,
-			})}\\n\\n`
+			})}\n\n`
 		);
 		res.end();
-		console.log(`${'═'.repeat(70)}\\n`);
+		console.log(`${'═'.repeat(70)}\n`);
 	}
 });
 

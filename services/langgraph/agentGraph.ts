@@ -125,6 +125,10 @@ export async function proposalNode(s: AgentState): Promise<AgentState> {
 		console.log(`   Files: ${s.data.referenceFiles?.length || 0}`);
 	}
 
+	// ✨ Fetch user language with fallback to English
+	const { getUserLanguage } = await import('../../../server/db/userService');
+	const userLanguage = await getUserLanguage(s.userId);
+
 	const sectionMd = await agentService.generateSectionContent(
 		s.data,
 		section,
@@ -133,6 +137,7 @@ export async function proposalNode(s: AgentState): Promise<AgentState> {
 			targetKeyword: s.data.primaryKeyword,
 			interlinks: s.data.interlinks as Interlink[],
 			referenceUrls: useRefs ? s.data.referenceUrls : [],
+			language: userLanguage, // ✨ Pass language parameter
 		}
 	);
 	if (useRefs && (s.data.referenceUrls?.length || 0) > 0) {
