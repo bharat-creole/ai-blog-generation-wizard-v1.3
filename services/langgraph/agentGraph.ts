@@ -125,9 +125,12 @@ export async function proposalNode(s: AgentState): Promise<AgentState> {
 		console.log(`   Files: ${s.data.referenceFiles?.length || 0}`);
 	}
 
-	// ✨ Fetch user language with fallback to English
-	const { getUserLanguage } = await import('../../../server/db/userService');
+	// ✨ Fetch user language and model with fallback
+	const { getUserLanguage, getUserModel } = await import(
+		'../../../server/db/userService'
+	);
 	const userLanguage = await getUserLanguage(s.userId);
+	const userModel = await getUserModel(s.userId);
 
 	const sectionMd = await agentService.generateSectionContent(
 		s.data,
@@ -138,6 +141,7 @@ export async function proposalNode(s: AgentState): Promise<AgentState> {
 			interlinks: s.data.interlinks as Interlink[],
 			referenceUrls: useRefs ? s.data.referenceUrls : [],
 			language: userLanguage, // ✨ Pass language parameter
+			model: userModel, // ✨ Pass model parameter
 		}
 	);
 	if (useRefs && (s.data.referenceUrls?.length || 0) > 0) {
@@ -236,7 +240,8 @@ export async function researchPrimaryNode(s: AgentState): Promise<AgentState> {
 	}
 
 	// 🎯 Extract main topic from multiple sources
-	const topicSource = s.data.title || s.data.topic || s.data.primaryKeyword || '';
+	const topicSource =
+		s.data.title || s.data.topic || s.data.primaryKeyword || '';
 
 	// 📊 LOG: Show what we're extracting from
 	console.log('🔍 [PRIMARY KEYWORD RESEARCH] Starting...');
@@ -262,7 +267,8 @@ export async function researchPrimaryNode(s: AgentState): Promise<AgentState> {
 		const batches = await Promise.all(
 			seeds.map(async (k, idx) => {
 				console.log(
-					`   📡 Fetching keywords for seed ${idx + 1}/${seeds.length
+					`   📡 Fetching keywords for seed ${idx + 1}/${
+						seeds.length
 					}: "${k}"`
 				);
 				try {
@@ -298,7 +304,9 @@ export async function researchPrimaryNode(s: AgentState): Promise<AgentState> {
 				`   🔄 [KEYWORD REGENERATION] Generating NEW keywords based on feedback: "${feedback}"`
 			);
 			try {
-				const { filterKeywordsWithFeedback } = await import('../geminiService');
+				const { filterKeywordsWithFeedback } = await import(
+					'../geminiService'
+				);
 				// Generate completely new keywords based on feedback
 				const newKeywords = await filterKeywordsWithFeedback(
 					scoredKeywords.slice(0, 50), // Pass some context for reference
@@ -310,7 +318,9 @@ export async function researchPrimaryNode(s: AgentState): Promise<AgentState> {
 					// Re-score new keywords with feedback in mind
 					scoredKeywords = keywordTool.scoreIdeas(
 						newKeywords,
-						`${s.data.title || s.data.topic || ''} ${feedback}`,
+						`${
+							s.data.title || s.data.topic || ''
+						} ${feedback}`,
 						true
 					);
 					console.log(
@@ -318,11 +328,15 @@ export async function researchPrimaryNode(s: AgentState): Promise<AgentState> {
 					);
 					// Clear feedback after using it
 					if (s.conversationContext) {
-						s.conversationContext.primaryKeywordFeedback = undefined;
+						s.conversationContext.primaryKeywordFeedback =
+							undefined;
 					}
 				}
 			} catch (err) {
-				console.error('   ⚠️  [KEYWORD REGENERATION] Failed to generate new keywords with feedback:', err);
+				console.error(
+					'   ⚠️  [KEYWORD REGENERATION] Failed to generate new keywords with feedback:',
+					err
+				);
 			}
 		}
 
@@ -336,9 +350,12 @@ export async function researchPrimaryNode(s: AgentState): Promise<AgentState> {
 		);
 
 		// Filter function with configurable threshold
-		const isRelevantKeyword = (kw: any, scoreThreshold: number = 0.3): boolean => {
+		const isRelevantKeyword = (
+			kw: any,
+			scoreThreshold: number = 0.3
+		): boolean => {
 			const kwText = kw.text.toLowerCase();
-			
+
 			// Filter out keywords with score below threshold
 			if (kw.score < scoreThreshold) {
 				return false;
@@ -371,7 +388,9 @@ export async function researchPrimaryNode(s: AgentState): Promise<AgentState> {
 		};
 
 		// Apply filtering with 30% threshold (preferred)
-		let relevantKeywords = scoredKeywords.filter((kw) => isRelevantKeyword(kw, 0.3));
+		let relevantKeywords = scoredKeywords.filter((kw) =>
+			isRelevantKeyword(kw, 0.3)
+		);
 
 		// Sort all keywords by score (descending) to prioritize higher-scored ones
 		scoredKeywords.sort((a, b) => b.score - a.score);
@@ -381,11 +400,11 @@ export async function researchPrimaryNode(s: AgentState): Promise<AgentState> {
 			console.log(
 				`   ⚠️  Only found ${relevantKeywords.length} keywords with 30%+ score. Including more keywords to reach at least 25...`
 			);
-			
+
 			// Take top 25 from all scored keywords (sorted by score)
 			// This ensures we always have 25, prioritizing higher scores
 			ranked = scoredKeywords.slice(0, 25);
-			
+
 			console.log(
 				`   ✅ Showing ${ranked.length} keywords (top ${relevantKeywords.length} with 30%+ score, rest with lower scores)`
 			);
@@ -478,7 +497,9 @@ export async function researchSecondaryNode(
 				`   🔄 [SECONDARY KEYWORD REGENERATION] Generating NEW keywords based on feedback: "${feedback}"`
 			);
 			try {
-				const { filterKeywordsWithFeedback } = await import('../geminiService');
+				const { filterKeywordsWithFeedback } = await import(
+					'../geminiService'
+				);
 				// Generate completely new keywords based on feedback
 				const newKeywords = await filterKeywordsWithFeedback(
 					scoredKeywords.slice(0, 30), // Pass some context for reference
@@ -490,7 +511,11 @@ export async function researchSecondaryNode(
 					// Re-score new keywords with feedback in mind
 					scoredKeywords = keywordTool.scoreIdeas(
 						newKeywords,
-						`${s.data.title || s.data.topic || primary} ${feedback}`,
+						`${
+							s.data.title ||
+							s.data.topic ||
+							primary
+						} ${feedback}`,
 						true
 					);
 					console.log(
@@ -498,11 +523,15 @@ export async function researchSecondaryNode(
 					);
 					// Clear feedback after using it
 					if (s.conversationContext) {
-						s.conversationContext.secondaryKeywordFeedback = undefined;
+						s.conversationContext.secondaryKeywordFeedback =
+							undefined;
 					}
 				}
 			} catch (err) {
-				console.error('   ⚠️  [SECONDARY KEYWORD REGENERATION] Failed to generate new keywords with feedback:', err);
+				console.error(
+					'   ⚠️  [SECONDARY KEYWORD REGENERATION] Failed to generate new keywords with feedback:',
+					err
+				);
 			}
 		}
 
@@ -513,11 +542,15 @@ export async function researchSecondaryNode(
 		);
 
 		// ✨ CRITICAL FIX: Filter out primary keyword from secondary candidates
-		const filteredRanked = ranked.filter(k =>
-			k.text.toLowerCase() !== primary.toLowerCase()
+		const filteredRanked = ranked.filter(
+			(k) => k.text.toLowerCase() !== primary.toLowerCase()
 		);
 
-		console.log(`🔍 [SECONDARY KEYWORDS] Filtered ${ranked.length - filteredRanked.length} duplicate(s) of primary keyword "${primary}"`);
+		console.log(
+			`🔍 [SECONDARY KEYWORDS] Filtered ${
+				ranked.length - filteredRanked.length
+			} duplicate(s) of primary keyword "${primary}"`
+		);
 
 		s.keywordResearch = s.keywordResearch || {};
 		s.keywordResearch.secondaryCandidates = filteredRanked; // ✨ Use filtered list
@@ -534,7 +567,9 @@ export async function researchSecondaryNode(
 		automationEngine.shouldAutoFill(s, 'secondaryKeywords') &&
 		s.keywordResearch.secondaryCandidates.length > 0
 	) {
-		s.data.secondaryKeywords = s.keywordResearch.secondaryCandidates.slice(0, 5).map((k) => k.text);
+		s.data.secondaryKeywords = s.keywordResearch.secondaryCandidates
+			.slice(0, 5)
+			.map((k) => k.text);
 		appendTrace(s, 'KeywordResearch.secondaryAutoSelected', {
 			count: s.data.secondaryKeywords.length,
 		});
@@ -563,22 +598,35 @@ export async function titleGenerationNode(s: AgentState): Promise<AgentState> {
 
 	// ✨ NEW: Check for regeneration feedback
 	const titleFeedback = s.conversationContext?.titleFeedback;
-	const isRegeneration = !s.titleSelected && (titleFeedback || s.titleOptions?.length === 0);
+	const isRegeneration =
+		!s.titleSelected && (titleFeedback || s.titleOptions?.length === 0);
 
 	if (isRegeneration) {
-		console.log('🔄 [TITLE REGENERATION] Regenerating titles with feedback...');
-		console.log(`   Feedback: ${titleFeedback || 'none (fresh generation)'}`);
+		console.log(
+			'🔄 [TITLE REGENERATION] Regenerating titles with feedback...'
+		);
+		console.log(
+			`   Feedback: ${titleFeedback || 'none (fresh generation)'}`
+		);
 	}
 
 	// ✨ NEW: Fetch reference titles from web search for inspiration
-	console.log('🔍 [TITLE GENERATION] Fetching reference titles from web search...');
-	const topicForSearch = s.data.title || s.data.topic || s.data.primaryKeyword || '';
+	console.log(
+		'🔍 [TITLE GENERATION] Fetching reference titles from web search...'
+	);
+	const topicForSearch =
+		s.data.title || s.data.topic || s.data.primaryKeyword || '';
 	let referenceTitles: string[] = [];
-	
+
 	if (topicForSearch) {
 		try {
-			referenceTitles = await geminiService.searchWebForTitles(topicForSearch, s.apiKey);
-			console.log(`   ✅ Found ${referenceTitles.length} reference titles from web search`);
+			referenceTitles = await geminiService.searchWebForTitles(
+				topicForSearch,
+				s.apiKey
+			);
+			console.log(
+				`   ✅ Found ${referenceTitles.length} reference titles from web search`
+			);
 			if (referenceTitles.length > 0) {
 				console.log(`   📋 Sample reference titles:`);
 				referenceTitles.slice(0, 5).forEach((title, idx) => {
@@ -586,7 +634,10 @@ export async function titleGenerationNode(s: AgentState): Promise<AgentState> {
 				});
 			}
 		} catch (err) {
-			console.warn('   ⚠️  Failed to fetch reference titles, continuing without them:', err);
+			console.warn(
+				'   ⚠️  Failed to fetch reference titles, continuing without them:',
+				err
+			);
 		}
 	}
 
@@ -616,10 +667,16 @@ export async function titleGenerationNode(s: AgentState): Promise<AgentState> {
 
 	// ✨ Case 3: Show options to user (default behavior)
 	s.halt = { reason: 'await_title_selection' };
-	appendTrace(s, isRegeneration ? 'TitleGeneration.regenerated' : 'TitleGeneration.generated', {
-		count: titles.length,
-		hadFeedback: !!titleFeedback,
-	});
+	appendTrace(
+		s,
+		isRegeneration
+			? 'TitleGeneration.regenerated'
+			: 'TitleGeneration.generated',
+		{
+			count: titles.length,
+			hadFeedback: !!titleFeedback,
+		}
+	);
 	return s;
 }
 
