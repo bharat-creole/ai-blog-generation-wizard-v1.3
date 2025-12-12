@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { AgentState } from '../../../../server/agent/state';
 import { OutlineSection, ChatMessage } from '../../../types';
 import DraggableOutline from '../content/DraggableOutline';
@@ -51,9 +51,13 @@ const OutlineApproval: React.FC<OutlineApprovalProps> = ({
 	onCollapseSidebar,
 	sendUserMessage,
 }) => {
+	// Track if submit button is being processed
+	const [isSubmitting, setIsSubmitting] = useState(false);
+
 	const handleApprove = async () => {
 		if (!agent) return;
 
+		setIsSubmitting(true);
 		setCompletedSelections((prev) => new Set(prev).add('outline'));
 
 		// Add user message immediately
@@ -181,18 +185,22 @@ const OutlineApproval: React.FC<OutlineApprovalProps> = ({
 
 	if (!outline) return null;
 
+	const isDisabled = completedSelections.has('outline') || isSubmitting;
+
 	return (
 		<div className='mt-3'>
-			<DraggableOutline
-				outline={outline}
-				onOutlineChange={handleOutlineChange}
-			/>
+			<div className={isDisabled ? 'opacity-60 pointer-events-none' : ''}>
+				<DraggableOutline
+					outline={outline}
+					onOutlineChange={handleOutlineChange}
+				/>
+			</div>
 
 			<div className='flex gap-[10px] border-t border-lightgray p-[10px] mt-[14px]'>
 				<button
-					disabled={completedSelections.has('outline')}
-					className={`px-[18px] py-[8px] text-[14px]  font-semibold rounded-[26px] transition-all duration-200 ${completedSelections.has('outline')
-							? 'text-white bg-primary hover:shadow-lg cursor-not-allowed'
+					disabled={isDisabled}
+					className={`px-[18px] py-[8px] text-[14px]  font-semibold rounded-[26px] transition-all duration-200 ${isDisabled
+							? 'text-white bg-primary hover:shadow-lg cursor-not-allowed opacity-60'
 							: 'text-white bg-primary hover:shadow-lg '
 						}`}
 					onClick={handleApprove}
@@ -200,7 +208,8 @@ const OutlineApproval: React.FC<OutlineApprovalProps> = ({
 					✅ Approve Outline
 				</button>
 				<button
-					className='px-[18px] py-[8px] text-[14px] font-semibold bg-offwhite text-black border border-lightgray rounded-[26px]  transition-all'
+					disabled={isDisabled}
+					className={`px-[18px] py-[8px] text-[14px] font-semibold bg-offwhite text-black border border-lightgray rounded-[26px]  transition-all ${isDisabled ? 'opacity-60 cursor-not-allowed' : ''}`}
 					onClick={() => {
 						setInput(
 							'Regenerate the outline with more detail'
