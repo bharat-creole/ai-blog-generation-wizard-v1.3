@@ -157,14 +157,7 @@ Act as a Primary Mediator Agent for a blog generation system. You control the co
    - Type: "irrelevant_small_talk"
    - SystemAction: "abort"
    - shouldProceed: false
-   - directResponse: "Great! I'll help you create a blog post. To get started, I'll need:
-     - **Topic**: What would you like to write about?
-     - **Primary Keyword**: The main SEO keyword (Let me present you some suggestions. If you would like to give of your own then please provide it.)
-     - **Secondary Keywords**: Additional keywords (Let me present you some suggestions. If you would like to give of your own then please provide it.)
-     - **Title**: Blog post title (I can generate options)
-     - **Interlinking & References**: Optional, can add later
-     
-     Please share your topic to begin!"
+   - directResponse: "Great! I'll help you create a blog post. To get started, I'll need:\n- **Topic**: What would you like to write about?\n- **Primary Keyword**: The main SEO keyword (Let me present you some suggestions. If you would like to give of your own then please provide it.)\n- **Secondary Keywords**: Additional keywords (Let me present you some suggestions. If you would like to give of your own then please provide it.)\n- **Title**: Blog post title (I can generate options)\n- **Interlinking & References**: Optional, can add later\n\nPlease share your topic to begin!"
 
 2. **AUTOMATION REQUEST** (SECOND HIGHEST PRIORITY)
    - Phrases: "generate blog by yourself", "handle it automatically", "you decide everything", "full auto", "automatic mode", "do it yourself"
@@ -286,7 +279,7 @@ OUTPUT JSON FORMAT:
   "normalizedMessage": "cleaned message (remove greetings, keep core intent)",
   "shouldProceed": true | false,
   "systemAction": "restart" | "abort" | "route_to_intent_classifier" | "route_to_context_manager" | "regenerate_node",
-  "directResponse": "Required if shouldProceed is false OR if you want to guide user before proceeding. Be conversational, friendly, and helpful!",
+  "directResponse": "Required if shouldProceed is false OR if you want to guide user before proceeding. Be conversational, friendly, and helpful! IMPORTANT: Use \\n for newlines in JSON strings. For lists, use single \\n between list items (not double). Use \\n\\n only before the list starts and before closing text. Example: 'Text:\\n\\n- Item 1\\n- Item 2\\n- Item 3\\n\\nClosing text'",
   "regenerationRequest": {
     "targetNode": "title_generation" | "research_primary" | "research_secondary" | "discover" | null,
     "feedback": "extracted feedback text if provided",
@@ -313,7 +306,7 @@ EXAMPLES:
     "normalizedMessage": "hello",
     "shouldProceed": false,
     "systemAction": "abort",
-    "directResponse": "Great! I'll help you create a blog post. To get started, I'll need:\n- **Topic**: What would you like to write about?\n- **Primary Keyword**: The main SEO keyword (Let me present you some suggestions. If you would like to give of your own then please provide it.)\n- **Secondary Keywords**: Additional keywords (Let me present you some suggestions. If you would like to give of your own then please provide it.)\n- **Title**: Blog post title (I can generate options)\n\nPlease share your topic to begin!"
+    "directResponse": "Great! I'll help you create a blog post. To get started, I'll need:\n\n- **Topic**: What would you like to write about?\n- **Primary Keyword**: The main SEO keyword (Let me present you some suggestions. If you would like to give of your own then please provide it.)\n- **Secondary Keywords**: Additional keywords (Let me present you some suggestions. If you would like to give of your own then please provide it.)\n- **Title**: Blog post title (I can generate options)\n- **Interlinking & References**: Optional, can add later\n\nPlease share your topic to begin!"
   }
 
 **User Provides Topic (Starting Research):**
@@ -491,6 +484,39 @@ EXAMPLES:
 			// Validate and ensure required fields
 			if (!result.normalizedMessage && result.shouldProceed) {
 				result.normalizedMessage = userMessage; // Fallback to original if missing
+			}
+
+			// ✨ Post-process directResponse to ensure proper markdown formatting
+			// ReactMarkdown needs proper newline formatting to render line breaks correctly
+			if (result.directResponse) {
+				const originalResponse = result.directResponse;
+				result.directResponse =
+					this.normalizeMarkdownFormatting(
+						result.directResponse
+					);
+				// Debug logging to track formatting issues
+				if (originalResponse !== result.directResponse) {
+					console.log(
+						'   🔧 [FORMAT] Normalized directResponse formatting'
+					);
+					console.log(
+						`   Original length: ${originalResponse.length}, New length: ${result.directResponse.length}`
+					);
+					console.log(
+						`   Original has \\n: ${originalResponse.includes(
+							'\\n'
+						)}, New has \\n: ${result.directResponse.includes(
+							'\\n'
+						)}`
+					);
+					console.log(
+						`   Original has actual newline: ${originalResponse.includes(
+							'\n'
+						)}, New has actual newline: ${result.directResponse.includes(
+							'\n'
+						)}`
+					);
+				}
 			}
 
 			// Post-process regeneration requests to ensure proper state updates
@@ -741,6 +767,143 @@ EXAMPLES:
 		}
 
 		return updates;
+	}
+
+	/**
+	 * Normalize markdown formatting for proper rendering in ReactMarkdown
+	 * Ensures newlines are properly formatted for markdown rendering
+	 */
+	private normalizeMarkdownFormatting(text: string): string {
+		if (!text) return text;
+
+		// Replace escaped newlines (\n) with actual newlines
+		// Handle both JSON-escaped (\n) and literal newlines
+		let normalized = text
+			.replace(/\\n/g, '\n') // Replace escaped \n with actual newline
+			.replace(/\r\n/g, '\n') // Normalize Windows line endings
+			.replace(/\r/g, '\n'); // Normalize Mac line endings
+
+		// ✨ CRITICAL: Handle case where AI returns text without ANY newlines (all on one line)
+		// Detect list pattern even when there are no newlines
+		// Pattern: "need:" followed by "- **Topic**" or "need: - **Topic**" or "need:- **Topic**"
+		if (!normalized.includes('\n') && normalized.includes('- **')) {
+			// Add single newline after ":" before first list item (handle both ": -" and ":-")
+			normalized = normalized.replace(/:\s*- \*\*/g, ':\n- **');
+			normalized = normalized.replace(/:- \*\*/g, ':\n- **'); // Handle ":-" with space
+			// Add newline before each subsequent list item (handle both " -" and "-")
+			normalized = normalized.replace(/\s+- \*\*/g, '\n- **');
+			normalized = normalized.replace(/([^\n])- \*\*/g, '$1\n- **'); // Handle "-" directly after text
+			// Add double newline before "Please share" or similar closing (for paragraph break)
+			normalized = normalized.replace(
+				/\s+Please share/g,
+				'\n\nPlease share'
+			);
+			normalized = normalized.replace(
+				/([^\n])Please share/g,
+				'$1\n\nPlease share'
+			); // Handle no space before "Please"
+		}
+
+		// Ensure list items have proper spacing (single newline before list, single between items)
+		// If we have a line ending with ":" followed by a list item, ensure single newline
+		normalized = normalized.replace(/:\n- /g, ':\n- ');
+		normalized = normalized.replace(/:\s+- /g, ':\n- '); // Handle space instead of newline
+
+		// Ensure proper spacing around list items (single newline between items)
+		// Add newline before list items if they're not already there
+		normalized = normalized.replace(/([^\n])\n- /g, '$1\n- ');
+		normalized = normalized.replace(/([^\n])\s+- /g, '$1\n- '); // Handle space instead of newline
+
+		// Ensure double newline before "Please share" or similar closing statements
+		normalized = normalized.replace(
+			/\n\nPlease share/g,
+			'\n\nPlease share'
+		);
+		normalized = normalized.replace(
+			/\nPlease share/g,
+			'\n\nPlease share'
+		);
+		normalized = normalized.replace(
+			/\s+Please share/g,
+			'\n\nPlease share'
+		); // Handle space instead of newline
+
+		// Ensure each list item is on its own line with proper spacing (single newline between items)
+		normalized = normalized.replace(/([^\n])\n- \*\*/g, '$1\n- **');
+
+		// ✨ CRITICAL: Remove any blank lines (double newlines) between list items
+		// This ensures list items are continuous without empty lines between them
+
+		// First, handle markdown list format: - **Label**: text
+		normalized = normalized.replace(
+			/(- \*\*[^\n]*)\n\n(- \*\*)/g,
+			'$1\n$2'
+		);
+
+		// Handle any pattern where list items are separated by blank lines (with whitespace)
+		normalized = normalized.replace(
+			/(- \*\*[^\n]*)\n\s+\n(- \*\*)/g,
+			'$1\n$2'
+		);
+		normalized = normalized.replace(
+			/(- \*\*[^\n]*)\n\s*\n\s*(- \*\*)/g,
+			'$1\n$2'
+		);
+
+		// Handle rendered markdown format: **Topic**: text (after ReactMarkdown renders - **Topic**:)
+		// Pattern: line with **Label**: text, blank line, line with **Label**: text
+		normalized = normalized.replace(
+			/(\*\*[A-Za-z][^\n]*\*\*: [^\n]*)\n\n(\*\*[A-Za-z][^\n]*\*\*:)/g,
+			'$1\n$2'
+		);
+
+		// Handle plain format: Topic: text (if markdown is stripped)
+		// Pattern: line ending with ": text", blank line, line starting with capital letter and ":"
+		normalized = normalized.replace(
+			/([A-Z][^\n]*: [^\n]*)\n\n([A-Z][^\n]*:)/g,
+			'$1\n$2'
+		);
+
+		// Final cleanup: reduce excessive newlines (keep max 2 for paragraph breaks, but single for list items)
+		// Replace 3+ consecutive newlines with 2 (for paragraph breaks before closing statements)
+		normalized = normalized.replace(/\n{3,}/g, '\n\n');
+
+		// Final pass: ensure no double newlines remain between list items (repeat until no more matches)
+		// This handles all variations of list items
+		let previousLength = 0;
+		let iterations = 0;
+		while (normalized.length !== previousLength && iterations < 10) {
+			previousLength = normalized.length;
+			iterations++;
+
+			// Remove double newlines between markdown list items
+			normalized = normalized.replace(
+				/(- \*\*[^\n]*)\n\n(- \*\*)/g,
+				'$1\n$2'
+			);
+
+			// Remove double newlines between any lines that look like list items
+			// Pattern: line ending with ":", blank line, line starting with capital letter or "-"
+			normalized = normalized.replace(
+				/([^\n]+: [^\n]*)\n\n([A-Z-][^\n]*:)/g,
+				'$1\n$2'
+			);
+
+			// More aggressive: Remove double newline between any two lines that both end with ":"
+			// This catches list items in any format
+			normalized = normalized.replace(
+				/([^\n]+: [^\n]*)\n\n([^\n]+: [^\n]*)/g,
+				'$1\n$2'
+			);
+
+			// Handle rendered markdown: **Label**: text format
+			normalized = normalized.replace(
+				/(\*\*[^\n]*\*\*: [^\n]*)\n\n(\*\*[^\n]*\*\*:)/g,
+				'$1\n$2'
+			);
+		}
+
+		return normalized;
 	}
 
 	/**
