@@ -48,19 +48,26 @@ interface ChatInterfaceProps {
 	showBlogContent: boolean;
 	setShowBlogContent: React.Dispatch<React.SetStateAction<boolean>>;
 	onCollapseSidebar?: () => void;
-	sendUserMessage: (message: string, agentState: AgentState) => Promise<{ response: string; updatedState: AgentState; metadata?: any }>;
+	sendUserMessage: (
+		message: string,
+		agentState: AgentState
+	) => Promise<{
+		response: string;
+		updatedState: AgentState;
+		metadata?: any;
+	}>;
 }
 
 /**
  * Chat interface component that displays messages and input
- * 
+ *
  * Main chat UI component that:
  * - Renders all chat messages using MessageRenderer
  * - Shows thinking indicator when agent is processing
  * - Provides chat input with send functionality
  * - Handles scrolling to latest message
  * - Adapts width based on blog content visibility
- * - 
+ * -
  * @param props - ChatInterfaceProps containing all necessary state and handlers
  * @returns JSX.Element - Chat interface component
  */
@@ -102,11 +109,13 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 }) => {
 	return (
 		<div
-			className={`flex flex-col min-h-0 transition-all duration-700 ease-in-out ${showBlogContent ? 'w-[30%]' : 'w-full'
-				} ${showBlogContent
+			className={`flex flex-col min-h-0 transition-all duration-700 ease-in-out ${
+				showBlogContent ? 'w-[30%]' : 'w-full'
+			} ${
+				showBlogContent
 					? 'border-2 border-orange-300 rounded-xl bg-white shadow-lg'
 					: ''
-				}`}
+			}`}
 		>
 			<div className='flex-1 overflow-y-auto py-3 px-4'>
 				{messages
@@ -114,55 +123,89 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 						// Filter out empty messages unless they have metadata for UI components
 						if (!m.content || !m.content.trim()) {
 							// Keep messages with metadata (for UI components)
-							return !!(m.keywordSelection || m.titleSelection || m.interlinkingForm || 
-								m.referencesForm || m.outlineApproval || m.controlLevelSelection);
+							return !!(
+								m.keywordSelection ||
+								m.titleSelection ||
+								m.interlinkingForm ||
+								m.referencesForm ||
+								m.outlineApproval ||
+								m.controlLevelSelection
+							);
 						}
 						return true; // Keep all messages with content
 					})
 					.map((m, i) => (
-					<div
-						key={i}
-						className={`mb-[12px] ${m.role === 'user'
-								? 'flex justify-end'
-								: 'flex justify-start'
+						<div
+							key={i}
+							className={`mb-[12px] ${
+								m.role === 'user'
+									? 'flex justify-end'
+									: 'flex justify-start'
 							}`}
-					>
-						<MessageRenderer
-							message={m}
-							agent={agent}
-							data={data}
-							selectedSecondaries={selectedSecondaries}
-							setSelectedSecondaries={setSelectedSecondaries}
-							selectedPrimary={selectedPrimary}
-							setSelectedPrimary={setSelectedPrimary}
-							selectedTitle={selectedTitle}
-							setSelectedTitle={setSelectedTitle}
-							completedSelections={completedSelections}
-							setCompletedSelections={setCompletedSelections}
-							setMessages={setMessages}
-							setAgent={setAgent}
-							updateData={updateData}
-							setIsThinking={setIsThinking}
-							setOutline={setOutline}
-							setDraft={setDraft}
-							setTraceItems={setTraceItems}
-							setInput={setInput}
-							setOutlineApproved={setOutlineApproved}
-							setViewMode={setViewMode}
-							messages={messages}
-							isStreaming={isStreaming}
-							setIsStreaming={setIsStreaming}
-							setShowBlogContent={setShowBlogContent}
-							onCollapseSidebar={onCollapseSidebar}
-							sendUserMessage={sendUserMessage}
-						/>
-					</div>
-				))}
+						>
+							<MessageRenderer
+								message={m}
+								agent={agent}
+								data={data}
+								selectedSecondaries={
+									selectedSecondaries
+								}
+								setSelectedSecondaries={
+									setSelectedSecondaries
+								}
+								selectedPrimary={
+									selectedPrimary
+								}
+								setSelectedPrimary={
+									setSelectedPrimary
+								}
+								selectedTitle={selectedTitle}
+								setSelectedTitle={
+									setSelectedTitle
+								}
+								completedSelections={
+									completedSelections
+								}
+								setCompletedSelections={
+									setCompletedSelections
+								}
+								setMessages={setMessages}
+								setAgent={setAgent}
+								updateData={updateData}
+								setIsThinking={setIsThinking}
+								setOutline={setOutline}
+								setDraft={setDraft}
+								setTraceItems={setTraceItems}
+								setInput={setInput}
+								setOutlineApproved={
+									setOutlineApproved
+								}
+								setViewMode={setViewMode}
+								messages={messages}
+								isStreaming={isStreaming}
+								setIsStreaming={setIsStreaming}
+								showBlogContent={
+									showBlogContent
+								}
+								setShowBlogContent={
+									setShowBlogContent
+								}
+								onCollapseSidebar={
+									onCollapseSidebar
+								}
+								sendUserMessage={
+									sendUserMessage
+								}
+							/>
+						</div>
+					))}
 				{isThinking && (
 					<div className='flex justify-start mb-4'>
 						<div className='bg-gray-100 text-gray-800 max-w-[75%] px-4 py-2.5 rounded-xl flex items-center gap-2'>
 							<Spinner className='w-4 h-4' />
-							<span className='text-sm'>Thinking...</span>
+							<span className='text-sm'>
+								Thinking...
+							</span>
 						</div>
 					</div>
 				)}
@@ -182,4 +225,3 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 		</div>
 	);
 };
-

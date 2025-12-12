@@ -42,9 +42,17 @@ interface MessageRendererProps {
 	messages: ChatMessage[];
 	isStreaming: boolean;
 	setIsStreaming: React.Dispatch<React.SetStateAction<boolean>>;
+	showBlogContent: boolean;
 	setShowBlogContent: React.Dispatch<React.SetStateAction<boolean>>;
 	onCollapseSidebar?: () => void;
-	sendUserMessage: (message: string, agentState: AgentState) => Promise<{ response: string; updatedState: AgentState; metadata?: any }>;
+	sendUserMessage: (
+		message: string,
+		agentState: AgentState
+	) => Promise<{
+		response: string;
+		updatedState: AgentState;
+		metadata?: any;
+	}>;
 }
 
 /**
@@ -75,6 +83,7 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({
 	messages,
 	isStreaming,
 	setIsStreaming,
+	showBlogContent,
 	setShowBlogContent,
 	onCollapseSidebar,
 	sendUserMessage,
@@ -89,42 +98,54 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({
 		message.outlineApproval ||
 		message.controlLevelSelection;
 
-	const messageClasses = `px-4 py-[10.5px] bg-[#FBFBFB]  rounded-[20px] text-base font-normal font-inter whitespace-pre-wrap ${isSystem
-		? 'border border-blue-100 w-full text-xs font-mono my-1 bg-blue-50 text-blue-700'
-		: message.role === 'user'
+	const messageClasses = `px-4 py-[10.5px] bg-[#FBFBFB]  rounded-[20px] text-base font-normal font-inter whitespace-pre-wrap ${
+		isSystem
+			? 'border border-blue-100 w-full text-xs font-mono my-1 bg-blue-50 text-blue-700'
+			: message.role === 'user'
 			? 'bg-primary text-white max-w-[75%]'
 			: hasMetadata
-				? 'border border-gray-200 max-w-full w-full  text-gray-800'
-				: 'max-w-[75%]  text-black'
+			? 'border border-gray-200 max-w-full w-full  text-gray-800'
+			: 'max-w-[75%]  text-black'
 	}`;
 
 	// Log when message is being rendered
 	React.useEffect(() => {
 		if (isAssistant && message.content) {
 			// Check if this is a pre-message (contains "Generating" or emoji indicators)
-			if (message.content.includes('🔍') || 
-				message.content.includes('📝') || 
-				message.content.includes('📋') || 
+			if (
+				message.content.includes('🔍') ||
+				message.content.includes('📝') ||
+				message.content.includes('📋') ||
 				message.content.includes('✍️') ||
-				message.content.includes('Generating')) {
-				console.log(`🎨 [UI RENDER] Pre-message being displayed: "${message.content}"`, {
-					timestamp: new Date().toISOString(),
-					hasMetadata,
-					role: message.role
-				});
+				message.content.includes('Generating')
+			) {
+				console.log(
+					`🎨 [UI RENDER] Pre-message being displayed: "${message.content}"`,
+					{
+						timestamp: new Date().toISOString(),
+						hasMetadata,
+						role: message.role,
+					}
+				);
 			}
 		}
 	}, [message.content, isAssistant, hasMetadata]);
 
 	// Get streaming completion callback from message metadata
-	const streamingCompleteCallback = (message as any)._streamingCompleteCallback;
+	const streamingCompleteCallback = (message as any)
+		._streamingCompleteCallback;
 	const messageId = (message as any)._messageId;
 	const callbackCalledRef = React.useRef<string | null>(null);
 
 	// For non-streaming messages (with metadata), call callback immediately after render
 	// These messages don't stream, so we can proceed to next message right away
 	React.useEffect(() => {
-		if (streamingCompleteCallback && hasMetadata && messageId && callbackCalledRef.current !== messageId) {
+		if (
+			streamingCompleteCallback &&
+			hasMetadata &&
+			messageId &&
+			callbackCalledRef.current !== messageId
+		) {
 			// Use a small timeout to ensure the message is rendered first
 			const timer = setTimeout(() => {
 				callbackCalledRef.current = messageId;
@@ -137,7 +158,7 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({
 	// Don't render if content is empty and there's no metadata for UI components
 	const hasContent = message.content && message.content.trim();
 	const hasMetadataForUI = hasMetadata;
-	
+
 	if (!hasContent && !hasMetadataForUI) {
 		return null; // Don't render empty messages without metadata
 	}
@@ -153,7 +174,12 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({
 						setIsStreaming(false);
 						// Call the queue callback to trigger next message
 						// Only call if not already called (safeguard)
-						if (streamingCompleteCallback && messageId && callbackCalledRef.current !== messageId) {
+						if (
+							streamingCompleteCallback &&
+							messageId &&
+							callbackCalledRef.current !==
+								messageId
+						) {
 							callbackCalledRef.current = messageId;
 							streamingCompleteCallback();
 						}
@@ -213,7 +239,9 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({
 						selectedTitle={selectedTitle}
 						setSelectedTitle={setSelectedTitle}
 						completedSelections={completedSelections}
-						setCompletedSelections={setCompletedSelections}
+						setCompletedSelections={
+							setCompletedSelections
+						}
 						setMessages={setMessages}
 						setAgent={setAgent}
 						updateData={updateData}
@@ -228,7 +256,9 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({
 			{/* Interlinking Form */}
 			{message.interlinkingForm && (
 				<InterlinkingForm
-					currentLinks={message.interlinkingForm.currentLinks || []}
+					currentLinks={
+						message.interlinkingForm.currentLinks || []
+					}
 					agent={agent}
 					data={data}
 					completedSelections={completedSelections}
@@ -248,8 +278,12 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({
 			{/* References Form */}
 			{message.referencesForm && (
 				<ReferencesForm
-					currentUrls={message.referencesForm.currentUrls || []}
-					currentFiles={message.referencesForm.currentFiles || []}
+					currentUrls={
+						message.referencesForm.currentUrls || []
+					}
+					currentFiles={
+						message.referencesForm.currentFiles || []
+					}
 					agent={agent}
 					data={data}
 					completedSelections={completedSelections}
@@ -267,29 +301,31 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({
 			)}
 
 			{/* Outline Approval */}
-			{message.outlineApproval && message.outlineApproval.outline && (
-				<OutlineApproval
-					outline={message.outlineApproval.outline}
-					agent={agent}
-					completedSelections={completedSelections}
-					setCompletedSelections={setCompletedSelections}
-					setMessages={setMessages}
-					messages={messages}
-					setAgent={setAgent}
-					updateData={updateData}
-					setOutline={setOutline}
-					setIsThinking={setIsThinking}
-					setDraft={setDraft}
-					setTraceItems={setTraceItems}
-					setInput={setInput}
-					setOutlineApproved={setOutlineApproved}
-					setViewMode={setViewMode}
-					setShowBlogContent={setShowBlogContent}
-					onCollapseSidebar={onCollapseSidebar}
-					sendUserMessage={sendUserMessage}
-				/>
-			)}
+			{message.outlineApproval &&
+				message.outlineApproval.outline && (
+					<OutlineApproval
+						outline={message.outlineApproval.outline}
+						agent={agent}
+						completedSelections={completedSelections}
+						setCompletedSelections={
+							setCompletedSelections
+						}
+						setMessages={setMessages}
+						messages={messages}
+						setAgent={setAgent}
+						updateData={updateData}
+						setOutline={setOutline}
+						setIsThinking={setIsThinking}
+						setDraft={setDraft}
+						setTraceItems={setTraceItems}
+						setInput={setInput}
+						setOutlineApproved={setOutlineApproved}
+						setViewMode={setViewMode}
+						setShowBlogContent={setShowBlogContent}
+						onCollapseSidebar={onCollapseSidebar}
+						sendUserMessage={sendUserMessage}
+					/>
+				)}
 		</div>
 	);
 };
-
