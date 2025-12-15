@@ -24,6 +24,10 @@ interface PrimaryKeywordSelectionProps {
 		updatedState: AgentState;
 		metadata?: any;
 	}>;
+	// Optional: message that contains this component (for storing selection per message)
+	message?: ChatMessage;
+	messageIndex?: number; // Index of the message in messages array
+	messages?: ChatMessage[]; // Full messages array for updating specific message
 }
 
 const PrimaryKeywordSelection: React.FC<PrimaryKeywordSelectionProps> = ({
@@ -41,6 +45,9 @@ const PrimaryKeywordSelection: React.FC<PrimaryKeywordSelectionProps> = ({
 	setDraft,
 	setTraceItems,
 	sendUserMessage,
+	message,
+	messageIndex,
+	messages,
 }) => {
 	// Sort candidates by volume (descending - highest volume first)
 	const sortedCandidates = useMemo(() => {
@@ -48,8 +55,21 @@ const PrimaryKeywordSelection: React.FC<PrimaryKeywordSelectionProps> = ({
 			(a, b) => (b.volume || 0) - (a.volume || 0)
 		);
 	}, [candidates]);
-const str = Date.now().toString();
-console.log("str", str);
+
+	// ✨ LOCAL STATE: Track selection per component instance
+	// Initialize from message metadata if it exists (for historical messages)
+	const [localSelectedPrimary, setLocalSelectedPrimary] = useState<string | null>(() => {
+		// Check if this message already has a stored selection
+		if (message && (message as any).selectedPrimaryKeyword) {
+			return (message as any).selectedPrimaryKeyword;
+		}
+		// For new/active component, use global state if it matches these candidates
+		if (selectedPrimary && candidates.some(c => c.text === selectedPrimary)) {
+			return selectedPrimary;
+		}
+		return null;
+	});
+
 	// Create a stable key from candidates to detect actual changes
 	const candidatesKey = useMemo(() => {
 		return candidates
@@ -64,20 +84,25 @@ console.log("str", str);
 	// Track if submit button is being processed
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
-	// Reset selection whenever component loads with new candidates
-	useEffect(() => {
-		const isCompleted = completedSelections.has('primaryKeyword');
+	// Check if this specific instance is completed (stored in message metadata)
+	const isThisInstanceCompleted = useMemo(() => {
+		if (message && (message as any).primaryKeywordCompleted) {
+			return true;
+		}
+		// Fallback to global completedSelections for backward compatibility
+		return completedSelections.has('primaryKeyword');
+	}, [message, completedSelections]);
 
-		// Reset if:
-		// 1. Candidates changed (different set of keywords)
-		// 2. Component is shown with candidates and selection is not completed
+	// Reset local selection only for new instances (when candidates change and not completed)
+	useEffect(() => {
 		const shouldReset =
 			candidatesKey !== prevCandidatesRef.current &&
 			candidates.length > 0 &&
-			!isCompleted;
+			!isThisInstanceCompleted &&
+			!(message && (message as any).selectedPrimaryKeyword);
 
 		if (shouldReset) {
-			setSelectedPrimary(null);
+			setLocalSelectedPrimary(null);
 		}
 
 		// Always update ref to track current candidates
@@ -85,14 +110,32 @@ console.log("str", str);
 	}, [
 		candidatesKey,
 		candidates.length,
-		completedSelections,
-		setSelectedPrimary,
+		isThisInstanceCompleted,
+		message,
 	]);
 
 	const handleConfirm = async () => {
-		if (!agent || !selectedPrimary) return;
+		if (!agent || !localSelectedPrimary) return;
 
 		setIsSubmitting(true);
+		
+		// Mark this specific instance as completed
+		if (messageIndex !== undefined && messages) {
+			setMessages((prev) => {
+				const updated = [...prev];
+				if (updated[messageIndex]) {
+					updated[messageIndex] = {
+						...updated[messageIndex],
+						selectedPrimaryKeyword: localSelectedPrimary,
+						primaryKeywordCompleted: true,
+					} as ChatMessage;
+				}
+				return updated;
+			});
+		}
+
+		// Also update global state for backward compatibility
+		setSelectedPrimary(localSelectedPrimary);
 		setCompletedSelections((prev) =>
 			new Set(prev).add('primaryKeyword')
 		);
@@ -100,7 +143,7 @@ console.log("str", str);
 		// Add user message immediately for UI feedback
 		const userMsg = {
 			role: 'user' as const,
-			content: `Primary keyword: ${selectedPrimary}`,
+			content: `Primary keyword: ${localSelectedPrimary}`,
 		};
 
 		setMessages((prev) => [...prev, userMsg]);
@@ -109,7 +152,7 @@ console.log("str", str);
 		try {
 			// Send selection to backend
 			const result = await sendUserMessage(
-				`Primary keyword: ${selectedPrimary}`,
+				`Primary keyword: ${localSelectedPrimary}`,
 				agent
 			);
 
@@ -149,6 +192,18 @@ console.log("str", str);
 		} catch (error) {
 			console.error('Error selecting primary keyword:', error);
 			// Revert selection on error
+			if (messageIndex !== undefined && messages) {
+				setMessages((prev) => {
+					const updated = [...prev];
+					if (updated[messageIndex]) {
+						updated[messageIndex] = {
+							...updated[messageIndex],
+							primaryKeywordCompleted: false,
+						} as ChatMessage;
+					}
+					return updated;
+				});
+			}
 			setCompletedSelections((prev) => {
 				const newSet = new Set(prev);
 				newSet.delete('primaryKeyword');
@@ -171,8 +226,15 @@ console.log("str", str);
 				<div className='font-inter text-[14px] font-medium text-[#777777] mb-[9px]'>Primary Keywords</div>
 			<div className=' grid grid-cols-1 md:grid-cols-2 gap-x-[8px] gap-y-[4px] '>
 				{candidates.map((kw, idx) => {
-					const isSelected = selectedPrimary === kw.text;
-					const isDisabled = completedSelections.has('primaryKeyword') || isSubmitting;
+					// ✨ Use local state for checked state - each component instance has its own selection
+					const isSelected = localSelectedPrimary === kw.text;
+					const isDisabled = isThisInstanceCompleted || isSubmitting;
+					
+					// Create unique name per message instance to avoid radio button conflicts
+					const radioName = messageIndex !== undefined 
+						? `primaryKeyword-${messageIndex}` 
+						: `primaryKeyword-${Date.now()}`;
+					
 					return (
 						<label
 						key={idx}
@@ -190,10 +252,16 @@ console.log("str", str);
 
 								<input
 									type='radio'
-									name='primaryKeyword'
+									name={radioName}
 									disabled={isDisabled}
 									checked={isSelected}
-									onChange={() => setSelectedPrimary(kw.text)}
+									onChange={() => {
+										setLocalSelectedPrimary(kw.text);
+										// Also update global state for active/current selection
+										if (!isThisInstanceCompleted) {
+											setSelectedPrimary(kw.text);
+										}
+									}}
 									className='w-4 h-4 text-primary focus:ring-primary border-primary'
 									/>
 									</div>
@@ -212,8 +280,8 @@ console.log("str", str);
 			<div className='mt-3 text-left'>
 				<button
 					disabled={
-						completedSelections.has('primaryKeyword') ||
-						!selectedPrimary ||
+						isThisInstanceCompleted ||
+						!localSelectedPrimary ||
 						isSubmitting
 					}
 					className='px-[18px] py-[8px] font-inter text-regular text-[14px] bg-success text-white  transition-colors disabled:opacity-[60%] disabled:cursor-not-allowed rounded-[26px]'

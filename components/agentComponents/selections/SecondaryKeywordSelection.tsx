@@ -24,6 +24,10 @@ interface SecondaryKeywordSelectionProps {
 		updatedState: AgentState;
 		metadata?: any;
 	}>;
+	// Optional: message that contains this component (for storing selection per message)
+	message?: ChatMessage;
+	messageIndex?: number; // Index of the message in messages array
+	messages?: ChatMessage[]; // Full messages array for updating specific message
 }
 
 const SecondaryKeywordSelection: React.FC<SecondaryKeywordSelectionProps> = ({
@@ -41,6 +45,9 @@ const SecondaryKeywordSelection: React.FC<SecondaryKeywordSelectionProps> = ({
 	setDraft,
 	setTraceItems,
 	sendUserMessage,
+	message,
+	messageIndex,
+	messages,
 }) => {
 	// Sort candidates by volume (descending - highest volume first)
 	const sortedCandidates = useMemo(() => {
@@ -48,6 +55,23 @@ const SecondaryKeywordSelection: React.FC<SecondaryKeywordSelectionProps> = ({
 			(a, b) => (b.volume || 0) - (a.volume || 0)
 		);
 	}, [candidates]);
+
+	// ✨ LOCAL STATE: Track selections per component instance (array for checkboxes)
+	// Initialize from message metadata if it exists (for historical messages)
+	const [localSelectedSecondaries, setLocalSelectedSecondaries] = useState<string[]>(() => {
+		// Check if this message already has stored selections
+		if (message && (message as any).selectedSecondaryKeywords) {
+			return (message as any).selectedSecondaryKeywords;
+		}
+		// For new/active component, use global state if selections match these candidates
+		if (selectedSecondaries.length > 0) {
+			const matchingSelections = selectedSecondaries.filter(sel => 
+				candidates.some(c => c.text === sel)
+			);
+			return matchingSelections;
+		}
+		return [];
+	});
 
 	// Create a stable key from candidates to detect actual changes
 	const candidatesKey = useMemo(() => {
@@ -63,21 +87,25 @@ const SecondaryKeywordSelection: React.FC<SecondaryKeywordSelectionProps> = ({
 	// Track if submit button is being processed
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
-	// Reset selections whenever component loads with new candidates
-	// This ensures a fresh start every time the component is shown
-	useEffect(() => {
-		const isCompleted = completedSelections.has('secondaryKeywords');
+	// Check if this specific instance is completed (stored in message metadata)
+	const isThisInstanceCompleted = useMemo(() => {
+		if (message && (message as any).secondaryKeywordsCompleted) {
+			return true;
+		}
+		// Fallback to global completedSelections for backward compatibility
+		return completedSelections.has('secondaryKeywords');
+	}, [message, completedSelections]);
 
-		// Reset if:
-		// 1. Candidates changed (different set of keywords)
-		// 2. Component is shown with candidates and selection is not completed
+	// Reset local selections only for new instances (when candidates change and not completed)
+	useEffect(() => {
 		const shouldReset =
 			candidatesKey !== prevCandidatesRef.current &&
 			candidates.length > 0 &&
-			!isCompleted;
+			!isThisInstanceCompleted &&
+			!(message && (message as any).selectedSecondaryKeywords);
 
 		if (shouldReset) {
-			setSelectedSecondaries([]);
+			setLocalSelectedSecondaries([]);
 		}
 
 		// Always update ref to track current candidates
@@ -85,14 +113,32 @@ const SecondaryKeywordSelection: React.FC<SecondaryKeywordSelectionProps> = ({
 	}, [
 		candidatesKey,
 		candidates.length,
-		completedSelections,
-		setSelectedSecondaries,
+		isThisInstanceCompleted,
+		message,
 	]);
 
 	const handleConfirm = async () => {
-		if (!agent) return;
+		if (!agent || localSelectedSecondaries.length === 0) return;
 
 		setIsSubmitting(true);
+		
+		// Mark this specific instance as completed
+		if (messageIndex !== undefined && messages) {
+			setMessages((prev) => {
+				const updated = [...prev];
+				if (updated[messageIndex]) {
+					updated[messageIndex] = {
+						...updated[messageIndex],
+						selectedSecondaryKeywords: [...localSelectedSecondaries],
+						secondaryKeywordsCompleted: true,
+					} as ChatMessage;
+				}
+				return updated;
+			});
+		}
+
+		// Also update global state for backward compatibility
+		setSelectedSecondaries([...localSelectedSecondaries]);
 		setCompletedSelections((prev) =>
 			new Set(prev).add('secondaryKeywords')
 		);
@@ -100,7 +146,7 @@ const SecondaryKeywordSelection: React.FC<SecondaryKeywordSelectionProps> = ({
 		// Add user message immediately for UI feedback
 		const userMsg = {
 			role: 'user' as const,
-			content: `Secondary keywords: ${selectedSecondaries.join(
+			content: `Secondary keywords: ${localSelectedSecondaries.join(
 				', '
 			)}`,
 		};
@@ -111,7 +157,7 @@ const SecondaryKeywordSelection: React.FC<SecondaryKeywordSelectionProps> = ({
 		try {
 			// Send selection to backend
 			const result = await sendUserMessage(
-				`Secondary keywords: ${selectedSecondaries.join(', ')}`,
+				`Secondary keywords: ${localSelectedSecondaries.join(', ')}`,
 				agent
 			);
 
@@ -151,6 +197,18 @@ const SecondaryKeywordSelection: React.FC<SecondaryKeywordSelectionProps> = ({
 		} catch (error) {
 			console.error('Error selecting secondary keywords:', error);
 			// Revert selection on error
+			if (messageIndex !== undefined && messages) {
+				setMessages((prev) => {
+					const updated = [...prev];
+					if (updated[messageIndex]) {
+						updated[messageIndex] = {
+							...updated[messageIndex],
+							secondaryKeywordsCompleted: false,
+						} as ChatMessage;
+					}
+					return updated;
+				});
+			}
 			setCompletedSelections((prev) => {
 				const newSet = new Set(prev);
 				newSet.delete('secondaryKeywords');
@@ -167,8 +225,15 @@ const SecondaryKeywordSelection: React.FC<SecondaryKeywordSelectionProps> = ({
 			<div className='p-[16px] bg-[#FFFFFF] border border-offwhite rounded-[10px]'>
 			<div className=' grid grid-cols-1 md:grid-cols-2 gap-x-[8px] gap-y-[4px]'>
 				{candidates.map((kw, idx) => {
-					const checked = selectedSecondaries.includes(kw.text);
-					const isDisabled = completedSelections.has('secondaryKeywords') || isSubmitting;
+					// ✨ Use local state for checked state - each component instance has its own selections
+					const checked = localSelectedSecondaries.includes(kw.text);
+					const isDisabled = isThisInstanceCompleted || isSubmitting;
+					
+					// Create unique name per message instance to avoid checkbox conflicts
+					const checkboxName = messageIndex !== undefined 
+						? `secondaryKeyword-${messageIndex}-${idx}` 
+						: `secondaryKeyword-${Date.now()}-${idx}`;
+					
 					return (
 						<label
 							key={idx}
@@ -188,18 +253,28 @@ const SecondaryKeywordSelection: React.FC<SecondaryKeywordSelectionProps> = ({
 								
 								<span className='relative'>
 									<input
-									
 										type='checkbox'
+										name={checkboxName}
 										disabled={isDisabled}
 										checked={checked}
 										onChange={(e) => {
-											setSelectedSecondaries((prev) => {
+											setLocalSelectedSecondaries((prev) => {
 												if (e.target.checked) {
 													const next = [...prev, kw.text];
-													return next.slice(0, 5);
+													return next.slice(0, 5); // Max 5 selections
 												}
 												return prev.filter((x) => x !== kw.text);
 											});
+											// Also update global state for active/current selection
+											if (!isThisInstanceCompleted) {
+												setSelectedSecondaries((prev) => {
+													if (e.target.checked) {
+														const next = [...prev, kw.text];
+														return next.slice(0, 5);
+													}
+													return prev.filter((x) => x !== kw.text);
+												});
+											}
 										}}
 										className={`w-4 h-4 text-primary focus:ring-primary border-primary rounded bg-white ${checked ? 'bg-primary' : ''}`}
 										/>
@@ -219,14 +294,14 @@ const SecondaryKeywordSelection: React.FC<SecondaryKeywordSelectionProps> = ({
 			<div className='mt-3 text-left'>
 				<button
 					disabled={
-						completedSelections.has(
-							'secondaryKeywords'
-						) || selectedSecondaries.length === 0 || isSubmitting
+						isThisInstanceCompleted ||
+						localSelectedSecondaries.length === 0 ||
+						isSubmitting
 					}
 					className='px-[18px] py-[8px] font-inter text-regular text-[14px] bg-success text-white  transition-colors disabled:opacity-[60%] disabled:cursor-not-allowed rounded-[26px]'
 					onClick={handleConfirm}
 				>
-					Confirm Selection ({selectedSecondaries.length}/5)
+					Confirm Selection ({localSelectedSecondaries.length}/5)
 				</button>
 			</div>
 			</div>

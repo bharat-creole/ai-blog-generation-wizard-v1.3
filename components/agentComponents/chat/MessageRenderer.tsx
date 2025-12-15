@@ -15,6 +15,7 @@ import OutlineApproval from '../selections/OutlineApproval';
  */
 interface MessageRendererProps {
 	message: ChatMessage;
+	messageIndex?: number; // Index of this message in the messages array
 	agent: AgentState | null;
 	data: BlogData;
 	selectedSecondaries: string[];
@@ -60,6 +61,7 @@ interface MessageRendererProps {
  */
 export const MessageRenderer: React.FC<MessageRendererProps> = ({
 	message,
+	messageIndex,
 	agent,
 	data,
 	selectedSecondaries,
@@ -206,6 +208,9 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({
 					setDraft={setDraft}
 					setTraceItems={setTraceItems}
 					sendUserMessage={sendUserMessage}
+					message={message}
+					messageIndex={messageIndex}
+					messages={messages}
 				/>
 			)}
 
@@ -226,6 +231,9 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({
 					setDraft={setDraft}
 					setTraceItems={setTraceItems}
 					sendUserMessage={sendUserMessage}
+					message={message}
+					messageIndex={messageIndex}
+					messages={messages}
 				/>
 			)}
 

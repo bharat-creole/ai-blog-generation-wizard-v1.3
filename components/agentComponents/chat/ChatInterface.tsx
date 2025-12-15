@@ -135,45 +135,46 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 						return true; // Keep all messages with content
 					})
 					.map((m, i) => (
-						<div
-							key={i}
-							className={`mb-[12px] ${
-								m.role === 'user'
-									? 'flex justify-end'
-									: 'flex justify-start'
-							}`}
-					>
-						<MessageRenderer
-							message={m}
-							agent={agent}
-							data={data}
-							selectedSecondaries={selectedSecondaries}
-							setSelectedSecondaries={setSelectedSecondaries}
-							selectedPrimary={selectedPrimary}
-							setSelectedPrimary={setSelectedPrimary}
-							selectedTitle={selectedTitle}
-							setSelectedTitle={setSelectedTitle}
-							completedSelections={completedSelections}
-							setCompletedSelections={setCompletedSelections}
-							setMessages={setMessages}
-							setAgent={setAgent}
-							updateData={updateData}
-							setIsThinking={setIsThinking}
-							setOutline={setOutline}
-							setDraft={setDraft}
-							setTraceItems={setTraceItems}
-							setInput={setInput}
-							setOutlineApproved={setOutlineApproved}
-							setViewMode={setViewMode}
-							messages={messages}
-							isStreaming={isStreaming}
-							setIsStreaming={setIsStreaming}
-							showBlogContent={showBlogContent}
-							setShowBlogContent={setShowBlogContent}
-							onCollapseSidebar={onCollapseSidebar}
-							sendUserMessage={sendUserMessage}
-						/>
-					</div>
+					<div
+						key={i}
+						className={`mb-[12px] ${
+							m.role === 'user'
+								? 'flex justify-end'
+								: 'flex justify-start'
+						}`}
+				>
+					<MessageRenderer
+						message={m}
+						messageIndex={i}
+						agent={agent}
+						data={data}
+						selectedSecondaries={selectedSecondaries}
+						setSelectedSecondaries={setSelectedSecondaries}
+						selectedPrimary={selectedPrimary}
+						setSelectedPrimary={setSelectedPrimary}
+						selectedTitle={selectedTitle}
+						setSelectedTitle={setSelectedTitle}
+						completedSelections={completedSelections}
+						setCompletedSelections={setCompletedSelections}
+						setMessages={setMessages}
+						setAgent={setAgent}
+						updateData={updateData}
+						setIsThinking={setIsThinking}
+						setOutline={setOutline}
+						setDraft={setDraft}
+						setTraceItems={setTraceItems}
+						setInput={setInput}
+						setOutlineApproved={setOutlineApproved}
+						setViewMode={setViewMode}
+						messages={messages}
+						isStreaming={isStreaming}
+						setIsStreaming={setIsStreaming}
+						showBlogContent={showBlogContent}
+						setShowBlogContent={setShowBlogContent}
+						onCollapseSidebar={onCollapseSidebar}
+						sendUserMessage={sendUserMessage}
+					/>
+				</div>
 				))}
 				{isThinking && (
 					<div className='flex justify-start mb-4'>
