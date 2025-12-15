@@ -112,16 +112,17 @@ const OutlineApproval: React.FC<OutlineApprovalProps> = ({
 			});
 
 			// Check if blog generation is complete
+			const currentSectionIndex = result.updatedState.progress?.sectionIndex ?? 0;
+			const totalSections = result.updatedState.outline?.length ?? 0;
 			const isBlogComplete =
 				result.updatedState.outlineApproved &&
 				result.updatedState.outline &&
-				result.updatedState.outline.length > 0 &&
-				(result.updatedState.progress?.sectionIndex ?? 0) >=
-					result.updatedState.outline.length;
+				totalSections > 0 &&
+				currentSectionIndex >= totalSections;
 
-			// Only show completion message if blog is done, otherwise don't show duplicate message
-			// (The initial "Starting blog generation..." message was already shown at line 61)
+			// ✨ SIMPLE APPROACH: Only turn off loader when ALL sections are complete
 			if (isBlogComplete) {
+				setIsThinking(false);
 				setMessages((prev) => [
 					...prev,
 					{
@@ -130,6 +131,9 @@ const OutlineApproval: React.FC<OutlineApprovalProps> = ({
 						...result.metadata,
 					},
 				]);
+			} else {
+				// Keep loader ON during blog generation - useAgentExecutionV3 will manage it
+				setIsThinking(true);
 			}
 			// If not complete, don't show result.response as it contains duplicate "Starting blog generation..." message
 		} catch (error) {

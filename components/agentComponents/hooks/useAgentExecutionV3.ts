@@ -319,14 +319,42 @@ export const useAgentExecutionV3 = (
 														pendingCompletionMessages.delete(
 															writingSectionNumber!
 														);
-														// Keep thinking indicator on until completion message is displayed
-														// It will be turned off when completion message is queued
+														// ✨ SIMPLE APPROACH: Keep loader ON - it will only be turned off when all sections are complete
+														// Check if all sections are done before turning off
+														const currentSectionIndex =
+															accumulatedState.progress?.sectionIndex ?? 0;
+														const totalSections =
+															accumulatedState.outline?.length ?? 0;
+														const allSectionsComplete =
+															accumulatedState.outlineApproved &&
+															accumulatedState.outline &&
+															totalSections > 0 &&
+															currentSectionIndex >= totalSections;
+
+														if (setIsThinking && !allSectionsComplete) {
+															// Keep loader ON during blog generation
+															setIsThinking(true);
+														}
+														
 														queueMessage(
 															pendingMessage
 														);
+													} else {
+														// No pending message, but keep loader ON if blog generation is still in progress
+														const currentSectionIndex =
+															accumulatedState.progress?.sectionIndex ?? 0;
+														const totalSections =
+															accumulatedState.outline?.length ?? 0;
+														const allSectionsComplete =
+															accumulatedState.outlineApproved &&
+															accumulatedState.outline &&
+															totalSections > 0 &&
+															currentSectionIndex >= totalSections;
+
+														if (setIsThinking && !allSectionsComplete) {
+															setIsThinking(true);
+														}
 													}
-													// Note: Keep thinking indicator on if no completion message yet
-													// It will be turned off when completion message arrives
 
 													writingSectionNumber =
 														null;
@@ -854,6 +882,17 @@ export const useAgentExecutionV3 = (
 												} else {
 													preMessage = `✍️ **Writing section ${sectionNumber}...**\n\nI'm generating the content for this section.`;
 												}
+												
+												// ✨ SIMPLE APPROACH: Keep isThinking true when blog generation starts
+												// It will only be turned off when all sections are complete
+												if (
+													setIsThinking &&
+													accumulatedState.outlineApproved &&
+													accumulatedState.outline &&
+													accumulatedState.outline.length > 0
+												) {
+													setIsThinking(true);
+												}
 											}
 
 											if (
@@ -862,34 +901,6 @@ export const useAgentExecutionV3 = (
 												shownPreMessages.add(
 													messageKey
 												);
-
-												// Keep thinking indicator ON during blog generation
-												// Check if we're in blog generation phase
-												const isBlogGenerationPhase =
-													accumulatedState.outlineApproved &&
-													accumulatedState.outline &&
-													accumulatedState
-														.outline
-														.length >
-														0 &&
-													(nodeName ===
-														'proposal' ||
-														(accumulatedState
-															.progress
-															?.sectionIndex ??
-															0) <
-															accumulatedState
-																.outline
-																.length);
-
-												if (
-													isBlogGenerationPhase &&
-													setIsThinking
-												) {
-													setIsThinking(
-														true
-													);
-												}
 
 												// Log when message is being queued
 												console.log(
@@ -1073,41 +1084,26 @@ export const useAgentExecutionV3 = (
 												lastShownSectionIndex =
 													completedSectionNumber;
 
-												// Check if blog generation is still in progress
-												const isBlogGenerationInProgress =
+												// ✨ SIMPLE APPROACH: Check if all sections are complete
+												// Only turn off loader when ALL sections are done
+												const currentSectionIndex =
+													accumulatedState.progress?.sectionIndex ?? 0;
+												const totalSections =
+													accumulatedState.outline?.length ?? 0;
+												const allSectionsComplete =
 													accumulatedState.outlineApproved &&
 													accumulatedState.outline &&
-													accumulatedState
-														.outline
-														.length >
-														0 &&
-													(accumulatedState
-														.progress
-														?.sectionIndex ??
-														0) <
-														accumulatedState
-															.outline
-															.length;
+													totalSections > 0 &&
+													currentSectionIndex >= totalSections;
 
-												// Keep thinking indicator ON during blog generation (regardless of automation level)
-												// Only turn off if blog generation is complete
-												if (
-													isBlogGenerationInProgress
-												) {
-													if (
-														setIsThinking
-													)
-														setIsThinking(
-															true
-														);
-												} else {
-													// Blog generation complete, turn off loader
-													if (
-														setIsThinking
-													)
-														setIsThinking(
-															false
-														);
+												if (setIsThinking) {
+													if (allSectionsComplete) {
+														// All sections complete, turn off loader
+														setIsThinking(false);
+													} else {
+														// Keep loader ON during blog generation
+														setIsThinking(true);
+													}
 												}
 
 												queueMessage(
@@ -1413,42 +1409,28 @@ export const useAgentExecutionV3 = (
 								delete updatedState.apiKey;
 								finalState = updatedState;
 
-								// Check if blog generation is in progress (regardless of automation level)
-								const isBlogGenerationInProgress =
+								// ✨ SIMPLE APPROACH: Only turn off loader when ALL sections are complete
+								const currentSectionIndex =
+									updatedState.progress?.sectionIndex ?? 0;
+								const totalSections =
+									updatedState.outline?.length ?? 0;
+								const allSectionsComplete =
 									updatedState.outlineApproved &&
 									updatedState.outline &&
-									updatedState.outline
-										.length > 0 &&
-									(updatedState.progress
-										?.sectionIndex ??
-										0) <
-										updatedState.outline
-											.length;
+									totalSections > 0 &&
+									currentSectionIndex >= totalSections;
 
-								// Keep loader ON during blog generation
-								// Also keep it on if there's a halt (waiting for user input) or if in full automation with pending steps
-								const isFullAutomation =
-									updatedState.preferences
-										?.automationLevel ===
-									'full';
-								const hasPendingSteps =
-									updatedState.halt ||
-									(isFullAutomation &&
-										isBlogGenerationInProgress);
+								// Also keep it on if there's a halt (waiting for user input)
+								const hasPendingSteps = updatedState.halt;
 
-								if (
-									isBlogGenerationInProgress ||
-									hasPendingSteps
-								) {
-									// Still processing, keep loader on
-									if (setIsThinking)
+								if (setIsThinking) {
+									if (allSectionsComplete && !hasPendingSteps) {
+										// All sections complete and no pending steps, turn off loader
+										setIsThinking(false);
+									} else {
+										// Keep loader ON during blog generation or if waiting for user input
 										setIsThinking(true);
-								} else {
-									// All processing complete
-									if (setIsThinking)
-										setIsThinking(
-											false
-										);
+									}
 								}
 
 								console.log(
