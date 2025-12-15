@@ -47,9 +47,15 @@ export const BlogContentDisplay: React.FC<BlogContentDisplayProps> = ({
 		<div className='flex flex-col min-h-0 w-[70%] transition-all duration-700 ease-in-out animate-[slideIn_0.7s_ease-out] border-2 border-orange-300 rounded-xl bg-white p-4 shadow-lg'>
 			<div className='flex items-center justify-between mb-2'>
 				<div className='flex items-center gap-2'>
-					<h3 className='text-lg font-semibold text-gray-800'>
-						Blog Content
+					<div  className='flex flex-col gap-[12px]'>
+
+					<h3 className='font-inter text-[28px] font-semibold text-black'>
+						Your blog is ready!
 					</h3>
+					<div className='font-inter text-[14px] font-medium text-[#777777]'>
+						define the topic to tailor your content for maximum impact
+					</div>
+					</div>
 					{/* SEO Info Button */}
 					{seoScore !== null &&
 						(seoPrimary || seoCritical) && (
@@ -105,15 +111,15 @@ export const BlogContentDisplay: React.FC<BlogContentDisplayProps> = ({
 				<div className='flex items-center gap-3'>
 					{/* View Mode Toggle */}
 					{draft.trim() && (
-						<div className='flex gap-1 bg-gray-100 rounded-md p-1'>
+						<div className='flex gap-1 '>
 							<button
 								onClick={() =>
 									setViewMode('markdown')
 								}
-								className={`px-3 py-1 text-xs rounded ${
+								className={`font-inter text-[14px] px-[12px] border py-[5.5px] rounded-[10px] font-semibold ${
 									viewMode === 'markdown'
-										? 'bg-orange-500 text-white'
-										: 'text-gray-600 hover:bg-gray-200'
+										? 'bg-primary text-white'
+										: 'bg-offwhite text-[#777777] border-lightgray'
 								}`}
 							>
 								Preview
@@ -122,10 +128,10 @@ export const BlogContentDisplay: React.FC<BlogContentDisplayProps> = ({
 								onClick={() =>
 									setViewMode('blog')
 								}
-								className={`px-3 py-1 text-xs rounded ${
+								className={`font-inter text-[14px] px-[12px] border py-[5.5px] rounded-[10px] font-semibold  ${
 									viewMode === 'blog'
-										? 'bg-orange-500 text-white'
-										: 'text-gray-600 hover:bg-gray-200'
+										? 'bg-primary text-white'
+										: 'bg-offwhite text-[#777777] border-lightgray'
 								}`}
 							>
 								Raw

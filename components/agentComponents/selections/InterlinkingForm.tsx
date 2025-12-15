@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { AgentState } from '../../../../server/agent/state';
 import { Interlink, ChatMessage, BlogData } from '../../../types';
+import { WhitePlusIcon } from '@/components/icons';
 
 interface InterlinkingFormProps {
 	currentLinks: Interlink[];
@@ -44,10 +45,11 @@ const InterlinkingForm: React.FC<InterlinkingFormProps> = ({
 }) => {
 	const [interlinkKeyword, setInterlinkKeyword] = useState('');
 	const [interlinkUrl, setInterlinkUrl] = useState('');
+	const [buttonsDisabled, setButtonsDisabled] = useState(false);
 
 	const handleContinue = async () => {
 		if (!agent) return;
-
+		setButtonsDisabled(true);
 		setCompletedSelections((prev) => new Set(prev).add('interlinking'));
 
 		const userMsg = {
@@ -170,24 +172,28 @@ const InterlinkingForm: React.FC<InterlinkingFormProps> = ({
 	};
 
 	return (
-		<div className='mt-3'>
+		<div className=''>
+				<div className='font-inter text-[16px] font-medium text-black mb-[4px]'>
+				Internal links
+			</div>
 			{currentLinks && currentLinks.length > 0 && (
-				<div className='space-y-2 mb-3'>
+				<div className='space-y-2 mb-[12px]'>
 					{currentLinks.map((link) => (
 						<div
 							key={link.id}
-							className='flex items-center justify-between text-sm bg-white border rounded p-2'
+							className='flex  gap-[10px]'
 						>
-							<div>
-								<div className='font-medium text-gray-800'>
+							<div className='flex flex-grow gap-2 flex-wrap'>
+								<div className='flex-grow flex-1 w-full px-[14px] py-[10px] h-[46px] font-inter text-black text-regular bg-offwhite rounded-[8px] border border-offwhite outline-none truncate block overflow-hidden whitespace-nowrap' title={link.keyword}>
 									{link.keyword}
 								</div>
-								<div className='text-xs text-blue-600 break-all'>
+								<div className='flex-grow flex-1 w-full px-[14px] py-[10px] h-[46px] font-inter text-[#3330E4] text-regular bg-offwhite rounded-[8px] border border-offwhite outline-none truncate block overflow-hidden whitespace-nowrap' title={link.url}>
 									{link.url}
 								</div>
 							</div>
+							
 							<button
-								className='px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600 transition-colors'
+								className='min-w-[84px] flex justify-center items-center text-white bg-alert_error rounded-[8px] p-[10px] min-h-[46px] disabled:bg-opacity-60 disabled:cursor-not-allowed'
 								onClick={() =>
 									handleRemoveLink(link.id)
 								}
@@ -198,8 +204,9 @@ const InterlinkingForm: React.FC<InterlinkingFormProps> = ({
 					))}
 				</div>
 			)}
+		
 
-			<div className='flex gap-2 mb-3'>
+			<div className='flex gap-2 mb-[12px]'>
 				<input
 					type='text'
 					placeholder='Keyword/Anchor Text'
@@ -207,41 +214,59 @@ const InterlinkingForm: React.FC<InterlinkingFormProps> = ({
 					onChange={(e) =>
 						setInterlinkKeyword(e.target.value)
 					}
-					className='flex-1 px-3 py-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-green-500 focus:border-green-500'
+					className='flex-grow flex-1 w-full px-[14px] py-[10px] h-[46px] font-inter text-black text-regular bg-white rounded-[8px] border border-offwhite outline-none placeholder:text-[14px] placeholder:text-[#777777] disabled:opacity-60 disabled:cursor-not-allowed'
 				/>
 				<input
 					type='text'
-					placeholder='URL'
+					placeholder='Enter URL here...'
 					value={interlinkUrl}
 					onChange={(e) => setInterlinkUrl(e.target.value)}
-					className='flex-1 px-3 py-2 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-green-500 focus:border-green-500'
+					className='flex-grow flex-1 w-full px-[14px] py-[10px] h-[46px] font-inter text-black text-regular bg-white rounded-[8px] border border-offwhite outline-none placeholder:text-[14px] placeholder:text-[#777777] disabled:opacity-60 disabled:cursor-not-allowed'
 				/>
 				<button
-					className='px-3 py-2 text-sm bg-green-500 text-white rounded hover:bg-green-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed'
+					className='min-w-[84px] flex justify-center items-center text-white bg-success  rounded-[36px]  p-[10px] min-h-[46px] disabled:bg-opacity-60 disabled:cursor-not-allowed'
 					disabled={
 						!interlinkKeyword.trim() ||
 						!interlinkUrl.trim()
 					}
 					onClick={handleAddLink}
 				>
-					Add
+					
+				<div className='flex gap-[8px] items-center'>
+					<WhitePlusIcon/>
+				   <div>Add</div>
+				</div>
 				</button>
 			</div>
 
-			<div className='text-right'>
+		
+
+			<div className='text-left flex gap-[10px]'>
+				
 				<button
-					disabled={completedSelections.has('interlinking')}
-					className={`px-4 py-2 text-sm text-white rounded transition-colors ${
-						completedSelections.has('interlinking')
-							? 'bg-gray-400 cursor-not-allowed'
-							: 'bg-green-600 hover:bg-green-700'
-					}`}
+					disabled={buttonsDisabled || completedSelections.has('interlinking') || currentLinks.length === 0}
+					className={` bg-primary text-white px-[18px] py-[8px] text-regular text-[14px] rounded-[26px] ${buttonsDisabled || completedSelections.has('interlinking') || currentLinks.length === 0
+							? 'cursor-not-allowed opacity-60'
+							: ' hover:bg-primary'
+						}`}
 					onClick={handleContinue}
 				>
-					Continue (skip){' '}
+					Continue
 					{data.interlinks.length > 0 &&
 						`(${data.interlinks.length} links)`}
 				</button>
+				<button
+					disabled={buttonsDisabled || completedSelections.has('interlinking') || currentLinks.length > 0}
+					className={` bg-primary text-white px-[18px] py-[8px] text-regular text-[14px] rounded-[26px] ${buttonsDisabled || completedSelections.has('interlinking') || currentLinks.length > 0
+							? 'cursor-not-allowed opacity-60'
+							: ' hover:bg-primary'
+						}`}
+					onClick={handleContinue}
+				>
+					Skip
+					
+				</button>
+				
 			</div>
 		</div>
 	);
