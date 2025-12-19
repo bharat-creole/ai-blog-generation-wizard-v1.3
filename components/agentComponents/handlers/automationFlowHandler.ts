@@ -1,5 +1,5 @@
 import { ChatMessage, AutomationLevel } from '../../../types';
-import { AgentState } from '../../../../server/agent/state';
+import { AgentState } from '../../../server/agent/state';
 import { FlowContext } from '../types/agentTypes';
 import { createAssistantMessage } from '../utils/messageUtils';
 import { updateAgentFromWorking, updateAllStateFromWorking, AgentStateSetters } from '../utils/agentStateUtils';

@@ -1,5 +1,5 @@
 import { ChatMessage, BlogData, AutomationLevel } from '../../../types';
-import { AgentState } from '../../../../server/agent/state';
+import { AgentState } from '../../../server/agent/state';
 import * as conversationHandler from '../../../services/conversationHandler';
 import { FlowContext } from '../types/agentTypes';
 import {
@@ -91,7 +91,29 @@ export const handleModificationConfirmation = async (
 
 			if (updatedAgent.data) {
 				const updatedData = updatedAgent.data;
-				updateData({ ...updatedData });
+				const rawInterlinks: any = (updatedData as any).interlinks;
+				const interlinks = Array.isArray(rawInterlinks)
+					? rawInterlinks
+							.map((l: any, idx: number) => {
+								if (!l) return null;
+								if (typeof l === 'string') {
+									return { id: String(idx + 1), keyword: l, url: '' };
+								}
+								if (typeof l === 'object') {
+									return {
+										id: String(l.id ?? idx + 1),
+										keyword: String(l.keyword ?? ''),
+										url: String(l.url ?? ''),
+									};
+								}
+								return null;
+							})
+							.filter(Boolean)
+					: undefined;
+				updateData({
+					...(updatedData as any),
+					...(interlinks ? { interlinks } : {}),
+				});
 
 				if (updatedData.topic) setUserTopic(updatedData.topic);
 				if (updatedData.targetLocation) {
@@ -326,7 +348,29 @@ export const handleAdditionalModification = async (
 
 		if (modificationResponse.stateUpdates?.data) {
 			const updatedData = modificationResponse.stateUpdates.data;
-			updateData({ ...updatedData });
+			const rawInterlinks: any = (updatedData as any).interlinks;
+			const interlinks = Array.isArray(rawInterlinks)
+				? rawInterlinks
+						.map((l: any, idx: number) => {
+							if (!l) return null;
+							if (typeof l === 'string') {
+								return { id: String(idx + 1), keyword: l, url: '' };
+							}
+							if (typeof l === 'object') {
+								return {
+									id: String(l.id ?? idx + 1),
+									keyword: String(l.keyword ?? ''),
+									url: String(l.url ?? ''),
+								};
+							}
+							return null;
+						})
+						.filter(Boolean)
+				: undefined;
+			updateData({
+				...(updatedData as any),
+				...(interlinks ? { interlinks } : {}),
+			});
 
 			if (updatedData.topic) setUserTopic(updatedData.topic);
 			if (updatedData.targetLocation) {

@@ -1,4 +1,4 @@
-import { AgentState } from './langgraph/agentGraph';
+import { AgentState } from '../server/agent/state';
 import { classifyIntent, UserIntent } from './agentIntentClassifier';
 import { extractDataFromMessage } from './dataExtractor';
 import { handleQuery } from './queryHandler';
@@ -30,15 +30,28 @@ export const processMessage = async (
 	// Step 0: Handle specific halt reasons before general intent classification
 	if (currentState.halt?.reason === 'await_keyword_selection') {
 		console.log('📝 [DIRECT INPUT] Handling primary keyword selection');
+		const picked = userMessage.trim();
+		const userProvidedFields = new Set<string>(
+			Array.from((currentState.userProvidedFields || []) as any)
+		);
+		userProvidedFields.add('primaryKeyword');
 		const stateUpdates: Partial<AgentState> = {
 			data: {
 				...currentState.data,
-				primaryKeyword: userMessage.trim(),
+				primaryKeyword: picked,
 			} as BlogData,
-			halt: null, // Clear halt to allow agent to proceed
+			// Clear halt + options so UI doesn't keep showing the primary keyword picker
+			halt: null,
+			currentStep: 'secondary_keywords' as any,
+			keywordCandidates: [],
+			keywordResearch: {
+				...(currentState.keywordResearch || {} as any),
+				primaryCandidates: [],
+			} as any,
+			userProvidedFields,
 		};
 		return {
-			assistantMessage: `Got it! I've updated the primary keyword to "${userMessage.trim()}".`,
+			assistantMessage: `Got it! I've updated the primary keyword to "${picked}".`,
 			stateUpdates,
 			shouldRunAgent: true,
 		};
@@ -52,12 +65,23 @@ export const processMessage = async (
 			.split(',')
 			.map((k) => k.trim())
 			.filter((k) => k);
+		const userProvidedFields = new Set<string>(
+			Array.from((currentState.userProvidedFields || []) as any)
+		);
+		userProvidedFields.add('secondaryKeywords');
 		const stateUpdates: Partial<AgentState> = {
 			data: {
 				...currentState.data,
 				secondaryKeywords,
 			} as BlogData,
 			halt: null, // Clear halt
+			currentStep: 'title' as any,
+			keywordCandidates: [],
+			keywordResearch: {
+				...(currentState.keywordResearch || {} as any),
+				secondaryCandidates: [],
+			} as any,
+			userProvidedFields,
 		};
 		return {
 			assistantMessage: `Got it! I've captured: ${secondaryKeywords.length} secondary keywords.`,
@@ -480,6 +504,52 @@ const handlePartialInfo = async (
 	apiKey: string,
 	userSelectedAutomationMode?: 'full' | 'guided' | 'manual'
 ): Promise<ConversationResponse> => {
+	const isGibberishLike = (text: string): boolean => {
+		const t = (text || '').trim();
+		if (t.length < 3) return false;
+		if (!/[a-zA-Z]/.test(t)) return true;
+		const vowels = (t.match(/[aeiouAEIOU]/g) || []).length;
+		const consonants = (t.match(/[bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ]/g) || []).length;
+		const total = vowels + consonants;
+		if (total > 0 && t.length > 8 && vowels / total < 0.15) return true;
+		if (/(.)\1{4,}/.test(t)) return true;
+		const tooManySpecialChars = (t.match(/[^a-zA-Z0-9\s]/g) || []).length > t.length * 0.35;
+		if (tooManySpecialChars) return true;
+		return false;
+	};
+
+	const isValidTopicInput = (topic: string | null | undefined): boolean => {
+		if (!topic) return false;
+		const t = topic.trim();
+		if (t.length < 3) return false;
+		if (isGibberishLike(t)) return false;
+		const invalid = new Set([
+			'blog',
+			'it',
+			'yourself',
+			'everything',
+			'something',
+			'anything',
+			'yes',
+			'no',
+			'ok',
+			'okay',
+			'sure',
+			'maybe',
+			'thanks',
+			'thank you',
+		]);
+		if (invalid.has(t.toLowerCase())) return false;
+		return true;
+	};
+
+	const isValidKeywordInput = (kw: string | null | undefined): boolean => {
+		if (!kw) return false;
+		const t = kw.trim();
+		if (t.length < 2) return false;
+		if (isGibberishLike(t)) return false;
+		return true;
+	};
 	// Check if message contains automation phrases (safety fallback)
 	const automationPhrases = [
 		'by yourself',
@@ -520,20 +590,44 @@ const handlePartialInfo = async (
 	// Extract data from message
 	const extractedData = await extractDataFromMessage(userMessage, apiKey);
 
-	// Filter out invalid topics (common words that aren't real topics)
-	const invalidTopics = [
-		'blog',
-		'it',
-		'yourself',
-		'everything',
-		'something',
-		'anything',
-	];
-	if (
-		extractedData.topic &&
-		invalidTopics.includes(extractedData.topic.toLowerCase().trim())
-	) {
+	const attemptedTopic = extractedData.topic && extractedData.topic.trim() ? extractedData.topic.trim() : '';
+	const attemptedKeyword = extractedData.primaryKeyword && extractedData.primaryKeyword.trim()
+		? extractedData.primaryKeyword.trim()
+		: '';
+
+	// If the user is requesting automation, do not let the extractor accidentally
+	// overwrite the topic unless the message explicitly contains a topic pattern.
+	if (shouldAutoFill || hasAutomationPhrase) {
+		const explicitTopic = extractTopicFromMessage(userMessage);
+		if (!explicitTopic) {
+			extractedData.topic = null;
+		}
+	}
+
+	// Drop invalid/gibberish topic/keyword inputs before they get merged into state
+	if (extractedData.topic && !isValidTopicInput(extractedData.topic)) {
 		extractedData.topic = null;
+	}
+	if (extractedData.primaryKeyword && !isValidKeywordInput(extractedData.primaryKeyword)) {
+		extractedData.primaryKeyword = null;
+	}
+
+	// If the user attempted to provide a topic/keyword but it was invalid, stop and ask again.
+	if (attemptedTopic && !isValidTopicInput(attemptedTopic)) {
+		return {
+			assistantMessage:
+				`I couldn't understand **"${attemptedTopic}"** as a topic. Please share a clear topic (e.g., "portable espresso makers", "Pulumi vs Terraform", "email deliverability best practices").`,
+			stateUpdates: {},
+			shouldRunAgent: false,
+		};
+	}
+	if (attemptedKeyword && !isValidKeywordInput(attemptedKeyword)) {
+		return {
+			assistantMessage:
+				`I couldn't use **"${attemptedKeyword}"** as a keyword. Please provide a clear SEO keyword/phrase (e.g., "portable espresso maker", "best espresso maker for travel").`,
+			stateUpdates: {},
+			shouldRunAgent: false,
+		};
 	}
 
 	// Merge extracted data with current data
@@ -773,6 +867,10 @@ const handleApproval = (currentState: AgentState): ConversationResponse => {
 	// Handle different approval contexts
 	if (currentState.halt?.reason === 'awaiting_approval') {
 		stateUpdates.outlineApproved = true;
+		stateUpdates.needsApproval = false;
+		stateUpdates.halt = null;
+		// Keep step on outline so the router can advance to proposal/generation.
+		stateUpdates.currentStep = 'outline' as any;
 		return {
 			assistantMessage:
 				'Great! Starting blog generation section by section...',
@@ -868,28 +966,6 @@ const handleRefinement = (
 	userMessage: string,
 	currentState: AgentState
 ): ConversationResponse => {
-	// ✨ Check if we're in outline approval stage and user is providing feedback
-	if (
-		currentState.halt?.reason === 'awaiting_approval' &&
-		currentState.outline &&
-		currentState.outline.length > 0 &&
-		!currentState.outlineApproved
-	) {
-		console.log(
-			'📝 [OUTLINE FEEDBACK] User provided feedback, preparing to regenerate outline...'
-		);
-
-		return {
-			assistantMessage:
-				"Got it! I'll regenerate the outline based on your feedback. Please wait...",
-			stateUpdates: {
-				outlineFeedback: userMessage,
-				outlineApproved: false, // Keep it unapproved
-			},
-			shouldRunAgent: true, // Run the agent to regenerate
-		};
-	}
-
 	// ✨ Check if user is refining topic or keywords
 	const extractedTopic = extractTopicFromMessage(userMessage);
 	const isTopicRefinement =
@@ -922,6 +998,62 @@ const handleRefinement = (
 		};
 	}
 
+	// ✨ Outline approval stage: only treat message as outline feedback when it actually
+	// looks like outline feedback. Otherwise, ask clarification to avoid regenerating
+	// outline on off-topic messages.
+	if (
+		currentState.halt?.reason === 'awaiting_approval' &&
+		currentState.outline &&
+		currentState.outline.length > 0 &&
+		!currentState.outlineApproved
+	) {
+		const t = userMessage.trim().toLowerCase();
+		const outlineFeedbackSignals = [
+			'outline',
+			'section',
+			'heading',
+			'h2',
+			'add',
+			'remove',
+			'delete',
+			'reorder',
+			'move',
+			'rename',
+			'include',
+			'exclude',
+			'more',
+			'less',
+			'too long',
+			'too short',
+			'focus',
+			'emphasize',
+			'skip',
+		];
+		const looksLikeOutlineFeedback = outlineFeedbackSignals.some((k) => t.includes(k));
+
+		if (!looksLikeOutlineFeedback) {
+			return {
+				assistantMessage:
+					`Are you giving feedback on the outline, or do you want to change the topic?\n\n- If it's **outline feedback**, tell me what to change (e.g., "add a section on pricing", "remove the intro", "reorder sections").\n- If it's a **topic change**, say: "write about ..."`,
+				stateUpdates: {},
+				shouldRunAgent: false,
+			};
+		}
+
+		console.log(
+			'📝 [OUTLINE FEEDBACK] User provided feedback, preparing to regenerate outline...'
+		);
+		return {
+			assistantMessage:
+				"Got it! I'll regenerate the outline based on your feedback. Please wait...",
+			stateUpdates: {
+				outlineFeedback: userMessage,
+				outlineApproved: false, // Keep it unapproved
+			},
+			shouldRunAgent: true, // Run the agent to regenerate
+		};
+	}
+
 	// Default refinement handler
 	return {
 		assistantMessage:
@@ -944,7 +1076,6 @@ const extractTopicFromMessage = (message: string): string => {
 		if (match) return match[1].trim();
 	}
 
-	// Fallback: use first few words
-	const words = message.split(' ').slice(0, 5).join(' ');
-	return words || 'Blog Topic';
+	// No explicit topic found
+	return '';
 };

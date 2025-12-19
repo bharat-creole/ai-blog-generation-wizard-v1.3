@@ -256,7 +256,7 @@ export async function streamMessage(
 	const decoder = new TextDecoder();
 	let buffer = '';
 	let lastKeepaliveTime = Date.now();
-	const KEEPALIVE_TIMEOUT = 60000; // 60 seconds
+	const KEEPALIVE_TIMEOUT = 600000; // 10 minutes
 	let keepaliveTimer: NodeJS.Timeout | null = null;
 	// ✨ FIX: Preserve event type across chunks to handle network buffering in production
 	let currentEvent: string | null = null;

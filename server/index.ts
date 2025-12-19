@@ -94,6 +94,24 @@ const sendSSEKeepalive = (res: express.Response): void => {
 	}
 };
 
+const startSSEKeepaliveInterval = (
+	res: express.Response,
+	intervalMs: number
+): NodeJS.Timeout => {
+	const timer = setInterval(() => {
+		// Avoid writing if connection is already closed
+		if ((res as any).writableEnded) return;
+		sendSSEKeepalive(res);
+	}, intervalMs);
+
+	// Ensure we stop the timer if the client disconnects
+	res.on('close', () => {
+		clearInterval(timer);
+	});
+
+	return timer;
+};
+
 app.get('/', (req, res) => {
 	const { token, userId } = req.query;
 	const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3002';
@@ -336,8 +354,7 @@ app.post('/api/getKeywordsGoogleAds', async (req, res) => {
 					}
 
 					console.log(
-						`   📡 [API] Attempt ${attemptNum} for URL ${
-							urlIndex + 1
+						`   📡 [API] Attempt ${attemptNum} for URL ${urlIndex + 1
 						}: ${url.substring(0, 60)}...`
 					);
 
@@ -467,7 +484,7 @@ app.post('/api/getKeywordsGoogleAds', async (req, res) => {
 						if (
 							data.error.code === 429 ||
 							data.error.status ===
-								'RESOURCE_EXHAUSTED'
+							'RESOURCE_EXHAUSTED'
 						) {
 							if (!isRetry) {
 								console.log(
@@ -522,8 +539,8 @@ app.post('/api/getKeywordsGoogleAds', async (req, res) => {
 										};
 										difficulty =
 											compMap[
-												metrics
-													.competition
+											metrics
+												.competition
 											] || 0.5;
 									}
 
@@ -579,8 +596,7 @@ app.post('/api/getKeywordsGoogleAds', async (req, res) => {
 			// Check if we got an auth error (null marker)
 			if (rows === null) {
 				console.log(
-					`   🔄 [RETRY] Auth error detected, refreshing token and retrying for URL ${
-						urlIndex + 1
+					`   🔄 [RETRY] Auth error detected, refreshing token and retrying for URL ${urlIndex + 1
 					}...`
 				);
 				await new Promise((resolve) =>
@@ -593,8 +609,7 @@ app.post('/api/getKeywordsGoogleAds', async (req, res) => {
 			// Use longer delay for empty responses as they might need more processing time
 			if (rows && rows.length === 0) {
 				console.log(
-					`   ⚠️ [RETRY] No results from URL ${
-						urlIndex + 1
+					`   ⚠️ [RETRY] No results from URL ${urlIndex + 1
 					}, retrying in 2s...`
 				);
 				await new Promise((resolve) =>
@@ -604,8 +619,7 @@ app.post('/api/getKeywordsGoogleAds', async (req, res) => {
 
 				if (rows && rows.length === 0) {
 					console.log(
-						`   ❌ [RETRY] Still no results after retry for URL ${
-							urlIndex + 1
+						`   ❌ [RETRY] Still no results after retry for URL ${urlIndex + 1
 						}. This URL may not be supported by Google Ads API or has no extractable keywords.`
 					);
 				}
@@ -617,8 +631,7 @@ app.post('/api/getKeywordsGoogleAds', async (req, res) => {
 		for (let i = 0; i < urls.length; i++) {
 			const urlToProcess = urls[i];
 			console.log(
-				`   🔗 Processing URL ${i + 1}/${
-					urls.length
+				`   🔗 Processing URL ${i + 1}/${urls.length
 				}: ${urlToProcess}`
 			);
 
@@ -630,15 +643,13 @@ app.post('/api/getKeywordsGoogleAds', async (req, res) => {
 
 				if (rows.length > 0) {
 					console.log(
-						`   ✅ Got ${
-							rows.length
+						`   ✅ Got ${rows.length
 						} keywords from URL ${i + 1}`
 					);
 					allRows.push(...rows);
 				} else {
 					console.log(
-						`   ⚠️ No results from URL ${
-							i + 1
+						`   ⚠️ No results from URL ${i + 1
 						} after retry`
 					);
 				}
@@ -797,9 +808,8 @@ const persistMessagesToCheckpointer = async (
 				existingCheckpointState =
 					tuple.checkpoint.channel_values;
 				console.log(
-					`   💾 Found existing checkpoint with ${
-						existingCheckpointState.messages?.length ||
-						0
+					`   💾 Found existing checkpoint with ${existingCheckpointState.messages?.length ||
+					0
 					} messages`
 				);
 			}
@@ -913,12 +923,14 @@ const persistMessagesToCheckpointer = async (
 
 		// IMPORTANT: Remove apiKey before persisting (security)
 		delete stateToPersist.apiKey;
+		// Also remove nested apiKey if it was accidentally stored under data
+		if (stateToPersist.data && typeof stateToPersist.data === 'object') {
+			delete stateToPersist.data.apiKey;
+		}
 
 		console.log(
-			`   💾 Persisting ${allMessages.length} total messages (${
-				existingMessages.length
-			} existing + ${newMessagesFromState.length} from state + ${
-				assistantExists ? '0' : '1'
+			`   💾 Persisting ${allMessages.length} total messages (${existingMessages.length
+			} existing + ${newMessagesFromState.length} from state + ${assistantExists ? '0' : '1'
 			} assistant)`
 		);
 
@@ -936,6 +948,7 @@ const persistMessagesToCheckpointer = async (
 
 		// Create checkpoint object with proper structure
 		const checkpoint = {
+			v: 1,
 			id: checkpointId,
 			ts: new Date().toISOString(),
 			channel_values: stateToPersist,
@@ -944,16 +957,17 @@ const persistMessagesToCheckpointer = async (
 		};
 
 		// Step 6: Persist using checkpointer
-		await checkpointer.put(config, checkpoint, {});
+		await checkpointer.put(config, checkpoint, {
+			source: 'update',
+			step: -1,
+			parents: {},
+		});
 		console.log(
-			`   💾 Persisted ${
-				allMessages.length
-			} messages to checkpointer (${
-				newMessagesFromState.length
-			} new from state, ${
-				assistantExists
-					? 'assistant already exists'
-					: 'added assistant'
+			`   💾 Persisted ${allMessages.length
+			} messages to checkpointer (${newMessagesFromState.length
+			} new from state, ${assistantExists
+				? 'assistant already exists'
+				: 'added assistant'
 			})`
 		);
 	} catch (err) {
@@ -991,6 +1005,16 @@ app.post('/api/agent/message', optionalAuth, async (req, res) => {
 		});
 	}
 
+	// If we're streaming, set SSE headers early and start a periodic keepalive
+	let keepaliveInterval: NodeJS.Timeout | null = null;
+	if (stream) {
+		res.setHeader('Content-Type', 'text/event-stream');
+		res.setHeader('Cache-Control', 'no-cache');
+		res.setHeader('Connection', 'keep-alive');
+		res.flushHeaders();
+		keepaliveInterval = startSSEKeepaliveInterval(res, 15000);
+	}
+
 	// Get apiKey from environment variable first (preferred), then request body, then state
 	// This allows the API key to be configured server-side via .env
 	const apiKeyToUse =
@@ -1004,6 +1028,10 @@ app.post('/api/agent/message', optionalAuth, async (req, res) => {
 	// Remove apiKey from state to prevent storing it
 	const sanitizedState = { ...currentState };
 	delete sanitizedState.apiKey;
+	// Some callers accidentally place apiKey inside data; strip it too.
+	if ((sanitizedState as any).data && typeof (sanitizedState as any).data === 'object') {
+		delete (sanitizedState as any).data.apiKey;
+	}
 
 	// Helper to convert frontend message format to LangChain format
 	const convertToLangChainMessage = (m: any): HumanMessage | AIMessage => {
@@ -1037,6 +1065,7 @@ app.post('/api/agent/message', optionalAuth, async (req, res) => {
 
 	// Step 1: Get messages from checkpointer (most reliable source)
 	let allMessages: (HumanMessage | AIMessage)[] = [];
+	let checkpointStateValues: any = null;
 	if (threadId) {
 		try {
 			const config = { configurable: { thread_id: threadId } };
@@ -1048,6 +1077,7 @@ app.post('/api/agent/message', optionalAuth, async (req, res) => {
 				tuple.checkpoint.channel_values
 			) {
 				const checkpointState = tuple.checkpoint.channel_values;
+				checkpointStateValues = checkpointState;
 				// Check if checkpoint has messages
 				if (
 					checkpointState.messages &&
@@ -1082,8 +1112,7 @@ app.post('/api/agent/message', optionalAuth, async (req, res) => {
 
 	// Step 2: Convert and merge frontend messages
 	console.log(
-		`   📨 Frontend sent ${
-			currentState?.messages?.length || 0
+		`   📨 Frontend sent ${currentState?.messages?.length || 0
 		} messages in currentState`
 	);
 	if (currentState?.messages && Array.isArray(currentState.messages)) {
@@ -1137,12 +1166,69 @@ app.post('/api/agent/message', optionalAuth, async (req, res) => {
 	// Update sanitizedState with properly formatted messages
 	sanitizedState.messages = allMessages;
 
-	// Setup streaming if requested
-	if (stream) {
-		res.setHeader('Content-Type', 'text/event-stream');
-		res.setHeader('Cache-Control', 'no-cache');
-		res.setHeader('Connection', 'keep-alive');
-		res.flushHeaders();
+	// Step 3.5: Merge the latest full checkpoint state into the in-flight state so the
+	// UserAgent can see authoritative halt/candidates/options even if the frontend
+	// only sent messages.
+	if (checkpointStateValues && typeof checkpointStateValues === 'object') {
+		const merged = {
+			...checkpointStateValues,
+			...sanitizedState,
+			data: {
+				...(checkpointStateValues.data || {}),
+				...(sanitizedState.data || {}),
+			},
+			conversationContext: {
+				...(checkpointStateValues.conversationContext || {}),
+				...(sanitizedState.conversationContext || {}),
+			},
+		};
+		Object.assign(sanitizedState, merged);
+
+		// IMPORTANT: Frontend often sends only messages + halt:null. Do not let that
+		// wipe the authoritative checkpoint halt, otherwise the UserAgent won't know
+		// we're awaiting a selection (title/keywords/etc.)
+		const checkpointHalt = (checkpointStateValues as any).halt;
+		const hasCheckpointHaltReason = !!(checkpointHalt && typeof checkpointHalt === 'object' && checkpointHalt.reason);
+		const incomingHalt = (sanitizedState as any).halt;
+		const incomingHasHaltReason = !!(incomingHalt && typeof incomingHalt === 'object' && (incomingHalt as any).reason);
+		const checkpointStep = (checkpointStateValues as any).currentStep;
+		const incomingStep = (sanitizedState as any).currentStep;
+		// Only preserve checkpoint halts when the incoming state did not explicitly
+		// move the flow forward/backward. Otherwise, stale halts can re-open old pickers.
+		if ((!incomingHalt || !incomingHasHaltReason) && hasCheckpointHaltReason) {
+			if (!incomingStep || incomingStep === checkpointStep) {
+				(sanitizedState as any).halt = checkpointHalt;
+			}
+		}
+		// Similarly, preserve selection option lists from checkpoint when frontend
+		// doesn't include them.
+		const checkpointTitleOptions = (checkpointStateValues as any).titleOptions;
+		const incomingTitleOptions = (sanitizedState as any).titleOptions;
+		const incomingTitleOptionsEmpty = Array.isArray(incomingTitleOptions) && incomingTitleOptions.length === 0;
+		const effectiveHaltReason = ((sanitizedState as any).halt && (sanitizedState as any).halt.reason) as string | undefined;
+		if (
+			((incomingTitleOptions == null) || incomingTitleOptionsEmpty) &&
+			Array.isArray(checkpointTitleOptions) &&
+			checkpointTitleOptions.length > 0
+		) {
+			// Only rehydrate title options when we are actually awaiting title selection
+			if ((!incomingStep || incomingStep === checkpointStep) && effectiveHaltReason === 'await_title_selection') {
+				(sanitizedState as any).titleOptions = checkpointTitleOptions;
+			}
+		}
+		if (
+			(!Array.isArray((sanitizedState as any).keywordCandidates) || (sanitizedState as any).keywordCandidates.length === 0) &&
+			Array.isArray((checkpointStateValues as any).keywordCandidates) &&
+			(checkpointStateValues as any).keywordCandidates.length > 0
+		) {
+			// Only rehydrate keyword candidates when we are actually awaiting a keyword selection
+			if (
+				(!incomingStep || incomingStep === checkpointStep) &&
+				(effectiveHaltReason === 'await_keyword_selection' || effectiveHaltReason === 'await_secondary_selection')
+			) {
+				(sanitizedState as any).keywordCandidates = (checkpointStateValues as any).keywordCandidates;
+			}
+		}
 	}
 
 	try {
@@ -1154,12 +1240,25 @@ app.post('/api/agent/message', optionalAuth, async (req, res) => {
 			sanitizedState
 		);
 
+		// If we're explicitly waiting for a selection/approval, never let the PrimaryAgent
+		// short-circuit the request. Otherwise typed selections (e.g., primary keyword)
+		// can be blocked and the UI stays stuck on the picker.
+		const haltReason = (sanitizedState as any).halt && (sanitizedState as any).halt.reason;
+		const awaitingSelection =
+			haltReason === 'await_keyword_selection' ||
+			haltReason === 'await_secondary_selection' ||
+			haltReason === 'await_title_selection' ||
+			haltReason === 'awaiting_approval' ||
+			haltReason === 'await_references_selection' ||
+			haltReason === 'await_references' ||
+			haltReason === 'await_interlinking';
+
 		// If router says: don't proceed (abort) and we have a direct response → return it.
-		if (!routing.shouldProceed) {
+		// But if we're awaiting a selection, allow the selection handlers to run.
+		if (!routing.shouldProceed && !awaitingSelection) {
 			console.log(`   ⛔ Primary Agent blocked: ${routing.type}`);
 			console.log(
-				`   Direct Response: "${
-					routing.directResponse || 'NOT PROVIDED'
+				`   Direct Response: "${routing.directResponse || 'NOT PROVIDED'
 				}"`
 			);
 
@@ -1356,6 +1455,8 @@ app.post('/api/agent/message', optionalAuth, async (req, res) => {
 							executed: false, // No graph execution
 						})}\n\n`
 					);
+					if (keepaliveInterval)
+						clearInterval(keepaliveInterval);
 					res.end();
 					return;
 				} catch (streamError) {
@@ -1378,8 +1479,7 @@ app.post('/api/agent/message', optionalAuth, async (req, res) => {
 				`   Target node: ${routing.regenerationRequest.targetNode}`
 			);
 			console.log(
-				`   Feedback: ${
-					routing.regenerationRequest.feedback || 'none'
+				`   Feedback: ${routing.regenerationRequest.feedback || 'none'
 				}`
 			);
 
@@ -1486,6 +1586,8 @@ app.post('/api/agent/message', optionalAuth, async (req, res) => {
 						metadata: reframed.metadata,
 					})}\n\n`
 				);
+				if (keepaliveInterval)
+					clearInterval(keepaliveInterval);
 				res.end();
 				return;
 			} else {
@@ -1511,32 +1613,36 @@ app.post('/api/agent/message', optionalAuth, async (req, res) => {
 			console.log(`   🔄 Applied state updates from Primary Agent`);
 		}
 
-		// ✨ CRITICAL: Send Primary Agent message FIRST (before LangGraph execution)
-		// This ensures proper message ordering: Primary Agent → LangGraph → Final
-		// Send this message IMMEDIATELY so user sees it while research is happening
-		if (routing.directResponse && stream && routing.shouldProceed) {
-			// Send Primary Agent message as a separate intent event BEFORE processing
-			// This message appears immediately while LangGraph is executing
-			writeSSE(
-				res,
-				`event: intent\ndata: ${JSON.stringify({
-					assistantMessage: routing.directResponse,
-					shouldRunAgent: true, // Will proceed to LangGraph
-					stateUpdates: routing.stateUpdates || {},
-					fromPrimaryAgent: true, // Flag to identify this is from Primary Agent
-					isBeforeExecution: true, // Flag to indicate this is before LangGraph execution
-				})}\n\n`
-			);
-			console.log(
-				`   💬 Sent Primary Agent message (BEFORE execution): "${routing.directResponse.substring(
-					0,
-					50
-				)}..."`
-			);
-		}
+		// If we are awaiting a selection/approval, do not let PrimaryAgent block the message.
+		// Also be resilient when `halt` is missing (frontend state merges can clear it):
+		// infer awaitingSelection from currentStep + presence of candidate lists.
+		const haltReason2 = (stateForProcessing as any).halt && (stateForProcessing as any).halt.reason;
+		const hasKeywordCandidates = Array.isArray((stateForProcessing as any).keywordCandidates) && (stateForProcessing as any).keywordCandidates.length > 0;
+		const hasTitleOptions = Array.isArray((stateForProcessing as any).titleOptions) && (stateForProcessing as any).titleOptions.length > 0;
+		const step2 = (stateForProcessing as any).currentStep;
+		const awaitingSelection2 =
+			haltReason2 === 'await_keyword_selection' ||
+			haltReason2 === 'await_secondary_selection' ||
+			haltReason2 === 'await_title_selection' ||
+			haltReason2 === 'awaiting_approval' ||
+			haltReason2 === 'await_references_selection' ||
+			haltReason2 === 'await_references' ||
+			haltReason2 === 'await_interlinking' ||
+			(step2 === 'primary_keyword' && hasKeywordCandidates) ||
+			(step2 === 'secondary_keywords' && hasKeywordCandidates) ||
+			(step2 === 'title' && hasTitleOptions);
 
-		// If Primary Agent blocked (shouldProceed = false), stop here
-		if (!routing.shouldProceed) {
+		// NOTE: We used to send the Primary Agent's "before execution" message
+		// immediately here, but we can't know yet whether the Conversation
+		// Handler will actually instruct the graph to run. Sending an early
+		// SSE with `shouldRunAgent: true` caused a UI mismatch when the
+		// Conversation Handler declined to execute the graph. We'll defer
+		// sending the Primary Agent's pre-exec event until after we call
+		// `processMessage` so the `shouldRunAgent` flag matches reality.
+
+		// If Primary Agent blocked (shouldProceed = false), stop here.
+		// But if we're awaiting a selection, allow Conversation Handler / UserAgent to process it.
+		if (!routing.shouldProceed && !awaitingSelection2) {
 			// Persist the Primary Agent message
 			await persistMessagesToCheckpointer(
 				threadId,
@@ -1584,22 +1690,56 @@ app.post('/api/agent/message', optionalAuth, async (req, res) => {
 			)}..."`
 		);
 		console.log(`   Should execute: ${response.shouldRunAgent}`);
+		console.log(`   State Updates from UserAgent:`, JSON.stringify(response.stateUpdates || {}, (key, value) => value instanceof Set ? Array.from(value) : value, 2));
 
 		// Merge state updates (without apiKey)
 		// But ensure apiKey is available for graph execution (from request or env)
 		let updatedState = {
 			...stateForProcessing,
-			...response.stateUpdates,
+			...(routing.stateUpdates || {}),
+			...(response.stateUpdates || {}),
 			apiKey: apiKeyToUse, // Ensure apiKey is available for nodes during execution
 			userId: userId || stateForProcessing.userId || '', // ✨ Ensure userId is available for fetching language
 		};
+
+		console.log(`   📍 Final State for Execution - Step: ${updatedState.currentStep}, Topic: "${updatedState.data?.topic || 'N/A'}"`);
+
+		// If Primary Agent provided a direct response, send it now with the
+		// accurate `shouldRunAgent` value (based on Conversation Handler).
+		// This avoids sending an optimistic `shouldRunAgent: true` earlier
+		// which could mislead the UI when the graph is ultimately not run.
+		let primaryAgentSentBeforeMessage = false;
+		// Only send Primary Agent's "before execution" SSE if we're actually
+		// going to run the graph. This prevents showing a researching/expectation
+		// message when no stepper execution will occur.
+		if (routing.directResponse && stream && response.shouldRunAgent) {
+			writeSSE(
+				res,
+				`event: intent\ndata: ${JSON.stringify({
+					assistantMessage: routing.directResponse,
+					shouldRunAgent: response.shouldRunAgent,
+					stateUpdates: {
+						...(routing.stateUpdates || {}),
+						...(response.stateUpdates || {}),
+					},
+					fromPrimaryAgent: true,
+					isBeforeExecution: true,
+				})}\n\n`
+			);
+			primaryAgentSentBeforeMessage = true;
+			console.log(
+				`   💬 Sent Primary Agent message (BEFORE execution): "${routing.directResponse.substring(
+					0,
+					50
+				)}..."`
+			);
+		}
 
 		// Emit intent event (only if Primary Agent didn't already send a "before execution" message)
 		// This is the Conversation Handler's response
 		// CRITICAL: If Primary Agent sent a "before execution" message, skip Conversation Handler's message
 		// to avoid duplicate/combined messages. The Primary Agent message is sufficient.
-		const primaryAgentSentBeforeMessage =
-			routing.directResponse && routing.shouldProceed && stream;
+		// `primaryAgentSentBeforeMessage` is set above when we actually emit the SSE
 		const hasConversationHandlerMessage =
 			response.assistantMessage && response.assistantMessage.trim();
 
@@ -1632,7 +1772,7 @@ app.post('/api/agent/message', optionalAuth, async (req, res) => {
 		let lastNodeExecuted = '';
 		if (response.shouldRunAgent) {
 			console.log(`   🚀 Executing LangGraph...`);
-			const config = { configurable: { thread_id: threadId } };
+			const config = { configurable: { thread_id: threadId }, recursionLimit: 150 };
 
 			if (stream) {
 				// Stream graph execution
@@ -1714,6 +1854,9 @@ app.post('/api/agent/message', optionalAuth, async (req, res) => {
 		};
 		// Ensure apiKey is not in serialized state
 		delete serializedState.apiKey;
+		if ((serializedState as any).data && typeof (serializedState as any).data === 'object') {
+			delete (serializedState as any).data.apiKey;
+		}
 
 		if (
 			serializedState.keywordCandidates &&
@@ -1772,6 +1915,7 @@ app.post('/api/agent/message', optionalAuth, async (req, res) => {
 					})}\n\n`
 				);
 			}
+			if (keepaliveInterval) clearInterval(keepaliveInterval);
 			res.end();
 		} else {
 			return res.json({
@@ -1810,12 +1954,12 @@ app.post('/api/agent/message', optionalAuth, async (req, res) => {
 				// Add assistant response if available
 				...(response.assistantMessage
 					? [
-							{
-								role: 'assistant',
-								content: response.assistantMessage,
-								timestamp: Date.now(),
-							},
-					  ]
+						{
+							role: 'assistant',
+							content: response.assistantMessage,
+							timestamp: Date.now(),
+						},
+					]
 					: []),
 			];
 
@@ -1887,6 +2031,7 @@ app.post('/api/agent/message', optionalAuth, async (req, res) => {
 					retryDelay: isRateLimit ? retryDelay : undefined,
 				})}\n\n`
 			);
+			if (keepaliveInterval) clearInterval(keepaliveInterval);
 			res.end();
 		} else {
 			return res.status(statusCode).json({
@@ -1947,9 +2092,11 @@ app.post('/api/agent/stream', async (req, res) => {
 	res.setHeader('Cache-Control', 'no-cache');
 	res.setHeader('Connection', 'keep-alive');
 	res.flushHeaders();
+	const keepaliveInterval = startSSEKeepaliveInterval(res, 15000);
 
 	try {
-		const config = { configurable: { thread_id: threadId } };
+		// Stream graph execution
+		const config = { configurable: { thread_id: threadId }, recursionLimit: 50 };
 		const stream = await graph.stream(state, config);
 
 		let chunkCount = 0;
@@ -1964,6 +2111,7 @@ app.post('/api/agent/stream', async (req, res) => {
 		}
 
 		writeSSE(res, 'event: done\ndata: {}\n\n');
+		clearInterval(keepaliveInterval);
 		res.end();
 
 		console.log(`   ✅ Stream complete`);
@@ -1976,6 +2124,7 @@ app.post('/api/agent/stream', async (req, res) => {
 				error: error.message,
 			})}\n\n`
 		);
+		clearInterval(keepaliveInterval);
 		res.end();
 		console.log(`${'═'.repeat(70)}\n`);
 	}
@@ -1986,7 +2135,7 @@ app.get('/api/agent/state/:threadId', async (req, res) => {
 	const { threadId } = req.params;
 
 	try {
-		const config = { configurable: { thread_id: threadId } };
+		const config = { configurable: { thread_id: threadId }, recursionLimit: 50 };
 		const snapshot = await graph.getState(config);
 
 		return res.json({ state: snapshot.values });

@@ -204,7 +204,7 @@ const InterlinkingForm: React.FC<InterlinkingFormProps> = ({
 					))}
 				</div>
 			)}
-		
+
 
 			<div className='flex gap-2 mb-[12px]'>
 				<input
@@ -248,7 +248,7 @@ const InterlinkingForm: React.FC<InterlinkingFormProps> = ({
 					className={` bg-primary text-white px-[18px] py-[8px] text-regular text-[14px] rounded-[26px] ${buttonsDisabled || completedSelections.has('interlinking') || currentLinks.length === 0
 							? 'cursor-not-allowed opacity-60'
 							: ' hover:bg-primary'
-						}`}
+					}`}
 					onClick={handleContinue}
 				>
 					Continue

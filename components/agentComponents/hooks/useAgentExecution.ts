@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { runNext as lgRunNext } from '../../../services/langgraph/agentGraph';
-import { AgentState } from '../../../../server/agent/state';
+import { AgentState } from '../../../server/agent/state';
 import * as automationEngine from '../../../services/automationEngine';
 import { getStepMessage } from '../utils/agentHelpers';
 import { shouldShowProgressMessage } from '../utils/messageUtils';

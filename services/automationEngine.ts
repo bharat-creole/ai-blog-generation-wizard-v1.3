@@ -6,7 +6,7 @@ export const autoFillPrimaryKeyword = async (
 	s: AgentState
 ): Promise<string> => {
 	const topicSource = s.data.title || s.data.topic || s.data.primaryKeyword || '';
-	
+
 	if (!topicSource || topicSource.trim().length === 0) {
 		console.log('⚠️ [AUTO-FILL PRIMARY KEYWORD] No topic provided');
 		return '';
@@ -188,7 +188,7 @@ export const autoFillTitle = async (s: AgentState): Promise<string> => {
 	console.log('🔍 [AUTO-FILL TITLE] Fetching reference titles from web search...');
 	const topicForSearch = s.data.title || s.data.topic || s.data.primaryKeyword || '';
 	let referenceTitles: string[] = [];
-	
+
 	if (topicForSearch) {
 		try {
 			referenceTitles = await geminiService.searchWebForTitles(topicForSearch, apiKey);
@@ -198,7 +198,7 @@ export const autoFillTitle = async (s: AgentState): Promise<string> => {
 		}
 	}
 
-	const titles = await geminiService.generateTitles(s.data, apiKey, undefined, referenceTitles);
+	const titles = await geminiService.generateTitles(s.data as any, apiKey, undefined, referenceTitles);
 	// Auto-select the first (best) title
 	return titles.length > 0 ? titles[0] : s.data.topic || 'Untitled Blog';
 };
@@ -208,9 +208,16 @@ export const shouldAutoFill = (
 	field: keyof typeof s.data
 ): boolean => {
 	// Check if field is in autoFillFields set
-	if (s.autoFillFields && s.autoFillFields.has(field)) {
-		console.log(`🤖 [AUTO-FILL] Field "${field}" - auto-fill enabled (in autoFillFields set)`);
-		return true;
+	const autoFillFields = s.autoFillFields as any;
+	if (autoFillFields) {
+		const hasField = typeof autoFillFields.has === 'function'
+			? autoFillFields.has(field)
+			: Array.isArray(autoFillFields) && autoFillFields.includes(field);
+
+		if (hasField) {
+			console.log(`🤖 [AUTO-FILL] Field "${field}" - auto-fill enabled (in autoFillFields)`);
+			return true;
+		}
 	}
 
 	// Check if full automation mode
@@ -226,14 +233,30 @@ export const isUserProvided = (
 	s: AgentState,
 	field: string
 ): boolean => {
-	return s.userProvidedFields
-		? s.userProvidedFields.has(field)
-		: false;
+	const userProvidedFields = s.userProvidedFields as any;
+	if (!userProvidedFields) return false;
+
+	if (typeof userProvidedFields.has === 'function') {
+		return userProvidedFields.has(field);
+	}
+
+	if (Array.isArray(userProvidedFields)) {
+		return userProvidedFields.includes(field);
+	}
+
+	return false;
 };
 
 export const needsUserInput = (s: AgentState): boolean => {
 	// ✨ ALWAYS require user input for outline approval regardless of automation mode
 	if (s.halt?.reason === 'awaiting_approval') {
+		return true;
+	}
+
+	// If the graph is halted for ANY reason, prefer stopping execution rather than
+	// risking infinite loops. Full automation is allowed to skip optional steps,
+	// but it should not keep running when the graph explicitly halts.
+	if (s.halt?.reason && s.preferences?.automationLevel === 'full') {
 		return true;
 	}
 
@@ -248,7 +271,11 @@ export const needsUserInput = (s: AgentState): boolean => {
 		'await_secondary_selection',
 		'await_title_selection',
 		'await_interlinking',
+		'await_interlinking_selection',
+		'await_interlinking_confirmation',
 		'await_references',
+		'await_references_selection',
+		'await_references_confirmation',
 	];
 
 	return s.halt?.reason

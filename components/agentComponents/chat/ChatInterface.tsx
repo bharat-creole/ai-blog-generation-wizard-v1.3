@@ -1,7 +1,7 @@
 import React from 'react';
 import Spinner from '../../common/Spinner';
 import { ChatMessage } from '../../../types';
-import { AgentState } from '../../../../server/agent/state';
+import { AgentState } from '../../../server/agent/state';
 import { BlogData } from '../../../types';
 import { MessageRenderer } from './MessageRenderer';
 import { ChatInput } from './ChatInput';
@@ -135,46 +135,46 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 						return true; // Keep all messages with content
 					})
 					.map((m, i) => (
-					<div
-						key={i}
-						className={`mb-[12px] ${
-							m.role === 'user'
-								? 'flex justify-end'
-								: 'flex justify-start'
-						}`}
-				>
-					<MessageRenderer
-						message={m}
+						<div
+							key={i}
+							className={`mb-[12px] ${
+								m.role === 'user'
+									? 'flex justify-end'
+									: 'flex justify-start'
+							}`}
+					>
+						<MessageRenderer
+							message={m}
 						messageIndex={i}
-						agent={agent}
-						data={data}
-						selectedSecondaries={selectedSecondaries}
-						setSelectedSecondaries={setSelectedSecondaries}
-						selectedPrimary={selectedPrimary}
-						setSelectedPrimary={setSelectedPrimary}
-						selectedTitle={selectedTitle}
-						setSelectedTitle={setSelectedTitle}
-						completedSelections={completedSelections}
-						setCompletedSelections={setCompletedSelections}
-						setMessages={setMessages}
-						setAgent={setAgent}
-						updateData={updateData}
-						setIsThinking={setIsThinking}
-						setOutline={setOutline}
-						setDraft={setDraft}
-						setTraceItems={setTraceItems}
-						setInput={setInput}
-						setOutlineApproved={setOutlineApproved}
-						setViewMode={setViewMode}
-						messages={messages}
-						isStreaming={isStreaming}
-						setIsStreaming={setIsStreaming}
-						showBlogContent={showBlogContent}
-						setShowBlogContent={setShowBlogContent}
-						onCollapseSidebar={onCollapseSidebar}
-						sendUserMessage={sendUserMessage}
-					/>
-				</div>
+							agent={agent}
+							data={data}
+							selectedSecondaries={selectedSecondaries}
+							setSelectedSecondaries={setSelectedSecondaries}
+							selectedPrimary={selectedPrimary}
+							setSelectedPrimary={setSelectedPrimary}
+							selectedTitle={selectedTitle}
+							setSelectedTitle={setSelectedTitle}
+							completedSelections={completedSelections}
+							setCompletedSelections={setCompletedSelections}
+							setMessages={setMessages}
+							setAgent={setAgent}
+							updateData={updateData}
+							setIsThinking={setIsThinking}
+							setOutline={setOutline}
+							setDraft={setDraft}
+							setTraceItems={setTraceItems}
+							setInput={setInput}
+							setOutlineApproved={setOutlineApproved}
+							setViewMode={setViewMode}
+							messages={messages}
+							isStreaming={isStreaming}
+							setIsStreaming={setIsStreaming}
+							showBlogContent={showBlogContent}
+							setShowBlogContent={setShowBlogContent}
+							onCollapseSidebar={onCollapseSidebar}
+							sendUserMessage={sendUserMessage}
+						/>
+					</div>
 				))}
 				{isThinking && (
 					<div className='flex justify-start mb-4'>

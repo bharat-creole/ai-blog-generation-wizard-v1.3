@@ -1,5 +1,5 @@
 import { ChatMessage, BlogData, AutomationLevel } from '../../../types';
-import { AgentState } from '../../../../server/agent/state';
+import { AgentState } from '../../../server/agent/state';
 import * as conversationHandler from '../../../services/conversationHandler';
 import { FlowContext } from '../types/agentTypes';
 import {
@@ -233,9 +233,28 @@ export const createHaltMessages = (
 			]);
 		}
 	} else if (working.halt?.reason === 'await_interlinking') {
+		const rawInterlinks: any = (working.data as any)?.interlinks || [];
+		const interlinks = Array.isArray(rawInterlinks)
+			? rawInterlinks
+					.map((l: any, idx: number) => {
+						if (!l) return null;
+						if (typeof l === 'string') {
+							return { id: String(idx + 1), keyword: l, url: '' };
+						}
+						if (typeof l === 'object') {
+							return {
+								id: String(l.id ?? idx + 1),
+								keyword: String(l.keyword ?? ''),
+								url: String(l.url ?? ''),
+							};
+						}
+						return null;
+					})
+					.filter(Boolean)
+			: [];
 		setMessages((prev) => [
 			...prev,
-			createInterlinkingFormMessage(working.data.interlinks || []),
+			createInterlinkingFormMessage(interlinks),
 		]);
 	} else if (working.halt?.reason === 'await_references') {
 		setMessages((prev) => [
@@ -319,6 +338,8 @@ export const handleBlogGeneration = async (
 
 		// Run agent if conversation handler says so
 		if (conversationResponse.shouldRunAgent) {
+			// Turn on loader while LangGraph executes (outline/blog generation)
+			setIsThinking(true);
 			working = await runBlogGenerationLoop(
 				working,
 				flowContext,
@@ -335,6 +356,8 @@ export const handleBlogGeneration = async (
 
 		// Show outline approval if needed
 		if (working.halt?.reason === 'awaiting_approval') {
+			// We are waiting for user input, so loader should not spin.
+			setIsThinking(false);
 			setMessages((prev) => [
 				...prev,
 				createOutlineApprovalMessage(working.outline || []),

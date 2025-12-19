@@ -30,12 +30,12 @@ export type PrimarySystemAction =
 
 export interface RegenerationRequest {
 	targetNode:
-		| 'title_generation'
-		| 'research_primary'
-		| 'research_secondary'
-		| 'discover'
-		| 'proposal'
-		| null;
+	| 'title_generation'
+	| 'research_primary'
+	| 'research_secondary'
+	| 'discover'
+	| 'proposal'
+	| null;
 	feedback?: string; // User feedback for regeneration
 	clearPrevious?: boolean; // Whether to clear previous results
 }
@@ -121,34 +121,30 @@ Act as a Primary Mediator Agent for a blog generation system. You control the co
 
 📋 INFORMATION STATUS:
 - Topic: ${hasTopic ? `✅ "${currentState.data?.topic}"` : '❌ Missing'}
-- Primary Keyword: ${
-			hasPrimaryKeyword
+- Primary Keyword: ${hasPrimaryKeyword
 				? `✅ "${currentState.data?.primaryKeyword}"`
 				: '❌ Missing'
-		}
-- Secondary Keywords: ${
-			hasSecondaryKeywords
+			}
+- Secondary Keywords: ${hasSecondaryKeywords
 				? `✅ ${currentState.data?.secondaryKeywords?.length} keywords`
 				: '❌ Missing'
-		}
+			}
 - Title: ${hasTitle ? `✅ "${currentState.data?.title}"` : '❌ Missing'}
 - Outline: ${hasOutline ? '✅ Generated' : '❌ Not generated'}
 - Current Step: ${currentState.currentStep || 'none'}
 - Halted Reason: ${currentState.halt?.reason || 'none'}
-- Automation Mode: ${
-			isFullAutomation ? 'Full' : isGuidedMode ? 'Guided' : 'Manual'
-		}
+- Automation Mode: ${isFullAutomation ? 'Full' : isGuidedMode ? 'Guided' : 'Manual'
+			}
 - Is First Message: ${isFirstMessage}
 - Modification Request: ${modificationRequest || 'none'}
 - About to Research Primary: ${isAboutToResearchPrimary}
 - About to Research Secondary: ${isAboutToResearchSecondary}
 - About to Generate Title: ${isAboutToGenerateTitle}
 
-📝 MISSING INFORMATION: ${
-			missingInfo.length > 0
+📝 MISSING INFORMATION: ${missingInfo.length > 0
 				? missingInfo.join(', ')
 				: 'None - all required info collected'
-		}
+			}
 
 🔍 CLASSIFICATION RULES (PRIORITY ORDER):
 
@@ -157,14 +153,7 @@ Act as a Primary Mediator Agent for a blog generation system. You control the co
    - Type: "irrelevant_small_talk"
    - SystemAction: "abort"
    - shouldProceed: false
-   - directResponse: "Great! I'll help you create a blog post. To get started, I'll need:
-     - **Topic**: What would you like to write about?
-     - **Primary Keyword**: The main SEO keyword (Let me present you some suggestions. If you would like to give of your own then please provide it.)
-     - **Secondary Keywords**: Additional keywords (Let me present you some suggestions. If you would like to give of your own then please provide it.)
-     - **Title**: Blog post title (I can generate options)
-     - **Interlinking & References**: Optional, can add later
-     
-     Please share your topic to begin!"
+   - directResponse: "Great! I'll help you create a blog post. To get started, I'll need:\n- **Topic**: What would you like to write about?\n- **Primary Keyword**: The main SEO keyword (Let me present you some suggestions. If you would like to give of your own then please provide it.)\n- **Secondary Keywords**: Additional keywords (Let me present you some suggestions. If you would like to give of your own then please provide it.)\n- **Title**: Blog post title (I can generate options)\n- **Interlinking & References**: Optional, can add later\n\nPlease share your topic to begin!"
 
 2. **AUTOMATION REQUEST** (SECOND HIGHEST PRIORITY)
    - Phrases: "generate blog by yourself", "handle it automatically", "you decide everything", "full auto", "automatic mode", "do it yourself"
@@ -174,16 +163,15 @@ Act as a Primary Mediator Agent for a blog generation system. You control the co
    - BUT: Set preferences.automationLevel to "full" in stateUpdates
    - directResponse: null (let lang-graph handle it, but add confirmation prompts later)
 
-3. **MODIFICATION REQUEST** (THIRD PRIORITY)
+   **CRITICAL: ONLY use this if the field being modified ALREADY HAS A VALUE in the information status above.**
+   If the field is "Missing", treat it as PARTIAL INFORMATION PROVIDED (Rule 5) instead.
    
-   **CRITICAL: Handle modification requests immediately (like regeneration)**
-   
-   A. If user wants to modify (treat like regeneration request - proceed immediately):
-      - Detect modification phrases: "change primary keyword", "I want to change primary keyword", "modify title", "change topic", "update keyword"
+   A. If user wants to modify an existing value (proceed immediately):
+      - Phrases: "change primary keyword", "modify title", "change topic", "actually, write about X instead"
       - Type: "blog_creation_request"
       - SystemAction: "route_to_intent_classifier"
       - shouldProceed: true (CRITICAL: Proceed immediately, like regeneration)
-      - directResponse: "Sure, I'll help you do that. You will have to redo some steps again for better blog generation."
+      - directResponse: null (If a new topic/keyword is provided, let UserAgent confirm it)
       - Clear the field being modified and set currentStep to the appropriate step in stateUpdates
       - Set modificationRequest: "primary keyword" | "title" | "topic" | "secondary keywords" in stateUpdates (for tracking only)
       - IMPORTANT: Do NOT set awaitingConfirmation - proceed immediately like regeneration requests
@@ -208,11 +196,10 @@ Act as a Primary Mediator Agent for a blog generation system. You control the co
    - Type: "off_topic"
    - SystemAction: "abort"
    - shouldProceed: false
-   - directResponse: "I'm focused on helping you create blog content. ${
-		missingInfo.length > 0
-			? `We still need: ${missingInfo.join(', ')}. `
-			: ''
-   }What would you like to work on next?"
+   - directResponse: "I'm focused on helping you create blog content. ${missingInfo.length > 0
+				? `We still need: ${missingInfo.join(', ')}. `
+				: ''
+			}What would you like to work on next?"
 
 7. **CONTEXT QUERY**
    - User asking about previous conversation: "what did we discuss?", "what's my topic?"
@@ -225,11 +212,10 @@ Act as a Primary Mediator Agent for a blog generation system. You control the co
    - Type: "general_question"
    - SystemAction: "abort"
    - shouldProceed: false
-   - directResponse: "I help you create SEO-optimized blog posts. I'll guide you through keyword research, title generation, and content creation. ${
-		missingInfo.length > 0
-			? `Currently, we need: ${missingInfo.join(', ')}. `
-			: ''
-   }What would you like to do?"
+   - directResponse: "I help you create SEO-optimized blog posts. I'll guide you through keyword research, title generation, and content creation. ${missingInfo.length > 0
+				? `Currently, we need: ${missingInfo.join(', ')}. `
+				: ''
+			}What would you like to do?"
 
 9. **RESTART REQUEST**
    - "start over", "reset", "begin again"
@@ -252,11 +238,10 @@ Act as a Primary Mediator Agent for a blog generation system. You control the co
 - SystemAction: "abort"
 - shouldProceed: false
 - directResponse: Redirect to missing information
-- Example: "I'm here to help with blog creation. ${
-			missingInfo.length > 0
+- Example: "I'm here to help with blog creation. ${missingInfo.length > 0
 				? `We need: ${missingInfo.join(', ')}. `
 				: ''
-		}What topic would you like to write about?"
+			}What topic would you like to write about?"
 
 **Scenario 3: User asks for automation**
 - Detect automation phrases
@@ -286,7 +271,7 @@ OUTPUT JSON FORMAT:
   "normalizedMessage": "cleaned message (remove greetings, keep core intent)",
   "shouldProceed": true | false,
   "systemAction": "restart" | "abort" | "route_to_intent_classifier" | "route_to_context_manager" | "regenerate_node",
-  "directResponse": "Required if shouldProceed is false OR if you want to guide user before proceeding. Be conversational, friendly, and helpful!",
+  "directResponse": "Required if shouldProceed is false OR if you want to guide user before proceeding. Be conversational, friendly, and helpful! IMPORTANT: Use \\n for newlines in JSON strings. For lists, use single \\n between list items (not double). Use \\n\\n only before the list starts and before closing text. Example: 'Text:\\n\\n- Item 1\\n- Item 2\\n- Item 3\\n\\nClosing text'",
   "regenerationRequest": {
     "targetNode": "title_generation" | "research_primary" | "research_secondary" | "discover" | null,
     "feedback": "extracted feedback text if provided",
@@ -313,7 +298,7 @@ EXAMPLES:
     "normalizedMessage": "hello",
     "shouldProceed": false,
     "systemAction": "abort",
-    "directResponse": "Great! I'll help you create a blog post. To get started, I'll need:\n- **Topic**: What would you like to write about?\n- **Primary Keyword**: The main SEO keyword (Let me present you some suggestions. If you would like to give of your own then please provide it.)\n- **Secondary Keywords**: Additional keywords (Let me present you some suggestions. If you would like to give of your own then please provide it.)\n- **Title**: Blog post title (I can generate options)\n\nPlease share your topic to begin!"
+    "directResponse": "Great! I'll help you create a blog post. To get started, I'll need:\n\n- **Topic**: What would you like to write about?\n- **Primary Keyword**: The main SEO keyword (Let me present you some suggestions. If you would like to give of your own then please provide it.)\n- **Secondary Keywords**: Additional keywords (Let me present you some suggestions. If you would like to give of your own then please provide it.)\n- **Title**: Blog post title (I can generate options)\n- **Interlinking & References**: Optional, can add later\n\nPlease share your topic to begin!"
   }
 
 **User Provides Topic (Starting Research):**
@@ -493,6 +478,39 @@ EXAMPLES:
 				result.normalizedMessage = userMessage; // Fallback to original if missing
 			}
 
+			// ✨ Post-process directResponse to ensure proper markdown formatting
+			// ReactMarkdown needs proper newline formatting to render line breaks correctly
+			if (result.directResponse) {
+				const originalResponse = result.directResponse;
+				result.directResponse =
+					this.normalizeMarkdownFormatting(
+						result.directResponse
+					);
+				// Debug logging to track formatting issues
+				if (originalResponse !== result.directResponse) {
+					console.log(
+						'   🔧 [FORMAT] Normalized directResponse formatting'
+					);
+					console.log(
+						`   Original length: ${originalResponse.length}, New length: ${result.directResponse.length}`
+					);
+					console.log(
+						`   Original has \\n: ${originalResponse.includes(
+							'\\n'
+						)}, New has \\n: ${result.directResponse.includes(
+							'\\n'
+						)}`
+					);
+					console.log(
+						`   Original has actual newline: ${originalResponse.includes(
+							'\n'
+						)}, New has actual newline: ${result.directResponse.includes(
+							'\n'
+						)}`
+					);
+				}
+			}
+
 			// Post-process regeneration requests to ensure proper state updates
 			if (
 				result.type === 'regeneration_request' &&
@@ -529,6 +547,11 @@ EXAMPLES:
 				}
 				result.shouldProceed = true; // Ensure we proceed
 				result.systemAction = 'route_to_intent_classifier';
+				// If we have a direct response like "Perfect! I've selected...", and it's a modification request,
+				// it's likely a hallucination. Clear it so UserAgent can provide the real one.
+				if (result.directResponse && (result.directResponse.toLowerCase().includes('selected') || result.directResponse.toLowerCase().includes('perfect'))) {
+					result.directResponse = undefined;
+				}
 				console.log(
 					`   🔄 [MODIFICATION REQUEST] Preparing state updates for: ${modificationRequest}`
 				);
@@ -741,6 +764,143 @@ EXAMPLES:
 		}
 
 		return updates;
+	}
+
+	/**
+	 * Normalize markdown formatting for proper rendering in ReactMarkdown
+	 * Ensures newlines are properly formatted for markdown rendering
+	 */
+	private normalizeMarkdownFormatting(text: string): string {
+		if (!text) return text;
+
+		// Replace escaped newlines (\n) with actual newlines
+		// Handle both JSON-escaped (\n) and literal newlines
+		let normalized = text
+			.replace(/\\n/g, '\n') // Replace escaped \n with actual newline
+			.replace(/\r\n/g, '\n') // Normalize Windows line endings
+			.replace(/\r/g, '\n'); // Normalize Mac line endings
+
+		// ✨ CRITICAL: Handle case where AI returns text without ANY newlines (all on one line)
+		// Detect list pattern even when there are no newlines
+		// Pattern: "need:" followed by "- **Topic**" or "need: - **Topic**" or "need:- **Topic**"
+		if (!normalized.includes('\n') && normalized.includes('- **')) {
+			// Add single newline after ":" before first list item (handle both ": -" and ":-")
+			normalized = normalized.replace(/:\s*- \*\*/g, ':\n- **');
+			normalized = normalized.replace(/:- \*\*/g, ':\n- **'); // Handle ":-" with space
+			// Add newline before each subsequent list item (handle both " -" and "-")
+			normalized = normalized.replace(/\s+- \*\*/g, '\n- **');
+			normalized = normalized.replace(/([^\n])- \*\*/g, '$1\n- **'); // Handle "-" directly after text
+			// Add double newline before "Please share" or similar closing (for paragraph break)
+			normalized = normalized.replace(
+				/\s+Please share/g,
+				'\n\nPlease share'
+			);
+			normalized = normalized.replace(
+				/([^\n])Please share/g,
+				'$1\n\nPlease share'
+			); // Handle no space before "Please"
+		}
+
+		// Ensure list items have proper spacing (single newline before list, single between items)
+		// If we have a line ending with ":" followed by a list item, ensure single newline
+		normalized = normalized.replace(/:\n- /g, ':\n- ');
+		normalized = normalized.replace(/:\s+- /g, ':\n- '); // Handle space instead of newline
+
+		// Ensure proper spacing around list items (single newline between items)
+		// Add newline before list items if they're not already there
+		normalized = normalized.replace(/([^\n])\n- /g, '$1\n- ');
+		normalized = normalized.replace(/([^\n])\s+- /g, '$1\n- '); // Handle space instead of newline
+
+		// Ensure double newline before "Please share" or similar closing statements
+		normalized = normalized.replace(
+			/\n\nPlease share/g,
+			'\n\nPlease share'
+		);
+		normalized = normalized.replace(
+			/\nPlease share/g,
+			'\n\nPlease share'
+		);
+		normalized = normalized.replace(
+			/\s+Please share/g,
+			'\n\nPlease share'
+		); // Handle space instead of newline
+
+		// Ensure each list item is on its own line with proper spacing (single newline between items)
+		normalized = normalized.replace(/([^\n])\n- \*\*/g, '$1\n- **');
+
+		// ✨ CRITICAL: Remove any blank lines (double newlines) between list items
+		// This ensures list items are continuous without empty lines between them
+
+		// First, handle markdown list format: - **Label**: text
+		normalized = normalized.replace(
+			/(- \*\*[^\n]*)\n\n(- \*\*)/g,
+			'$1\n$2'
+		);
+
+		// Handle any pattern where list items are separated by blank lines (with whitespace)
+		normalized = normalized.replace(
+			/(- \*\*[^\n]*)\n\s+\n(- \*\*)/g,
+			'$1\n$2'
+		);
+		normalized = normalized.replace(
+			/(- \*\*[^\n]*)\n\s*\n\s*(- \*\*)/g,
+			'$1\n$2'
+		);
+
+		// Handle rendered markdown format: **Topic**: text (after ReactMarkdown renders - **Topic**:)
+		// Pattern: line with **Label**: text, blank line, line with **Label**: text
+		normalized = normalized.replace(
+			/(\*\*[A-Za-z][^\n]*\*\*: [^\n]*)\n\n(\*\*[A-Za-z][^\n]*\*\*:)/g,
+			'$1\n$2'
+		);
+
+		// Handle plain format: Topic: text (if markdown is stripped)
+		// Pattern: line ending with ": text", blank line, line starting with capital letter and ":"
+		normalized = normalized.replace(
+			/([A-Z][^\n]*: [^\n]*)\n\n([A-Z][^\n]*:)/g,
+			'$1\n$2'
+		);
+
+		// Final cleanup: reduce excessive newlines (keep max 2 for paragraph breaks, but single for list items)
+		// Replace 3+ consecutive newlines with 2 (for paragraph breaks before closing statements)
+		normalized = normalized.replace(/\n{3,}/g, '\n\n');
+
+		// Final pass: ensure no double newlines remain between list items (repeat until no more matches)
+		// This handles all variations of list items
+		let previousLength = 0;
+		let iterations = 0;
+		while (normalized.length !== previousLength && iterations < 10) {
+			previousLength = normalized.length;
+			iterations++;
+
+			// Remove double newlines between markdown list items
+			normalized = normalized.replace(
+				/(- \*\*[^\n]*)\n\n(- \*\*)/g,
+				'$1\n$2'
+			);
+
+			// Remove double newlines between any lines that look like list items
+			// Pattern: line ending with ":", blank line, line starting with capital letter or "-"
+			normalized = normalized.replace(
+				/([^\n]+: [^\n]*)\n\n([A-Z-][^\n]*:)/g,
+				'$1\n$2'
+			);
+
+			// More aggressive: Remove double newline between any two lines that both end with ":"
+			// This catches list items in any format
+			normalized = normalized.replace(
+				/([^\n]+: [^\n]*)\n\n([^\n]+: [^\n]*)/g,
+				'$1\n$2'
+			);
+
+			// Handle rendered markdown: **Label**: text format
+			normalized = normalized.replace(
+				/(\*\*[^\n]*\*\*: [^\n]*)\n\n(\*\*[^\n]*\*\*:)/g,
+				'$1\n$2'
+			);
+		}
+
+		return normalized;
 	}
 
 	/**

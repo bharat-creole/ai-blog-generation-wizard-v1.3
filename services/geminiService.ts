@@ -8,6 +8,7 @@ import OpenAI from 'openai';
 import { BlogData, OutlineSection } from '../types';
 import { retryWithBackoff } from '../utils/retryWithBackoff';
 import { searchGoogleForUrls } from './googleSearchService';
+import * as keywordTool from './keywordService';
 
 // Helper to safely extract text from Gemini response (handles non-text parts like thoughtSignature)
 const extractTextFromResponse = (response: GenerateContentResponse): string => {
@@ -30,21 +31,157 @@ const extractTextFromResponse = (response: GenerateContentResponse): string => {
 	throw new Error('Unable to extract text from Gemini response');
 };
 
-const cleanAndParseJson = (text: string): any => {
-	// The model might return JSON wrapped in markdown ```json ... ```
-	const cleanedText = text
-		.replace(/^```json\s*/, '')
-		.replace(/```\s*$/, '')
+export const __internal_extractFirstJsonValue = (rawText: string): string | null => {
+	if (!rawText) return null;
+
+	const text = String(rawText);
+	const start = Math.min(
+		...['[', '{']
+			.map((c) => text.indexOf(c))
+			.filter((i) => i >= 0)
+	);
+	if (!Number.isFinite(start) || start < 0) return null;
+
+	const stack: string[] = [];
+	let inString = false;
+	let escape = false;
+	for (let i = start; i < text.length; i++) {
+		const ch = text[i];
+
+		if (inString) {
+			if (escape) {
+				escape = false;
+				continue;
+			}
+			if (ch === '\\') {
+				escape = true;
+				continue;
+			}
+			if (ch === '"') {
+				inString = false;
+			}
+			continue;
+		}
+
+		if (ch === '"') {
+			inString = true;
+			continue;
+		}
+
+		if (ch === '{' || ch === '[') {
+			stack.push(ch);
+			continue;
+		}
+		if (ch === '}' || ch === ']') {
+			const last = stack.pop();
+			if (!last) return null;
+			if (last === '{' && ch !== '}') return null;
+			if (last === '[' && ch !== ']') return null;
+			if (stack.length === 0) {
+				return text.slice(start, i + 1);
+			}
+		}
+	}
+
+	return null;
+};
+
+export const __internal_cleanAndParseJson = (text: string): any => {
+	const raw = String(text ?? '');
+	const cleanedText = raw
+		.replace(/^[\s\uFEFF\xA0]+/, '')
+		.replace(/^```(?:json)?\s*/i, '')
+		.replace(/```\s*$/i, '')
 		.trim();
+
 	try {
 		return JSON.parse(cleanedText);
-	} catch (e) {
+	} catch {
+		const extracted =
+			__internal_extractFirstJsonValue(cleanedText) ||
+			__internal_extractFirstJsonValue(raw);
+		if (extracted) {
+			try {
+				return JSON.parse(extracted);
+			} catch {
+				// fall through
+			}
+		}
+
 		console.error('Failed to parse JSON from model response:', text);
-		// Throw a more informative error
 		throw new Error(
 			`Model returned invalid JSON. Response text: "${text}"`
 		);
 	}
+};
+
+const cleanAndParseJson = (text: string): any => {
+	return __internal_cleanAndParseJson(text);
+};
+
+/**
+ * Use Gemini to sort candidate keywords by relevance to the topic.
+ * Returns an ordered array of keyword texts.
+ */
+export const rankKeywordsByLLM = async (
+	topic: string,
+	keywords: string[],
+	apiKey: string
+): Promise<string[]> => {
+	if (!apiKey) {
+		console.warn(
+			'   ⚠️ [LLM RANKING] API key missing – skipping LLM sorting'
+		);
+		return [];
+	}
+	if (!keywords || keywords.length === 0) {
+		return [];
+	}
+
+	const ai = new GoogleGenAI({ apiKey });
+	const prompt = `
+ROLE: You are a search-aware SEO assistant that understands user intent.
+TASK: Given a target topic and a list of keyword candidates, sort the keywords so that the most relevant ones appear first.
+PRIORITIZE: 1) Fresh relevance to "${topic}", 2) Intent alignment, 3) Actionable phrasing.
+OUTPUT: A JSON array of the keyword texts in the order you recommend. Do not add any prose.
+
+TOPIC: "${topic}"
+KEYWORDS:
+${keywords.map((kw, index) => `${index + 1}. ${kw}`).join('\n')}
+`;
+
+	try {
+		const response: GenerateContentResponse = await retryWithBackoff(
+			async () => {
+				return await ai.models.generateContent({
+					model: 'gemini-2.5-flash',
+					contents: { parts: [{ text: prompt }] },
+					config: {
+						tools: [{ googleSearch: {} }],
+					},
+				});
+			},
+			{
+				maxRetries: 2,
+				initialDelay: 800,
+			}
+		);
+
+		const extractedText = extractTextFromResponse(response);
+		const parsed = cleanAndParseJson(extractedText);
+		if (Array.isArray(parsed)) {
+			return parsed
+				.map((item) => (typeof item === 'string' ? item : ''))
+				.filter(Boolean);
+		}
+	} catch (err) {
+		console.warn(
+			'   ⚠️ [LLM RANKING] Failed to rank keywords via Gemini:',
+			err
+		);
+	}
+
+	return [];
 };
 
 const PLANNING_PROMPT = (data: BlogData): string => {
@@ -868,7 +1005,7 @@ CRITICAL: Extract exactly 20 keywords per URL. Make sure keywords are relevant t
 					config: {
 						tools: [
 							{ googleSearch: {} },
-							{ urlContext: { urls } },
+							{ urlContext: {} },
 						],
 						// Note: Cannot use responseMimeType with tools - must parse JSON from text
 					},
@@ -914,6 +1051,88 @@ CRITICAL: Extract exactly 20 keywords per URL. Make sure keywords are relevant t
 		return [];
 	} catch (error) {
 		console.error('❌ [EXTRACT KEYWORDS FROM URLS] Error:', error);
+
+		// If the error looks like a schema mismatch for the batch `urls` field, attempt
+		// per-URL urlContext calls (some GenAI tool schemas expect a single `url` per tool).
+		const isUrlsFieldError = String(error).includes("Unknown name \"urls\"") || (error && (error as any).status === 400);
+		if (isUrlsFieldError) {
+			console.warn('   ⚠️ [EXTRACT KEYWORDS FROM URLS] Batch urlContext payload failed; retrying in small batches (prompt-embedded URLs)');
+			const perBatchResults: any[] = [];
+			// retry in small batches to avoid potential per-request size issues
+			const batchSize = 5;
+			for (let i = 0; i < urls.length; i += batchSize) {
+				const slice = urls.slice(i, i + batchSize);
+				try {
+					const batchPrompt = prompt.replace(/URLs TO ANALYZE:[\s\S]*?OUTPUT FORMAT:/, `URLs TO ANALYZE:\n${slice.map((u, idx) => `${idx + 1}. ${u}`).join('\n')}\n\nOUTPUT FORMAT:`);
+					const resp: GenerateContentResponse = await retryWithBackoff(
+						async () => {
+							return await ai.models.generateContent({
+								model: 'gemini-2.5-flash',
+								contents: { parts: [{ text: batchPrompt }] },
+								config: {
+									tools: [
+										{ googleSearch: {} },
+										{ urlContext: {} },
+									],
+								},
+							});
+						},
+						{ maxRetries: 2, initialDelay: 800 }
+					);
+					const text = extractTextFromResponse(resp);
+					const kws = cleanAndParseJson(text);
+					if (Array.isArray(kws)) perBatchResults.push(...kws);
+
+					// log url_context_metadata if present for diagnostics
+					try {
+						const meta = (resp as any).candidates?.[0]?.url_context_metadata;
+						if (meta && meta.url_metadata) {
+							console.log('   ℹ️ url_context_metadata for batch:', meta.url_metadata);
+						}
+					} catch (metaErr) {
+						// ignore
+					}
+				} catch (perErr) {
+					console.warn('   ⚠️ per-batch urlContext request failed for', slice, perErr);
+				}
+			}
+			if (perBatchResults.length > 0) {
+				const mapped = perBatchResults
+					.filter((kw: any) => kw.text && typeof kw.volume === 'number' && typeof kw.difficulty === 'number')
+					.map((kw: any) => ({ text: kw.text.trim(), volume: Math.max(0, Math.min(100000, kw.volume)), difficulty: Math.max(0, Math.min(1, kw.difficulty)) }));
+				console.log(`   ✅ [EXTRACT KEYWORDS FROM URLS] Per-batch urlContext produced ${mapped.length} keywords`);
+				return mapped;
+			}
+		}
+
+		// FALLBACK: If urlContext/tool payload fails (or per-URL retries produced nothing),
+		// try a titles-based extraction path so the caller still receives usable keywords.
+		try {
+			console.log('   ⚠️ [EXTRACT KEYWORDS FROM URLS] Falling back to titles-based extraction');
+			// Use searchWebForTitles to get representative titles for the topic
+			const titles = await searchWebForTitles(topic, apiKey);
+			if (titles && titles.length > 0) {
+				let extracted: string[] = [];
+				if ((keywordTool as any).extractKeywordsFromTitles) {
+					extracted = (keywordTool as any).extractKeywordsFromTitles(titles, Math.max(20, urls.length * 5)) || [];
+				} else if ((keywordTool as any).extractSeedsFromTitle) {
+					extracted = titles.map((t) => (keywordTool as any).extractSeedsFromTitle(t, 3)).flat().filter(Boolean) as string[];
+				}
+				if (extracted && extracted.length > 0) {
+					// Map to expected shape with heuristic volume/difficulty estimates
+					const mapped = extracted.map((t, i) => ({ text: t, volume: 1000 - Math.min(900, i * 10), difficulty: 0.5 }));
+					console.log(`   ✅ [EXTRACT KEYWORDS FROM URLS] Fallback produced ${mapped.length} keywords from titles`);
+					return mapped;
+				}
+			}
+		} catch (fbErr) {
+			console.warn('   ⚠️ [EXTRACT KEYWORDS FROM URLS] Titles-based fallback failed:', fbErr);
+		}
+
+		// TODO: If titles-based extraction is insufficient, implement an OpenAI-based fallback
+		// that either fetches page HTML server-side and asks the LLM to extract keywords from content,
+		// or prompts OpenAI to suggest keywords for the topic when web tools are unavailable.
+
 		return [];
 	}
 };
@@ -1476,9 +1695,67 @@ export const generateOutline = async (
 	if (!apiKey) throw new Error('API Key is required.');
 	const ai = new GoogleGenAI({ apiKey });
 
+	const outlineWebQuery = [data.title, data.topic, data.primaryKeyword]
+		.map((s) => String(s || '').trim())
+		.filter(Boolean)
+		.join(' - ')
+		.trim();
+	let webReferenceTitles: string[] = [];
+	let webReferenceUrls: string[] = [];
+	let webReferenceKeywords: string[] = [];
+	if (outlineWebQuery) {
+		try {
+			webReferenceTitles = await searchWebForTitles(outlineWebQuery, apiKey);
+		} catch {
+			webReferenceTitles = [];
+		}
+		try {
+			webReferenceUrls = await searchWebForUrls(outlineWebQuery, apiKey);
+		} catch {
+			webReferenceUrls = [];
+		}
+		if (webReferenceUrls.length > 0) {
+			try {
+				const extracted = await extractKeywordsFromUrls(
+					webReferenceUrls,
+					(data.topic || data.title || outlineWebQuery).trim(),
+					apiKey
+				);
+				webReferenceKeywords = Array.isArray(extracted)
+					? extracted
+							.map((k) => (k && typeof k.text === 'string' ? k.text : ''))
+							.filter(Boolean)
+					: [];
+			} catch {
+				webReferenceKeywords = [];
+			}
+		}
+	}
+
+	const hasUserReferences =
+		(!!data.referenceUrls && data.referenceUrls.length > 0) ||
+		(!!data.referenceFiles && data.referenceFiles.length > 0);
+	const webContextSection = `
+
+WEB RESEARCH CONTEXT (use this to inform the outline structure and ensure topical coverage):
+- If the user provided reference URLs/files, treat them as the PRIMARY source of truth and only use web research to fill gaps or validate common subtopics.
+- If the user did NOT provide references, rely on this web research heavily to propose the most relevant and up-to-date outline.
+
+USER REFERENCES PRESENT: ${hasUserReferences ? 'YES' : 'NO'}
+
+WEB REFERENCE TITLES (real titles found on the web):
+${(webReferenceTitles || []).slice(0, 20).map((t, i) => `${i + 1}. ${t}`).join('\n') || '(none)'}
+
+WEB REFERENCE URLS:
+${(webReferenceUrls || []).slice(0, 10).map((u, i) => `${i + 1}. ${u}`).join('\n') || '(none)'}
+
+WEB-EXTRACTED KEYWORDS (from URLs/titles):
+${(webReferenceKeywords || []).slice(0, 30).join(', ') || '(none)'}
+`;
+
 	if (feedback && data.outline.length > 0) {
 		// Regeneration flow
-		const prompt = REGENERATION_PROMPT(data, feedback);
+		const prompt = `${REGENERATION_PROMPT(data, feedback)}${webContextSection}`;
 		const contentParts = await buildContentParts(prompt, data);
 		const response: GenerateContentResponse =
 			await ai.models.generateContent({
@@ -1493,7 +1770,7 @@ export const generateOutline = async (
 
 	// Agentic flow for initial generation
 	// 1. Planner Agent: Generate H2s
-	const plannerPrompt = PLANNING_PROMPT(data);
+	const plannerPrompt = `${PLANNING_PROMPT(data)}${webContextSection}`;
 	const plannerContentParts = await buildContentParts(plannerPrompt, data);
 	const plannerResponse: GenerateContentResponse = await retryWithBackoff(
 		async () => {
@@ -1536,13 +1813,13 @@ export const generateOutline = async (
 		const previousH2 = i > 0 ? h2Plan[i - 1] : undefined;
 		const nextH2 = i < h2Plan.length - 1 ? h2Plan[i + 1] : undefined;
 
-		const executorPrompt = EXECUTION_PROMPT(
+		const executorPrompt = `${EXECUTION_PROMPT(
 			data,
 			h2Name,
 			h2Id,
 			previousH2,
 			nextH2
-		);
+		)}${webContextSection}`;
 		const executorContentParts = await buildContentParts(
 			executorPrompt,
 			data

@@ -101,6 +101,7 @@ export async function estimatorNode(s: AgentState): Promise<AgentState> {
 export async function proposalNode(s: AgentState): Promise<AgentState> {
 	if (!s.outlineApproved) return s;
 	const idx = s.progress.sectionIndex ?? 0;
+	console.log(`✍️ [PROPOSAL] sectionIndex=${idx}, outlineLength=${s.outline?.length || 0}`);
 	if (idx >= s.outline.length) return s;
 
 	// ✨ Clear the approval halt once we start generating content
@@ -179,6 +180,13 @@ export function route(
 	| 'proposal'
 	| 'final_blog'
 	| 'done' {
+	// If any node set a halt reason, stop the graph run and wait for user input.
+	// Without this, the router can keep re-entering the same node and hit recursion limits.
+	if (s.halt?.reason && s.halt.reason !== 'awaiting_approval') {
+		console.log(`   → Route: done (halted: ${s.halt.reason})`);
+		return 'done';
+	}
+
 	// ✨ PRIORITY: If user provided outline feedback, regenerate outline
 	if (s.outlineFeedback?.trim()) {
 		console.log(

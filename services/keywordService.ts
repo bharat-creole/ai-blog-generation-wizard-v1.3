@@ -174,7 +174,12 @@ export function extractSeedsFromTitle(title: string, max = 5): string[] {
 }
 
 // Generate intent-based keyword variations for better search results
-export function generateIntentVariations(baseKeyword: string): string[] {
+export function generateIntentVariations(baseKeyword: any): string[] {
+	// Guard against non-string inputs (e.g., arrays, objects)
+	if (typeof baseKeyword !== 'string') {
+		return [];
+	}
+
 	if (!baseKeyword || baseKeyword.trim().length === 0) {
 		return [];
 	}

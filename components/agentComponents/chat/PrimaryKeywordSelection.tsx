@@ -53,12 +53,34 @@ const PrimaryKeywordSelection: React.FC<PrimaryKeywordSelectionProps> = ({
 		);
 	}, [candidates]);
 
+	// Keep track of the top 5 volume-based suggestions for confirmation messaging
+	const topVolumeCandidates = React.useMemo(() => {
+		return [...candidates]
+			.sort((a, b) => (b.volume || 0) - (a.volume || 0))
+			.slice(0, 5);
+	}, [candidates]);
+	const topVolumeSet = React.useMemo(
+		() => new Set(topVolumeCandidates.map((kw) => kw.text)),
+		[topVolumeCandidates]
+	);
+
 	const handleSelect = async (kw: KeywordCandidate) => {
 		if (!agent) return;
 
 		setCompletedSelections((prev) =>
 			new Set(prev).add('primaryKeyword')
 		);
+		const LOW_VOLUME_THRESHOLD = 1000;
+
+		const warningNeeded =
+			(kw.volume || 0) > 0 &&
+			kw.volume < LOW_VOLUME_THRESHOLD &&
+			!agent.conversationContext?.lowVolumeWarningShown;
+		const confirmTopFive =
+			topVolumeCandidates.length > 0 &&
+			!topVolumeSet.has(kw.text) &&
+			kw.volume !== undefined;
+
 		setMessages((prev) => [
 			...prev,
 			{
@@ -69,10 +91,38 @@ const PrimaryKeywordSelection: React.FC<PrimaryKeywordSelectionProps> = ({
 				role: 'assistant',
 				content: `✅ Selected "${kw.text}" as primary keyword. Continuing...`,
 			},
+			...(confirmTopFive
+				? [
+						{
+							role: 'assistant',
+							content: `⚠️ This keyword is outside our top five by volume. Our higher-volume relevant alternatives are: ${topVolumeCandidates
+								.map(
+									(item) =>
+										`${item.text} (${item.volume ?? 'n/a'})`
+								)
+								.join(', ')}. Are you sure you want to proceed with "${kw.text}"? If not, feel free to pick one of those higher-volume suggestions.`,
+						},
+				  ]
+				: []),
+			...(warningNeeded
+				? [
+						{
+							role: 'assistant',
+							content:
+								'⚠️ Heads-up: this keyword has lower volume than typical targets. Feel free to continue, but the post may attract less search traffic.',
+						},
+				  ]
+				: []),
 		]);
 
 		const next = {
 			...agent,
+			conversationContext: warningNeeded
+				? {
+						...(agent.conversationContext || {}),
+						lowVolumeWarningShown: true,
+				  }
+				: agent.conversationContext,
 			data: {
 				...agent.data,
 				primaryKeyword: kw.text,

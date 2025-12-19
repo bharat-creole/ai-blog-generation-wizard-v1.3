@@ -1,7 +1,7 @@
 import React from 'react';
 import StreamingText from '../../StreamingText';
 import { ChatMessage } from '../../../types';
-import { AgentState } from '../../../../server/agent/state';
+import { AgentState } from '../../../server/agent/state';
 import { BlogData } from '../../../types';
 import PrimaryKeywordSelection from '../selections/PrimaryKeywordSelection';
 import SecondaryKeywordSelection from '../selections/SecondaryKeywordSelection';

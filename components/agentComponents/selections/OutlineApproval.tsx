@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AgentState } from '../../../../server/agent/state';
+import { AgentState } from '../../../server/agent/state';
 import { OutlineSection, ChatMessage } from '../../../types';
 import DraggableOutline from '../content/DraggableOutline';
 

@@ -3,51 +3,28 @@ import * as keywordTool from '../../../services/keywordService';
 import * as automationEngine from '../../../services/automationEngine';
 import * as geminiService from '../../../services/geminiService';
 import { AIMessage } from '@langchain/core/messages';
+import { isValidTopic, isGibberish } from '../validation';
+
+export type ResearchPrimaryResult = {
+	currentStep?: any;
+	errorReason?: 'invalid_topic' | 'no_topic_provided' | 'no_keywords_found' | string;
+	messages?: any[];
+	trace?: any[];
+	keywordCandidates?: any[];
+	autoSelected?: string | null;
+	toolOutputs?: any[];
+	data?: Partial<AgentState['data']>;
+	halt?: AgentState['halt'];
+};
 
 export const researchPrimaryNode = async (
 	state: AgentState
-): Promise<Partial<AgentState>> => {
+): Promise<ResearchPrimaryResult> => {
 	// ✨ VALIDATION: Check if topic is valid before proceeding
 	if (state.data.topic) {
-		// Helper function to check if topic is gibberish
-		const isGibberish = (text: string): boolean => {
-			if (!text || text.trim().length < 3) return false;
-			const trimmed = text.trim();
-			const vowels = (trimmed.match(/[aeiouAEIOU]/g) || []).length;
-			const consonants = (
-				trimmed.match(
-					/[bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ]/g
-				) || []
-			).length;
-			const totalLetters = vowels + consonants;
-			if (totalLetters === 0) return true;
-			const vowelRatio = vowels / totalLetters;
-			if (vowelRatio < 0.15 && trimmed.length > 8) return true;
-			const hasRepeatedPattern = /(.{2,})\1{2,}/.test(trimmed);
-			if (hasRepeatedPattern && trimmed.length > 10) return true;
-			return false;
-		};
-
-		const isValidTopic = (topic: string): boolean => {
-			if (!topic || !topic.trim() || topic.trim().length < 3)
-				return false;
-			const trimmed = topic.trim();
-			const invalidPatterns = [
-				/^[^a-zA-Z]*$/,
-				/^(blog|it|yourself|everything|anything|something|whatever|random)$/i,
-			];
-			for (const pattern of invalidPatterns) {
-				if (pattern.test(trimmed)) return false;
-			}
-			return true;
-		};
-
-		if (
-			isGibberish(state.data.topic) ||
-			!isValidTopic(state.data.topic)
-		) {
+		if (isGibberish(state.data.topic) || !isValidTopic(state.data.topic)) {
 			return {
-				halt: { reason: 'invalid_topic' },
+				errorReason: 'invalid_topic',
 				messages: [
 					...(state.messages || []),
 					new AIMessage(
@@ -72,6 +49,8 @@ export const researchPrimaryNode = async (
 	) {
 		return {
 			currentStep: 'primary_keyword',
+			autoSelected: state.data.primaryKeyword || null,
+			data: { primaryKeyword: state.data.primaryKeyword },
 			trace: [
 				{
 					step: 'KeywordResearch.userProvided',
@@ -83,21 +62,19 @@ export const researchPrimaryNode = async (
 	}
 
 	// 🎯 Extract main topic from multiple sources
+	// IMPORTANT: Prefer the explicit topic over title to avoid title/query artifacts
 	const topicSource =
-		state.data.title ||
 		state.data.topic ||
+		state.data.title ||
 		state.data.primaryKeyword ||
 		'';
 
 	if (!topicSource || topicSource.trim().length === 0) {
 		return {
-			halt: { reason: 'no_topic_provided' },
-			currentStep: 'topic',
+			errorReason: 'no_topic_provided',
 			messages: [
 				...(state.messages || []),
-				new AIMessage(
-					'Please provide a topic or title to search for keywords.'
-				),
+				new AIMessage('Please provide a topic or title to search for keywords.'),
 			],
 			trace: [
 				{
@@ -124,9 +101,27 @@ export const researchPrimaryNode = async (
 				? `${topicSource} ${feedback}` // Include feedback in search to get different URLs
 				: topicSource;
 
+		// If the UserAgent provided normalized query variants (from normalize node), use them ONLY
+		// when they still clearly reference the user's topic. This prevents accidental drift
+		// to irrelevant intents (e.g., "login", "sign in") from Google Labs pages.
+		const queryVariants = (state.conversationContext as any)
+			?.normalizeQueries as string[] | undefined;
+		const topicWordList = topicSource
+			.toLowerCase()
+			.split(/\s+/)
+			.map((w) => w.trim())
+			.filter(Boolean);
+		const preferredVariant =
+			Array.isArray(queryVariants) && queryVariants.length > 0
+				? String(queryVariants[0] || '').trim()
+				: '';
+		const variantLooksOnTopic =
+			!!preferredVariant &&
+			topicWordList.length > 0 &&
+			topicWordList.some((w) => preferredVariant.toLowerCase().includes(w));
+
 		console.log(
-			`🔍 [PRIMARY KEYWORD RESEARCH] Step 1: Searching web for top 5 URLs...${
-				isRegeneration ? ' (REGENERATION WITH FEEDBACK)' : ''
+			`🔍 [PRIMARY KEYWORD RESEARCH] Step 1: Searching web for top 5 URLs...${isRegeneration ? ' (REGENERATION WITH FEEDBACK)' : ''
 			}`
 		);
 		if (isRegeneration && feedback) {
@@ -142,7 +137,7 @@ export const researchPrimaryNode = async (
 		}
 
 		const webUrls = await geminiService.searchWebForUrls(
-			searchQuery, // Use modified query if regenerating
+			variantLooksOnTopic ? preferredVariant : searchQuery,
 			apiKey
 		);
 		console.log(`   ✅ Found ${webUrls.length} URLs from web search`);
@@ -175,8 +170,7 @@ export const researchPrimaryNode = async (
 		);
 		keywordsFromUrls.forEach((kw, idx) => {
 			console.log(
-				`      ${idx + 1}. "${kw.text}" (Volume: ${
-					kw.volume
+				`      ${idx + 1}. "${kw.text}" (Volume: ${kw.volume
 				}, Difficulty: ${kw.difficulty})`
 			);
 		});
@@ -253,11 +247,9 @@ export const researchPrimaryNode = async (
 					}
 
 					console.log(
-						`   ✅ [KEYWORD REGENERATION] Using ${
-							scoredKeywords.length
-						} keywords (${newScored.length} new + ${
-							scoredKeywords.length -
-							newScored.length
+						`   ✅ [KEYWORD REGENERATION] Using ${scoredKeywords.length
+						} keywords (${newScored.length} new + ${scoredKeywords.length -
+						newScored.length
 						} merged)`
 					);
 
@@ -514,12 +506,134 @@ export const researchPrimaryNode = async (
 
 		// Extract meaningful topic words (exclude stop words and short words)
 		// Include both original and expanded forms
-		const topicWords = new Set(
+		const baseTopicTokens = new Set(
 			expandedTopic
+				.toLowerCase()
 				.split(/\W+/)
 				.filter((w) => w.length >= 3) // Only meaningful words (3+ chars)
 				.filter((w) => !stopWords.has(w)) // Exclude stop words
 		);
+		const topicWords = new Set(baseTopicTokens);
+
+		const addTokensFromText = (text: string) => {
+			if (!text) return;
+			text
+				.toLowerCase()
+				.split(/\W+/)
+				.filter((w) => w.length >= 3)
+				.filter((w) => !stopWords.has(w))
+				.forEach((token) => {
+					topicWords.add(token);
+					baseTopicTokens.add(token);
+				});
+		};
+
+		type ChatHistoryMessage = {
+			role?: string;
+			content?: string | Array<{ text?: string } | string> | { text?: string };
+		};
+
+		const extractMessageText = (message?: ChatHistoryMessage): string => {
+			const content = message?.content;
+			if (!content) return '';
+
+			if (typeof content === 'string') return content;
+
+			if (Array.isArray(content)) {
+				return content
+					.map((item) => {
+						if (!item) return '';
+						if (typeof item === 'string') return item;
+						return typeof item.text === 'string' ? item.text : '';
+					})
+					.join(' ');
+			}
+
+			if (typeof content === 'object') {
+				return typeof content.text === 'string' ? content.text : '';
+			}
+
+			return '';
+		};
+
+		const userMessages =
+			(state.messages || []) as ChatHistoryMessage[];
+
+		userMessages
+			.filter((message) => message.role === 'user')
+			.slice(-5)
+			.forEach((message) =>
+				addTokensFromText(extractMessageText(message))
+			);
+
+		const collectUrlTokens = (url: string): string[] => {
+			try {
+				const parsed = new URL(url);
+				const hostTokens = parsed.hostname
+					.split('.')
+					.filter((token) => token.length >= 3);
+				const pathTokens = parsed.pathname
+					.split(/[\W_]+/)
+					.filter((token) => token.length >= 3);
+				return [...hostTokens, ...pathTokens].map((token) =>
+					token.toLowerCase()
+				);
+			} catch {
+				return [];
+			}
+		};
+
+		const urlTokens = new Set<string>();
+		webUrls.forEach((url) => {
+			collectUrlTokens(url).forEach((token) => {
+				if (!stopWords.has(token)) {
+					urlTokens.add(token);
+					topicWords.add(token);
+				}
+			});
+		});
+
+		const matchTextToTokens = (text: string, tokens: Set<string>) => {
+			const lowerText = text.toLowerCase();
+			const words = lowerText
+				.split(/\W+/)
+				.filter((w) => w.length >= 3);
+			const matches = new Set<string>();
+			tokens.forEach((token) => {
+				if (!token) return;
+				const found = words.some(
+					(word) =>
+						word === token ||
+						word.includes(token) ||
+						token.includes(word)
+				);
+				if (found) matches.add(token);
+			});
+			return {
+				matchCount: matches.size,
+				matches: Array.from(matches),
+			};
+		};
+
+		const keywordMentionsTopicWord = (text: string): boolean =>
+			matchTextToTokens(text, baseTopicTokens).matchCount > 0;
+		const keywordMentionsUrlToken = (text: string): boolean =>
+			matchTextToTokens(text, urlTokens).matchCount > 0;
+
+		const topicOrUrlMatchExists = keywordsFromUrls.some(
+			(kw) =>
+				keywordMentionsTopicWord(kw.text) ||
+				keywordMentionsUrlToken(kw.text)
+		);
+		const requireTopicMatch =
+			baseTopicTokens.size > 0 || urlTokens.size > 0;
+		const enforceTopicWordMatch =
+			requireTopicMatch && topicOrUrlMatchExists;
+		if (requireTopicMatch && !topicOrUrlMatchExists) {
+			console.log(
+				'   ⚠️  No keywords or URLs matched topic/url tokens—continuing but results may be broad'
+			);
+		}
 
 		// Generic phrases that should be filtered out (not topic-specific)
 		const genericPhrases = [
@@ -672,21 +786,27 @@ export const researchPrimaryNode = async (
 					}
 				});
 
-				// ✨ STRICT: Require at least one MEANINGFUL topic word match (exact or partial)
-				// Stop words don't count as valid matches
+				// ✨ STRICT: Require at least one MEANINGFUL topic word match
 				const hasTopicWord =
 					exactMatches.length > 0 ||
 					partialMatches.length > 0;
 
-				if (!hasTopicWord) {
+				if (enforceTopicWordMatch && !hasTopicWord) {
 					return false;
 				}
 
-				// Store the matched topic words for later use in scoring
-				kw._matchedTopicWords = [
-					...exactMatches,
-					...partialMatches,
-				];
+				if (hasTopicWord) {
+					kw._matchedTopicWords = [
+						...exactMatches,
+						...partialMatches,
+					];
+				}
+
+				// ✨ NEW: Reject keywords that only repeat a single meaningful word (e.g., "google from google")
+				const uniqueKwWords = Array.from(new Set(kwWords));
+				if (uniqueKwWords.length === 1 && kwWords.length > 1) {
+					return false;
+				}
 			} else {
 				// If no meaningful topic words (only stop words), reject the keyword
 				return false;
@@ -745,67 +865,67 @@ export const researchPrimaryNode = async (
 				label: string;
 				keywords: typeof keywords;
 			}> = [
-				{
-					minScore: 0.95,
-					maxScore: 1.0,
-					label: '100%',
-					keywords: [],
-				},
-				{
-					minScore: 0.85,
-					maxScore: 0.95,
-					label: '90%',
-					keywords: [],
-				},
-				{
-					minScore: 0.75,
-					maxScore: 0.85,
-					label: '80%',
-					keywords: [],
-				},
-				{
-					minScore: 0.65,
-					maxScore: 0.75,
-					label: '70%',
-					keywords: [],
-				},
-				{
-					minScore: 0.55,
-					maxScore: 0.65,
-					label: '60%',
-					keywords: [],
-				},
-				{
-					minScore: 0.45,
-					maxScore: 0.55,
-					label: '50%',
-					keywords: [],
-				},
-				{
-					minScore: 0.35,
-					maxScore: 0.45,
-					label: '40%',
-					keywords: [],
-				},
-				{
-					minScore: 0.25,
-					maxScore: 0.35,
-					label: '30%',
-					keywords: [],
-				},
-				{
-					minScore: 0.15,
-					maxScore: 0.25,
-					label: '20%',
-					keywords: [],
-				},
-				{
-					minScore: 0.0,
-					maxScore: 0.15,
-					label: '10%',
-					keywords: [],
-				},
-			];
+					{
+						minScore: 0.95,
+						maxScore: 1.0,
+						label: '100%',
+						keywords: [],
+					},
+					{
+						minScore: 0.85,
+						maxScore: 0.95,
+						label: '90%',
+						keywords: [],
+					},
+					{
+						minScore: 0.75,
+						maxScore: 0.85,
+						label: '80%',
+						keywords: [],
+					},
+					{
+						minScore: 0.65,
+						maxScore: 0.75,
+						label: '70%',
+						keywords: [],
+					},
+					{
+						minScore: 0.55,
+						maxScore: 0.65,
+						label: '60%',
+						keywords: [],
+					},
+					{
+						minScore: 0.45,
+						maxScore: 0.55,
+						label: '50%',
+						keywords: [],
+					},
+					{
+						minScore: 0.35,
+						maxScore: 0.45,
+						label: '40%',
+						keywords: [],
+					},
+					{
+						minScore: 0.25,
+						maxScore: 0.35,
+						label: '30%',
+						keywords: [],
+					},
+					{
+						minScore: 0.15,
+						maxScore: 0.25,
+						label: '20%',
+						keywords: [],
+					},
+					{
+						minScore: 0.0,
+						maxScore: 0.15,
+						label: '10%',
+						keywords: [],
+					},
+				];
 
 			keywords.forEach((kw) => {
 				for (const tier of tiers) {
@@ -816,8 +936,8 @@ export const researchPrimaryNode = async (
 						isHighestTier
 							? kw.relevanceScore >= tier.minScore
 							: kw.relevanceScore >=
-									tier.minScore &&
-							  kw.relevanceScore < tier.maxScore
+							tier.minScore &&
+							kw.relevanceScore < tier.maxScore
 					) {
 						tier.keywords.push(kw);
 						break;
@@ -859,8 +979,7 @@ export const researchPrimaryNode = async (
 						tier.minScore * 100
 					).toFixed(0)}-${(tier.maxScore * 100).toFixed(
 						0
-					)}%): ${
-						tier.keywords.length
+					)}%): ${tier.keywords.length
 					} keywords (avg ${avgTopicMatches.toFixed(
 						1
 					)} topic word matches)`
@@ -927,8 +1046,7 @@ export const researchPrimaryNode = async (
 				);
 
 				console.log(
-					`   ✅ Found ${newUrls.length} new URLs (${
-						additionalWebUrls.length - newUrls.length
+					`   ✅ Found ${newUrls.length} new URLs (${additionalWebUrls.length - newUrls.length
 					} duplicates filtered)`
 				);
 
@@ -1066,7 +1184,7 @@ export const researchPrimaryNode = async (
 									...tier.keywords.slice(
 										alreadyAdded,
 										alreadyAdded +
-											remaining
+										remaining
 									)
 								);
 							}
@@ -1101,6 +1219,49 @@ export const researchPrimaryNode = async (
 				`   🧹 Filtered out ${filteredOutCount} irrelevant keywords`
 			);
 		}
+
+		// ✨ NEW: Reorder candidates based on LLM ranking (context-aware)
+		const llmApiKey =
+			process.env.GEMINI_API_KEY || state.apiKey || undefined;
+		if (llmApiKey) {
+			try {
+				const llmOrder = await geminiService.rankKeywordsByLLM(
+					topicSource,
+					ranked.map((kw) => kw.text),
+					llmApiKey
+				);
+
+				if (llmOrder.length > 0) {
+					const keywordMap = new Map(
+						ranked.map((kw) => [kw.text, kw])
+					);
+					const ordered: typeof ranked = [];
+					const used = new Set<string>();
+
+					llmOrder.forEach((text) => {
+						const candidate = keywordMap.get(text);
+						if (candidate) {
+							ordered.push(candidate);
+							used.add(text);
+						}
+					});
+
+					const remaining = ranked.filter(
+						(kw) => !used.has(kw.text)
+					);
+					ranked = [...ordered, ...remaining];
+					console.log(
+						'   🔄 [LLM RANKING] Reordered keywords based on Gemini relevance.'
+					);
+				}
+			} catch (err) {
+				console.warn(
+					'   ⚠️ [LLM RANKING] Failed to reorder keywords:',
+					err
+				);
+			}
+		}
+
 		console.log(
 			`   🎯 Top ${ranked.length} keywords filtered by relevance tiers (100% → 90% → 80% → ...):`
 		);
@@ -1114,8 +1275,7 @@ export const researchPrimaryNode = async (
 					? ` [${kw.matchedTopicWords.join(', ')}]`
 					: '';
 			console.log(
-				`      ${idx + 1}. "${
-					kw.text
+				`      ${idx + 1}. "${kw.text
 				}" (Relevance: ${relevancePercent}%, Topic Words: ${topicMatches}${matchedWords}, Overall Score: ${kw.score.toFixed(
 					3
 				)}, Volume: ${kw.volume}, Difficulty: ${kw.difficulty})`
@@ -1133,8 +1293,7 @@ export const researchPrimaryNode = async (
 	// ✨ NEW: Handle no keywords found
 	if (ranked.length === 0) {
 		return {
-			halt: { reason: 'no_keywords_found' },
-			currentStep: 'topic', // or some other appropriate step
+			errorReason: 'no_keywords_found',
 			messages: [
 				...(state.messages || []),
 				new AIMessage(
@@ -1152,13 +1311,11 @@ export const researchPrimaryNode = async (
 	}
 
 	// ✨ Case 2: Auto-select if automation enabled
-	if (
-		automationEngine.shouldAutoFill(state as any, 'primaryKeyword') &&
-		ranked.length > 0
-	) {
+	if (automationEngine.shouldAutoFill(state as any, 'primaryKeyword') && ranked.length > 0) {
 		return {
-			data: { ...state.data, primaryKeyword: ranked[0].text },
 			currentStep: 'primary_keyword',
+			autoSelected: ranked[0].text,
+			data: { primaryKeyword: ranked[0].text },
 			trace: [
 				{
 					step: 'KeywordResearch.primaryCandidates',
@@ -1181,8 +1338,7 @@ export const researchPrimaryNode = async (
 	// In LangGraph, we interrupt the graph execution here
 	return {
 		halt: { reason: 'await_keyword_selection' },
-		keywordCandidates: ranked, // ✨ Store candidates for UI
-		currentStep: 'primary_keyword',
+		keywordCandidates: ranked,
 		toolOutputs: [
 			{
 				type: 'keyword_options',
@@ -1228,7 +1384,7 @@ const cleanPrimaryKeyword = (keyword: string): string => {
 
 export const researchSecondaryNode = async (
 	state: AgentState
-): Promise<Partial<AgentState>> => {
+): Promise<ResearchPrimaryResult> => {
 	const rawPrimary = (state.data.primaryKeyword || '').trim();
 	if (!rawPrimary) return {};
 
@@ -1265,6 +1421,7 @@ export const researchSecondaryNode = async (
 	}
 
 	const location = state.data.targetLocation || 'United States';
+	const topicContext = (state.data.title || state.data.topic || '').trim();
 	let ranked: any[] = [];
 	let ideas: any[] = []; // Store ideas for potential additional fetching
 
@@ -1305,10 +1462,11 @@ export const researchSecondaryNode = async (
 			`   🔄 After deduplication: ${merged.length} unique keywords`
 		);
 
-		// Score keywords with context - prioritize relevance/intent to primary keyword
+		// Score keywords with context - prioritize relevance/intent to the actual blog topic/title.
+		// Include primary keyword as additional context to keep secondaries aligned to the chosen primary.
 		ranked = keywordTool.scoreIdeas(
 			merged,
-			primary, // Use primary keyword as context for intent filtering
+			`${topicContext} ${primary}`.trim() || primary,
 			true // Prioritize relevance/intent over volume
 		) as any[]; // Type assertion: scoreIdeas returns KwRow & { score: number }[]
 
@@ -1318,8 +1476,7 @@ export const researchSecondaryNode = async (
 
 		if (ranked.length === 0) {
 			console.error(
-				`   ❌ [SECONDARY KEYWORD] No keywords after scoring. Raw ideas: ${
-					ideas?.length || 0
+				`   ❌ [SECONDARY KEYWORD] No keywords after scoring. Raw ideas: ${ideas?.length || 0
 				}, Merged: ${merged.length}`
 			);
 		}
@@ -1382,7 +1539,7 @@ export const researchSecondaryNode = async (
 			);
 			const additionalRanked = keywordTool.scoreIdeas(
 				additionalMerged,
-				primary,
+				`${topicContext} ${primary}`.trim() || primary,
 				true // Prioritize relevance
 			) as any[];
 
@@ -1432,12 +1589,10 @@ export const researchSecondaryNode = async (
 	// ✨ NEW: Handle no keywords found gracefully
 	if (limitedRanked.length === 0) {
 		return {
-			currentStep: 'secondary_keywords',
+			errorReason: 'no_keywords_found',
 			messages: [
 				...(state.messages || []),
-				new AIMessage(
-					"I couldn't find any secondary keywords. I'll proceed with just the primary keyword for now."
-				),
+				new AIMessage("I couldn't find any secondary keywords. I'll proceed with just the primary keyword for now."),
 			],
 			trace: [
 				{
@@ -1450,21 +1605,11 @@ export const researchSecondaryNode = async (
 	}
 
 	// ✨ Case 2: Auto-select if automation enabled
-	if (
-		automationEngine.shouldAutoFill(
-			state as any,
-			'secondaryKeywords'
-		) &&
-		limitedRanked.length > 0
-	) {
+	if (automationEngine.shouldAutoFill(state as any, 'secondaryKeywords') && limitedRanked.length > 0) {
 		return {
-			data: {
-				...state.data,
-				secondaryKeywords: limitedRanked
-					.slice(0, 5)
-					.map((k) => k.text),
-			},
 			currentStep: 'secondary_keywords',
+			autoSelected: undefined,
+			data: { secondaryKeywords: limitedRanked.slice(0, 5).map((k) => k.text) },
 			trace: [
 				{
 					step: 'KeywordResearch.secondaryCandidates',
@@ -1483,8 +1628,7 @@ export const researchSecondaryNode = async (
 	// ✨ Case 3: Show options to user (always show at least 25 if available)
 	return {
 		halt: { reason: 'await_secondary_selection' },
-		keywordCandidates: limitedRanked, // ✨ Limited to 25, filtered by primary keyword intent
-		currentStep: 'secondary_keywords',
+		keywordCandidates: limitedRanked,
 		toolOutputs: [
 			{
 				type: 'keyword_options',

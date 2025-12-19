@@ -5,12 +5,27 @@ import * as automationEngine from '../../../services/automationEngine';
 import { Interlink } from '../../../types';
 import { getUserLanguage, getUserModel } from '../../../server/db/userService';
 
+export type ProposalResult = {
+	draft?: string;
+	progress?: { sectionIndex: number };
+	currentStep?: any;
+	trace?: any[];
+};
+
 export const proposalNode = async (
 	state: AgentState
-): Promise<Partial<AgentState>> => {
+): Promise<ProposalResult> => {
 	if (!state.outlineApproved) return {};
 	const idx = state.progress.sectionIndex ?? 0;
-	if (idx >= state.outline.length) return {};
+	// IMPORTANT: When the router is still on `currentStep: 'outline'`, it will keep routing
+	// back to `proposal`. If we silently return {} here, the graph can loop forever.
+	// Instead, advance the step to `generation` and clamp sectionIndex so the router can stop.
+	if (idx >= state.outline.length) {
+		return {
+			currentStep: 'generation',
+			progress: { sectionIndex: Math.min(idx, state.outline.length) },
+		};
+	}
 
 	// ✨ Initialize draft with title on first section
 	let currentDraft = state.draft;
@@ -53,8 +68,8 @@ export const proposalNode = async (
 
 	return {
 		draft: newDraft,
-		progress: { sectionIndex: idx + 1 },
-		currentStep: 'generation', // ✨ Set step so router can track progress
+		progress: { sectionIndex: Math.min(idx + 1, state.outline.length) },
+		currentStep: 'generation',
 		trace: [
 			{
 				step: 'ProposalNode.generatedSection',
@@ -65,15 +80,15 @@ export const proposalNode = async (
 	};
 };
 
+export type FinalBlogResult = {
+	draft?: string;
+	trace?: any[];
+};
+
 export const finalBlogGenerationNode = async (
 	state: AgentState
-): Promise<Partial<AgentState>> => {
-	if (
-		!state.outlineApproved ||
-		!state.outline ||
-		state.outline.length === 0
-	)
-		return {};
+): Promise<FinalBlogResult> => {
+	if (!state.outlineApproved || !state.outline || state.outline.length === 0) return {};
 
 	// Generate complete blog post using the approved outline
 	// Note: In the original, this regenerates the WHOLE blog.
@@ -96,8 +111,7 @@ export const finalBlogGenerationNode = async (
 	);
 
 	return {
-		draft: fullBlog, // Overwrite draft with final polished version
-		// finalBlogGenerated: true, // We don't have this in schema yet, maybe add it?
+		draft: fullBlog,
 		trace: [
 			{
 				step: 'FinalBlog.generated',

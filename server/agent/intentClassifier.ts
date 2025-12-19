@@ -47,6 +47,7 @@ export interface UserIntent {
 	extractedData?: Partial<BlogData>;
 	missingFields?: string[];
 	autoFillRequested?: boolean;
+	delegatedChoiceRequested?: boolean;
 	specificRequest?: string;
 	controlPreferences?: {
 		wantsToChooseKeywords?: boolean;
@@ -117,6 +118,14 @@ CRITICAL CLASSIFICATION RULES (PRIORITY ORDER - CHECK IN THIS ORDER):
    - "I want to choose", "let me select", "I'll pick"
    - type: "manual_control"
 
+8b. **DELEGATED CHOICE (USER WANTS AGENT TO PICK FROM SHOWN OPTIONS)**
+   - If the user is NOT providing a concrete value, but instead is telling the agent to choose/select/pick on their behalf
+   - This is most common while halted awaiting selection (primary keyword, secondary keywords, or title)
+   - In this case:
+     - Set delegatedChoiceRequested: true
+     - Do NOT treat the instruction text as a keyword/title value
+     - Keep extractedData fields null unless the user provided an explicit concrete value
+
 9. **REFINEMENT**
    - User wants to modify existing content
    - type: "refinement"
@@ -169,6 +178,7 @@ OUTPUT SCHEMA:
     "targetLocation": string | null
   },
   "autoFillRequested": boolean,
+  "delegatedChoiceRequested": boolean,
   "specificRequest": string | null,
   "controlPreferences": {
     "wantsToChooseKeywords": boolean,
@@ -236,6 +246,7 @@ EXAMPLES:
 				},
 			},
 			autoFillRequested: { type: Type.BOOLEAN },
+			delegatedChoiceRequested: { type: Type.BOOLEAN },
 			specificRequest: { type: Type.STRING, nullable: true },
 			controlPreferences: {
 				type: Type.OBJECT,
@@ -246,7 +257,7 @@ EXAMPLES:
 				},
 			},
 		},
-		required: ['type', 'autoFillRequested', 'controlPreferences'],
+		required: ['type', 'autoFillRequested', 'delegatedChoiceRequested', 'controlPreferences'],
 	};
 
 	const response = await retryWithBackoff(
