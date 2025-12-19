@@ -185,7 +185,7 @@ export class UserAgent {
           titleSelected: true,
         };
         return {
-          assistantMessage: `✅ Perfect! I've selected "${selectedTitle}" as your blog title.\n\nDo you want to add **reference links/files** for this blog? (optional) Reply **Yes** to add references, or **Skip** to continue.`,
+          assistantMessage: `✅ Perfect! I've selected "${selectedTitle}" as your blog title.\n\nDo you want to add **reference links/files** for this blog?\n\n📌 **Note:** The reference links/files you provide will be used as source material to enhance your blog and ensure the content is well-researched and informative. If you don't provide references, we will use the best relevant internet knowledge available.\n\n Reply **Yes** to add references, or **Skip** to continue.`,
           stateUpdates,
           shouldRunStepper: false,
         };
@@ -449,7 +449,7 @@ export class UserAgent {
       // UI often sends "Skip" / "Skip references".
       if (msg.includes('skip')) {
         return {
-          assistantMessage: 'Skipped. Do you want to add any internal links to your existing content (optional)? Reply **Yes** to add interlinks, or **Skip** to continue.',
+          assistantMessage: 'Skipped.\n\nDo you want to add any internal links to your existing content?\n\n📌 **Note:** Adding internal links will be helpful to embed internal links on the selected keyword, improving SEO and user navigation.\n\nReply **Yes** to add interlinks, or **Skip** to continue.',
           stateUpdates: {
             currentStep: 'interlinking',
             halt: { reason: 'await_interlinking_confirmation' },
@@ -461,7 +461,7 @@ export class UserAgent {
       // UI sends something like: "Added 1 URL(s) and 0 file(s). Continue."
       if (msg.includes('continue') || msg.includes('added')) {
         return {
-          assistantMessage: '✅ Got it. References saved.\n\nDo you want to add any internal links to your existing content (optional)? Reply **Yes** to add interlinks, or **Skip** to continue.',
+          assistantMessage: '✅ Got it. References saved.\n\nDo you want to add any internal links to your existing content?\n\n📌 **Note:** Adding internal links will be helpful to embed internal links on the selected keyword, improving SEO and user navigation.\n\nReply **Yes** to add interlinks, or **Skip** to continue.',
           stateUpdates: {
             currentStep: 'interlinking',
             halt: { reason: 'await_interlinking_confirmation' },
@@ -487,7 +487,7 @@ export class UserAgent {
       }
       if (msg.includes('skip') || msg === 'no' || msg === 'n') {
         return {
-          assistantMessage: 'No problem. Do you want to add any internal links to your existing content (optional)? Reply **Yes** to add interlinks, or **Skip** to continue.',
+          assistantMessage: 'No problem.\n\nDo you want to add any internal links to your existing content?\n\n📌 **Note:** Adding internal links will be helpful to embed internal links on the selected keyword, improving SEO and user navigation.\n\nReply **Yes** to add interlinks, or **Skip** to continue.',
           stateUpdates: {
             currentStep: 'interlinking',
             halt: { reason: 'await_interlinking_confirmation' },
@@ -669,7 +669,7 @@ export class UserAgent {
         titleSelected: true,
       };
       return {
-        assistantMessage: `✅ Perfect! I've selected "${selectedTitle}" as your blog title.\n\nDo you want to add **reference links/files** for this blog? (optional) Reply **Yes** to add references, or **Skip** to continue.`,
+        assistantMessage:`✅ Perfect! I've selected "${selectedTitle}" as your blog title.\n\nDo you want to add **reference links/files** for this blog?\n\n📌 **Note:** The reference links/files you provide will be used as source material to enhance your blog and ensure the content is well-researched and informative. If you don't provide references, we will use the best relevant internet knowledge available.\n\n Reply **Yes** to add references, or **Skip** to continue.`,
         stateUpdates,
         shouldRunStepper: false,
       };
