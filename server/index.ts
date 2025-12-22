@@ -989,7 +989,7 @@ app.post('/api/agent/message', optionalAuth, async (req, res) => {
 		stream = false,
 	} = req.body || {};
 	let userId = req.userId; // ✨ Extracted from JWT token by optionalAuth middleware
-	userId = '5c9447c7-440b-4b62-93c2-36a12c1b2d92';
+	// userId = '5c9447c7-440b-4b62-93c2-36a12c1b2d92';
 	console.log(`\n${'═'.repeat(70)}`);
 	console.log(
 		`💬 [AGENT] Message Request Received ${stream ? '(Streaming)' : ''}`

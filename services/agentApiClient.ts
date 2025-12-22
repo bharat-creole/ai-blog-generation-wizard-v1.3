@@ -51,7 +51,7 @@ export async function sendMessage(
 ): Promise<{ assistantMessage: string; state: any; executed: boolean }> {
 	const response = await fetch(`${API_BASE}/api/agent/message`, {
 		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
+		headers: getAuthHeaders(),
 		body: JSON.stringify({ message, threadId, currentState }),
 	});
 
