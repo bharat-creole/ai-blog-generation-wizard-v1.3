@@ -51,7 +51,7 @@ export const useParentData = (onDataReceived?: (data: ParentDataPayload) => void
       // In development, allow localhost:3000
       // In production, use the configured parent URL
       // @ts-ignore - Vite environment variables
-      const parentUrl = import.meta.env?.VITE_PARENT_URL || 'http://localhost:3000';
+      const parentUrl = import.meta.env?.VITE_PARENT_URL ;
       
       console.log('   Parent URL configured as:', parentUrl);
       
@@ -61,7 +61,7 @@ export const useParentData = (onDataReceived?: (data: ParentDataPayload) => void
         allowedOrigin = new URL(parentUrl).origin;
       } catch (e) {
         console.error('❌ [PostMessage] Invalid VITE_PARENT_URL:', parentUrl);
-        allowedOrigin = 'http://localhost:3000';
+        // allowedOrigin = 'http://localhost:3000';
       }
 
       // Allow both the configured origin and any localhost origin in development
@@ -156,7 +156,7 @@ export const useParentData = (onDataReceived?: (data: ParentDataPayload) => void
  */
 export const sendToParent = (data: any, targetOrigin?: string) => {
   // @ts-ignore - Vite environment variables
-  const parentUrl = targetOrigin || import.meta.env?.VITE_PARENT_URL || 'http://localhost:3000';
+  const parentUrl = targetOrigin || import.meta.env?.VITE_PARENT_URL ;
   
   try {
     const origin = new URL(parentUrl).origin;
