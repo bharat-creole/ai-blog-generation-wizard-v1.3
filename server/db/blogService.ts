@@ -159,7 +159,9 @@ export const saveBlogToDatabase = async (data: BlogSaveData): Promise<void> => {
                                 event: ['BLOG_CREATED'],
                                 count: -1,
                                 totalCount: (blogUsage.blogLimit || 0) - updatedBlogCreated,
-                            },
+                                createdAt: new Date(),
+                                updatedAt: new Date(),  // ✅ This fixes it
+                                                        },
                         });
 
                         console.log(`✅ [DB] User usage updated and log created for userId: ${data.userId}`);
