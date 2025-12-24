@@ -1690,7 +1690,7 @@ app.post('/api/agent/message', optionalAuth, async (req, res) => {
 			)}..."`
 		);
 		console.log(`   Should execute: ${response.shouldRunAgent}`);
-		console.log(`   State Updates from UserAgent:`, JSON.stringify(response.stateUpdates || {}, (key, value) => value instanceof Set ? Array.from(value) : value, 2));
+
 
 		// Merge state updates (without apiKey)
 		// But ensure apiKey is available for graph execution (from request or env)
