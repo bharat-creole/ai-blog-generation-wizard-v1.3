@@ -31,6 +31,7 @@
 		"mammoth": "^1.8.0",
 		"openai": "^6.10.0",
 		"pdfjs-dist": "^4.8.69",
+		"posthog-js": "^1.310.1",
 		"prisma": "^5.19.1",
 		"react": "^19.2.0",
 		"react-dom": "^19.2.0",
